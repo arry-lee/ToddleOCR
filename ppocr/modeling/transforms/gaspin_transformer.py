@@ -168,7 +168,7 @@ class GA_SPIN_Transformer(nn.Module):
                 nn.ReLU(),  # 1*3
                 nn.AdaptiveAvgPool2d(1),
                 nn.Flatten(1, -1),  # batch_size x 512
-                nn.Linear(512, 256, weight_attr=nn.initializer.Normal(0.001)),
+                nn.Linear(512, 256),
                 nn.BatchNorm1D(256),
                 nn.ReLU(),
             )
