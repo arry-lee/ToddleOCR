@@ -48,11 +48,11 @@ class ConvNormLayer(nn.Module):
 
 
         if norm_type == "bn":
-            self.norm = nn.BatchNorm2d(ch_out, bias=True)
+            self.norm = nn.BatchNorm2d(ch_out)
         elif norm_type == "sync_bn":
-            self.norm = nn.SyncBatchNorm(ch_out, bias=True)
+            self.norm = nn.SyncBatchNorm(ch_out)
         elif norm_type == "gn":
-            self.norm = nn.GroupNorm(num_groups=norm_groups, num_channels=ch_out, bias=True)
+            self.norm = nn.GroupNorm(num_groups=norm_groups, num_channels=ch_out)
 
     def forward(self, inputs):
         out = self.conv(inputs)
