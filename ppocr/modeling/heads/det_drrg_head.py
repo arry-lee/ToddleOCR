@@ -172,7 +172,7 @@ class DRRGHead(nn.Module):
         if none_flag:
             return None, None, None
         gcn_pred = self.gcn(local_graphs_node_feat, adjacent_matrices, pivots_knn_inds)
-        pred_labels = F.softmax(gcn_pred, axis=1)
+        pred_labels = F.softmax(gcn_pred, dim=1)
 
         edges = []
         scores = []

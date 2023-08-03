@@ -98,7 +98,7 @@ class DotProductAttentionLayer(nn.Module):
 
         # reshape to (n, c, h, w)
         logits = torch.reshape(logits, [n, c, t])
-        weights = F.softmax(logits, axis=2)
+        weights = F.softmax(logits, dim=2)
         value = torch.transpose(value, (0, 2, 1))
         glimpse = torch.matmul(weights, value)
         glimpse = torch.transpose(glimpse, (0, 2, 1))

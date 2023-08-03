@@ -47,5 +47,5 @@ class ClsHead(nn.Module):
         x = torch.reshape(x, shape=[x.shape[0], x.shape[1]])
         x = self.fc(x)
         if not self.training:
-            x = F.softmax(x, axis=1)
+            x = F.softmax(x, dim=1)
         return x

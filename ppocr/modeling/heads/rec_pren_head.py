@@ -29,6 +29,6 @@ class PRENHead(nn.Module):
         predicts = self.linear(x)
 
         if not self.training:
-            predicts = F.softmax(predicts, axis=2)
+            predicts = F.softmax(predicts, dim=2)
 
         return predicts

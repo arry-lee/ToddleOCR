@@ -72,7 +72,7 @@ class SPINAttentionHead(nn.Module):
                 next_input = probs_step.argmax(axis=1)
                 targets = next_input
         if not self.training:
-            probs = torch.nn.functional.softmax(probs, axis=2)
+            probs = torch.nn.functional.softmax(probs, dim=2)
         return probs
 
 
@@ -96,7 +96,7 @@ class AttentionLSTMCell(nn.Module):
         res = torch.tanh(res)
         e = self.score(res)
 
-        alpha = F.softmax(e, axis=1)
+        alpha = F.softmax(e, dim=1)
         alpha = torch.transpose(alpha, [0, 2, 1])
         context = torch.squeeze(torch.mm(alpha, batch_H), axis=1)
         concat_context = torch.concat([context, char_onehots], 1)

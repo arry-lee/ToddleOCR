@@ -163,7 +163,7 @@ class PicoDetPostProcess(object):
                 # box distribution to distance
                 reg_range = np.arange(reg_max + 1)
                 box_distance = box_distribute.reshape((-1, reg_max + 1))
-                box_distance = softmax(box_distance, axis=1)
+                box_distance = softmax(box_distance, dim=1)
                 box_distance = box_distance * np.expand_dims(reg_range, axis=0)
                 box_distance = np.sum(box_distance, axis=1).reshape((-1, 4))
                 box_distance = box_distance * stride

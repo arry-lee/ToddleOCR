@@ -148,7 +148,7 @@ class GSRM(nn.Module):
         b, t, c = inputs.shape
         pvam_features = torch.reshape(inputs, [-1, c])
         word_out = self.fc0(pvam_features)
-        word_ids = torch.argmax(F.softmax(word_out), axis=1)
+        word_ids = torch.argmax(F.softmax(word_out), dim=1)
         word_ids = torch.reshape(x=word_ids, shape=[-1, t, 1])
 
         # ===== GSRM Semantic reasoning block =====
@@ -245,7 +245,7 @@ class SRNHead(nn.Module):
 
         final_out = self.vsfd(pvam_feature, gsrm_feature)
         if not self.training:
-            final_out = F.softmax(final_out, axis=1)
+            final_out = F.softmax(final_out, dim=1)
 
         _, decoded_out = torch.topk(final_out, k=1)
 

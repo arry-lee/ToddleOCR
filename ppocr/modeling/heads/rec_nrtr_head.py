@@ -206,7 +206,7 @@ class Transformer(nn.Module):
                     tgt = decoder_layer(tgt, enc_output, self_mask=tgt_mask)
                 dec_output = tgt
                 dec_output = dec_output[:, -1, :]  # Pick the last step: (bh * bm) * d_h
-                word_prob = F.softmax(self.tgt_word_prj(dec_output), axis=1)
+                word_prob = F.softmax(self.tgt_word_prj(dec_output), dim=1)
                 word_prob = torch.reshape(word_prob, [n_active_inst, n_bm, -1])
                 return word_prob
 

@@ -120,7 +120,7 @@ class AttentionRecognitionHead(nn.Module):
                 y_prev = predicted
 
             output, state = self.decoder(x, state, y_prev)
-            output = F.softmax(output, axis=1)
+            output = F.softmax(output, dim=1)
             score, predicted = output.max(1)
             predicted_ids.append(predicted.unsqueeze(1))
             predicted_scores.append(score.unsqueeze(1))
@@ -288,7 +288,7 @@ class AttentionUnit(nn.Module):
 
         vProj = self.wEmbed(sumTanh)  # [(b x T) x 1]
         vProj = torch.reshape(vProj, [batch_size, T])
-        alpha = F.softmax(vProj, axis=1)  # attention weights for each sample in the minibatch
+        alpha = F.softmax(vProj, dim=1)  # attention weights for each sample in the minibatch
         return alpha
 
 
