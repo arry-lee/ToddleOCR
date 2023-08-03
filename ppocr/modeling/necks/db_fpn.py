@@ -78,14 +78,14 @@ class DBFPN(nn.Module):
         self.use_asf = use_asf
         weight_attr = torch.nn.initializer.KaimingUniform()
 
-        self.in2_conv = nn.Conv2d(in_channels=in_channels[0], out_channels=self.out_channels, kernel_size=1, weight_attr=ParamAttr(initializer=weight_attr), bias=False)
-        self.in3_conv = nn.Conv2d(in_channels=in_channels[1], out_channels=self.out_channels, kernel_size=1, weight_attr=ParamAttr(initializer=weight_attr), bias=False)
-        self.in4_conv = nn.Conv2d(in_channels=in_channels[2], out_channels=self.out_channels, kernel_size=1, weight_attr=ParamAttr(initializer=weight_attr), bias=False)
-        self.in5_conv = nn.Conv2d(in_channels=in_channels[3], out_channels=self.out_channels, kernel_size=1, weight_attr=ParamAttr(initializer=weight_attr), bias=False)
-        self.p5_conv = nn.Conv2d(in_channels=self.out_channels, out_channels=self.out_channels // 4, kernel_size=3, padding=1, weight_attr=ParamAttr(initializer=weight_attr), bias=False)
-        self.p4_conv = nn.Conv2d(in_channels=self.out_channels, out_channels=self.out_channels // 4, kernel_size=3, padding=1, weight_attr=ParamAttr(initializer=weight_attr), bias=False)
-        self.p3_conv = nn.Conv2d(in_channels=self.out_channels, out_channels=self.out_channels // 4, kernel_size=3, padding=1, weight_attr=ParamAttr(initializer=weight_attr), bias=False)
-        self.p2_conv = nn.Conv2d(in_channels=self.out_channels, out_channels=self.out_channels // 4, kernel_size=3, padding=1, weight_attr=ParamAttr(initializer=weight_attr), bias=False)
+        self.in2_conv = nn.Conv2d(in_channels=in_channels[0], out_channels=self.out_channels, kernel_size=1,  bias=False)
+        self.in3_conv = nn.Conv2d(in_channels=in_channels[1], out_channels=self.out_channels, kernel_size=1,  bias=False)
+        self.in4_conv = nn.Conv2d(in_channels=in_channels[2], out_channels=self.out_channels, kernel_size=1,  bias=False)
+        self.in5_conv = nn.Conv2d(in_channels=in_channels[3], out_channels=self.out_channels, kernel_size=1,  bias=False)
+        self.p5_conv = nn.Conv2d(in_channels=self.out_channels, out_channels=self.out_channels // 4, kernel_size=3, padding=1,  bias=False)
+        self.p4_conv = nn.Conv2d(in_channels=self.out_channels, out_channels=self.out_channels // 4, kernel_size=3, padding=1,  bias=False)
+        self.p3_conv = nn.Conv2d(in_channels=self.out_channels, out_channels=self.out_channels // 4, kernel_size=3, padding=1,  bias=False)
+        self.p2_conv = nn.Conv2d(in_channels=self.out_channels, out_channels=self.out_channels // 4, kernel_size=3, padding=1,  bias=False)
 
         if self.use_asf is True:
             self.asf = ASFBlock(self.out_channels, self.out_channels // 4)
@@ -124,7 +124,7 @@ class RSELayer(nn.Module):
         weight_attr = torch.nn.initializer.KaimingUniform()
         self.out_channels = out_channels
         self.in_conv = nn.Conv2d(
-            in_channels=in_channels, out_channels=self.out_channels, kernel_size=kernel_size, padding=int(kernel_size // 2), weight_attr=ParamAttr(initializer=weight_attr), bias=False
+            in_channels=in_channels, out_channels=self.out_channels, kernel_size=kernel_size, padding=int(kernel_size // 2),  bias=False
         )
         self.se_block = SEModule(self.out_channels)
         self.shortcut = shortcut
@@ -194,16 +194,16 @@ class LKPAN(nn.Module):
             raise ValueError("mode can only be one of ['lite', 'large'], but received {}".format(mode))
 
         for i in range(len(in_channels)):
-            self.ins_conv.append(nn.Conv2d(in_channels=in_channels[i], out_channels=self.out_channels, kernel_size=1, weight_attr=ParamAttr(initializer=weight_attr), bias=False))
+            self.ins_conv.append(nn.Conv2d(in_channels=in_channels[i], out_channels=self.out_channels, kernel_size=1,  bias=False))
 
-            self.inp_conv.append(p_layer(in_channels=self.out_channels, out_channels=self.out_channels // 4, kernel_size=9, padding=4, weight_attr=ParamAttr(initializer=weight_attr), bias=False))
+            self.inp_conv.append(p_layer(in_channels=self.out_channels, out_channels=self.out_channels // 4, kernel_size=9, padding=4,  bias=False))
 
             if i > 0:
                 self.pan_head_conv.append(
-                    nn.Conv2d(in_channels=self.out_channels // 4, out_channels=self.out_channels // 4, kernel_size=3, padding=1, stride=2, weight_attr=ParamAttr(initializer=weight_attr), bias=False)
+                    nn.Conv2d(in_channels=self.out_channels // 4, out_channels=self.out_channels // 4, kernel_size=3, padding=1, stride=2,  bias=False)
                 )
             self.pan_lat_conv.append(
-                p_layer(in_channels=self.out_channels // 4, out_channels=self.out_channels // 4, kernel_size=9, padding=4, weight_attr=ParamAttr(initializer=weight_attr), bias=False)
+                p_layer(in_channels=self.out_channels // 4, out_channels=self.out_channels // 4, kernel_size=9, padding=4,  bias=False)
             )
 
     def forward(self, x):
@@ -263,14 +263,14 @@ class ASFBlock(nn.Module):
 
         self.spatial_scale = nn.Sequential(
             # Nx1xHxW
-            nn.Conv2d(in_channels=1, out_channels=1, kernel_size=3, bias=False, padding=1, weight_attr=ParamAttr(initializer=weight_attr)),
+            nn.Conv2d(in_channels=1, out_channels=1, kernel_size=3, bias=False, padding=1, 
             nn.ReLU(),
-            nn.Conv2d(in_channels=1, out_channels=1, kernel_size=1, bias=False, weight_attr=ParamAttr(initializer=weight_attr)),
+            nn.Conv2d(in_channels=1, out_channels=1, kernel_size=1, bias=False, 
             nn.Sigmoid(),
         )
 
         self.channel_scale = nn.Sequential(
-            nn.Conv2d(in_channels=inter_channels, out_channels=out_features_num, kernel_size=1, bias=False, weight_attr=ParamAttr(initializer=weight_attr)), nn.Sigmoid()
+            nn.Conv2d(in_channels=inter_channels, out_channels=out_features_num, kernel_size=1, bias=False,  nn.Sigmoid()
         )
 
     def forward(self, fuse_features, features_list):

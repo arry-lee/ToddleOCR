@@ -35,7 +35,7 @@ class ConvBNLayer(nn.Module):
             stride=stride,
             padding=(kernel_size - 1) // 2,
             groups=groups,
-            weight_attr=ParamAttr(name=name + "_weights"),
+            
             bias=False,
         )
 

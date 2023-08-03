@@ -28,7 +28,7 @@ class ConvBNLayer(nn.Module):
         self.if_act = if_act
         self.act = act
         self.conv = nn.Conv2d(
-            in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size, stride=stride, padding=padding, groups=groups, weight_attr=ParamAttr(name=name + "_weights"), bias=False
+            in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size, stride=stride, padding=padding, groups=groups,  bias=False
         )
 
         self.bn = nn.BatchNorm2d(
@@ -52,7 +52,7 @@ class DeConvBNLayer(nn.Module):
         self.if_act = if_act
         self.act = act
         self.deconv = nn.ConvTranspose2d(
-            in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size, stride=stride, padding=padding, groups=groups, weight_attr=ParamAttr(name=name + "_weights"), bias=False
+            in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size, stride=stride, padding=padding, groups=groups,  bias=False
         )
         self.bn = nn.BatchNorm2d(
             num_channels=out_channels,

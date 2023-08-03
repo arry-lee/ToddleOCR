@@ -60,7 +60,7 @@ class FCEHead(nn.Module):
             stride=1,
             padding=1,
             groups=1,
-            weight_attr=ParamAttr(name="cls_weights", initializer=Normal(mean=0.0, std=0.01)),
+            
             bias=True,
         )
         self.out_conv_reg = nn.Conv2d(
@@ -70,7 +70,7 @@ class FCEHead(nn.Module):
             stride=1,
             padding=1,
             groups=1,
-            weight_attr=ParamAttr(name="reg_weights", initializer=Normal(mean=0.0, std=0.01)),
+            
             bias=True,
         )
 

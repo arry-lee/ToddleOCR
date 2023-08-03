@@ -79,13 +79,13 @@ class ResNetFPN(nn.Module):
 
             self.base_block.append(
                 self.add_sublayer(
-                    "F_{}_base_block_0".format(i), nn.Conv2d(in_channels=in_channels, out_channels=out_ch_list[i], kernel_size=1, weight_attr=ParamAttr(trainable=True), bias=ParamAttr(trainable=True))
+                    "F_{}_base_block_0".format(i), nn.Conv2d(in_channels=in_channels, out_channels=out_ch_list[i], kernel_size=1,  bias=ParamAttr(trainable=True))
                 )
             )
             self.base_block.append(
                 self.add_sublayer(
                     "F_{}_base_block_1".format(i),
-                    nn.Conv2d(in_channels=out_ch_list[i], out_channels=out_ch_list[i], kernel_size=3, padding=1, weight_attr=ParamAttr(trainable=True), bias=ParamAttr(trainable=True)),
+                    nn.Conv2d(in_channels=out_ch_list[i], out_channels=out_ch_list[i], kernel_size=3, padding=1, 
                 )
             )
             self.base_block.append(
@@ -93,7 +93,7 @@ class ResNetFPN(nn.Module):
             )
         self.base_block.append(
             self.add_sublayer(
-                "F_{}_base_block_3".format(i), nn.Conv2d(in_channels=out_ch_list[i], out_channels=512, kernel_size=1, bias=ParamAttr(trainable=True), weight_attr=ParamAttr(trainable=True))
+                "F_{}_base_block_3".format(i), nn.Conv2d(in_channels=out_ch_list[i], out_channels=512, kernel_size=1, bias=ParamAttr(trainable=True), )
             )
         )
         self.out_channels = 512
@@ -138,7 +138,7 @@ class ConvBNLayer(nn.Module):
             stride=stride,
             padding=(kernel_size - 1) // 2,
             groups=groups,
-            weight_attr=ParamAttr(name=name + ".conv2d.output.1.w_0"),
+            
             bias=False,
         )
 

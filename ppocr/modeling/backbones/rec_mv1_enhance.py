@@ -42,7 +42,7 @@ class ConvBNLayer(nn.Module):
             stride=stride,
             padding=padding,
             groups=num_groups,
-            weight_attr=ParamAttr(initializer=KaimingNormal()),
+            
             bias=False,
         )
 
@@ -125,8 +125,8 @@ class SEModule(nn.Module):
     def __init__(self, channel, reduction=4):
         super(SEModule, self).__init__()
         self.avg_pool = AdaptiveAvgPool2D(1)
-        self.conv1 = Conv2D(in_channels=channel, out_channels=channel // reduction, kernel_size=1, stride=1, padding=0, weight_attr=ParamAttr(), bias=ParamAttr())
-        self.conv2 = Conv2D(in_channels=channel // reduction, out_channels=channel, kernel_size=1, stride=1, padding=0, weight_attr=ParamAttr(), bias=ParamAttr())
+        self.conv1 = Conv2D(in_channels=channel, out_channels=channel // reduction, kernel_size=1, stride=1, padding=0,  bias=ParamAttr())
+        self.conv2 = Conv2D(in_channels=channel // reduction, out_channels=channel, kernel_size=1, stride=1, padding=0,  bias=ParamAttr())
 
     def forward(self, inputs):
         outputs = self.avg_pool(inputs)

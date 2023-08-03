@@ -65,7 +65,7 @@ class DeformableConvV2(nn.Module):
         else:
             offset_bias_attr = ParamAttr(initializer=Constant(0.0), learning_rate=lr_scale, regularizer=regularizer)
         self.conv_offset = nn.Conv2d(
-            in_channels, groups * 3 * kernel_size**2, kernel_size, stride=stride, padding=(kernel_size - 1) // 2, weight_attr=ParamAttr(initializer=Constant(0.0)), bias=offset_bias_attr
+            in_channels, groups * 3 * kernel_size**2, kernel_size, stride=stride, padding=(kernel_size - 1) // 2,  bias=offset_bias_attr
         )
         if skip_quant:
             self.conv_offset.skip_quant = True

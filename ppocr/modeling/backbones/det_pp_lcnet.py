@@ -76,7 +76,7 @@ class ConvBNLayer(nn.Module):
             stride=stride,
             padding=(filter_size - 1) // 2,
             groups=num_groups,
-            weight_attr=ParamAttr(initializer=KaimingNormal()),
+            
             bias=False,
         )
 

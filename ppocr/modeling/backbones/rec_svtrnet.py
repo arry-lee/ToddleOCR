@@ -112,7 +112,7 @@ class ConvMixer(nn.Module):
         super().__init__()
         self.HW = HW
         self.dim = dim
-        self.local_mixer = nn.Conv2d(dim, dim, local_k, 1, [local_k[0] // 2, local_k[1] // 2], groups=num_heads, weight_attr=ParamAttr(initializer=KaimingNormal()))
+        self.local_mixer = nn.Conv2d(dim, dim, local_k, 1, [local_k[0] // 2, local_k[1] // 2], groups=num_heads, )
 
     def forward(self, x):
         h = self.HW[0]
@@ -267,7 +267,7 @@ class SubSample(nn.Module):
             self.maxpool = nn.MaxPool2D(kernel_size=[3, 5], stride=stride, padding=[1, 2])
             self.proj = nn.Linear(in_channels, out_channels)
         else:
-            self.conv = nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=stride, padding=1, weight_attr=ParamAttr(initializer=KaimingNormal()))
+            self.conv = nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=stride, padding=1, )
         self.norm = eval(sub_norm)(out_channels)
         if act is not None:
             self.act = act()

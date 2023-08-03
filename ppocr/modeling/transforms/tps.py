@@ -37,7 +37,7 @@ class ConvBNLayer(nn.Module):
             stride=stride,
             padding=(kernel_size - 1) // 2,
             groups=groups,
-            weight_attr=ParamAttr(name=name + "_weights"),
+            
             bias=False,
         )
         bn_name = "bn_" + name
@@ -78,7 +78,7 @@ class LocalizationNetwork(nn.Module):
         name = "loc_fc1"
         stdv = 1.0 / math.sqrt(num_filters_list[-1] * 1.0)
         self.fc1 = nn.Linear(
-            in_channels, fc_dim, weight_attr=ParamAttr(learning_rate=loc_lr, name=name + "_w", initializer=nn.initializer.Uniform(-stdv, stdv)), bias=ParamAttr(name=name + ".b_0"), name=name
+            in_channels, fc_dim,  name=name
         )
 
         # Init fc2 in LocalizationNetwork

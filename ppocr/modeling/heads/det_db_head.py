@@ -43,7 +43,7 @@ class Head(nn.Module):
             out_channels=in_channels // 4,
             kernel_size=kernel_list[1],
             stride=2,
-            weight_attr=ParamAttr(initializer=torch.nn.initializer.KaimingUniform()),
+            
             bias=get_bias_attr(in_channels // 4),
         )
         self.conv_bn2 = nn.BatchNorm2d(
@@ -54,7 +54,7 @@ class Head(nn.Module):
             out_channels=1,
             kernel_size=kernel_list[2],
             stride=2,
-            weight_attr=ParamAttr(initializer=torch.nn.initializer.KaimingUniform()),
+            
             bias=get_bias_attr(in_channels // 4),
         )
 
