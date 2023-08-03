@@ -85,9 +85,9 @@ class MultiHeadAttention(nn.Module):
         self.n_head = n_head
         self.d_k = d_k
         self.d_v = d_v
-        self.w_qs = nn.Linear(d_model, n_head * d_k,  std=np.sqrt(2.0 / (d_model + d_k)))))
-        self.w_ks = nn.Linear(d_model, n_head * d_k,  std=np.sqrt(2.0 / (d_model + d_k)))))
-        self.w_vs = nn.Linear(d_model, n_head * d_v,  std=np.sqrt(2.0 / (d_model + d_v)))))
+        self.w_qs = nn.Linear(d_model, n_head * d_k)
+        self.w_ks = nn.Linear(d_model, n_head * d_k)
+        self.w_vs = nn.Linear(d_model, n_head * d_v)
 
         self.attention = ScaledDotProductAttention(temperature=np.power(d_k, 0.5))
         self.layer_norm = nn.LayerNorm(d_model)
