@@ -29,7 +29,7 @@ __dir__ = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.abspath(os.path.join(__dir__, '../..')))
 
 import copy
-from torch.io import Dataset, DataLoader, BatchSampler, DistributedBatchSampler
+from torch.utils.data import Dataset, DataLoader, BatchSampler, DistributedBatchSampler
 import torch.distributed as dist
 
 from ppocr.data.imaug import transform, create_operators

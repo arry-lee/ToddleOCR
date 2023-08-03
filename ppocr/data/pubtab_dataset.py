@@ -14,7 +14,7 @@
 import numpy as np
 import os
 import random
-from torch.io import Dataset
+from torch.utils.data import Dataset
 import json
 from copy import deepcopy
 

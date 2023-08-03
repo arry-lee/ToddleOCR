@@ -13,7 +13,7 @@
 # limitations under the License.
 import numpy as np
 import os
-from torch.io import Dataset
+from torch.utils.data import Dataset
 import lmdb
 import cv2
 import string
