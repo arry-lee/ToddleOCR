@@ -97,7 +97,7 @@ class AttentionLSTMCell(nn.Module):
         e = self.score(res)
 
         alpha = F.softmax(e, dim=1)
-        alpha = torch.transpose(alpha, [0, 2, 1])
+        alpha = alpha.permute(0, 2, 1)
         context = torch.squeeze(torch.mm(alpha, batch_H), dim=1)
         concat_context = torch.concat([context, char_onehots], 1)
         cur_hidden = self.rnn(concat_context, prev_hidden)

@@ -71,7 +71,7 @@ class PGLoss(nn.Module):
         return direction_loss
 
     def ctcloss(self, f_char, tcl_pos, tcl_mask, tcl_label, label_t):
-        f_char = torch.transpose(f_char, [0, 2, 3, 1])
+        f_char = f_char.permute(0, 2, 3, 1)
         tcl_pos = torch.reshape(tcl_pos, [-1, 3])
         tcl_pos = torch.cast(tcl_pos, dtype=int)
         f_tcl_char = torch.gather_nd(f_char, tcl_pos)

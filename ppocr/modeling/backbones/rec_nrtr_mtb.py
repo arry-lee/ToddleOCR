@@ -32,7 +32,7 @@ class MTB(nn.Module):
         x = self.block(images)
         if self.cnn_num == 2:
             # (b, w, h, c)
-            x = torch.transpose(x, [0, 3, 2, 1])
+            x = x.permute(0, 3, 2, 1)
             x_shape = x.shape
             x = torch.reshape(x, [x_shape[0], x_shape[1], x_shape[2] * x_shape[3]])
         return x

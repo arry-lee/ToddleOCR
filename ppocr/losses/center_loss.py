@@ -59,7 +59,7 @@ class CenterLoss(nn.Module):
 
         square_center = torch.sum(torch.square(self.centers), dim=1, keepdim=True)
         square_center = torch.unsqueeze(square_center, 0).repeat(self.num_classes, batch_size).astype("float64")
-        square_center = torch.transpose(square_center, [1, 0])
+        square_center = square_center.permute(1, 0)
 
         distmat = torch.add(square_feat, square_center)
         feat_dot_center = torch.matmul(feats_reshape, torch.transpose(self.centers, [1, 0]))

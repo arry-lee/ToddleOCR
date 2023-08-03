@@ -169,11 +169,11 @@ class Cross_Attention(nn.Module):
     def _cal_fweight(self, f, shape):
         f_theta, f_phi, f_g = f
         # flatten
-        f_theta = torch.transpose(f_theta, [0, 2, 3, 1])
+        f_theta = f_theta.permute(0, 2, 3, 1)
         f_theta = torch.reshape(f_theta, [shape[0] * shape[1], shape[2], 128])
-        f_phi = torch.transpose(f_phi, [0, 2, 3, 1])
+        f_phi = f_phi.permute(0, 2, 3, 1)
         f_phi = torch.reshape(f_phi, [shape[0] * shape[1], shape[2], 128])
-        f_g = torch.transpose(f_g, [0, 2, 3, 1])
+        f_g = f_g.permute(0, 2, 3, 1)
         f_g = torch.reshape(f_g, [shape[0] * shape[1], shape[2], 128])
         # correlation
         f_attn = torch.matmul(f_theta, torch.transpose(f_phi, [0, 2, 1]))
@@ -195,18 +195,18 @@ class Cross_Attention(nn.Module):
 
         ######## horizon ########
         fh_weight = self._cal_fweight([f_theta, f_phi, f_g], [f_shape[0], f_shape[2], f_shape[3]])
-        fh_weight = torch.transpose(fh_weight, [0, 3, 1, 2])
+        fh_weight = fh_weight.permute(0, 3, 1, 2)
         fh_weight = self.fh_weight_conv(fh_weight)
         # short cut
         fh_sc = self.fh_sc_conv(f_common)
         f_h = F.relu(fh_weight + fh_sc)
 
         ######## vertical ########
-        fv_theta = torch.transpose(f_theta, [0, 1, 3, 2])
-        fv_phi = torch.transpose(f_phi, [0, 1, 3, 2])
-        fv_g = torch.transpose(f_g, [0, 1, 3, 2])
+        fv_theta = f_theta.permute(0, 1, 3, 2)
+        fv_phi = f_phi.permute(0, 1, 3, 2)
+        fv_g = f_g.permute(0, 1, 3, 2)
         fv_weight = self._cal_fweight([fv_theta, fv_phi, fv_g], [f_shape[0], f_shape[3], f_shape[2]])
-        fv_weight = torch.transpose(fv_weight, [0, 3, 2, 1])
+        fv_weight = fv_weight.permute(0, 3, 2, 1)
         fv_weight = self.fv_weight_conv(fv_weight)
         # short cut
         fv_sc = self.fv_sc_conv(f_common)

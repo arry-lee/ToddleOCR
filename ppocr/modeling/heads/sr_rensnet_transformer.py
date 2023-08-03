@@ -76,11 +76,11 @@ class MultiHeadedAttention(nn.Module):
             mask = mask.unsqueeze(1)
         nbatches = query.shape[0]
 
-        query, key, value = [torch.transpose(l(x).reshape([nbatches, -1, self.h, self.d_k]), [0, 2, 1, 3]) for l, x in zip(self.linears, (query, key, value))]
+        query, key, value = [l(x).reshape([nbatches, -1, self.h, self.d_k]).permute(0, 2, 1, 3) for l, x in zip(self.linears, (query, key, value))]
 
         x, attention_map = attention(query, key, value, mask=mask, dropout=self.dropout, attention_map=attention_map)
 
-        x = torch.reshape(torch.transpose(x, [0, 2, 1, 3]), [nbatches, -1, self.h * self.d_k])
+        x = torch.reshape(x, [0, 2, 1, 3]).permute(nbatches, -1, self.h * self.d_k)
 
         return self.linears[-1](x), attention_map
 
@@ -288,7 +288,7 @@ class Decoder(nn.Module):
         result = text
         result = self.mul_layernorm1(result + self.mask_multihead(text, text, text, mask=mask)[0])
         b, c, h, w = conv_feature.shape
-        conv_feature = torch.transpose(conv_feature.reshape([b, c, h * w]), [0, 2, 1])
+        conv_feature = conv_feature.reshape([b, c, h * w]).permute(0, 2, 1)
         word_image_align, attention_map = self.multihead(result, conv_feature, conv_feature, mask=None, attention_map=attention_map)
         result = self.mul_layernorm2(result + word_image_align)
         result = self.mul_layernorm3(result + self.pff(result))

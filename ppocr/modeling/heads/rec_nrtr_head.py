@@ -389,7 +389,7 @@ class PositionalEncoding(nn.Module):
         pe[:, 0::2] = torch.sin(position * div_term)
         pe[:, 1::2] = torch.cos(position * div_term)
         pe = torch.unsqueeze(pe, 0)
-        pe = torch.transpose(pe, [1, 0, 2])
+        pe = pe.permute(1, 0, 2)
         self.register_buffer("pe", pe)
 
     def forward(self, x):
@@ -433,7 +433,7 @@ class PositionalEncoding_2d(nn.Module):
         div_term = torch.exp(torch.arange(0, dim, 2).astype("float32") * (-math.log(10000.0) / dim))
         pe[:, 0::2] = torch.sin(position * div_term)
         pe[:, 1::2] = torch.cos(position * div_term)
-        pe = torch.transpose(torch.unsqueeze(pe, 0), [1, 0, 2])
+        pe = torch.unsqueeze(pe, 0).permute(1, 0, 2)
         self.register_buffer("pe", pe)
 
         self.avg_pool_1 = nn.AdaptiveAvgPool2d((1, 1))
@@ -456,17 +456,17 @@ class PositionalEncoding_2d(nn.Module):
         w_pe = self.pe[: x.shape[-1], :]
         w1 = self.linear1(self.avg_pool_1(x).squeeze()).unsqueeze(0)
         w_pe = w_pe * w1
-        w_pe = torch.transpose(w_pe, [1, 2, 0])
+        w_pe = w_pe.permute(1, 2, 0)
         w_pe = torch.unsqueeze(w_pe, 2)
 
         h_pe = self.pe[: x.shape.shape[-2], :]
         w2 = self.linear2(self.avg_pool_2(x).squeeze()).unsqueeze(0)
         h_pe = h_pe * w2
-        h_pe = torch.transpose(h_pe, [1, 2, 0])
+        h_pe = h_pe.permute(1, 2, 0)
         h_pe = torch.unsqueeze(h_pe, 3)
 
         x = x + w_pe + h_pe
-        x = torch.transpose(torch.reshape(x, [x.shape[0], x.shape[1], x.shape[2] * x.shape[3]]), [2, 0, 1])
+        x = torch.reshape(x, [x.shape[0], x.shape[1], x.shape[2] * x.shape[3]]).permute(2, 0, 1)
 
         return self.dropout(x)
 
