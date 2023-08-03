@@ -12,17 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
-import cv2
 import random
-import pyclipper
-import paddle
 
+import cv2
 import numpy as np
-import Polygon as plg
-
+import pyclipper
 from PIL import Image
-import paddle.vision.transforms as transforms
+from shapely.geometry import Polygon
 
 
 class RandomScale():
@@ -72,7 +68,7 @@ class MakeShrink():
         rate = rate * rate
         shrinked_bboxes = []
         for bbox in bboxes:
-            area = plg.Polygon(bbox).area()
+            area = Polygon(bbox).area()
             peri = self.perimeter(bbox)
 
             try:
