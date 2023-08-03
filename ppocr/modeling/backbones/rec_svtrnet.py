@@ -53,7 +53,7 @@ class ConvBNLayer(nn.Module):
             weight_attr=torch.ParamAttr(initializer=nn.initializer.KaimingUniform()),
             bias=bias,
         )
-        self.norm = nn.BatchNorm2D(out_channels)
+        self.norm = nn.BatchNorm2d(out_channels)
         self.act = act()
 
     def forward(self, inputs):

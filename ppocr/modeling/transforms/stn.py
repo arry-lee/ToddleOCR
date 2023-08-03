@@ -32,7 +32,7 @@ def conv3x3_block(in_channels, out_channels, stride=1):
     n = 3 * 3 * out_channels
     w = math.sqrt(2.0 / n)
     conv_layer = nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=stride, padding=1, weight_attr=nn.initializer.Normal(mean=0.0, std=w), bias=nn.initializer.Constant(0))
-    block = nn.Sequential(conv_layer, nn.BatchNorm2D(out_channels), nn.ReLU())
+    block = nn.Sequential(conv_layer, nn.BatchNorm2d(out_channels), nn.ReLU())
     return block
 
 

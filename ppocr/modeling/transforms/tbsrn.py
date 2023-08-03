@@ -119,7 +119,7 @@ class TBSRN(nn.Module):
         for i in range(srb_nums):
             setattr(self, "block%d" % (i + 2), RecurrentResidualBlock(2 * hidden_units))
 
-        setattr(self, "block%d" % (srb_nums + 2), nn.Sequential(nn.Conv2d(2 * hidden_units, 2 * hidden_units, kernel_size=3, padding=1), nn.BatchNorm2D(2 * hidden_units)))
+        setattr(self, "block%d" % (srb_nums + 2), nn.Sequential(nn.Conv2d(2 * hidden_units, 2 * hidden_units, kernel_size=3, padding=1), nn.BatchNorm2d(2 * hidden_units)))
 
         # self.non_local = NonLocalBlock2D(64, 64)
         block_ = [UpsampleBLock(2 * hidden_units, 2) for _ in range(upsample_block_num)]
@@ -210,12 +210,12 @@ class RecurrentResidualBlock(nn.Module):
     def __init__(self, channels):
         super(RecurrentResidualBlock, self).__init__()
         self.conv1 = nn.Conv2d(channels, channels, kernel_size=3, padding=1)
-        self.bn1 = nn.BatchNorm2D(channels)
+        self.bn1 = nn.BatchNorm2d(channels)
         self.gru1 = GruBlock(channels, channels)
         # self.prelu = nn.ReLU()
         self.prelu = mish()
         self.conv2 = nn.Conv2d(channels, channels, kernel_size=3, padding=1)
-        self.bn2 = nn.BatchNorm2D(channels)
+        self.bn2 = nn.BatchNorm2d(channels)
         self.gru2 = GruBlock(channels, channels)
         self.feature_enhancer = FeatureEnhancer()
 

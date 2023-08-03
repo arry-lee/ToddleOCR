@@ -31,9 +31,9 @@ class Bottleneck(nn.Module):
     def __init__(self, nChannels, growthRate, use_dropout):
         super(Bottleneck, self).__init__()
         interChannels = 4 * growthRate
-        self.bn1 = nn.BatchNorm2D(interChannels)
+        self.bn1 = nn.BatchNorm2d(interChannels)
         self.conv1 = nn.Conv2d(nChannels, interChannels, kernel_size=1, bias=None)  # Xavier initialization
-        self.bn2 = nn.BatchNorm2D(growthRate)
+        self.bn2 = nn.BatchNorm2d(growthRate)
         self.conv2 = nn.Conv2d(interChannels, growthRate, kernel_size=3, padding=1, bias=None)  # Xavier initialization
         self.use_dropout = use_dropout
         self.dropout = nn.Dropout(p=0.2)
@@ -52,7 +52,7 @@ class Bottleneck(nn.Module):
 class SingleLayer(nn.Module):
     def __init__(self, nChannels, growthRate, use_dropout):
         super(SingleLayer, self).__init__()
-        self.bn1 = nn.BatchNorm2D(nChannels)
+        self.bn1 = nn.BatchNorm2d(nChannels)
         self.conv1 = nn.Conv2d(nChannels, growthRate, kernel_size=3, padding=1, bias=False)
 
         self.use_dropout = use_dropout
@@ -70,7 +70,7 @@ class SingleLayer(nn.Module):
 class Transition(nn.Module):
     def __init__(self, nChannels, out_channels, use_dropout):
         super(Transition, self).__init__()
-        self.bn1 = nn.BatchNorm2D(out_channels)
+        self.bn1 = nn.BatchNorm2d(out_channels)
         self.conv1 = nn.Conv2d(nChannels, out_channels, kernel_size=1, bias=False)
         self.use_dropout = use_dropout
         self.dropout = nn.Dropout(p=0.2)

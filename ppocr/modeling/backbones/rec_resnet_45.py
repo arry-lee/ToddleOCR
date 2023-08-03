@@ -45,10 +45,10 @@ class BasicBlock(nn.Module):
     def __init__(self, in_channels, channels, stride=1, downsample=None):
         super().__init__()
         self.conv1 = conv1x1(in_channels, channels)
-        self.bn1 = nn.BatchNorm2D(channels)
+        self.bn1 = nn.BatchNorm2d(channels)
         self.relu = nn.ReLU()
         self.conv2 = conv3x3(channels, channels, stride)
-        self.bn2 = nn.BatchNorm2D(channels)
+        self.bn2 = nn.BatchNorm2d(channels)
         self.downsample = downsample
         self.stride = stride
 
@@ -75,7 +75,7 @@ class ResNet45(nn.Module):
         self.inplanes = 32
         super(ResNet45, self).__init__()
         self.conv1 = nn.Conv2d(in_channels, 32, kernel_size=3, stride=1, padding=1,  bias=False)
-        self.bn1 = nn.BatchNorm2D(32)
+        self.bn1 = nn.BatchNorm2d(32)
         self.relu = nn.ReLU()
 
         self.layer1 = self._make_layer(block, 32, layers[0], stride=strides[0])
@@ -91,7 +91,7 @@ class ResNet45(nn.Module):
             # downsample = True
             downsample = nn.Sequential(
                 nn.Conv2d(self.inplanes, planes * block.expansion, kernel_size=1, stride=stride, 
-                nn.BatchNorm2D(planes * block.expansion),
+                nn.BatchNorm2d(planes * block.expansion),
             )
 
         layers = []

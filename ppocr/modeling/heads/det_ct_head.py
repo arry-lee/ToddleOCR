@@ -33,7 +33,7 @@ class CT_Head(nn.Module):
     def __init__(self, in_channels, hidden_dim, num_classes, loss_kernel=None, loss_loc=None):
         super(CT_Head, self).__init__()
         self.conv1 = nn.Conv2d(in_channels, hidden_dim, kernel_size=3, stride=1, padding=1)
-        self.bn1 = nn.BatchNorm2D(hidden_dim)
+        self.bn1 = nn.BatchNorm2d(hidden_dim)
         self.relu1 = nn.ReLU()
 
         self.conv2 = nn.Conv2d(hidden_dim, num_classes, kernel_size=1, stride=1, padding=0)
@@ -43,7 +43,7 @@ class CT_Head(nn.Module):
                 n = m._kernel_size[0] * m._kernel_size[1] * m._out_channels
                 normal_ = Normal(mean=0.0, std=math.sqrt(2.0 / n))
                 normal_(m.weight)
-            elif isinstance(m, nn.BatchNorm2D):
+            elif isinstance(m, nn.BatchNorm2d):
                 zeros_(m.bias)
                 ones_(m.weight)
 

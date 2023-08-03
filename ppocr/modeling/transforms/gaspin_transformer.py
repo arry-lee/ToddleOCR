@@ -128,7 +128,7 @@ class GA_SPIN_Transformer(nn.Module):
         self.I_r_size = I_r_size
         self.out_channels = in_channels
         if norm_type == "BN":
-            norm_layer = functools.partial(nn.BatchNorm2D, use_global_stats=True)
+            norm_layer = functools.partial(nn.BatchNorm2d, use_global_stats=True)
         elif norm_type == "IN":
             norm_layer = functools.partial(nn.InstanceNorm2D, weight_attr=False, use_global_stats=False)
         else:

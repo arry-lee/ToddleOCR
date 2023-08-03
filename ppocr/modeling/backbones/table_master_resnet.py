@@ -27,10 +27,10 @@ class BasicBlock(nn.Module):
     def __init__(self, inplanes, planes, stride=1, downsample=None, gcb_config=None):
         super(BasicBlock, self).__init__()
         self.conv1 = nn.Conv2d(inplanes, planes, kernel_size=3, stride=stride, padding=1, bias=False)
-        self.bn1 = nn.BatchNorm2D(planes, momentum=0.9)
+        self.bn1 = nn.BatchNorm2d(planes, momentum=0.9)
         self.relu = nn.ReLU()
         self.conv2 = nn.Conv2d(planes, planes, kernel_size=3, stride=1, padding=1, bias=False)
-        self.bn2 = nn.BatchNorm2D(planes, momentum=0.9)
+        self.bn2 = nn.BatchNorm2d(planes, momentum=0.9)
         self.downsample = downsample
         self.stride = stride
         self.gcb_config = gcb_config
@@ -78,11 +78,11 @@ class TableResNetExtra(nn.Module):
         super(TableResNetExtra, self).__init__()
         self.inplanes = 128
         self.conv1 = nn.Conv2d(in_channels, 64, kernel_size=3, stride=1, padding=1, bias=False)
-        self.bn1 = nn.BatchNorm2D(64)
+        self.bn1 = nn.BatchNorm2d(64)
         self.relu1 = nn.ReLU()
 
         self.conv2 = nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1, bias=False)
-        self.bn2 = nn.BatchNorm2D(128)
+        self.bn2 = nn.BatchNorm2d(128)
         self.relu2 = nn.ReLU()
 
         self.maxpool1 = nn.MaxPool2D(kernel_size=2, stride=2)
@@ -90,7 +90,7 @@ class TableResNetExtra(nn.Module):
         self.layer1 = self._make_layer(BasicBlock, 256, layers[0], stride=1, gcb_config=get_gcb_config(gcb_config, 0))
 
         self.conv3 = nn.Conv2d(256, 256, kernel_size=3, stride=1, padding=1, bias=False)
-        self.bn3 = nn.BatchNorm2D(256)
+        self.bn3 = nn.BatchNorm2d(256)
         self.relu3 = nn.ReLU()
 
         self.maxpool2 = nn.MaxPool2D(kernel_size=2, stride=2)
@@ -98,7 +98,7 @@ class TableResNetExtra(nn.Module):
         self.layer2 = self._make_layer(BasicBlock, 256, layers[1], stride=1, gcb_config=get_gcb_config(gcb_config, 1))
 
         self.conv4 = nn.Conv2d(256, 256, kernel_size=3, stride=1, padding=1, bias=False)
-        self.bn4 = nn.BatchNorm2D(256)
+        self.bn4 = nn.BatchNorm2d(256)
         self.relu4 = nn.ReLU()
 
         self.maxpool3 = nn.MaxPool2D(kernel_size=2, stride=2)
@@ -106,13 +106,13 @@ class TableResNetExtra(nn.Module):
         self.layer3 = self._make_layer(BasicBlock, 512, layers[2], stride=1, gcb_config=get_gcb_config(gcb_config, 2))
 
         self.conv5 = nn.Conv2d(512, 512, kernel_size=3, stride=1, padding=1, bias=False)
-        self.bn5 = nn.BatchNorm2D(512)
+        self.bn5 = nn.BatchNorm2d(512)
         self.relu5 = nn.ReLU()
 
         self.layer4 = self._make_layer(BasicBlock, 512, layers[3], stride=1, gcb_config=get_gcb_config(gcb_config, 3))
 
         self.conv6 = nn.Conv2d(512, 512, kernel_size=3, stride=1, padding=1, bias=False)
-        self.bn6 = nn.BatchNorm2D(512)
+        self.bn6 = nn.BatchNorm2d(512)
         self.relu6 = nn.ReLU()
 
         self.out_channels = [256, 256, 512]
@@ -122,7 +122,7 @@ class TableResNetExtra(nn.Module):
         if stride != 1 or self.inplanes != planes * block.expansion:
             downsample = nn.Sequential(
                 nn.Conv2d(self.inplanes, planes * block.expansion, kernel_size=1, stride=stride, bias=False),
-                nn.BatchNorm2D(planes * block.expansion),
+                nn.BatchNorm2d(planes * block.expansion),
             )
 
         layers = []

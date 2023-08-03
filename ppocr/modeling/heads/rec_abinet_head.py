@@ -69,12 +69,12 @@ class BCNLanguage(nn.Module):
 
 
 def encoder_layer(in_c, out_c, k=3, s=2, p=1):
-    return nn.Sequential(nn.Conv2d(in_c, out_c, k, s, p), nn.BatchNorm2D(out_c), nn.ReLU())
+    return nn.Sequential(nn.Conv2d(in_c, out_c, k, s, p), nn.BatchNorm2d(out_c), nn.ReLU())
 
 
 def decoder_layer(in_c, out_c, k=3, s=1, p=1, mode="nearest", scale_factor=None, size=None):
     align_corners = False if mode == "nearest" else True
-    return nn.Sequential(nn.Upsample(size=size, scale_factor=scale_factor, mode=mode, align_corners=align_corners), nn.Conv2d(in_c, out_c, k, s, p), nn.BatchNorm2D(out_c), nn.ReLU())
+    return nn.Sequential(nn.Upsample(size=size, scale_factor=scale_factor, mode=mode, align_corners=align_corners), nn.Conv2d(in_c, out_c, k, s, p), nn.BatchNorm2d(out_c), nn.ReLU())
 
 
 class PositionAttention(nn.Module):

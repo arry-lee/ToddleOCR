@@ -50,10 +50,10 @@ class AsterBlock(nn.Module):
     def __init__(self, inplanes, planes, stride=1, downsample=None):
         super(AsterBlock, self).__init__()
         self.conv1 = conv1x1(inplanes, planes, stride)
-        self.bn1 = nn.BatchNorm2D(planes)
+        self.bn1 = nn.BatchNorm2d(planes)
         self.relu = nn.ReLU()
         self.conv2 = conv3x3(planes, planes)
-        self.bn2 = nn.BatchNorm2D(planes)
+        self.bn2 = nn.BatchNorm2d(planes)
         self.downsample = downsample
         self.stride = stride
 
@@ -80,7 +80,7 @@ class ResNet_ASTER(nn.Module):
         self.with_lstm = with_lstm
         self.n_group = n_group
 
-        self.layer0 = nn.Sequential(nn.Conv2d(in_channels, 32, kernel_size=(3, 3), stride=1, padding=1, bias=False), nn.BatchNorm2D(32), nn.ReLU())
+        self.layer0 = nn.Sequential(nn.Conv2d(in_channels, 32, kernel_size=(3, 3), stride=1, padding=1, bias=False), nn.BatchNorm2d(32), nn.ReLU())
 
         self.inplanes = 32
         self.layer1 = self._make_layer(32, 3, [2, 2])  # [16, 50]
@@ -98,7 +98,7 @@ class ResNet_ASTER(nn.Module):
     def _make_layer(self, planes, blocks, stride):
         downsample = None
         if stride != [1, 1] or self.inplanes != planes:
-            downsample = nn.Sequential(conv1x1(self.inplanes, planes, stride), nn.BatchNorm2D(planes))
+            downsample = nn.Sequential(conv1x1(self.inplanes, planes, stride), nn.BatchNorm2d(planes))
 
         layers = []
         layers.append(AsterBlock(self.inplanes, planes, stride, downsample))

@@ -26,14 +26,14 @@ class Conv_BN_ReLU(nn.Module):
     def __init__(self, in_planes, out_planes, kernel_size=1, stride=1, padding=0):
         super(Conv_BN_ReLU, self).__init__()
         self.conv = nn.Conv2d(in_planes, out_planes, kernel_size=kernel_size, stride=stride, padding=padding, bias=False)
-        self.bn = nn.BatchNorm2D(out_planes, momentum=0.1)
+        self.bn = nn.BatchNorm2d(out_planes, momentum=0.1)
         self.relu = nn.ReLU()
 
         for m in self.sublayers():
             if isinstance(m, nn.Conv2d):
                 n = m._kernel_size[0] * m._kernel_size[1] * m._out_channels
                 m.weight = torch.create_parameter(shape=m.weight.shape, dtype="float32", default_initializer=torch.nn.initializer.Normal(0, math.sqrt(2.0 / n)))
-            elif isinstance(m, nn.BatchNorm2D):
+            elif isinstance(m, nn.BatchNorm2d):
                 m.weight = torch.create_parameter(shape=m.weight.shape, dtype="float32", default_initializer=torch.nn.initializer.Constant(1.0))
                 m.bias = torch.create_parameter(shape=m.bias.shape, dtype="float32", default_initializer=torch.nn.initializer.Constant(0.0))
 
@@ -66,7 +66,7 @@ class FPN(nn.Module):
             if isinstance(m, nn.Conv2d):
                 n = m._kernel_size[0] * m._kernel_size[1] * m._out_channels
                 m.weight = torch.create_parameter(shape=m.weight.shape, dtype="float32", default_initializer=torch.nn.initializer.Normal(0, math.sqrt(2.0 / n)))
-            elif isinstance(m, nn.BatchNorm2D):
+            elif isinstance(m, nn.BatchNorm2d):
                 m.weight = torch.create_parameter(shape=m.weight.shape, dtype="float32", default_initializer=torch.nn.initializer.Constant(1.0))
                 m.bias = torch.create_parameter(shape=m.bias.shape, dtype="float32", default_initializer=torch.nn.initializer.Constant(0.0))
 

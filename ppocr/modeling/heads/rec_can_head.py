@@ -53,7 +53,7 @@ class CountingDecoder(nn.Module):
         self.in_channel = in_channel
         self.out_channel = out_channel
 
-        self.trans_layer = nn.Sequential(nn.Conv2d(self.in_channel, 512, kernel_size=kernel_size, padding=kernel_size // 2, bias=False), nn.BatchNorm2D(512))
+        self.trans_layer = nn.Sequential(nn.Conv2d(self.in_channel, 512, kernel_size=kernel_size, padding=kernel_size // 2, bias=False), nn.BatchNorm2d(512))
 
         self.channel_att = ChannelAtt(512, 16)
 
