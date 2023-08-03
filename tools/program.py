@@ -105,13 +105,7 @@ def check_device(use_gpu, use_xpu=False, use_npu=False, use_mlu=False):
     Log error and exit when set use_gpu=true in paddlepaddle
     cpu version.
     """
-    err = (
-        "Config {} cannot be set as true while your paddle "
-        "is not compiled with {} ! \nPlease try: \n"
-        "\t1. Install paddlepaddle to run model on {} \n"
-        "\t2. Set {} as false in config file to run "
-        "model on CPU"
-    )
+    err = "Config {} cannot be set as true while your paddle " "is not compiled with {} ! \nPlease try: \n" "\t1. Install paddlepaddle to run model on {} \n" "\t2. Set {} as false in config file to run " "model on CPU"
 
     try:
         if use_gpu and use_xpu:
@@ -347,9 +341,7 @@ def train(
                 if model_average:
                     Model_Average = torch.incubate.optimizer.ModelAverage(0.15, parameters=model.parameters(), min_average_window=10000, max_average_window=15625)
                     Model_Average.apply()
-                cur_metric = eval(
-                    model, valid_dataloader, post_process_class, eval_class, model_type, extra_input=extra_input, scaler=scaler, amp_level=amp_level, amp_custom_black_list=amp_custom_black_list
-                )
+                cur_metric = eval(model, valid_dataloader, post_process_class, eval_class, model_type, extra_input=extra_input, scaler=scaler, amp_level=amp_level, amp_custom_black_list=amp_custom_black_list)
                 cur_metric_str = "cur metric, {}".format(", ".join(["{}: {}".format(k, v) for k, v in cur_metric.items()]))
                 logger.info(cur_metric_str)
 

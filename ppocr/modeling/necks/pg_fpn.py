@@ -21,7 +21,6 @@ from torch import nn
 import torch.nn.functional as F
 
 
-
 class ConvBNLayer(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, stride=1, groups=1, is_vd_mode=False, act=None, name=None):
         super(ConvBNLayer, self).__init__()
@@ -35,7 +34,6 @@ class ConvBNLayer(nn.Module):
             stride=stride,
             padding=(kernel_size - 1) // 2,
             groups=groups,
-            
             bias=False,
         )
         if name == "conv1":
@@ -45,7 +43,6 @@ class ConvBNLayer(nn.Module):
         self._batch_norm = nn.BatchNorm2d(
             out_channels,
             act=act,
-            
             bias=True,
             moving_mean_name=bn_name + "_mean",
             moving_variance_name=bn_name + "_variance",
@@ -64,13 +61,10 @@ class DeConvBNLayer(nn.Module):
 
         self.if_act = if_act
         self.act = act
-        self.deconv = nn.ConvTranspose2d(
-            in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size, stride=stride, padding=padding, groups=groups,  bias=False
-        )
+        self.deconv = nn.ConvTranspose2d(in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size, stride=stride, padding=padding, groups=groups, bias=False)
         self.bn = nn.BatchNorm2d(
             num_channels=out_channels,
             act=act,
-            
             bias=True,
             moving_mean_name="bn_" + name + "_mean",
             moving_variance_name="bn_" + name + "_variance",

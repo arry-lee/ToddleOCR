@@ -40,12 +40,10 @@ class ConvNormLayer(nn.Module):
             stride=stride,
             padding=(filter_size - 1) // 2,
             groups=groups,
-            
             bias=True,
         )
 
         norm_lr = 0.0 if freeze_norm else 1.0
-
 
         if norm_type == "bn":
             self.norm = nn.BatchNorm2d(ch_out)
@@ -143,7 +141,14 @@ class FCEFPN(nn.Module):
                     ),
                 )
             else:
-                lateral = self.add_sublayer(lateral_name, nn.Conv2d(in_channels=in_c, out_channels=out_channels, kernel_size=1, ))
+                lateral = self.add_sublayer(
+                    lateral_name,
+                    nn.Conv2d(
+                        in_channels=in_c,
+                        out_channels=out_channels,
+                        kernel_size=1,
+                    ),
+                )
             self.lateral_convs.append(lateral)
 
         for i in range(st_stage, ed_stage + 1):
@@ -163,9 +168,7 @@ class FCEFPN(nn.Module):
                     ),
                 )
             else:
-                fpn_conv = self.add_sublayer(
-                    fpn_name, nn.Conv2d(in_channels=out_channels, out_channels=out_channels, kernel_size=3, padding=1)
-                )
+                fpn_conv = self.add_sublayer(fpn_name, nn.Conv2d(in_channels=out_channels, out_channels=out_channels, kernel_size=3, padding=1))
             self.fpn_convs.append(fpn_conv)
 
         # add extra conv levels for RetinaNet(use_c5)/FCOS(use_p5)
@@ -193,7 +196,14 @@ class FCEFPN(nn.Module):
                     )
                 else:
                     extra_fpn_conv = self.add_sublayer(
-                        extra_fpn_name, nn.Conv2d(in_channels=in_c, out_channels=out_channels, kernel_size=3, stride=2, padding=1, )
+                        extra_fpn_name,
+                        nn.Conv2d(
+                            in_channels=in_c,
+                            out_channels=out_channels,
+                            kernel_size=3,
+                            stride=2,
+                            padding=1,
+                        ),
                     )
                 self.fpn_convs.append(extra_fpn_conv)
 

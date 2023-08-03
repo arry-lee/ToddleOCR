@@ -47,16 +47,13 @@ class ConvBNLayer(nn.Module):
             stride=stride,
             padding=(kernel_size - 1) // 2,
             groups=groups,
-            
             bias=False,
         )
         if name == "conv1":
             bn_name = "bn_" + name
         else:
             bn_name = "bn" + name[3:]
-        self._batch_norm = nn.BatchNorm2d(
-            out_channels, act=act,  bias=True, moving_mean_name=bn_name + "_mean", moving_variance_name=bn_name + "_variance"
-        )
+        self._batch_norm = nn.BatchNorm2d(out_channels, act=act, bias=True, moving_mean_name=bn_name + "_mean", moving_variance_name=bn_name + "_variance")
 
     def forward(self, inputs):
         if self.is_vd_mode:

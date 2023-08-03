@@ -149,9 +149,7 @@ class ResidualUnit(nn.Module):
         self.if_se = use_se
 
         self.expand_conv = ConvBNLayer(in_channels=in_channels, out_channels=mid_channels, kernel_size=1, stride=1, padding=0, if_act=True, act=act)
-        self.bottleneck_conv = ConvBNLayer(
-            in_channels=mid_channels, out_channels=mid_channels, kernel_size=kernel_size, stride=stride, padding=int((kernel_size - 1) // 2), groups=mid_channels, if_act=True, act=act
-        )
+        self.bottleneck_conv = ConvBNLayer(in_channels=mid_channels, out_channels=mid_channels, kernel_size=kernel_size, stride=stride, padding=int((kernel_size - 1) // 2), groups=mid_channels, if_act=True, act=act)
         if self.if_se:
             self.mid_se = SEModule(mid_channels)
         self.linear_conv = ConvBNLayer(in_channels=mid_channels, out_channels=out_channels, kernel_size=1, stride=1, padding=0, if_act=False, act=None)

@@ -22,7 +22,6 @@ from torch import nn
 import torch.nn.functional as F
 
 
-
 def get_bias_attr(k):
     stdv = 1.0 / math.sqrt(k * 1.0)
     initializer = torch.nn.initializer.Uniform(-stdv, stdv)
@@ -35,26 +34,20 @@ class Head(nn.Module):
         super(Head, self).__init__()
 
         self.conv1 = nn.Conv2d(in_channels=in_channels, out_channels=in_channels // 4, kernel_size=kernel_list[0], padding=int(kernel_list[0] // 2), bias=False)
-        self.conv_bn1 = nn.BatchNorm2d(
-            num_channels=in_channels // 4,  bias=True, act="relu"
-        )
+        self.conv_bn1 = nn.BatchNorm2d(num_channels=in_channels // 4, bias=True, act="relu")
         self.conv2 = nn.ConvTranspose2d(
             in_channels=in_channels // 4,
             out_channels=in_channels // 4,
             kernel_size=kernel_list[1],
             stride=2,
-            
             bias=get_bias_attr(in_channels // 4),
         )
-        self.conv_bn2 = nn.BatchNorm2d(
-            num_channels=in_channels // 4,  bias=True, act="relu"
-        )
+        self.conv_bn2 = nn.BatchNorm2d(num_channels=in_channels // 4, bias=True, act="relu")
         self.conv3 = nn.ConvTranspose2d(
             in_channels=in_channels // 4,
             out_channels=1,
             kernel_size=kernel_list[2],
             stride=2,
-            
             bias=get_bias_attr(in_channels // 4),
         )
 

@@ -142,9 +142,7 @@ MODEL_URLS = {
         },
     },
     "STRUCTURE": {
-        "PP-Structure": {
-            "table": {"en": {"url": "https://paddleocr.bj.bcebos.com/dygraph_v2.0/table/en_ppocr_mobile_v2.0_table_structure_infer.tar", "dict_path": "ppocr/utils/dict/table_structure_dict.txt"}}
-        },
+        "PP-Structure": {"table": {"en": {"url": "https://paddleocr.bj.bcebos.com/dygraph_v2.0/table/en_ppocr_mobile_v2.0_table_structure_infer.tar", "dict_path": "ppocr/utils/dict/table_structure_dict.txt"}}},
         "PP-StructureV2": {
             "table": {
                 "en": {"url": "https://paddleocr.bj.bcebos.com/ppstructure/models/slanet/en_ppstructure_mobile_v2.0_SLANet_infer.tar", "dict_path": "ppocr/utils/dict/table_structure_dict.txt"},
@@ -179,10 +177,7 @@ def parse_args(mMain=True):
         type=str,
         choices=SUPPORT_OCR_MODEL_VERSION,
         default="PP-OCRv3",
-        help="OCR Model version, the current model support list is as follows: "
-        "1. PP-OCRv3 Support Chinese and English detection and recognition model, and direction classifier model"
-        "2. PP-OCRv2 Support Chinese detection and recognition model. "
-        "3. PP-OCR support Chinese detection, recognition and direction classifier and multilingual recognition model.",
+        help="OCR Model version, the current model support list is as follows: " "1. PP-OCRv3 Support Chinese and English detection and recognition model, and direction classifier model" "2. PP-OCRv2 Support Chinese detection and recognition model. " "3. PP-OCR support Chinese detection, recognition and direction classifier and multilingual recognition model.",
     )
     parser.add_argument(
         "--structure_version",

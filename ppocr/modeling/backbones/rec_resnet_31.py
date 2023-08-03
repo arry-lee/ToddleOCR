@@ -46,9 +46,7 @@ class BasicBlock(nn.Module):
         self.bn2 = nn.BatchNorm2d(channels)
         self.downsample = downsample
         if downsample:
-            self.downsample = nn.Sequential(
-                nn.Conv2d(in_channels, channels * self.expansion, 1, stride, bias=False), nn.BatchNorm2d(channels * self.expansion)
-            )
+            self.downsample = nn.Sequential(nn.Conv2d(in_channels, channels * self.expansion, 1, stride, bias=False), nn.BatchNorm2d(channels * self.expansion))
         else:
             self.downsample = nn.Sequential()
         self.stride = stride
@@ -99,7 +97,6 @@ class ResNet31(nn.Module):
             assert init_type in support_dict, Exception("resnet31 only support {}".format(support_dict))
             conv_weight_attr = nn.initializer.KaimingNormal()
 
-
         # conv 1 (Conv Conv)
         self.conv1_1 = nn.Conv2d(in_channels, channels[0], kernel_size=3, stride=1, padding=1)
         self.bn1_1 = nn.BatchNorm2d(channels[0])
@@ -146,9 +143,7 @@ class ResNet31(nn.Module):
         for _ in range(blocks):
             downsample = None
             if input_channels != output_channels:
-                downsample = nn.Sequential(
-                    nn.Conv2d(input_channels, output_channels, kernel_size=1, stride=1, bias=False), nn.BatchNorm2d(output_channels)
-                )
+                downsample = nn.Sequential(nn.Conv2d(input_channels, output_channels, kernel_size=1, stride=1, bias=False), nn.BatchNorm2d(output_channels))
 
             layers.append(BasicBlock(input_channels, output_channels, downsample=downsample, conv_weight_attr=conv_weight_attr, bn_weight_attr=bn_weight_attr))
             input_channels = output_channels

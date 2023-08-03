@@ -214,9 +214,7 @@ def create_predictor(args, mode, logger):
                 logger.warning("GPU is not found in current device by nvidia-smi. Please check your device or ignore it if run on jetson.")
             config.enable_use_gpu(args.gpu_mem, args.gpu_id)
             if args.use_tensorrt:
-                config.enable_tensorrt_engine(
-                    workspace_size=1 << 30, precision_mode=precision, max_batch_size=args.max_batch_size, min_subgraph_size=args.min_subgraph_size, use_calib_mode=False  # skip the minmum trt subgraph
-                )
+                config.enable_tensorrt_engine(workspace_size=1 << 30, precision_mode=precision, max_batch_size=args.max_batch_size, min_subgraph_size=args.min_subgraph_size, use_calib_mode=False)  # skip the minmum trt subgraph
 
                 # collect shape
                 trt_shape_f = os.path.join(model_dir, f"{mode}_trt_dynamic_shape.txt")

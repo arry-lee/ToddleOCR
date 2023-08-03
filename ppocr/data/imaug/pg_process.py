@@ -22,21 +22,7 @@ __all__ = ["PGProcessTrain"]
 
 
 class PGProcessTrain(object):
-    def __init__(
-        self,
-        character_dict_path,
-        max_text_length,
-        max_text_nums,
-        tcl_len,
-        batch_size=14,
-        use_resize=True,
-        use_random_crop=False,
-        min_crop_size=24,
-        min_text_size=4,
-        max_text_size=512,
-        point_gather_mode=None,
-        **kwargs
-    ):
+    def __init__(self, character_dict_path, max_text_length, max_text_nums, tcl_len, batch_size=14, use_resize=True, use_random_crop=False, min_crop_size=24, min_text_size=4, max_text_size=512, point_gather_mode=None, **kwargs):
         self.tcl_len = tcl_len
         self.max_text_length = max_text_length
         self.max_text_nums = max_text_nums
@@ -88,12 +74,7 @@ class PGProcessTrain(object):
         first_point_idx = 0
         min_dist = 1e4
         for i in range(4):
-            dist = (
-                np.linalg.norm(box[(i + 0) % 4] - poly[0])
-                + np.linalg.norm(box[(i + 1) % 4] - poly[point_num // 2 - 1])
-                + np.linalg.norm(box[(i + 2) % 4] - poly[point_num // 2])
-                + np.linalg.norm(box[(i + 3) % 4] - poly[-1])
-            )
+            dist = np.linalg.norm(box[(i + 0) % 4] - poly[0]) + np.linalg.norm(box[(i + 1) % 4] - poly[point_num // 2 - 1]) + np.linalg.norm(box[(i + 2) % 4] - poly[point_num // 2]) + np.linalg.norm(box[(i + 3) % 4] - poly[-1])
             if dist < min_dist:
                 min_dist = dist
                 first_point_idx = i
@@ -523,12 +504,7 @@ class PGProcessTrain(object):
             first_point_idx = 0
             min_dist = 1e4
             for i in range(4):
-                dist = (
-                    np.linalg.norm(box[(i + 0) % 4] - poly[0])
-                    + np.linalg.norm(box[(i + 1) % 4] - poly[point_num // 2 - 1])
-                    + np.linalg.norm(box[(i + 2) % 4] - poly[point_num // 2])
-                    + np.linalg.norm(box[(i + 3) % 4] - poly[-1])
-                )
+                dist = np.linalg.norm(box[(i + 0) % 4] - poly[0]) + np.linalg.norm(box[(i + 1) % 4] - poly[point_num // 2 - 1]) + np.linalg.norm(box[(i + 2) % 4] - poly[point_num // 2]) + np.linalg.norm(box[(i + 3) % 4] - poly[-1])
                 if dist < min_dist:
                     min_dist = dist
                     first_point_idx = i
@@ -851,9 +827,7 @@ class PGProcessTrain(object):
         text_polys[:, :, 0] += sw
         text_polys[:, :, 1] += sh
 
-        score_map, score_label_map, border_map, direction_map, training_mask, pos_list, pos_mask, label_list, score_label_map_text_label = self.generate_tcl_ctc_label(
-            input_size, input_size, text_polys, text_tags, text_strs, 0.25
-        )
+        score_map, score_label_map, border_map, direction_map, training_mask, pos_list, pos_mask, label_list, score_label_map_text_label = self.generate_tcl_ctc_label(input_size, input_size, text_polys, text_tags, text_strs, 0.25)
         if len(label_list) <= 0:  # eliminate negative samples
             return None
         pos_list_temp = np.zeros([64, 3])

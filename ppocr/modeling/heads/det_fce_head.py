@@ -60,7 +60,6 @@ class FCEHead(nn.Module):
             stride=1,
             padding=1,
             groups=1,
-            
             bias=True,
         )
         self.out_conv_reg = nn.Conv2d(
@@ -70,7 +69,6 @@ class FCEHead(nn.Module):
             stride=1,
             padding=1,
             groups=1,
-            
             bias=True,
         )
 

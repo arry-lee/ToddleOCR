@@ -61,12 +61,7 @@ class SASTProcessTrain(object):
             first_point_idx = 0
             min_dist = 1e4
             for i in range(4):
-                dist = (
-                    np.linalg.norm(box[(i + 0) % 4] - poly[0])
-                    + np.linalg.norm(box[(i + 1) % 4] - poly[point_num // 2 - 1])
-                    + np.linalg.norm(box[(i + 2) % 4] - poly[point_num // 2])
-                    + np.linalg.norm(box[(i + 3) % 4] - poly[-1])
-                )
+                dist = np.linalg.norm(box[(i + 0) % 4] - poly[0]) + np.linalg.norm(box[(i + 1) % 4] - poly[point_num // 2 - 1]) + np.linalg.norm(box[(i + 2) % 4] - poly[point_num // 2]) + np.linalg.norm(box[(i + 3) % 4] - poly[-1])
                 if dist < min_dist:
                     min_dist = dist
                     first_point_idx = i
@@ -372,12 +367,7 @@ class SASTProcessTrain(object):
             first_point_idx = 0
             min_dist = 1e4
             for i in range(4):
-                dist = (
-                    np.linalg.norm(box[(i + 0) % 4] - poly[0])
-                    + np.linalg.norm(box[(i + 1) % 4] - poly[point_num // 2 - 1])
-                    + np.linalg.norm(box[(i + 2) % 4] - poly[point_num // 2])
-                    + np.linalg.norm(box[(i + 3) % 4] - poly[-1])
-                )
+                dist = np.linalg.norm(box[(i + 0) % 4] - poly[0]) + np.linalg.norm(box[(i + 1) % 4] - poly[point_num // 2 - 1]) + np.linalg.norm(box[(i + 2) % 4] - poly[point_num // 2]) + np.linalg.norm(box[(i + 3) % 4] - poly[-1])
                 if dist < min_dist:
                     min_dist = dist
                     first_point_idx = i

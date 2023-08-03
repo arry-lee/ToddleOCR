@@ -598,21 +598,7 @@ class RobustScannerDecoder(BaseDecoder):
 
 
 class RobustScannerHead(nn.Module):
-    def __init__(
-        self,
-        out_channels,  # 90 + unknown + start + padding
-        in_channels,
-        enc_outchannles=128,
-        hybrid_dec_rnn_layers=2,
-        hybrid_dec_dropout=0,
-        position_dec_rnn_layers=2,
-        start_idx=0,
-        max_text_length=40,
-        mask=True,
-        padding_idx=None,
-        encode_value=False,
-        **kwargs
-    ):
+    def __init__(self, out_channels, in_channels, enc_outchannles=128, hybrid_dec_rnn_layers=2, hybrid_dec_dropout=0, position_dec_rnn_layers=2, start_idx=0, max_text_length=40, mask=True, padding_idx=None, encode_value=False, **kwargs):  # 90 + unknown + start + padding
         super(RobustScannerHead, self).__init__()
 
         # encoder module

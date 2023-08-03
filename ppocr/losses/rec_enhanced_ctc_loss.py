@@ -24,19 +24,7 @@ from .rec_ctc_loss import CTCLoss
 
 
 class EnhancedCTCLoss(nn.Module):
-    def __init__(
-        self,
-        use_focal_loss=False,
-        use_ace_loss=False,
-        ace_loss_weight=0.1,
-        use_center_loss=False,
-        center_loss_weight=0.05,
-        num_classes=6625,
-        feat_dim=96,
-        init_center=False,
-        center_file_path=None,
-        **kwargs
-    ):
+    def __init__(self, use_focal_loss=False, use_ace_loss=False, ace_loss_weight=0.1, use_center_loss=False, center_loss_weight=0.05, num_classes=6625, feat_dim=96, init_center=False, center_file_path=None, **kwargs):
         super(EnhancedCTCLoss, self).__init__()
         self.ctc_loss_func = CTCLoss(use_focal_loss=use_focal_loss)
 

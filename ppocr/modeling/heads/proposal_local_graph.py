@@ -182,9 +182,7 @@ class ProposalLocalGraphs:
                 continue
             score_map = text_region_map * current_center_mask
 
-            text_comps = self.propose_comps(
-                score_map, top_height_map, bot_height_map, sin_map, cos_map, self.comp_score_thr, self.min_width, self.max_width, self.comp_shrink_ratio, self.comp_w_h_ratio
-            )
+            text_comps = self.propose_comps(score_map, top_height_map, bot_height_map, sin_map, cos_map, self.comp_score_thr, self.min_width, self.max_width, self.comp_shrink_ratio, self.comp_w_h_ratio)
 
             text_comps = la_nms(text_comps, self.nms_thr)
             text_comp_mask = np.zeros(mask_sz)

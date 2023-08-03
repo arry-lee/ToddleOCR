@@ -32,26 +32,7 @@ from .proposal_local_graph import ProposalLocalGraphs
 
 
 class DRRGHead(nn.Module):
-    def __init__(
-        self,
-        in_channels,
-        k_at_hops=(8, 4),
-        num_adjacent_linkages=3,
-        node_geo_feat_len=120,
-        pooling_scale=1.0,
-        pooling_output_size=(4, 3),
-        nms_thr=0.3,
-        min_width=8.0,
-        max_width=24.0,
-        comp_shrink_ratio=1.03,
-        comp_ratio=0.4,
-        comp_score_thr=0.3,
-        text_region_thr=0.2,
-        center_region_thr=0.2,
-        center_region_area_thr=50,
-        local_graph_thr=0.7,
-        **kwargs
-    ):
+    def __init__(self, in_channels, k_at_hops=(8, 4), num_adjacent_linkages=3, node_geo_feat_len=120, pooling_scale=1.0, pooling_output_size=(4, 3), nms_thr=0.3, min_width=8.0, max_width=24.0, comp_shrink_ratio=1.03, comp_ratio=0.4, comp_score_thr=0.3, text_region_thr=0.2, center_region_thr=0.2, center_region_area_thr=50, local_graph_thr=0.7, **kwargs):
         super().__init__()
 
         assert isinstance(in_channels, int)

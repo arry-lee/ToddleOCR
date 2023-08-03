@@ -175,9 +175,7 @@ class OneCycle(object):
         self.warmup_epoch = round(warmup_epoch * step_each_epoch)
 
     def __call__(self):
-        learning_rate = OneCycleDecay(
-            max_lr=self.max_lr, epochs=self.epochs, steps_per_epoch=self.steps_per_epoch, anneal_strategy=self.anneal_strategy, three_phase=self.three_phase, last_epoch=self.last_epoch
-        )
+        learning_rate = OneCycleDecay(max_lr=self.max_lr, epochs=self.epochs, steps_per_epoch=self.steps_per_epoch, anneal_strategy=self.anneal_strategy, three_phase=self.three_phase, last_epoch=self.last_epoch)
         if self.warmup_epoch > 0:
             learning_rate = lr.LinearWarmup(learning_rate=learning_rate, warmup_steps=self.warmup_epoch, start_lr=0.0, end_lr=self.max_lr, last_epoch=self.last_epoch)
         return learning_rate

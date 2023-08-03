@@ -23,23 +23,7 @@ from numpy.linalg import norm
 
 
 class DRRGTargets(object):
-    def __init__(
-        self,
-        orientation_thr=2.0,
-        resample_step=8.0,
-        num_min_comps=9,
-        num_max_comps=600,
-        min_width=8.0,
-        max_width=24.0,
-        center_region_shrink_ratio=0.3,
-        comp_shrink_ratio=1.0,
-        comp_w_h_ratio=0.3,
-        text_comp_nms_thr=0.25,
-        min_rand_half_height=8.0,
-        max_rand_half_height=24.0,
-        jitter_level=0.2,
-        **kwargs
-    ):
+    def __init__(self, orientation_thr=2.0, resample_step=8.0, num_min_comps=9, num_max_comps=600, min_width=8.0, max_width=24.0, center_region_shrink_ratio=0.3, comp_shrink_ratio=1.0, comp_w_h_ratio=0.3, text_comp_nms_thr=0.25, min_rand_half_height=8.0, max_rand_half_height=24.0, jitter_level=0.2, **kwargs):
         super().__init__()
         self.orientation_thr = orientation_thr
         self.resample_step = resample_step

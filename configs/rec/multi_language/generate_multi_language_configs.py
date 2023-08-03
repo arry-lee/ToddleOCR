@@ -130,9 +130,7 @@ class ArgsParser(ArgumentParser):
     def _set_language(self, type):
         lang = type[0]
         assert type, "please use -l or --language to choose language type"
-        assert lang in support_list.keys() or lang in multi_lang, "the sub_keys(-l or --language) can only be one of support list: \n{},\nbut get: {}, " "please check your running command".format(
-            multi_lang, type
-        )
+        assert lang in support_list.keys() or lang in multi_lang, "the sub_keys(-l or --language) can only be one of support list: \n{},\nbut get: {}, " "please check your running command".format(multi_lang, type)
         if lang in latin_lang:
             lang = "latin"
         elif lang in arabic_lang:

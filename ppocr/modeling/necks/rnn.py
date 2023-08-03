@@ -69,12 +69,7 @@ class EncoderWithCascadeRNN(nn.Module):
     def __init__(self, in_channels, hidden_size, out_channels, num_layers=2, with_linear=False):
         super(EncoderWithCascadeRNN, self).__init__()
         self.out_channels = out_channels[-1]
-        self.encoder = nn.LayerList(
-            [
-                BidirectionalLSTM(in_channels if i == 0 else out_channels[i - 1], hidden_size, output_size=out_channels[i], num_layers=1, direction="bidirectional", with_linear=with_linear)
-                for i in range(num_layers)
-            ]
-        )
+        self.encoder = nn.LayerList([BidirectionalLSTM(in_channels if i == 0 else out_channels[i - 1], hidden_size, output_size=out_channels[i], num_layers=1, direction="bidirectional", with_linear=with_linear) for i in range(num_layers)])
 
     def forward(self, x):
         for i, l in enumerate(self.encoder):
@@ -95,9 +90,7 @@ class EncoderWithFC(nn.Module):
 
 
 class EncoderWithSVTR(nn.Module):
-    def __init__(
-        self, in_channels, dims=64, depth=2, hidden_dims=120, use_guide=False, num_heads=8, qkv_bias=True, mlp_ratio=2.0, drop_rate=0.1, attn_drop_rate=0.1, drop_path=0.0, qk_scale=None  # XS
-    ):
+    def __init__(self, in_channels, dims=64, depth=2, hidden_dims=120, use_guide=False, num_heads=8, qkv_bias=True, mlp_ratio=2.0, drop_rate=0.1, attn_drop_rate=0.1, drop_path=0.0, qk_scale=None):  # XS
         super(EncoderWithSVTR, self).__init__()
         self.depth = depth
         self.use_guide = use_guide

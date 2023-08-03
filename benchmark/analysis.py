@@ -220,9 +220,7 @@ if __name__ == "__main__":
                 run_info["log_with_profiler"] = args.log_with_profiler
                 run_info["profiler_path"] = args.profiler_path
             analyzer = TimeAnalyzer(args.filename, args.keyword, args.separator, args.position, args.range)
-            run_info["FINAL_RESULT"], run_info["UNIT"] = analyzer.analysis(
-                batch_size=args.base_batch_size, gpu_num=args.gpu_num, skip_steps=args.skip_steps, mode=args.model_mode, run_mode=args.run_mode, unit=args.ips_unit
-            )
+            run_info["FINAL_RESULT"], run_info["UNIT"] = analyzer.analysis(batch_size=args.base_batch_size, gpu_num=args.gpu_num, skip_steps=args.skip_steps, mode=args.model_mode, run_mode=args.run_mode, unit=args.ips_unit)
             try:
                 if int(os.getenv("job_fail_flag")) == 1 or int(run_info["FINAL_RESULT"]) == 0:
                     run_info["JOB_FAIL_FLAG"] = 1

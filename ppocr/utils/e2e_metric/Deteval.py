@@ -98,15 +98,7 @@ def get_socre_A(gt_dir, pred_dict):
     ###############################################################################
 
     for input_id in range(allInputs):
-        if (
-            (input_id != ".DS_Store")
-            and (input_id != "Pascal_result.txt")
-            and (input_id != "Pascal_result_curved.txt")
-            and (input_id != "Pascal_result_non_curved.txt")
-            and (input_id != "Deteval_result.txt")
-            and (input_id != "Deteval_result_curved.txt")
-            and (input_id != "Deteval_result_non_curved.txt")
-        ):
+        if (input_id != ".DS_Store") and (input_id != "Pascal_result.txt") and (input_id != "Pascal_result_curved.txt") and (input_id != "Pascal_result_non_curved.txt") and (input_id != "Deteval_result.txt") and (input_id != "Deteval_result_curved.txt") and (input_id != "Deteval_result_non_curved.txt"):
             detections = input_reading_mod(pred_dict)
             groundtruths = gt_reading_mod(gt_dir)
             detections = detection_filtering(detections, groundtruths)  # filters detections overlapping with DC area
@@ -219,15 +211,7 @@ def get_socre_B(gt_dir, img_id, pred_dict):
     ###############################################################################
 
     for input_id in range(allInputs):
-        if (
-            (input_id != ".DS_Store")
-            and (input_id != "Pascal_result.txt")
-            and (input_id != "Pascal_result_curved.txt")
-            and (input_id != "Pascal_result_non_curved.txt")
-            and (input_id != "Deteval_result.txt")
-            and (input_id != "Deteval_result_curved.txt")
-            and (input_id != "Deteval_result_non_curved.txt")
-        ):
+        if (input_id != ".DS_Store") and (input_id != "Pascal_result.txt") and (input_id != "Pascal_result_curved.txt") and (input_id != "Pascal_result_non_curved.txt") and (input_id != "Deteval_result.txt") and (input_id != "Deteval_result_curved.txt") and (input_id != "Deteval_result_non_curved.txt"):
             detections = input_reading_mod(pred_dict)
             groundtruths = gt_reading_mod(gt_dir, img_id).tolist()
             detections = detection_filtering(detections, groundtruths)  # filters detections overlapping with DC area
@@ -412,9 +396,7 @@ def combine_results(all_data, rec_flag=True):
     hit_str_count = 0
     hit_count = 0
 
-    def one_to_one(
-        local_sigma_table, local_tau_table, local_accumulative_recall, local_accumulative_precision, global_accumulative_recall, global_accumulative_precision, gt_flag, det_flag, idy, rec_flag
-    ):
+    def one_to_one(local_sigma_table, local_tau_table, local_accumulative_recall, local_accumulative_precision, global_accumulative_recall, global_accumulative_precision, gt_flag, det_flag, idy, rec_flag):
         hit_str_num = 0
         for gt_id in range(num_gt):
             gt_matching_qualified_sigma_candidates = np.where(local_sigma_table[gt_id, :] > tr)
@@ -427,12 +409,7 @@ def combine_results(all_data, rec_flag=True):
             det_matching_qualified_tau_candidates = np.where(local_tau_table[:, gt_matching_qualified_tau_candidates[0]] > tp)
             det_matching_num_qualified_tau_candidates = det_matching_qualified_tau_candidates[0].shape[0]
 
-            if (
-                (gt_matching_num_qualified_sigma_candidates == 1)
-                and (gt_matching_num_qualified_tau_candidates == 1)
-                and (det_matching_num_qualified_sigma_candidates == 1)
-                and (det_matching_num_qualified_tau_candidates == 1)
-            ):
+            if (gt_matching_num_qualified_sigma_candidates == 1) and (gt_matching_num_qualified_tau_candidates == 1) and (det_matching_num_qualified_sigma_candidates == 1) and (det_matching_num_qualified_tau_candidates == 1):
                 global_accumulative_recall = global_accumulative_recall + 1.0
                 global_accumulative_precision = global_accumulative_precision + 1.0
                 local_accumulative_recall = local_accumulative_recall + 1.0
@@ -453,9 +430,7 @@ def combine_results(all_data, rec_flag=True):
                 det_flag[0, matched_det_id] = 1
         return local_accumulative_recall, local_accumulative_precision, global_accumulative_recall, global_accumulative_precision, gt_flag, det_flag, hit_str_num
 
-    def one_to_many(
-        local_sigma_table, local_tau_table, local_accumulative_recall, local_accumulative_precision, global_accumulative_recall, global_accumulative_precision, gt_flag, det_flag, idy, rec_flag
-    ):
+    def one_to_many(local_sigma_table, local_tau_table, local_accumulative_recall, local_accumulative_precision, global_accumulative_recall, global_accumulative_precision, gt_flag, det_flag, idy, rec_flag):
         hit_str_num = 0
         for gt_id in range(num_gt):
             # skip the following if the groundtruth was matched
@@ -512,9 +487,7 @@ def combine_results(all_data, rec_flag=True):
 
         return local_accumulative_recall, local_accumulative_precision, global_accumulative_recall, global_accumulative_precision, gt_flag, det_flag, hit_str_num
 
-    def many_to_one(
-        local_sigma_table, local_tau_table, local_accumulative_recall, local_accumulative_precision, global_accumulative_recall, global_accumulative_precision, gt_flag, det_flag, idy, rec_flag
-    ):
+    def many_to_one(local_sigma_table, local_tau_table, local_accumulative_recall, local_accumulative_precision, global_accumulative_recall, global_accumulative_precision, gt_flag, det_flag, idy, rec_flag):
         hit_str_num = 0
         for det_id in range(num_det):
             # skip the following if the detection was matched
@@ -600,20 +573,14 @@ def combine_results(all_data, rec_flag=True):
         det_flag = np.zeros((1, num_det))
 
         #######first check for one-to-one case##########
-        local_accumulative_recall, local_accumulative_precision, global_accumulative_recall, global_accumulative_precision, gt_flag, det_flag, hit_str_num = one_to_one(
-            local_sigma_table, local_tau_table, local_accumulative_recall, local_accumulative_precision, global_accumulative_recall, global_accumulative_precision, gt_flag, det_flag, idx, rec_flag
-        )
+        local_accumulative_recall, local_accumulative_precision, global_accumulative_recall, global_accumulative_precision, gt_flag, det_flag, hit_str_num = one_to_one(local_sigma_table, local_tau_table, local_accumulative_recall, local_accumulative_precision, global_accumulative_recall, global_accumulative_precision, gt_flag, det_flag, idx, rec_flag)
 
         hit_str_count += hit_str_num
         #######then check for one-to-many case##########
-        local_accumulative_recall, local_accumulative_precision, global_accumulative_recall, global_accumulative_precision, gt_flag, det_flag, hit_str_num = one_to_many(
-            local_sigma_table, local_tau_table, local_accumulative_recall, local_accumulative_precision, global_accumulative_recall, global_accumulative_precision, gt_flag, det_flag, idx, rec_flag
-        )
+        local_accumulative_recall, local_accumulative_precision, global_accumulative_recall, global_accumulative_precision, gt_flag, det_flag, hit_str_num = one_to_many(local_sigma_table, local_tau_table, local_accumulative_recall, local_accumulative_precision, global_accumulative_recall, global_accumulative_precision, gt_flag, det_flag, idx, rec_flag)
         hit_str_count += hit_str_num
         #######then check for many-to-one case##########
-        local_accumulative_recall, local_accumulative_precision, global_accumulative_recall, global_accumulative_precision, gt_flag, det_flag, hit_str_num = many_to_one(
-            local_sigma_table, local_tau_table, local_accumulative_recall, local_accumulative_precision, global_accumulative_recall, global_accumulative_precision, gt_flag, det_flag, idx, rec_flag
-        )
+        local_accumulative_recall, local_accumulative_precision, global_accumulative_recall, global_accumulative_precision, gt_flag, det_flag, hit_str_num = many_to_one(local_sigma_table, local_tau_table, local_accumulative_recall, local_accumulative_precision, global_accumulative_recall, global_accumulative_precision, gt_flag, det_flag, idx, rec_flag)
         hit_str_count += hit_str_num
 
     try:

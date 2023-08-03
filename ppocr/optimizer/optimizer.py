@@ -127,9 +127,7 @@ class RMSProp(object):
 
     def __call__(self, model):
         train_params = [param for param in model.parameters() if param.trainable is True]
-        opt = optim.RMSProp(
-            learning_rate=self.learning_rate, momentum=self.momentum, rho=self.rho, epsilon=self.epsilon, weight_decay=self.weight_decay, grad_clip=self.grad_clip, parameters=train_params
-        )
+        opt = optim.RMSProp(learning_rate=self.learning_rate, momentum=self.momentum, rho=self.rho, epsilon=self.epsilon, weight_decay=self.weight_decay, grad_clip=self.grad_clip, parameters=train_params)
         return opt
 
 
@@ -151,21 +149,7 @@ class Adadelta(object):
 
 
 class AdamW(object):
-    def __init__(
-        self,
-        learning_rate=0.001,
-        beta1=0.9,
-        beta2=0.999,
-        epsilon=1e-8,
-        weight_decay=0.01,
-        multi_precision=False,
-        grad_clip=None,
-        no_weight_decay_name=None,
-        one_dim_param_no_weight_decay=False,
-        name=None,
-        lazy_mode=False,
-        **args
-    ):
+    def __init__(self, learning_rate=0.001, beta1=0.9, beta2=0.999, epsilon=1e-8, weight_decay=0.01, multi_precision=False, grad_clip=None, no_weight_decay_name=None, one_dim_param_no_weight_decay=False, name=None, lazy_mode=False, **args):
         super().__init__()
         self.learning_rate = learning_rate
         self.beta1 = beta1

@@ -283,9 +283,7 @@ class DYMicroBlock(nn.Module):
         if gs1[0] == 0:
             self.layers = nn.Sequential(
                 DepthSpatialSepConv(inp, t1, kernel_size, stride),
-                DYShiftMax(hidden_dim2, hidden_dim2, act_max=2.0, act_relu=True if y2 == 2 else False, init_a=init_a, reduction=act_reduction, init_b=init_b, g=gs1, expansion=False)
-                if y2 > 0
-                else nn.ReLU6(),
+                DYShiftMax(hidden_dim2, hidden_dim2, act_max=2.0, act_relu=True if y2 == 2 else False, init_a=init_a, reduction=act_reduction, init_b=init_b, g=gs1, expansion=False) if y2 > 0 else nn.ReLU6(),
                 ChannelShuffle(gs1[1]) if shuffle else nn.Sequential(),
                 ChannelShuffle(hidden_dim2 // 2) if shuffle and y2 != 0 else nn.Sequential(),
                 GroupConv(hidden_dim2, oup, (g1, g2)),
@@ -301,22 +299,14 @@ class DYMicroBlock(nn.Module):
         else:
             self.layers = nn.Sequential(
                 GroupConv(inp, hidden_dim2, gs1),
-                DYShiftMax(hidden_dim2, hidden_dim2, act_max=2.0, act_relu=True if y1 == 2 else False, init_a=init_a, reduction=act_reduction, init_b=init_b, g=gs1, expansion=False)
-                if y1 > 0
-                else nn.ReLU6(),
+                DYShiftMax(hidden_dim2, hidden_dim2, act_max=2.0, act_relu=True if y1 == 2 else False, init_a=init_a, reduction=act_reduction, init_b=init_b, g=gs1, expansion=False) if y1 > 0 else nn.ReLU6(),
                 ChannelShuffle(gs1[1]) if shuffle else nn.Sequential(),
                 DepthSpatialSepConv(hidden_dim2, (1, 1), kernel_size, stride) if depthsep else DepthConv(hidden_dim2, hidden_dim2, kernel_size, stride),
                 nn.Sequential(),
-                DYShiftMax(hidden_dim2, hidden_dim2, act_max=2.0, act_relu=True if y2 == 2 else False, init_a=init_a, reduction=act_reduction, init_b=init_b, g=gs1, expansion=True)
-                if y2 > 0
-                else nn.ReLU6(),
+                DYShiftMax(hidden_dim2, hidden_dim2, act_max=2.0, act_relu=True if y2 == 2 else False, init_a=init_a, reduction=act_reduction, init_b=init_b, g=gs1, expansion=True) if y2 > 0 else nn.ReLU6(),
                 ChannelShuffle(hidden_dim2 // 4) if shuffle and y1 != 0 and y2 != 0 else nn.Sequential() if y1 == 0 and y2 == 0 else ChannelShuffle(hidden_dim2 // 2),
                 GroupConv(hidden_dim2, oup, (g1, g2)),
-                DYShiftMax(
-                    oup, oup, act_max=2.0, act_relu=False, init_a=[1.0, 0.0], reduction=act_reduction // 2 if oup < hidden_dim2 else act_reduction, init_b=[0.0, 0.0], g=(g1, g2), expansion=False
-                )
-                if y3 > 0
-                else nn.Sequential(),
+                DYShiftMax(oup, oup, act_max=2.0, act_relu=False, init_a=[1.0, 0.0], reduction=act_reduction // 2 if oup < hidden_dim2 else act_reduction, init_b=[0.0, 0.0], g=(g1, g2), expansion=False) if y3 > 0 else nn.Sequential(),
                 ChannelShuffle(g2) if shuffle else nn.Sequential(),
                 ChannelShuffle(oup // 2) if shuffle and y3 != 0 else nn.Sequential(),
             )

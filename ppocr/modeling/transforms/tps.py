@@ -37,13 +37,10 @@ class ConvBNLayer(nn.Module):
             stride=stride,
             padding=(kernel_size - 1) // 2,
             groups=groups,
-            
             bias=False,
         )
         bn_name = "bn_" + name
-        self.bn = nn.BatchNorm2d(
-            out_channels, act=act,  bias=True, moving_mean_name=bn_name + "_mean", moving_variance_name=bn_name + "_variance"
-        )
+        self.bn = nn.BatchNorm2d(out_channels, act=act, bias=True, moving_mean_name=bn_name + "_mean", moving_variance_name=bn_name + "_variance")
 
     def forward(self, x):
         x = self.conv(x)
@@ -77,15 +74,12 @@ class LocalizationNetwork(nn.Module):
             self.block_list.append(pool)
         name = "loc_fc1"
         stdv = 1.0 / math.sqrt(num_filters_list[-1] * 1.0)
-        self.fc1 = nn.Linear(
-            in_channels, fc_dim,  name=name
-        )
+        self.fc1 = nn.Linear(in_channels, fc_dim, name=name)
 
         # Init fc2 in LocalizationNetwork
         initial_bias = self.get_initial_fiducials()
         initial_bias = initial_bias.reshape(-1)
         name = "loc_fc2"
-
 
         self.fc2 = nn.Linear(fc_dim, F * 2, bias=True, name=name)
         self.out_channels = F * 2
@@ -130,7 +124,6 @@ class GridGenerator(nn.Module):
 
         name = "ex_fc"
         initializer = nn.initializer.Constant(value=0.0)
-
 
         self.fc = nn.Linear(in_channels, 6, bias=True, name=name)
 

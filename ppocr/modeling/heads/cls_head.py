@@ -38,7 +38,6 @@ class ClsHead(nn.Module):
         self.fc = nn.Linear(
             in_channels,
             class_dim,
-            
             bias=True,
         )
 

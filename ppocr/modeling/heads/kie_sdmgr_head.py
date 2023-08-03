@@ -23,7 +23,6 @@ from torch import nn
 import torch.nn.functional as F
 
 
-
 class SDMGRHead(nn.Module):
     def __init__(self, in_channels, num_chars=92, visual_dim=16, fusion_dim=1024, node_input=32, node_embed=256, edge_input=5, edge_embed=256, num_gnn=2, num_classes=26, bidirectional=False):
         super().__init__()

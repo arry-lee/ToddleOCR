@@ -45,16 +45,7 @@ class FCENetTargets:
             assigned to each level.
     """
 
-    def __init__(
-        self,
-        fourier_degree=5,
-        resample_step=4.0,
-        center_region_shrink_ratio=0.3,
-        level_size_divisors=(8, 16, 32),
-        level_proportion_range=((0, 0.25), (0.2, 0.65), (0.55, 1.0)),
-        orientation_thr=2.0,
-        **kwargs
-    ):
+    def __init__(self, fourier_degree=5, resample_step=4.0, center_region_shrink_ratio=0.3, level_size_divisors=(8, 16, 32), level_proportion_range=((0, 0.25), (0.2, 0.65), (0.55, 1.0)), orientation_thr=2.0, **kwargs):
         super().__init__()
         assert isinstance(level_size_divisors, tuple)
         assert isinstance(level_proportion_range, tuple)

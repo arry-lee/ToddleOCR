@@ -89,9 +89,7 @@ class MobileNetV3(nn.Layer):
         else:
             raise NotImplementedError("mode[{}_model] is not implemented!".format(model_name))
 
-        self.conv1 = ConvBNLayer(
-            in_c=3, out_c=make_divisible(inplanes * scale), filter_size=3, stride=2, padding=1, num_groups=1, if_act=True, act="hardswish", name="conv1", use_custom_relu=self.use_custom_relu
-        )
+        self.conv1 = ConvBNLayer(in_c=3, out_c=make_divisible(inplanes * scale), filter_size=3, stride=2, padding=1, num_groups=1, if_act=True, act="hardswish", name="conv1", use_custom_relu=self.use_custom_relu)
 
         self.block_list = []
         i = 0

@@ -21,20 +21,16 @@ from torch import nn
 import torch.nn.functional as F
 
 
-
 class ConvBNLayer(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, stride, padding, groups=1, if_act=True, act=None, name=None):
         super(ConvBNLayer, self).__init__()
         self.if_act = if_act
         self.act = act
-        self.conv = nn.Conv2d(
-            in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size, stride=stride, padding=padding, groups=groups,  bias=False
-        )
+        self.conv = nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size, stride=stride, padding=padding, groups=groups, bias=False)
 
         self.bn = nn.BatchNorm2d(
             num_channels=out_channels,
             act=act,
-            
             bias=True,
             moving_mean_name="bn_" + name + "_mean",
             moving_variance_name="bn_" + name + "_variance",
@@ -51,13 +47,10 @@ class DeConvBNLayer(nn.Module):
         super(DeConvBNLayer, self).__init__()
         self.if_act = if_act
         self.act = act
-        self.deconv = nn.ConvTranspose2d(
-            in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size, stride=stride, padding=padding, groups=groups,  bias=False
-        )
+        self.deconv = nn.ConvTranspose2d(in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size, stride=stride, padding=padding, groups=groups, bias=False)
         self.bn = nn.BatchNorm2d(
             num_channels=out_channels,
             act=act,
-            
             bias=True,
             moving_mean_name="bn_" + name + "_mean",
             moving_variance_name="bn_" + name + "_variance",

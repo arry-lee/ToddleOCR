@@ -574,9 +574,7 @@ def deal_isolate_span(thead_part):
     :return:
     """
     # 1. find out isolate span tokens.
-    isolate_pattern = (
-        '<td></td> rowspan="(\d)+" colspan="(\d)+"></b></td>|' '<td></td> colspan="(\d)+" rowspan="(\d)+"></b></td>|' '<td></td> rowspan="(\d)+"></b></td>|' '<td></td> colspan="(\d)+"></b></td>'
-    )
+    isolate_pattern = '<td></td> rowspan="(\d)+" colspan="(\d)+"></b></td>|' '<td></td> colspan="(\d)+" rowspan="(\d)+"></b></td>|' '<td></td> rowspan="(\d)+"></b></td>|' '<td></td> colspan="(\d)+"></b></td>'
     isolate_iter = re.finditer(isolate_pattern, thead_part)
     isolate_list = [i.group() for i in isolate_iter]
 
@@ -610,9 +608,7 @@ def deal_duplicate_bb(thead_part):
     :return:
     """
     # 1. find out <td></td> in <thead></thead>.
-    td_pattern = (
-        '<td rowspan="(\d)+" colspan="(\d)+">(.+?)</td>|' '<td colspan="(\d)+" rowspan="(\d)+">(.+?)</td>|' '<td rowspan="(\d)+">(.+?)</td>|' '<td colspan="(\d)+">(.+?)</td>|' "<td>(.*?)</td>"
-    )
+    td_pattern = '<td rowspan="(\d)+" colspan="(\d)+">(.+?)</td>|' '<td colspan="(\d)+" rowspan="(\d)+">(.+?)</td>|' '<td rowspan="(\d)+">(.+?)</td>|' '<td colspan="(\d)+">(.+?)</td>|' "<td>(.*?)</td>"
     td_iter = re.finditer(td_pattern, thead_part)
     td_list = [t.group() for t in td_iter]
 

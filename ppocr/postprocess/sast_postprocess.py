@@ -275,9 +275,7 @@ class SASTPostProcess(object):
             p_tco = tco_list[ino].transpose((1, 2, 0))
             src_h, src_w, ratio_h, ratio_w = shape_list[ino]
 
-            poly_list = self.detect_sast(
-                p_score, p_tvo, p_border, p_tco, ratio_w, ratio_h, src_w, src_h, shrink_ratio_of_width=self.shrink_ratio_of_width, tcl_map_thresh=self.tcl_map_thresh, offset_expand=self.expand_scale
-            )
+            poly_list = self.detect_sast(p_score, p_tvo, p_border, p_tco, ratio_w, ratio_h, src_w, src_h, shrink_ratio_of_width=self.shrink_ratio_of_width, tcl_map_thresh=self.tcl_map_thresh, offset_expand=self.expand_scale)
             poly_lists.append({"points": np.array(poly_list)})
 
         return poly_lists
