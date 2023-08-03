@@ -23,7 +23,7 @@ from torch import ParamAttr
 __all__ = ['CSPPAN']
 
 
-class ConvBNLayer(nn.Layer):
+class ConvBNLayer(nn.Module):
     def __init__(self,
                  in_channel=96,
                  out_channel=96,
@@ -55,7 +55,7 @@ class ConvBNLayer(nn.Layer):
         return x
 
 
-class DPModule(nn.Layer):
+class DPModule(nn.Module):
     """
     Depth-wise and point-wise module.
      Args:
@@ -109,7 +109,7 @@ class DPModule(nn.Layer):
         return x
 
 
-class DarknetBottleneck(nn.Layer):
+class DarknetBottleneck(nn.Module):
     """The basic bottleneck block used in Darknet.
     Each Block consists of two ConvModules and the input is added to the
     final output. Each ConvModule is composed of Conv, BN, and act.
@@ -161,7 +161,7 @@ class DarknetBottleneck(nn.Layer):
             return out
 
 
-class CSPLayer(nn.Layer):
+class CSPLayer(nn.Module):
     """Cross Stage Partial Layer.
     Args:
         in_channels (int): The input channels of the CSP layer.
@@ -212,7 +212,7 @@ class CSPLayer(nn.Layer):
         return self.final_conv(x_final)
 
 
-class Channel_T(nn.Layer):
+class Channel_T(nn.Module):
     def __init__(self,
                  in_channels=[116, 232, 464],
                  out_channels=96,
@@ -229,7 +229,7 @@ class Channel_T(nn.Layer):
         return outs
 
 
-class CSPPAN(nn.Layer):
+class CSPPAN(nn.Module):
     """Path Aggregation Network with CSP module.
     Args:
         in_channels (List[int]): Number of input channels per scale.

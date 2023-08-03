@@ -73,7 +73,7 @@ def build_output_control_points(num_control_points, margins):
     return output_ctrl_pts
 
 
-class TPSSpatialTransformer(nn.Layer):
+class TPSSpatialTransformer(nn.Module):
     def __init__(self,
                  output_image_size=None,
                  num_control_points=None,

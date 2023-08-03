@@ -26,7 +26,7 @@ from ppocr.utils.save_load import load_pretrained_params
 __all__ = ['DistillationModel']
 
 
-class DistillationModel(nn.Layer):
+class DistillationModel(nn.Module):
     def __init__(self, config):
         """
         the module for OCR distillation.

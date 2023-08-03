@@ -22,7 +22,7 @@ from .det_basic_loss import DiceLoss
 import numpy as np
 
 
-class SASTLoss(nn.Layer):
+class SASTLoss(nn.Module):
     """
     """
 

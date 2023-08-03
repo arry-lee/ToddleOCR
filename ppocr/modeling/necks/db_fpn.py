@@ -30,7 +30,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(__dir__, '../../..')))
 from ppocr.modeling.backbones.det_mobilenet_v3 import SEModule
 
 
-class DSConv(nn.Layer):
+class DSConv(nn.Module):
     def __init__(self,
                  in_channels,
                  out_channels,
@@ -104,7 +104,7 @@ class DSConv(nn.Layer):
         return x
 
 
-class DBFPN(nn.Layer):
+class DBFPN(nn.Module):
     def __init__(self, in_channels, out_channels, use_asf=False, **kwargs):
         super(DBFPN, self).__init__()
         self.out_channels = out_channels
@@ -198,7 +198,7 @@ class DBFPN(nn.Layer):
         return fuse
 
 
-class RSELayer(nn.Layer):
+class RSELayer(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, shortcut=True):
         super(RSELayer, self).__init__()
         weight_attr = torch.nn.initializer.KaimingUniform()
@@ -222,7 +222,7 @@ class RSELayer(nn.Layer):
         return out
 
 
-class RSEFPN(nn.Layer):
+class RSEFPN(nn.Module):
     def __init__(self, in_channels, out_channels, shortcut=True, **kwargs):
         super(RSEFPN, self).__init__()
         self.out_channels = out_channels
@@ -271,7 +271,7 @@ class RSEFPN(nn.Layer):
         return fuse
 
 
-class LKPAN(nn.Layer):
+class LKPAN(nn.Module):
     def __init__(self, in_channels, out_channels, mode='large', **kwargs):
         super(LKPAN, self).__init__()
         self.out_channels = out_channels
@@ -366,7 +366,7 @@ class LKPAN(nn.Layer):
         return fuse
 
 
-class ASFBlock(nn.Layer):
+class ASFBlock(nn.Module):
     """
     This code is refered from:
         https://github.com/MhLiao/DB/blob/master/decoders/feature_attention.py

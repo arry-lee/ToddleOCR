@@ -28,7 +28,7 @@ from .tps import GridGenerator
 https://github.com/hikopensource/DAVAR-Lab-OCR/davarocr/davar_rcg/models/transformations/gaspin_transformation.py
 '''
 
-class SP_TransformerNetwork(nn.Layer):
+class SP_TransformerNetwork(nn.Module):
     """
     Sturture-Preserving Transformation (SPT) as Equa. (2) in Ref. [1]
     Ref: [1] SPIN: Structure-Preserving Inner Offset Network for Scene Text Recognition. AAAI-2021.
@@ -93,7 +93,7 @@ class SP_TransformerNetwork(nn.Layer):
         batch_weight_sum = batch_weight_sum * 2 - 1
         return batch_weight_sum
 
-class GA_SPIN_Transformer(nn.Layer):
+class GA_SPIN_Transformer(nn.Module):
     """
     Geometric-Absorbed SPIN Transformation (GA-SPIN) proposed in Ref. [1]
 

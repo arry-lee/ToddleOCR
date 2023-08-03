@@ -26,7 +26,7 @@ from torch.regularizer import L2Decay
 __all__ = ['FCEFPN']
 
 
-class ConvNormLayer(nn.Layer):
+class ConvNormLayer(nn.Module):
     def __init__(self,
                  ch_in,
                  ch_out,
@@ -82,7 +82,7 @@ class ConvNormLayer(nn.Layer):
         return out
 
 
-class FCEFPN(nn.Layer):
+class FCEFPN(nn.Module):
     """
     Feature Pyramid Network, see https://arxiv.org/abs/1612.03144
     Args:

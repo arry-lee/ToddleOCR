@@ -17,7 +17,7 @@ import torch.nn as nn
 from arch.base_module import SNConv, SNConvTranspose, ResBlock
 
 
-class Decoder(nn.Layer):
+class Decoder(nn.Module):
     def __init__(self, name, encode_dim, out_channels, use_bias, norm_layer,
                  act, act_attr, conv_block_dropout, conv_block_num,
                  conv_block_dilation, out_conv_act, out_conv_act_attr):
@@ -93,7 +93,7 @@ class Decoder(nn.Layer):
         return output_dict
 
 
-class DecoderUnet(nn.Layer):
+class DecoderUnet(nn.Module):
     def __init__(self, name, encode_dim, out_channels, use_bias, norm_layer,
                  act, act_attr, conv_block_dropout, conv_block_num,
                  conv_block_dilation, out_conv_act, out_conv_act_attr):
@@ -173,7 +173,7 @@ class DecoderUnet(nn.Layer):
         return output_dict
 
 
-class SingleDecoder(nn.Layer):
+class SingleDecoder(nn.Module):
     def __init__(self, name, encode_dim, out_channels, use_bias, norm_layer,
                  act, act_attr, conv_block_dropout, conv_block_num,
                  conv_block_dilation, out_conv_act, out_conv_act_attr):

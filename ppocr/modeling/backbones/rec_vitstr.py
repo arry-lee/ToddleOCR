@@ -24,7 +24,7 @@ from ppocr.modeling.backbones.rec_svtrnet import Block, PatchEmbed, zeros_, trun
 scale_dim_heads = {'tiny': [192, 3], 'small': [384, 6], 'base': [768, 12]}
 
 
-class ViTSTR(nn.Layer):
+class ViTSTR(nn.Module):
     def __init__(self,
                  img_size=[224, 224],
                  in_channels=1,

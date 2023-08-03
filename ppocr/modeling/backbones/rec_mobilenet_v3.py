@@ -19,7 +19,7 @@ from ppocr.modeling.backbones.det_mobilenet_v3 import ResidualUnit, ConvBNLayer,
 __all__ = ['MobileNetV3']
 
 
-class MobileNetV3(nn.Layer):
+class MobileNetV3(nn.Module):
     def __init__(self,
                  in_channels=3,
                  model_name='small',

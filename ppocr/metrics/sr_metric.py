@@ -23,7 +23,7 @@ import torch.nn as nn
 import string
 
 
-class SSIM(nn.Layer):
+class SSIM(nn.Module):
     def __init__(self, window_size=11, size_average=True):
         super(SSIM, self).__init__()
         self.window_size = window_size

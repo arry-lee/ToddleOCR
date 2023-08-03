@@ -33,7 +33,7 @@ from torch.nn.initializer import Normal, Constant, XavierUniform
 from .det_resnet_vd import DeformableConvV2, ConvBNLayer
 
 
-class BottleneckBlock(nn.Layer):
+class BottleneckBlock(nn.Module):
     def __init__(self,
                  num_channels,
                  num_filters,
@@ -87,7 +87,7 @@ class BottleneckBlock(nn.Layer):
         return y
 
 
-class BasicBlock(nn.Layer):
+class BasicBlock(nn.Module):
     def __init__(self,
                  num_channels,
                  num_filters,
@@ -130,7 +130,7 @@ class BasicBlock(nn.Layer):
         return y
 
 
-class ResNet(nn.Layer):
+class ResNet(nn.Module):
     def __init__(self,
                  in_channels=3,
                  layers=50,

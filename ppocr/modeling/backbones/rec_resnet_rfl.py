@@ -30,7 +30,7 @@ zeros_ = Constant(value=0.)
 ones_ = Constant(value=1.)
 
 
-class BasicBlock(nn.Layer):
+class BasicBlock(nn.Module):
     """Res-net Basic Block"""
     expansion = 1
 
@@ -87,7 +87,7 @@ class BasicBlock(nn.Layer):
         return out
 
 
-class ResNetRFL(nn.Layer):
+class ResNetRFL(nn.Module):
     def __init__(self,
                  in_channels,
                  out_channels=512,
@@ -241,7 +241,7 @@ class ResNetRFL(nn.Layer):
         return [visual_feature_3, x_3]
 
 
-class ResNetBase(nn.Layer):
+class ResNetBase(nn.Module):
     def __init__(self, in_channels, out_channels, block, layers):
         super(ResNetBase, self).__init__()
 
@@ -336,7 +336,7 @@ class ResNetBase(nn.Layer):
         return x
 
 
-class RFLBase(nn.Layer):
+class RFLBase(nn.Module):
     """ Reciprocal feature learning share backbone network"""
 
     def __init__(self, in_channels, out_channels=512):

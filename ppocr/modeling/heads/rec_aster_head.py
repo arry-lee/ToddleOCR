@@ -26,7 +26,7 @@ from torch import nn
 from torch.nn import functional as F
 
 
-class AsterHead(nn.Layer):
+class AsterHead(nn.Module):
     def __init__(self,
                  in_channels,
                  out_channels,
@@ -69,7 +69,7 @@ class AsterHead(nn.Layer):
         return return_dict
 
 
-class Embedding(nn.Layer):
+class Embedding(nn.Module):
     def __init__(self, in_timestep, in_planes, mid_dim=4096, embed_dim=300):
         super(Embedding, self).__init__()
         self.in_timestep = in_timestep
@@ -86,7 +86,7 @@ class Embedding(nn.Layer):
         return x
 
 
-class AttentionRecognitionHead(nn.Layer):
+class AttentionRecognitionHead(nn.Module):
     """
   input: [b x 16 x 64 x in_planes]
   output: probability sequence: [b x T x num_classes]
@@ -309,7 +309,7 @@ class AttentionRecognitionHead(nn.Layer):
         return p, torch.ones_like(p)
 
 
-class AttentionUnit(nn.Layer):
+class AttentionUnit(nn.Module):
     def __init__(self, sDim, xDim, attDim):
         super(AttentionUnit, self).__init__()
 
@@ -343,7 +343,7 @@ class AttentionUnit(nn.Layer):
         return alpha
 
 
-class DecoderUnit(nn.Layer):
+class DecoderUnit(nn.Module):
     def __init__(self, sDim, xDim, yDim, attDim):
         super(DecoderUnit, self).__init__()
         self.sDim = sDim

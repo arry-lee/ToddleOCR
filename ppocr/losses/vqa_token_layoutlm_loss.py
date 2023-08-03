@@ -20,7 +20,7 @@ from torch import nn
 from ppocr.losses.basic_loss import DMLLoss
 
 
-class VQASerTokenLayoutLMLoss(nn.Layer):
+class VQASerTokenLayoutLMLoss(nn.Module):
     def __init__(self, num_classes, key=None):
         super().__init__()
         self.loss_class = nn.CrossEntropyLoss()

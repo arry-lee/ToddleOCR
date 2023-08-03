@@ -17,7 +17,7 @@ import torch.nn as nn
 from arch.spectral_norm import spectral_norm
 
 
-class CBN(nn.Layer):
+class CBN(nn.Module):
     def __init__(self,
                  name,
                  in_channels,
@@ -69,7 +69,7 @@ class CBN(nn.Layer):
         return out
 
 
-class SNConv(nn.Layer):
+class SNConv(nn.Module):
     def __init__(self,
                  name,
                  in_channels,
@@ -122,7 +122,7 @@ class SNConv(nn.Layer):
         return out
 
 
-class SNConvTranspose(nn.Layer):
+class SNConvTranspose(nn.Module):
     def __init__(self,
                  name,
                  in_channels,
@@ -177,7 +177,7 @@ class SNConvTranspose(nn.Layer):
         return out
 
 
-class MiddleNet(nn.Layer):
+class MiddleNet(nn.Module):
     def __init__(self, name, in_channels, mid_channels, out_channels,
                  use_bias):
         super(MiddleNet, self).__init__()
@@ -212,7 +212,7 @@ class MiddleNet(nn.Layer):
         return sn_conv3
 
 
-class ResBlock(nn.Layer):
+class ResBlock(nn.Module):
     def __init__(self, name, channels, norm_layer, use_dropout, use_dilation,
                  use_bias):
         super(ResBlock, self).__init__()

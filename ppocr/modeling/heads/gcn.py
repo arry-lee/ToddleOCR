@@ -47,13 +47,13 @@ class BatchNorm1D(nn.BatchNorm1D):
             use_global_stats=track_running_stats)
 
 
-class MeanAggregator(nn.Layer):
+class MeanAggregator(nn.Module):
     def forward(self, features, A):
         x = torch.bmm(A, features)
         return x
 
 
-class GraphConv(nn.Layer):
+class GraphConv(nn.Module):
     def __init__(self, in_dim, out_dim):
         super().__init__()
         self.in_dim = in_dim
@@ -78,7 +78,7 @@ class GraphConv(nn.Layer):
         return out
 
 
-class GCN(nn.Layer):
+class GCN(nn.Module):
     def __init__(self, feat_len):
         super(GCN, self).__init__()
         self.bn0 = BatchNorm1D(feat_len, affine=False)

@@ -40,7 +40,7 @@ def conv3x3(in_channel, out_channel, stride=1, conv_weight_attr=None):
         bias_attr=False)
 
 
-class BasicBlock(nn.Layer):
+class BasicBlock(nn.Module):
     expansion = 1
 
     def __init__(self, in_channels, channels, stride=1, downsample=False, conv_weight_attr=None, bn_weight_attr=None):
@@ -86,7 +86,7 @@ class BasicBlock(nn.Layer):
         return out
 
 
-class ResNet31(nn.Layer):
+class ResNet31(nn.Module):
     '''
     Args:
         in_channels (int): Number of channels of input image tensor.

@@ -64,7 +64,7 @@ def weight_cross_entropy(pred, gt, weight_table):
     return loss / batch
 
 
-class TelescopeLoss(nn.Layer):
+class TelescopeLoss(nn.Module):
     def __init__(self, confuse_dict_path):
         super(TelescopeLoss, self).__init__()
         self.weight_table = load_confuse_matrix(confuse_dict_path)

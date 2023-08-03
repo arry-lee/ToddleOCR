@@ -23,7 +23,7 @@ import torch.nn.functional as F
 from torch import ParamAttr
 
 
-class ConvBNLayer(nn.Layer):
+class ConvBNLayer(nn.Module):
     def __init__(self,
                  in_channels,
                  out_channels,
@@ -60,7 +60,7 @@ class ConvBNLayer(nn.Layer):
         return x
 
 
-class SAST_Header1(nn.Layer):
+class SAST_Header1(nn.Module):
     def __init__(self, in_channels, **kwargs):
         super(SAST_Header1, self).__init__()
         out_channels = [64, 64, 128]
@@ -84,7 +84,7 @@ class SAST_Header1(nn.Layer):
         return f_score, f_border
 
 
-class SAST_Header2(nn.Layer):
+class SAST_Header2(nn.Module):
     def __init__(self, in_channels, **kwargs):
         super(SAST_Header2, self).__init__()
         out_channels = [64, 64, 128]
@@ -107,7 +107,7 @@ class SAST_Header2(nn.Layer):
         return f_tvo, f_tco
 
 
-class SASTHead(nn.Layer):
+class SASTHead(nn.Module):
     """
     """
     def __init__(self, in_channels, **kwargs):

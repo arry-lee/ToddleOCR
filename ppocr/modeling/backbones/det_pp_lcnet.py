@@ -77,7 +77,7 @@ def make_divisible(v, divisor=8, min_value=None):
     return new_v
 
 
-class ConvBNLayer(nn.Layer):
+class ConvBNLayer(nn.Module):
     def __init__(self,
                  num_channels,
                  filter_size,
@@ -109,7 +109,7 @@ class ConvBNLayer(nn.Layer):
         return x
 
 
-class DepthwiseSeparable(nn.Layer):
+class DepthwiseSeparable(nn.Module):
     def __init__(self,
                  num_channels,
                  num_filters,
@@ -140,7 +140,7 @@ class DepthwiseSeparable(nn.Layer):
         return x
 
 
-class SEModule(nn.Layer):
+class SEModule(nn.Module):
     def __init__(self, channel, reduction=4):
         super().__init__()
         self.avg_pool = AdaptiveAvgPool2D(1)
@@ -170,7 +170,7 @@ class SEModule(nn.Layer):
         return x
 
 
-class PPLCNet(nn.Layer):
+class PPLCNet(nn.Module):
     def __init__(self,
                  in_channels=3,
                  scale=1.0,

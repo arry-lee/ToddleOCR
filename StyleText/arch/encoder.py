@@ -17,7 +17,7 @@ import torch.nn as nn
 from arch.base_module import SNConv, SNConvTranspose, ResBlock
 
 
-class Encoder(nn.Layer):
+class Encoder(nn.Module):
     def __init__(self, name, in_channels, encode_dim, use_bias, norm_layer,
                  act, act_attr, conv_block_dropout, conv_block_num,
                  conv_block_dilation):
@@ -88,7 +88,7 @@ class Encoder(nn.Layer):
         return out_dict
 
 
-class EncoderUnet(nn.Layer):
+class EncoderUnet(nn.Module):
     def __init__(self, name, in_channels, encode_dim, use_bias, norm_layer,
                  act, act_attr):
         super(EncoderUnet, self).__init__()

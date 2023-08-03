@@ -30,7 +30,7 @@ from collections import OrderedDict
 gradient_clip = 10
 
 
-class PVAM(nn.Layer):
+class PVAM(nn.Module):
     def __init__(self, in_channels, char_num, max_text_length, num_heads,
                  num_encoder_tus, hidden_dims):
         super(PVAM, self).__init__()
@@ -99,7 +99,7 @@ class PVAM(nn.Layer):
         return pvam_features
 
 
-class GSRM(nn.Layer):
+class GSRM(nn.Module):
     def __init__(self, in_channels, char_num, max_text_length, num_heads,
                  num_encoder_tus, num_decoder_tus, hidden_dims):
         super(GSRM, self).__init__()
@@ -190,7 +190,7 @@ class GSRM(nn.Layer):
         return gsrm_features, word_out, gsrm_out
 
 
-class VSFD(nn.Layer):
+class VSFD(nn.Module):
     def __init__(self, in_channels=512, pvam_ch=512, char_num=38):
         super(VSFD, self).__init__()
         self.char_num = char_num
@@ -217,7 +217,7 @@ class VSFD(nn.Layer):
         return out
 
 
-class SRNHead(nn.Layer):
+class SRNHead(nn.Module):
     def __init__(self, in_channels, out_channels, max_text_length, num_heads,
                  num_encoder_TUs, num_decoder_TUs, hidden_dims, **kwargs):
         super(SRNHead, self).__init__()

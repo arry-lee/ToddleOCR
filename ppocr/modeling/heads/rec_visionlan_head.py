@@ -28,7 +28,7 @@ from torch.nn.initializer import Normal, XavierNormal
 import numpy as np
 
 
-class PositionalEncoding(nn.Layer):
+class PositionalEncoding(nn.Module):
     def __init__(self, d_hid, n_position=200):
         super(PositionalEncoding, self).__init__()
         self.register_buffer(
@@ -55,7 +55,7 @@ class PositionalEncoding(nn.Layer):
         return x + self.pos_table[:, :x.shape[1]].clone().detach()
 
 
-class ScaledDotProductAttention(nn.Layer):
+class ScaledDotProductAttention(nn.Module):
     "Scaled Dot-Product Attention"
 
     def __init__(self, temperature, attn_dropout=0.1):
@@ -86,7 +86,7 @@ class ScaledDotProductAttention(nn.Layer):
         return output
 
 
-class MultiHeadAttention(nn.Layer):
+class MultiHeadAttention(nn.Module):
     " Multi-Head Attention module"
 
     def __init__(self, n_head, d_model, d_k, d_v, dropout=0.1):
@@ -154,7 +154,7 @@ class MultiHeadAttention(nn.Layer):
         return output
 
 
-class PositionwiseFeedForward(nn.Layer):
+class PositionwiseFeedForward(nn.Module):
     def __init__(self, d_in, d_hid, dropout=0.1):
         super(PositionwiseFeedForward, self).__init__()
         self.w_1 = nn.Conv1D(d_in, d_hid, 1)  # position-wise
@@ -172,7 +172,7 @@ class PositionwiseFeedForward(nn.Layer):
         return x
 
 
-class EncoderLayer(nn.Layer):
+class EncoderLayer(nn.Module):
     ''' Compose with two layers '''
 
     def __init__(self, d_model, d_inner, n_head, d_k, d_v, dropout=0.1):
@@ -189,7 +189,7 @@ class EncoderLayer(nn.Layer):
         return enc_output
 
 
-class Transformer_Encoder(nn.Layer):
+class Transformer_Encoder(nn.Module):
     def __init__(self,
                  n_layers=2,
                  n_head=8,
@@ -220,7 +220,7 @@ class Transformer_Encoder(nn.Layer):
         return enc_output
 
 
-class PP_layer(nn.Layer):
+class PP_layer(nn.Module):
     def __init__(self, n_dim=512, N_max_character=25, n_position=256):
 
         super(PP_layer, self).__init__()
@@ -251,7 +251,7 @@ class PP_layer(nn.Layer):
         return g_output
 
 
-class Prediction(nn.Layer):
+class Prediction(nn.Module):
     def __init__(self,
                  n_dim=512,
                  n_position=256,
@@ -288,7 +288,7 @@ class Prediction(nn.Layer):
             return g_output
 
 
-class MLM(nn.Layer):
+class MLM(nn.Module):
     "Architecture of MLM"
 
     def __init__(self, n_dim=512, n_position=256, max_text_length=25):
@@ -336,7 +336,7 @@ def trans_1d_2d(x):
     return x
 
 
-class MLM_VRM(nn.Layer):
+class MLM_VRM(nn.Module):
     """
     MLM+VRM, MLM is only used in training.
     ratio controls the occluded number in a batch.
@@ -433,7 +433,7 @@ class MLM_VRM(nn.Layer):
             return text_pre, x
 
 
-class VLHead(nn.Layer):
+class VLHead(nn.Module):
     """
     Architecture of VisionLAN
     """

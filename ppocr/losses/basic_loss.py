@@ -21,7 +21,7 @@ from torch.nn import MSELoss as L2Loss
 from torch.nn import SmoothL1Loss
 
 
-class CELoss(nn.Layer):
+class CELoss(nn.Module):
     def __init__(self, epsilon=None):
         super().__init__()
         if epsilon is not None and (epsilon <= 0 or epsilon >= 1):
@@ -88,7 +88,7 @@ class KLJSLoss(object):
         return loss
 
 
-class DMLLoss(nn.Layer):
+class DMLLoss(nn.Module):
     """
     DMLLoss
     """
@@ -130,7 +130,7 @@ class DMLLoss(nn.Layer):
         return loss
 
 
-class DistanceLoss(nn.Layer):
+class DistanceLoss(nn.Module):
     """
     DistanceLoss:
         mode: loss mode
@@ -150,7 +150,7 @@ class DistanceLoss(nn.Layer):
         return self.loss_func(x, y)
 
 
-class LossFromOutput(nn.Layer):
+class LossFromOutput(nn.Module):
     def __init__(self, key='loss', reduction='none'):
         super().__init__()
         self.key = key

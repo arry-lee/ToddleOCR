@@ -25,7 +25,7 @@ zeros_ = Constant(value=0.)
 ones_ = Constant(value=1.)
 
 
-class S2VAdaptor(nn.Layer):
+class S2VAdaptor(nn.Module):
     """ Semantic to Visual adaptation module"""
 
     def __init__(self, in_channels=512):
@@ -67,7 +67,7 @@ class S2VAdaptor(nn.Layer):
         return channel_output
 
 
-class V2SAdaptor(nn.Layer):
+class V2SAdaptor(nn.Module):
     """ Visual to Semantic adaptation module"""
 
     def __init__(self, in_channels=512, return_mask=False):
@@ -99,7 +99,7 @@ class V2SAdaptor(nn.Layer):
         return channel_output
 
 
-class RFAdaptor(nn.Layer):
+class RFAdaptor(nn.Module):
     def __init__(self, in_channels=512, use_v2s=True, use_s2v=True, **kwargs):
         super(RFAdaptor, self).__init__()
         if use_v2s is True:

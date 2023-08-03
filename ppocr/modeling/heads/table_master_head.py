@@ -23,7 +23,7 @@ from torch import nn
 from torch.nn import functional as F
 
 
-class TableMasterHead(nn.Layer):
+class TableMasterHead(nn.Module):
     """
     Split to two transformer header at the last layer.
     Cls_layer is used to structure token classification.
@@ -150,7 +150,7 @@ class TableMasterHead(nn.Layer):
         return self.forward_test(out_enc)
 
 
-class DecoderLayer(nn.Layer):
+class DecoderLayer(nn.Module):
     """
     Decoder is made of self attention, srouce attention and feed forward.
     """
@@ -169,7 +169,7 @@ class DecoderLayer(nn.Layer):
         return self.sublayer[2](x, self.feed_forward)
 
 
-class MultiHeadAttention(nn.Layer):
+class MultiHeadAttention(nn.Module):
     def __init__(self, headers, d_model, dropout):
         super(MultiHeadAttention, self).__init__()
 
@@ -194,7 +194,7 @@ class MultiHeadAttention(nn.Layer):
         return self.linears[-1](x)
 
 
-class FeedForward(nn.Layer):
+class FeedForward(nn.Module):
     def __init__(self, d_model, d_ff, dropout):
         super(FeedForward, self).__init__()
         self.w_1 = nn.Linear(d_model, d_ff)
@@ -205,7 +205,7 @@ class FeedForward(nn.Layer):
         return self.w_2(self.dropout(F.relu(self.w_1(x))))
 
 
-class SubLayerConnection(nn.Layer):
+class SubLayerConnection(nn.Module):
     """
     A residual connection followed by a layer norm.
     Note for code simplicity the norm is first as opposed to last.
@@ -248,7 +248,7 @@ def clones(module, N):
     return nn.LayerList([copy.deepcopy(module) for _ in range(N)])
 
 
-class Embeddings(nn.Layer):
+class Embeddings(nn.Module):
     def __init__(self, d_model, vocab):
         super(Embeddings, self).__init__()
         self.lut = nn.Embedding(vocab, d_model)
@@ -259,7 +259,7 @@ class Embeddings(nn.Layer):
         return self.lut(x) * math.sqrt(self.d_model)
 
 
-class PositionalEncoding(nn.Layer):
+class PositionalEncoding(nn.Module):
     """ Implement the PE function. """
 
     def __init__(self, d_model, dropout=0., max_len=5000):

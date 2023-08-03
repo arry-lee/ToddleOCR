@@ -21,7 +21,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class BasicBlock(nn.Layer):
+class BasicBlock(nn.Module):
     expansion = 1
 
     def __init__(self,
@@ -88,7 +88,7 @@ def get_gcb_config(gcb_config, layer):
         return gcb_config
 
 
-class TableResNetExtra(nn.Layer):
+class TableResNetExtra(nn.Module):
     def __init__(self, layers, in_channels=3, gcb_config=None):
         assert len(layers) >= 4
 
@@ -233,7 +233,7 @@ class TableResNetExtra(nn.Layer):
         return f
 
 
-class MultiAspectGCAttention(nn.Layer):
+class MultiAspectGCAttention(nn.Module):
     def __init__(self,
                  inplanes,
                  ratio,

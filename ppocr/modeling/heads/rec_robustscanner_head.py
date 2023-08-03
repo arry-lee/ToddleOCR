@@ -28,7 +28,7 @@ from torch import ParamAttr
 import torch.nn as nn
 import torch.nn.functional as F
 
-class BaseDecoder(nn.Layer):
+class BaseDecoder(nn.Module):
     def __init__(self, **kwargs):
         super().__init__()
 
@@ -51,7 +51,7 @@ class BaseDecoder(nn.Layer):
             return self.forward_train(feat, out_enc, label, valid_ratios, word_positions)
         return self.forward_test(feat, out_enc, valid_ratios, word_positions)
 
-class ChannelReductionEncoder(nn.Layer):
+class ChannelReductionEncoder(nn.Module):
     """Change the channel number with a one by one convoluational layer.
 
     Args:
@@ -84,7 +84,7 @@ def masked_fill(x, mask, value):
     y = torch.full(x.shape, value, x.dtype)
     return torch.where(mask, y, x)
 
-class DotProductAttentionLayer(nn.Layer):
+class DotProductAttentionLayer(nn.Module):
 
     def __init__(self, dim_model=None):
         super().__init__()
@@ -304,7 +304,7 @@ class SequenceAttentionDecoder(BaseDecoder):
         return out
 
 
-class PositionAwareLayer(nn.Layer):
+class PositionAwareLayer(nn.Module):
 
     def __init__(self, dim_model, rnn_layers=2):
         super().__init__()
@@ -483,7 +483,7 @@ class PositionAttentionDecoder(BaseDecoder):
 
         return self.prediction(attn_out)
 
-class RobustScannerFusionLayer(nn.Layer):
+class RobustScannerFusionLayer(nn.Module):
 
     def __init__(self, dim_model, dim=-1):
         super(RobustScannerFusionLayer, self).__init__()
@@ -648,7 +648,7 @@ class RobustScannerDecoder(BaseDecoder):
 
         return outputs
 
-class RobustScannerHead(nn.Layer):
+class RobustScannerHead(nn.Module):
     def __init__(self,
                  out_channels, # 90 + unknown + start + padding
                  in_channels,

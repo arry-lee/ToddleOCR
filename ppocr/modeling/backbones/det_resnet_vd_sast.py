@@ -24,7 +24,7 @@ import torch.nn.functional as F
 __all__ = ["ResNet_SAST"]
 
 
-class ConvBNLayer(nn.Layer):
+class ConvBNLayer(nn.Module):
     def __init__(
             self,
             in_channels,
@@ -69,7 +69,7 @@ class ConvBNLayer(nn.Layer):
         return y
 
 
-class BottleneckBlock(nn.Layer):
+class BottleneckBlock(nn.Module):
     def __init__(self,
                  in_channels,
                  out_channels,
@@ -124,7 +124,7 @@ class BottleneckBlock(nn.Layer):
         return y
 
 
-class BasicBlock(nn.Layer):
+class BasicBlock(nn.Module):
     def __init__(self,
                  in_channels,
                  out_channels,
@@ -172,7 +172,7 @@ class BasicBlock(nn.Layer):
         return y
 
 
-class ResNet_SAST(nn.Layer):
+class ResNet_SAST(nn.Module):
     def __init__(self, in_channels=3, layers=50, **kwargs):
         super(ResNet_SAST, self).__init__()
 

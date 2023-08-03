@@ -22,7 +22,7 @@ import torch.nn.functional as F
 from torch import ParamAttr
 
 
-class ConvBNLayer(nn.Layer):
+class ConvBNLayer(nn.Module):
     def __init__(self,
                  in_channels,
                  out_channels,
@@ -60,7 +60,7 @@ class ConvBNLayer(nn.Layer):
         return x
 
 
-class DeConvBNLayer(nn.Layer):
+class DeConvBNLayer(nn.Module):
     def __init__(self,
                  in_channels,
                  out_channels,
@@ -97,7 +97,7 @@ class DeConvBNLayer(nn.Layer):
         return x
 
 
-class EASTFPN(nn.Layer):
+class EASTFPN(nn.Module):
     def __init__(self, in_channels, model_name, **kwargs):
         super(EASTFPN, self).__init__()
         self.model_name = model_name

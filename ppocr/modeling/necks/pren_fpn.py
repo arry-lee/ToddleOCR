@@ -25,7 +25,7 @@ from torch import nn
 import torch.nn.functional as F
 
 
-class PoolAggregate(nn.Layer):
+class PoolAggregate(nn.Module):
     def __init__(self, n_r, d_in, d_middle=None, d_out=None):
         super(PoolAggregate, self).__init__()
         if not d_middle:
@@ -67,7 +67,7 @@ class PoolAggregate(nn.Layer):
         return out
 
 
-class WeightAggregate(nn.Layer):
+class WeightAggregate(nn.Module):
     def __init__(self, n_r, d_in, d_middle=None, d_out=None):
         super(WeightAggregate, self).__init__()
         if not d_middle:
@@ -105,7 +105,7 @@ class WeightAggregate(nn.Layer):
         return r
 
 
-class GCN(nn.Layer):
+class GCN(nn.Module):
     def __init__(self, d_in, n_in, d_out=None, n_out=None, dropout=0.1):
         super(GCN, self).__init__()
         if not d_out:
@@ -124,7 +124,7 @@ class GCN(nn.Layer):
         return self.act(x)
 
 
-class PRENFPN(nn.Layer):
+class PRENFPN(nn.Module):
     def __init__(self, in_channels, n_r, d_model, max_len, dropout):
         super(PRENFPN, self).__init__()
         assert len(in_channels) == 3, "in_channels' length must be 3."

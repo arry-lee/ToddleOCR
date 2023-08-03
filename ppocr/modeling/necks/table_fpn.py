@@ -22,7 +22,7 @@ import torch.nn.functional as F
 from torch import ParamAttr
 
 
-class TableFPN(nn.Layer):
+class TableFPN(nn.Module):
     def __init__(self, in_channels, out_channels, **kwargs):
         super(TableFPN, self).__init__()
         self.out_channels = 512

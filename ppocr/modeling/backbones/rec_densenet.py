@@ -27,7 +27,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class Bottleneck(nn.Layer):
+class Bottleneck(nn.Module):
     def __init__(self, nChannels, growthRate, use_dropout):
         super(Bottleneck, self).__init__()
         interChannels = 4 * growthRate
@@ -53,7 +53,7 @@ class Bottleneck(nn.Layer):
         return out
 
 
-class SingleLayer(nn.Layer):
+class SingleLayer(nn.Module):
     def __init__(self, nChannels, growthRate, use_dropout):
         super(SingleLayer, self).__init__()
         self.bn1 = nn.BatchNorm2D(nChannels)
@@ -72,7 +72,7 @@ class SingleLayer(nn.Layer):
         return out
 
 
-class Transition(nn.Layer):
+class Transition(nn.Module):
     def __init__(self, nChannels, out_channels, use_dropout):
         super(Transition, self).__init__()
         self.bn1 = nn.BatchNorm2D(out_channels)
@@ -89,7 +89,7 @@ class Transition(nn.Layer):
         return out
 
 
-class DenseNet(nn.Layer):
+class DenseNet(nn.Module):
     def __init__(self, growthRate, reduction, bottleneck, use_dropout,
                  input_channel, **kwargs):
         super(DenseNet, self).__init__()

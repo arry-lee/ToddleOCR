@@ -24,7 +24,7 @@ import torch.nn.functional as F
 from torch import ParamAttr
 
 
-class SDMGRHead(nn.Layer):
+class SDMGRHead(nn.Module):
     def __init__(self,
                  in_channels,
                  num_chars=92,
@@ -101,7 +101,7 @@ class SDMGRHead(nn.Layer):
         return node_cls, edge_cls
 
 
-class GNNLayer(nn.Layer):
+class GNNLayer(nn.Module):
     def __init__(self, node_dim=256, edge_dim=256):
         super().__init__()
         self.in_fc = nn.Linear(node_dim * 2 + edge_dim, node_dim)
@@ -136,7 +136,7 @@ class GNNLayer(nn.Layer):
         return [nodes, cat_nodes]
 
 
-class Block(nn.Layer):
+class Block(nn.Module):
     def __init__(self,
                  input_dims,
                  output_dim,

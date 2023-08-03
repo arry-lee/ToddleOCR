@@ -23,7 +23,7 @@ from .rec_ctc_loss import CTCLoss
 from .rec_sar_loss import SARLoss
 
 
-class MultiLoss(nn.Layer):
+class MultiLoss(nn.Module):
     def __init__(self, **kwargs):
         super().__init__()
         self.loss_funcs = {}

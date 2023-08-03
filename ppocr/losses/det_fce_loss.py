@@ -29,7 +29,7 @@ def multi_apply(func, *args, **kwargs):
     return tuple(map(list, zip(*map_results)))
 
 
-class FCELoss(nn.Layer):
+class FCELoss(nn.Module):
     """The class for implementing FCENet loss
     FCENet(CVPR2021): Fourier Contour Embedding for Arbitrary-shaped
         Text Detection

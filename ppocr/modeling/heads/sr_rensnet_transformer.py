@@ -63,7 +63,7 @@ def attention(query, key, value, mask=None, dropout=None, attention_map=None):
     return torch.matmul(p_attn, value), p_attn
 
 
-class MultiHeadedAttention(nn.Layer):
+class MultiHeadedAttention(nn.Module):
     def __init__(self, h, d_model, dropout=0.1, compress_attention=False):
         super(MultiHeadedAttention, self).__init__()
         assert d_model % h == 0
@@ -99,7 +99,7 @@ class MultiHeadedAttention(nn.Layer):
         return self.linears[-1](x), attention_map
 
 
-class ResNet(nn.Layer):
+class ResNet(nn.Module):
     def __init__(self, num_in, block, layers):
         super(ResNet, self).__init__()
 
@@ -186,7 +186,7 @@ class ResNet(nn.Layer):
         return x
 
 
-class Bottleneck(nn.Layer):
+class Bottleneck(nn.Module):
     def __init__(self, input_dim):
         super(Bottleneck, self).__init__()
         self.conv1 = nn.Conv2D(input_dim, input_dim, 1)
@@ -212,7 +212,7 @@ class Bottleneck(nn.Layer):
         return out
 
 
-class PositionalEncoding(nn.Layer):
+class PositionalEncoding(nn.Module):
     "Implement the PE function."
 
     def __init__(self, dropout, dim, max_len=5000):
@@ -234,7 +234,7 @@ class PositionalEncoding(nn.Layer):
         return self.dropout(x)
 
 
-class PositionwiseFeedForward(nn.Layer):
+class PositionwiseFeedForward(nn.Module):
     "Implements FFN equation."
 
     def __init__(self, d_model, d_ff, dropout=0.1):
@@ -247,7 +247,7 @@ class PositionwiseFeedForward(nn.Layer):
         return self.w_2(self.dropout(F.relu(self.w_1(x))))
 
 
-class Generator(nn.Layer):
+class Generator(nn.Module):
     "Define standard linear + softmax generation step."
 
     def __init__(self, d_model, vocab):
@@ -260,7 +260,7 @@ class Generator(nn.Layer):
         return out
 
 
-class Embeddings(nn.Layer):
+class Embeddings(nn.Module):
     def __init__(self, d_model, vocab):
         super(Embeddings, self).__init__()
         self.lut = nn.Embedding(vocab, d_model)
@@ -271,7 +271,7 @@ class Embeddings(nn.Layer):
         return embed
 
 
-class LayerNorm(nn.Layer):
+class LayerNorm(nn.Module):
     "Construct a layernorm module (See citation for details)."
 
     def __init__(self, features, eps=1e-6):
@@ -290,7 +290,7 @@ class LayerNorm(nn.Layer):
         return self.a_2 * (x - mean) / (std + self.eps) + self.b_2
 
 
-class Decoder(nn.Layer):
+class Decoder(nn.Module):
     def __init__(self):
         super(Decoder, self).__init__()
 
@@ -325,7 +325,7 @@ class Decoder(nn.Layer):
         return result, attention_map
 
 
-class BasicBlock(nn.Layer):
+class BasicBlock(nn.Module):
     def __init__(self, inplanes, planes, downsample):
         super(BasicBlock, self).__init__()
         self.conv1 = nn.Conv2D(
@@ -356,7 +356,7 @@ class BasicBlock(nn.Layer):
         return out
 
 
-class Encoder(nn.Layer):
+class Encoder(nn.Module):
     def __init__(self):
         super(Encoder, self).__init__()
         self.cnn = ResNet(num_in=1, block=BasicBlock, layers=[1, 2, 5, 3])
@@ -366,7 +366,7 @@ class Encoder(nn.Layer):
         return conv_result
 
 
-class Transformer(nn.Layer):
+class Transformer(nn.Module):
     def __init__(self, in_channels=1, alphabet='0123456789'):
         super(Transformer, self).__init__()
         self.alphabet = alphabet

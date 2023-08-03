@@ -25,7 +25,7 @@ import torch.nn as nn
 import torch
 
 
-class StrokeFocusLoss(nn.Layer):
+class StrokeFocusLoss(nn.Module):
     def __init__(self, character_dict_path=None, **kwargs):
         super(StrokeFocusLoss, self).__init__(character_dict_path)
         self.mse_loss = nn.MSELoss()

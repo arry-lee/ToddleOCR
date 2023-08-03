@@ -28,7 +28,7 @@ from torch.nn.initializer import Normal, Constant, XavierUniform
 __all__ = ["ResNet_vd", "ConvBNLayer", "DeformableConvV2"]
 
 
-class DeformableConvV2(nn.Layer):
+class DeformableConvV2(nn.Module):
     def __init__(self,
                  in_channels,
                  out_channels,
@@ -97,7 +97,7 @@ class DeformableConvV2(nn.Layer):
         return y
 
 
-class ConvBNLayer(nn.Layer):
+class ConvBNLayer(nn.Module):
     def __init__(self,
                  in_channels,
                  out_channels,
@@ -141,7 +141,7 @@ class ConvBNLayer(nn.Layer):
         return y
 
 
-class BottleneckBlock(nn.Layer):
+class BottleneckBlock(nn.Module):
     def __init__(
             self,
             in_channels,
@@ -195,7 +195,7 @@ class BottleneckBlock(nn.Layer):
         return y
 
 
-class BasicBlock(nn.Layer):
+class BasicBlock(nn.Module):
     def __init__(
             self,
             in_channels,
@@ -240,7 +240,7 @@ class BasicBlock(nn.Layer):
         return y
 
 
-class ResNet_vd(nn.Layer):
+class ResNet_vd(nn.Module):
     def __init__(self,
                  in_channels=3,
                  layers=50,

@@ -28,7 +28,7 @@ ones_ = Constant(value=1.)
 zeros_ = Constant(value=0.)
 
 
-class CT_Head(nn.Layer):
+class CT_Head(nn.Module):
     def __init__(self,
                  in_channels,
                  hidden_dim,

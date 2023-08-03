@@ -20,7 +20,7 @@ import torch
 from torch import nn
 
 
-class CosineEmbeddingLoss(nn.Layer):
+class CosineEmbeddingLoss(nn.Module):
     def __init__(self, margin=0.):
         super(CosineEmbeddingLoss, self).__init__()
         self.margin = margin
@@ -41,7 +41,7 @@ class CosineEmbeddingLoss(nn.Layer):
         return out
 
 
-class AsterLoss(nn.Layer):
+class AsterLoss(nn.Module):
     def __init__(self,
                  weight=None,
                  size_average=True,

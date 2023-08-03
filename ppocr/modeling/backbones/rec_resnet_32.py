@@ -26,7 +26,7 @@ __all__ = ["ResNet32"]
 
 conv_weight_attr = nn.initializer.KaimingNormal()
 
-class ResNet32(nn.Layer):
+class ResNet32(nn.Module):
     """
     Feature Extractor is proposed in  FAN Ref [1]
 
@@ -55,7 +55,7 @@ class ResNet32(nn.Layer):
         """
         return self.ConvNet(inputs)
 
-class BasicBlock(nn.Layer):
+class BasicBlock(nn.Module):
     """Res-net Basic Block"""
     expansion = 1
 
@@ -114,7 +114,7 @@ class BasicBlock(nn.Layer):
 
         return out
 
-class ResNet(nn.Layer):
+class ResNet(nn.Module):
     """Res-Net network structure"""
     def __init__(self, input_channel,
                  output_channel, block, layers):

@@ -40,7 +40,7 @@ def drop_path(x, drop_prob=0., training=False):
     return output
 
 
-class ConvBNLayer(nn.Layer):
+class ConvBNLayer(nn.Module):
     def __init__(self,
                  in_channels,
                  out_channels,
@@ -71,7 +71,7 @@ class ConvBNLayer(nn.Layer):
         return out
 
 
-class DropPath(nn.Layer):
+class DropPath(nn.Module):
     """Drop paths (Stochastic Depth) per sample  (when applied in main path of residual blocks).
     """
 
@@ -83,7 +83,7 @@ class DropPath(nn.Layer):
         return drop_path(x, self.drop_prob, self.training)
 
 
-class Identity(nn.Layer):
+class Identity(nn.Module):
     def __init__(self):
         super(Identity, self).__init__()
 
@@ -91,7 +91,7 @@ class Identity(nn.Layer):
         return input
 
 
-class Mlp(nn.Layer):
+class Mlp(nn.Module):
     def __init__(self,
                  in_features,
                  hidden_features=None,
@@ -115,7 +115,7 @@ class Mlp(nn.Layer):
         return x
 
 
-class ConvMixer(nn.Layer):
+class ConvMixer(nn.Module):
     def __init__(
             self,
             dim,
@@ -142,7 +142,7 @@ class ConvMixer(nn.Layer):
         return x
 
 
-class Attention(nn.Layer):
+class Attention(nn.Module):
     def __init__(self,
                  dim,
                  num_heads=8,
@@ -204,7 +204,7 @@ class Attention(nn.Layer):
         return x
 
 
-class Block(nn.Layer):
+class Block(nn.Module):
     def __init__(self,
                  dim,
                  num_heads,
@@ -266,7 +266,7 @@ class Block(nn.Layer):
         return x
 
 
-class PatchEmbed(nn.Layer):
+class PatchEmbed(nn.Module):
     """ Image to Patch Embedding
     """
 
@@ -343,7 +343,7 @@ class PatchEmbed(nn.Layer):
         return x
 
 
-class SubSample(nn.Layer):
+class SubSample(nn.Module):
     def __init__(self,
                  in_channels,
                  out_channels,
@@ -390,7 +390,7 @@ class SubSample(nn.Layer):
         return out
 
 
-class SVTRNet(nn.Layer):
+class SVTRNet(nn.Module):
     def __init__(
             self,
             img_size=[32, 100],

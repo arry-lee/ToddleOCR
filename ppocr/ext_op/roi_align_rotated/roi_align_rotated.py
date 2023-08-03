@@ -29,7 +29,7 @@ custom_ops = load(
 roi_align_rotated = custom_ops.roi_align_rotated
 
 
-class RoIAlignRotated(nn.Layer):
+class RoIAlignRotated(nn.Module):
     """RoI align pooling layer for rotated proposals.
 
     """

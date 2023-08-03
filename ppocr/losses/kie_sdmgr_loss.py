@@ -22,7 +22,7 @@ from torch import nn
 import torch
 
 
-class SDMGRLoss(nn.Layer):
+class SDMGRLoss(nn.Module):
     def __init__(self, node_weight=1.0, edge_weight=1.0, ignore=0):
         super().__init__()
         self.loss_node = nn.CrossEntropyLoss(ignore_index=ignore)

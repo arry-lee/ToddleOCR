@@ -21,7 +21,7 @@ import torch.nn as nn
 import numpy as np
 
 
-class CANLoss(nn.Layer):
+class CANLoss(nn.Module):
     '''
     CANLoss is consist of two part:
         word_average_loss: average accuracy of the symbol

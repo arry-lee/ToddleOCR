@@ -32,7 +32,7 @@ def get_para_bias_attr(l2_decay, k):
     return [weight_attr, bias_attr]
 
 
-class CTCHead(nn.Layer):
+class CTCHead(nn.Module):
     def __init__(self,
                  in_channels,
                  out_channels,

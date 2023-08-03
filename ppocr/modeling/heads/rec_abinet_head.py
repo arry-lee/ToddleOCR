@@ -24,7 +24,7 @@ from torch.nn import LayerList
 from ppocr.modeling.heads.rec_nrtr_head import TransformerBlock, PositionalEncoding
 
 
-class BCNLanguage(nn.Layer):
+class BCNLanguage(nn.Module):
     def __init__(self,
                  d_model=512,
                  nhead=8,
@@ -104,7 +104,7 @@ def decoder_layer(in_c,
         nn.ReLU())
 
 
-class PositionAttention(nn.Layer):
+class PositionAttention(nn.Module):
     def __init__(self,
                  max_length,
                  in_channels=512,
@@ -171,7 +171,7 @@ class PositionAttention(nn.Layer):
         return attn_vecs, attn_scores.reshape([0, self.max_length, H, W])
 
 
-class ABINetHead(nn.Layer):
+class ABINetHead(nn.Module):
     def __init__(self,
                  in_channels,
                  out_channels,

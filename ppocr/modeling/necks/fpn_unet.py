@@ -21,7 +21,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class UpBlock(nn.Layer):
+class UpBlock(nn.Module):
     def __init__(self, in_channels, out_channels):
         super().__init__()
 
@@ -42,7 +42,7 @@ class UpBlock(nn.Layer):
         return x
 
 
-class FPN_UNet(nn.Layer):
+class FPN_UNet(nn.Module):
     def __init__(self, in_channels, out_channels):
         super().__init__()
 

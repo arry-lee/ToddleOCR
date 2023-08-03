@@ -22,7 +22,7 @@ import torch.nn.functional as F
 from torch import ParamAttr
 
 
-class ConvBNLayer(nn.Layer):
+class ConvBNLayer(nn.Module):
     def __init__(self,
                  in_channels,
                  out_channels,
@@ -59,7 +59,7 @@ class ConvBNLayer(nn.Layer):
         return x
 
 
-class DeConvBNLayer(nn.Layer):
+class DeConvBNLayer(nn.Module):
     def __init__(self,
                  in_channels,
                  out_channels,
@@ -95,7 +95,7 @@ class DeConvBNLayer(nn.Layer):
         return x
 
 
-class FPN_Up_Fusion(nn.Layer):
+class FPN_Up_Fusion(nn.Module):
     def __init__(self, in_channels):
         super(FPN_Up_Fusion, self).__init__()
         in_channels = in_channels[::-1]
@@ -150,7 +150,7 @@ class FPN_Up_Fusion(nn.Layer):
         return g4
 
 
-class FPN_Down_Fusion(nn.Layer):
+class FPN_Down_Fusion(nn.Module):
     def __init__(self, in_channels):
         super(FPN_Down_Fusion, self).__init__()
         out_channels = [32, 64, 128]
@@ -186,7 +186,7 @@ class FPN_Down_Fusion(nn.Layer):
         return g2
 
 
-class Cross_Attention(nn.Layer):
+class Cross_Attention(nn.Module):
     def __init__(self, in_channels):
         super(Cross_Attention, self).__init__()
         self.theta_conv = ConvBNLayer(in_channels, in_channels, 1, 1, act='relu', name='f_theta')
@@ -256,7 +256,7 @@ class Cross_Attention(nn.Layer):
         return f_attn
 
 
-class SASTFPN(nn.Layer):
+class SASTFPN(nn.Module):
     def __init__(self, in_channels, with_cab=False, **kwargs):
         super(SASTFPN, self).__init__()
         self.in_channels = in_channels

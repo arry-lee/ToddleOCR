@@ -28,7 +28,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class SAREncoder(nn.Layer):
+class SAREncoder(nn.Module):
     """
     Args:
         enc_bi_rnn (bool): If True, use bidirectional RNN in encoder.
@@ -111,7 +111,7 @@ class SAREncoder(nn.Layer):
         return holistic_feat
 
 
-class BaseDecoder(nn.Layer):
+class BaseDecoder(nn.Module):
     def __init__(self, **kwargs):
         super().__init__()
 
@@ -348,7 +348,7 @@ class ParallelSARDecoder(BaseDecoder):
         return outputs
 
 
-class SARHead(nn.Layer):
+class SARHead(nn.Module):
     def __init__(self,
                  in_channels,
                  out_channels,

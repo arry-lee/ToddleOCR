@@ -21,7 +21,7 @@ from torch import nn
 from .det_basic_loss import DiceLoss
 
 
-class EASTLoss(nn.Layer):
+class EASTLoss(nn.Module):
     """
     """
 

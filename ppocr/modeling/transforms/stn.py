@@ -44,7 +44,7 @@ def conv3x3_block(in_channels, out_channels, stride=1):
     return block
 
 
-class STN(nn.Layer):
+class STN(nn.Module):
     def __init__(self, in_channels, num_ctrlpoints, activation='none'):
         super(STN, self).__init__()
         self.in_channels = in_channels
@@ -113,7 +113,7 @@ class STN(nn.Layer):
         return img_feat, x
 
 
-class STN_ON(nn.Layer):
+class STN_ON(nn.Module):
     def __init__(self, in_channels, tps_inputsize, tps_outputsize,
                  num_control_points, tps_margins, stn_activation):
         super(STN_ON, self).__init__()

@@ -23,7 +23,7 @@ from .det_basic_loss import DiceLoss
 from ppocr.utils.e2e_utils.extract_batchsize import pre_process
 
 
-class PGLoss(nn.Layer):
+class PGLoss(nn.Module):
     def __init__(self,
                  tcl_bs,
                  max_text_length,

@@ -26,7 +26,7 @@ __all__ = ['BaseModel']
 
 
 
-class BaseModel(nn.Layer):
+class BaseModel(nn.Module):
     def __init__(self, config):
         """
         the module for OCR.

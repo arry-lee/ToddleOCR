@@ -23,7 +23,7 @@ from .center_loss import CenterLoss
 from .rec_ctc_loss import CTCLoss
 
 
-class EnhancedCTCLoss(nn.Layer):
+class EnhancedCTCLoss(nn.Module):
     def __init__(self,
                  use_focal_loss=False,
                  use_ace_loss=False,

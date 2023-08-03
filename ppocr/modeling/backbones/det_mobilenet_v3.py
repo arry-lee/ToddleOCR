@@ -33,7 +33,7 @@ def make_divisible(v, divisor=8, min_value=None):
     return new_v
 
 
-class MobileNetV3(nn.Layer):
+class MobileNetV3(nn.Module):
     def __init__(self,
                  in_channels=3,
                  model_name='large',
@@ -151,7 +151,7 @@ class MobileNetV3(nn.Layer):
         return out_list
 
 
-class ConvBNLayer(nn.Layer):
+class ConvBNLayer(nn.Module):
     def __init__(self,
                  in_channels,
                  out_channels,
@@ -190,7 +190,7 @@ class ConvBNLayer(nn.Layer):
         return x
 
 
-class ResidualUnit(nn.Layer):
+class ResidualUnit(nn.Module):
     def __init__(self,
                  in_channels,
                  mid_channels,
@@ -242,7 +242,7 @@ class ResidualUnit(nn.Layer):
         return x
 
 
-class SEModule(nn.Layer):
+class SEModule(nn.Module):
     def __init__(self, in_channels, reduction=4):
         super(SEModule, self).__init__()
         self.avg_pool = nn.AdaptiveAvgPool2D(1)

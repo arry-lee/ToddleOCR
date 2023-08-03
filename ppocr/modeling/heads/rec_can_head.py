@@ -32,7 +32,7 @@ Counting Module
 '''
 
 
-class ChannelAtt(nn.Layer):
+class ChannelAtt(nn.Module):
     def __init__(self, channel, reduction):
         super(ChannelAtt, self).__init__()
         self.avg_pool = nn.AdaptiveAvgPool2D(1)
@@ -48,7 +48,7 @@ class ChannelAtt(nn.Layer):
         return x * y
 
 
-class CountingDecoder(nn.Layer):
+class CountingDecoder(nn.Module):
     def __init__(self, in_channel, out_channel, kernel_size):
         super(CountingDecoder, self).__init__()
         self.in_channel = in_channel
@@ -89,7 +89,7 @@ Attention Decoder
 '''
 
 
-class PositionEmbeddingSine(nn.Layer):
+class PositionEmbeddingSine(nn.Module):
     def __init__(self,
                  num_pos_feats=64,
                  temperature=10000,
@@ -145,7 +145,7 @@ class PositionEmbeddingSine(nn.Layer):
         return pos
 
 
-class AttDecoder(nn.Layer):
+class AttDecoder(nn.Module):
     def __init__(self, ratio, is_train, input_size, hidden_size,
                  encoder_out_channel, dropout, dropout_ratio, word_num,
                  counting_decoder_out_channel, attention):
@@ -250,7 +250,7 @@ Attention Module
 '''
 
 
-class Attention(nn.Layer):
+class Attention(nn.Module):
     def __init__(self, hidden_size, attention_dim):
         super(Attention, self).__init__()
         self.hidden = hidden_size
@@ -290,7 +290,7 @@ class Attention(nn.Layer):
         return context_vector, alpha, alpha_sum
 
 
-class CANHead(nn.Layer):
+class CANHead(nn.Module):
     def __init__(self, in_channel, out_channel, ratio, attdecoder, **kwargs):
         super(CANHead, self).__init__()
 

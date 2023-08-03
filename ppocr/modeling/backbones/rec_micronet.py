@@ -79,7 +79,7 @@ def get_micronet_config(mode):
     return eval(mode + '_cfgs')
 
 
-class MaxGroupPooling(nn.Layer):
+class MaxGroupPooling(nn.Module):
     def __init__(self, channel_per_group=2):
         super(MaxGroupPooling, self).__init__()
         self.channel_per_group = channel_per_group
@@ -96,7 +96,7 @@ class MaxGroupPooling(nn.Layer):
         return out
 
 
-class SpatialSepConvSF(nn.Layer):
+class SpatialSepConvSF(nn.Module):
     def __init__(self, inp, oups, kernel_size, stride):
         super(SpatialSepConvSF, self).__init__()
 
@@ -122,7 +122,7 @@ class SpatialSepConvSF(nn.Layer):
         return out
 
 
-class ChannelShuffle(nn.Layer):
+class ChannelShuffle(nn.Module):
     def __init__(self, groups):
         super(ChannelShuffle, self).__init__()
         self.groups = groups
@@ -141,7 +141,7 @@ class ChannelShuffle(nn.Layer):
         return out
 
 
-class StemLayer(nn.Layer):
+class StemLayer(nn.Module):
     def __init__(self, inp, oup, stride, groups=(4, 4)):
         super(StemLayer, self).__init__()
 
@@ -155,7 +155,7 @@ class StemLayer(nn.Layer):
         return out
 
 
-class DepthSpatialSepConv(nn.Layer):
+class DepthSpatialSepConv(nn.Module):
     def __init__(self, inp, expand, kernel_size, stride):
         super(DepthSpatialSepConv, self).__init__()
 
@@ -185,7 +185,7 @@ class DepthSpatialSepConv(nn.Layer):
         return x
 
 
-class GroupConv(nn.Layer):
+class GroupConv(nn.Module):
     def __init__(self, inp, oup, groups=2):
         super(GroupConv, self).__init__()
         self.inp = inp
@@ -201,7 +201,7 @@ class GroupConv(nn.Layer):
         return x
 
 
-class DepthConv(nn.Layer):
+class DepthConv(nn.Module):
     def __init__(self, inp, oup, kernel_size, stride):
         super(DepthConv, self).__init__()
         self.conv = nn.Sequential(
@@ -220,7 +220,7 @@ class DepthConv(nn.Layer):
         return out
 
 
-class DYShiftMax(nn.Layer):
+class DYShiftMax(nn.Module):
     def __init__(self,
                  inp,
                  oup,
@@ -308,7 +308,7 @@ class DYShiftMax(nn.Layer):
         return out
 
 
-class DYMicroBlock(nn.Layer):
+class DYMicroBlock(nn.Module):
     def __init__(self,
                  inp,
                  oup,
@@ -434,7 +434,7 @@ class DYMicroBlock(nn.Layer):
         return out
 
 
-class MicroNet(nn.Layer):
+class MicroNet(nn.Module):
     """
         the MicroNet backbone network for recognition module.
         Args:

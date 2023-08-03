@@ -24,7 +24,7 @@ import numpy as np
 __all__ = ["ResNetFPN"]
 
 
-class ResNetFPN(nn.Layer):
+class ResNetFPN(nn.Module):
     def __init__(self, in_channels=1, layers=50, **kwargs):
         super(ResNetFPN, self).__init__()
         supported_layers = {
@@ -174,7 +174,7 @@ class ResNetFPN(nn.Layer):
         return base
 
 
-class ConvBNLayer(nn.Layer):
+class ConvBNLayer(nn.Module):
     def __init__(self,
                  in_channels,
                  out_channels,
@@ -213,7 +213,7 @@ class ConvBNLayer(nn.Layer):
         return x
 
 
-class ShortCut(nn.Layer):
+class ShortCut(nn.Module):
     def __init__(self, in_channels, out_channels, stride, name, is_first=False):
         super(ShortCut, self).__init__()
         self.use_conv = True
@@ -234,7 +234,7 @@ class ShortCut(nn.Layer):
         return x
 
 
-class BottleneckBlock(nn.Layer):
+class BottleneckBlock(nn.Module):
     def __init__(self, in_channels, out_channels, stride, name):
         super(BottleneckBlock, self).__init__()
         self.conv0 = ConvBNLayer(
@@ -275,7 +275,7 @@ class BottleneckBlock(nn.Layer):
         return y
 
 
-class BasicBlock(nn.Layer):
+class BasicBlock(nn.Module):
     def __init__(self, in_channels, out_channels, stride, name, is_first):
         super(BasicBlock, self).__init__()
         self.conv0 = ConvBNLayer(

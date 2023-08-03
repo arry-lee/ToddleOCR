@@ -25,7 +25,7 @@ from torch import nn
 from .det_basic_loss import BalanceLoss, MaskL1Loss, DiceLoss
 
 
-class DBLoss(nn.Layer):
+class DBLoss(nn.Module):
     """
     Differentiable Binarization (DB) Loss Function
     args:

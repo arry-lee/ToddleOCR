@@ -133,7 +133,7 @@ class EffUtils:
         return int(math.ceil(multiplier * repeats))
 
 
-class MbConvBlock(nn.Layer):
+class MbConvBlock(nn.Module):
     def __init__(self, block_args):
         super(MbConvBlock, self).__init__()
         self._block_args = block_args
@@ -214,7 +214,7 @@ class MbConvBlock(nn.Layer):
         return x
 
 
-class EfficientNetb3_PREN(nn.Layer):
+class EfficientNetb3_PREN(nn.Module):
     def __init__(self, in_channels):
         super(EfficientNetb3_PREN, self).__init__()
         """

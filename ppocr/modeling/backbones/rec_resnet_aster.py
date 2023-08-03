@@ -55,7 +55,7 @@ def get_sinusoid_encoding(n_position, feat_dim, wave_length=10000):
     return angles
 
 
-class AsterBlock(nn.Layer):
+class AsterBlock(nn.Module):
     def __init__(self, inplanes, planes, stride=1, downsample=None):
         super(AsterBlock, self).__init__()
         self.conv1 = conv1x1(inplanes, planes, stride)
@@ -81,7 +81,7 @@ class AsterBlock(nn.Layer):
         return out
 
 
-class ResNet_ASTER(nn.Layer):
+class ResNet_ASTER(nn.Module):
     """For aster or crnn"""
 
     def __init__(self, with_lstm=True, n_group=1, in_channels=3):

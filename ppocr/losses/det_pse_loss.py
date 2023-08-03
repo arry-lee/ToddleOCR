@@ -23,7 +23,7 @@ import numpy as np
 from ppocr.utils.iou import iou
 
 
-class PSELoss(nn.Layer):
+class PSELoss(nn.Module):
     def __init__(self,
                  alpha,
                  ohem_ratio=3,

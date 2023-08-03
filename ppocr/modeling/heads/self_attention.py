@@ -26,7 +26,7 @@ import numpy as np
 gradient_clip = 10
 
 
-class WrapEncoderForFeature(nn.Layer):
+class WrapEncoderForFeature(nn.Module):
     def __init__(self,
                  src_vocab_size,
                  max_length,
@@ -64,7 +64,7 @@ class WrapEncoderForFeature(nn.Layer):
         return enc_output
 
 
-class WrapEncoder(nn.Layer):
+class WrapEncoder(nn.Module):
     """
     embedder + encoder
     """
@@ -105,7 +105,7 @@ class WrapEncoder(nn.Layer):
         return enc_output
 
 
-class Encoder(nn.Layer):
+class Encoder(nn.Module):
     """
     encoder
     """
@@ -145,7 +145,7 @@ class Encoder(nn.Layer):
         return enc_output
 
 
-class EncoderLayer(nn.Layer):
+class EncoderLayer(nn.Module):
     """
     EncoderLayer
     """
@@ -185,7 +185,7 @@ class EncoderLayer(nn.Layer):
         return ffn_output
 
 
-class MultiHeadAttention(nn.Layer):
+class MultiHeadAttention(nn.Module):
     """
     Multi-Head Attention
     """
@@ -269,7 +269,7 @@ class MultiHeadAttention(nn.Layer):
         return out
 
 
-class PrePostProcessLayer(nn.Layer):
+class PrePostProcessLayer(nn.Module):
     """
     PrePostProcessLayer
     """
@@ -305,7 +305,7 @@ class PrePostProcessLayer(nn.Layer):
         return x
 
 
-class PrepareEncoder(nn.Layer):
+class PrepareEncoder(nn.Module):
     def __init__(self,
                  src_vocab_size,
                  src_emb_dim,
@@ -337,7 +337,7 @@ class PrepareEncoder(nn.Layer):
         return out
 
 
-class PrepareDecoder(nn.Layer):
+class PrepareDecoder(nn.Module):
     def __init__(self,
                  src_vocab_size,
                  src_emb_dim,
@@ -382,7 +382,7 @@ class PrepareDecoder(nn.Layer):
         return out
 
 
-class FFN(nn.Layer):
+class FFN(nn.Module):
     """
     Feed-Forward Network
     """

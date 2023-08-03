@@ -20,7 +20,7 @@ import torch
 from torch import nn
 
 
-class TableMasterLoss(nn.Layer):
+class TableMasterLoss(nn.Module):
     def __init__(self, ignore_index=-1):
         super(TableMasterLoss, self).__init__()
         self.structure_loss = nn.CrossEntropyLoss(

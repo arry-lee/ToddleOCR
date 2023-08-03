@@ -23,7 +23,7 @@ from ppocr.modeling.backbones.rec_svtrnet import Mlp, zeros_, ones_
 from torch.nn.initializer import XavierNormal as xavier_normal_
 
 
-class Transformer(nn.Layer):
+class Transformer(nn.Module):
     """A transformer model. User is able to modify the attributes as needed. The architechture
     is based on the paper "Attention Is All You Need". Ashish Vaswani, Noam Shazeer,
     Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N Gomez, Lukasz Kaiser, and
@@ -342,7 +342,7 @@ class Transformer(nn.Layer):
         return mask.unsqueeze([0, 1])
 
 
-class MultiheadAttention(nn.Layer):
+class MultiheadAttention(nn.Module):
     """Allows the model to jointly attend to information
     from different representation subspaces.
     See reference: Attention Is All You Need
@@ -404,7 +404,7 @@ class MultiheadAttention(nn.Layer):
         return x
 
 
-class TransformerBlock(nn.Layer):
+class TransformerBlock(nn.Module):
     def __init__(self,
                  d_model,
                  nhead,
@@ -454,7 +454,7 @@ class TransformerBlock(nn.Layer):
         return tgt
 
 
-class PositionalEncoding(nn.Layer):
+class PositionalEncoding(nn.Module):
     """Inject some information about the relative or absolute position of the tokens
         in the sequence. The positional encodings have the same dimension as
         the embeddings, so that the two can be summed. Here, we use sine and cosine
@@ -501,7 +501,7 @@ class PositionalEncoding(nn.Layer):
         return self.dropout(x).transpose([1, 0, 2])
 
 
-class PositionalEncoding_2d(nn.Layer):
+class PositionalEncoding_2d(nn.Module):
     """Inject some information about the relative or absolute position of the tokens
         in the sequence. The positional encodings have the same dimension as
         the embeddings, so that the two can be summed. Here, we use sine and cosine
@@ -570,7 +570,7 @@ class PositionalEncoding_2d(nn.Layer):
         return self.dropout(x)
 
 
-class Embeddings(nn.Layer):
+class Embeddings(nn.Module):
     def __init__(self, d_model, vocab, padding_idx=None, scale_embedding=True):
         super(Embeddings, self).__init__()
         self.embedding = nn.Embedding(vocab, d_model, padding_idx=padding_idx)

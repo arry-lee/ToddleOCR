@@ -25,7 +25,7 @@ from torch import nn
 from .basic_loss import CELoss, DistanceLoss
 
 
-class RFLLoss(nn.Layer):
+class RFLLoss(nn.Module):
     def __init__(self, ignore_index=-100, **kwargs):
         super().__init__()
 

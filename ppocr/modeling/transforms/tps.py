@@ -27,7 +27,7 @@ from torch.nn import functional as F
 import numpy as np
 
 
-class ConvBNLayer(nn.Layer):
+class ConvBNLayer(nn.Module):
     def __init__(self,
                  in_channels,
                  out_channels,
@@ -61,7 +61,7 @@ class ConvBNLayer(nn.Layer):
         return x
 
 
-class LocalizationNetwork(nn.Layer):
+class LocalizationNetwork(nn.Module):
     def __init__(self, in_channels, num_fiducial, loc_lr, model_name):
         super(LocalizationNetwork, self).__init__()
         self.F = num_fiducial
@@ -156,7 +156,7 @@ class LocalizationNetwork(nn.Layer):
         return initial_bias
 
 
-class GridGenerator(nn.Layer):
+class GridGenerator(nn.Module):
     def __init__(self, in_channels, num_fiducial):
         super(GridGenerator, self).__init__()
         self.eps = 1e-6
@@ -289,7 +289,7 @@ class GridGenerator(nn.Layer):
         return batch_C_ex_part_tensor
 
 
-class TPS(nn.Layer):
+class TPS(nn.Module):
     def __init__(self, in_channels, num_fiducial, loc_lr, model_name):
         super(TPS, self).__init__()
         self.loc_net = LocalizationNetwork(in_channels, num_fiducial, loc_lr,

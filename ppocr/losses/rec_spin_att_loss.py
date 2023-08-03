@@ -24,7 +24,7 @@ from torch import nn
 https://github.com/hikopensource/DAVAR-Lab-OCR
 '''
 
-class SPINAttentionLoss(nn.Layer):
+class SPINAttentionLoss(nn.Module):
     def __init__(self, reduction='mean', ignore_index=-100, **kwargs):
         super(SPINAttentionLoss, self).__init__()
         self.loss_func = nn.CrossEntropyLoss(weight=None, reduction=reduction, ignore_index=ignore_index)

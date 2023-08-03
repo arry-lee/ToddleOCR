@@ -6,7 +6,7 @@ import torch
 from torch import nn
 
 
-class SARLoss(nn.Layer):
+class SARLoss(nn.Module):
     def __init__(self, **kwargs):
         super(SARLoss, self).__init__()
         ignore_index = kwargs.get('ignore_index', 92)  # 6626

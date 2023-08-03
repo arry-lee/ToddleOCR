@@ -52,7 +52,7 @@ def conv3x3(in_channel, out_channel, stride=1):
         bias_attr=False)
 
 
-class BasicBlock(nn.Layer):
+class BasicBlock(nn.Module):
     expansion = 1
 
     def __init__(self, in_channels, channels, stride=1, downsample=None):
@@ -83,7 +83,7 @@ class BasicBlock(nn.Layer):
         return out
 
 
-class ResNet45(nn.Layer):
+class ResNet45(nn.Module):
     def __init__(self,
                  in_channels=3,
                  block=BasicBlock,

@@ -41,7 +41,7 @@ pretrained_model_dict = {
 }
 
 
-class NLPBaseModel(nn.Layer):
+class NLPBaseModel(nn.Module):
     def __init__(self,
                  base_model_class,
                  model_class,

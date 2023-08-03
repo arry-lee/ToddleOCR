@@ -16,7 +16,7 @@ from torch import nn
 import torch
 
 
-class MTB(nn.Layer):
+class MTB(nn.Module):
     def __init__(self, cnn_num, in_channels):
         super(MTB, self).__init__()
         self.block = nn.Sequential()

@@ -26,7 +26,7 @@ zeros_ = Constant(value=0.)
 ones_ = Constant(value=1.)
 
 
-class CNTHead(nn.Layer):
+class CNTHead(nn.Module):
     def __init__(self,
                  embed_size=512,
                  encode_length=26,
@@ -54,7 +54,7 @@ class CNTHead(nn.Layer):
         return prediction_visual
 
 
-class RFLHead(nn.Layer):
+class RFLHead(nn.Module):
     def __init__(self,
                  in_channels=512,
                  hidden_size=256,

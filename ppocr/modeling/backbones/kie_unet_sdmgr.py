@@ -24,7 +24,7 @@ import cv2
 __all__ = ["Kie_backbone"]
 
 
-class Encoder(nn.Layer):
+class Encoder(nn.Module):
     def __init__(self, num_channels, num_filters):
         super(Encoder, self).__init__()
         self.conv1 = nn.Conv2D(
@@ -56,7 +56,7 @@ class Encoder(nn.Layer):
         return x, x_pooled
 
 
-class Decoder(nn.Layer):
+class Decoder(nn.Module):
     def __init__(self, num_channels, num_filters):
         super(Decoder, self).__init__()
 
@@ -100,7 +100,7 @@ class Decoder(nn.Layer):
         return x
 
 
-class UNet(nn.Layer):
+class UNet(nn.Module):
     def __init__(self):
         super(UNet, self).__init__()
         self.down1 = Encoder(num_channels=3, num_filters=16)
@@ -129,7 +129,7 @@ class UNet(nn.Layer):
         return x
 
 
-class Kie_backbone(nn.Layer):
+class Kie_backbone(nn.Module):
     def __init__(self, in_channels, **kwargs):
         super(Kie_backbone, self).__init__()
         self.out_channels = 16

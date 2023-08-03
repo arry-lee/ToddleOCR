@@ -30,7 +30,7 @@ def multi_apply(func, *args, **kwargs):
     return tuple(map(list, zip(*map_results)))
 
 
-class FCEHead(nn.Layer):
+class FCEHead(nn.Module):
     """The class for implementing FCENet head.
     FCENet(CVPR2021): Fourier Contour Embedding for Arbitrary-shaped Text
     Detection.

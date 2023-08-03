@@ -58,7 +58,7 @@ def positionalencoding2d(d_model, height, width):
     return pe
 
 
-class FeatureEnhancer(nn.Layer):
+class FeatureEnhancer(nn.Module):
 
     def __init__(self):
         super(FeatureEnhancer, self).__init__()
@@ -106,7 +106,7 @@ def str_filt(str_, voc_type):
     return str_
 
 
-class TBSRN(nn.Layer):
+class TBSRN(nn.Module):
     def __init__(self,
                  in_channels=3,
                  scale_factor=2,
@@ -233,7 +233,7 @@ class TBSRN(nn.Layer):
         return output
 
 
-class RecurrentResidualBlock(nn.Layer):
+class RecurrentResidualBlock(nn.Module):
     def __init__(self, channels):
         super(RecurrentResidualBlock, self).__init__()
         self.conv1 = nn.Conv2D(channels, channels, kernel_size=3, padding=1)

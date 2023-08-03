@@ -22,7 +22,7 @@ import torch.nn.functional as F
 from torch import ParamAttr
 
 
-class ConvBNLayer(nn.Layer):
+class ConvBNLayer(nn.Module):
     def __init__(self,
                  in_channels,
                  out_channels,
@@ -65,7 +65,7 @@ class ConvBNLayer(nn.Layer):
         return y
 
 
-class DeConvBNLayer(nn.Layer):
+class DeConvBNLayer(nn.Module):
     def __init__(self,
                  in_channels,
                  out_channels,
@@ -104,7 +104,7 @@ class DeConvBNLayer(nn.Layer):
         return x
 
 
-class PGFPN(nn.Layer):
+class PGFPN(nn.Module):
     def __init__(self, in_channels, **kwargs):
         super(PGFPN, self).__init__()
         num_inputs = [2048, 2048, 1024, 512, 256]

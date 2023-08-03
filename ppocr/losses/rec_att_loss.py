@@ -20,7 +20,7 @@ import torch
 from torch import nn
 
 
-class AttentionLoss(nn.Layer):
+class AttentionLoss(nn.Module):
     def __init__(self, **kwargs):
         super(AttentionLoss, self).__init__()
         self.loss_func = nn.CrossEntropyLoss(weight=None, reduction='none')

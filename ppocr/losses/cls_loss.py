@@ -19,7 +19,7 @@ from __future__ import print_function
 from torch import nn
 
 
-class ClsLoss(nn.Layer):
+class ClsLoss(nn.Module):
     def __init__(self, **kwargs):
         super(ClsLoss, self).__init__()
         self.loss_func = nn.CrossEntropyLoss(reduction='mean')

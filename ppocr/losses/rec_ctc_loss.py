@@ -20,7 +20,7 @@ import torch
 from torch import nn
 
 
-class CTCLoss(nn.Layer):
+class CTCLoss(nn.Module):
     def __init__(self, use_focal_loss=False, **kwargs):
         super(CTCLoss, self).__init__()
         self.loss_func = nn.CTCLoss(blank=0, reduction='none')

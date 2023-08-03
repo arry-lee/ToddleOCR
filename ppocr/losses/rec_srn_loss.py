@@ -20,7 +20,7 @@ import torch
 from torch import nn
 
 
-class SRNLoss(nn.Layer):
+class SRNLoss(nn.Module):
     def __init__(self, **kwargs):
         super(SRNLoss, self).__init__()
         self.loss_func = torch.nn.loss.CrossEntropyLoss(reduction="sum")

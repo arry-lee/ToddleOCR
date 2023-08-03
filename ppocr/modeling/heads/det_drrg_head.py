@@ -31,7 +31,7 @@ from .local_graph import LocalGraphs
 from .proposal_local_graph import ProposalLocalGraphs
 
 
-class DRRGHead(nn.Layer):
+class DRRGHead(nn.Module):
     def __init__(self,
                  in_channels,
                  k_at_hops=(8, 4),

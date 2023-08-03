@@ -30,7 +30,7 @@ def get_bias_attr(k):
     return bias_attr
 
 
-class Head(nn.Layer):
+class Head(nn.Module):
     def __init__(self, in_channels, kernel_list=[3, 2, 2], **kwargs):
         super(Head, self).__init__()
 
@@ -82,7 +82,7 @@ class Head(nn.Layer):
         return x
 
 
-class DBHead(nn.Layer):
+class DBHead(nn.Module):
     """
     Differentiable Binarization (DB) for text detection:
         see https://arxiv.org/abs/1911.08947

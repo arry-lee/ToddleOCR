@@ -21,7 +21,7 @@ from utils.load_params import load_dygraph_pretrain
 from utils.logging import get_logger
 
 
-class StyleTextRec(nn.Layer):
+class StyleTextRec(nn.Module):
     def __init__(self, config):
         super(StyleTextRec, self).__init__()
         self.logger = get_logger()
@@ -72,7 +72,7 @@ class StyleTextRec(nn.Layer):
         }
 
 
-class TextGenerator(nn.Layer):
+class TextGenerator(nn.Module):
     def __init__(self, config):
         super(TextGenerator, self).__init__()
         name = config["module_name"]
@@ -152,7 +152,7 @@ class TextGenerator(nn.Layer):
         return {"fake_sk": fake_sk, "fake_text": fake_text}
 
 
-class BgGeneratorWithMask(nn.Layer):
+class BgGeneratorWithMask(nn.Module):
     def __init__(self, config):
         super(BgGeneratorWithMask, self).__init__()
         name = config["module_name"]
@@ -236,7 +236,7 @@ class BgGeneratorWithMask(nn.Layer):
         }
 
 
-class FusionGeneratorSimple(nn.Layer):
+class FusionGeneratorSimple(nn.Module):
     def __init__(self, config):
         super(FusionGeneratorSimple, self).__init__()
         name = config["module_name"]

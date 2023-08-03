@@ -22,7 +22,7 @@ import math
 import torch.nn.functional as F
 
 
-class Conv_BN_ReLU(nn.Layer):
+class Conv_BN_ReLU(nn.Module):
     def __init__(self,
                  in_planes,
                  out_planes,
@@ -62,7 +62,7 @@ class Conv_BN_ReLU(nn.Layer):
         return self.relu(self.bn(self.conv(x)))
 
 
-class FPN(nn.Layer):
+class FPN(nn.Module):
     def __init__(self, in_channels, out_channels):
         super(FPN, self).__init__()
 

@@ -26,7 +26,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class SPINAttentionHead(nn.Layer):
+class SPINAttentionHead(nn.Module):
     def __init__(self, in_channels, out_channels, hidden_size, **kwargs):
         super(SPINAttentionHead, self).__init__()
         self.input_size = in_channels
@@ -84,7 +84,7 @@ class SPINAttentionHead(nn.Layer):
         return probs
 
 
-class AttentionLSTMCell(nn.Layer):
+class AttentionLSTMCell(nn.Module):
     def __init__(self, input_size, hidden_size, num_embeddings, use_gru=False):
         super(AttentionLSTMCell, self).__init__()
         self.i2h = nn.Linear(input_size, hidden_size, bias_attr=False)

@@ -22,7 +22,7 @@ from torch import nn, ParamAttr
 import torch.nn.functional as F
 
 
-class ClsHead(nn.Layer):
+class ClsHead(nn.Module):
     """
     Class orientation
 

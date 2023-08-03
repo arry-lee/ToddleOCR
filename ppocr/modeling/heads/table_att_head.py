@@ -39,7 +39,7 @@ def get_para_bias_attr(l2_decay, k):
     return [weight_attr, bias_attr]
 
 
-class TableAttentionHead(nn.Layer):
+class TableAttentionHead(nn.Module):
     def __init__(self,
                  in_channels,
                  hidden_size,
@@ -127,7 +127,7 @@ class TableAttentionHead(nn.Layer):
         return {'structure_probs': structure_probs, 'loc_preds': loc_preds}
 
 
-class SLAHead(nn.Layer):
+class SLAHead(nn.Module):
     def __init__(self,
                  in_channels,
                  hidden_size,

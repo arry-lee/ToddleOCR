@@ -23,7 +23,7 @@ import torch.nn.functional as F
 from torch import ParamAttr
 
 
-class ConvBNLayer(nn.Layer):
+class ConvBNLayer(nn.Module):
     def __init__(self,
                  in_channels,
                  out_channels,
@@ -62,7 +62,7 @@ class ConvBNLayer(nn.Layer):
         return x
 
 
-class PGHead(nn.Layer):
+class PGHead(nn.Module):
     """
     """
 

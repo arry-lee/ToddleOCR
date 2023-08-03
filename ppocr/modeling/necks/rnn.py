@@ -23,7 +23,7 @@ from ppocr.modeling.heads.rec_ctc_head import get_para_bias_attr
 from ppocr.modeling.backbones.rec_svtrnet import Block, ConvBNLayer, trunc_normal_, zeros_, ones_
 
 
-class Im2Seq(nn.Layer):
+class Im2Seq(nn.Module):
     def __init__(self, in_channels, **kwargs):
         super().__init__()
         self.out_channels = in_channels
@@ -36,7 +36,7 @@ class Im2Seq(nn.Layer):
         return x
 
 
-class EncoderWithRNN(nn.Layer):
+class EncoderWithRNN(nn.Module):
     def __init__(self, in_channels, hidden_size):
         super(EncoderWithRNN, self).__init__()
         self.out_channels = hidden_size * 2
@@ -47,7 +47,7 @@ class EncoderWithRNN(nn.Layer):
         x, _ = self.lstm(x)
         return x
 
-class BidirectionalLSTM(nn.Layer):
+class BidirectionalLSTM(nn.Module):
     def __init__(self, input_size,
                  hidden_size,
                  output_size=None,
@@ -76,7 +76,7 @@ class BidirectionalLSTM(nn.Layer):
             return output
         return recurrent
 
-class EncoderWithCascadeRNN(nn.Layer):
+class EncoderWithCascadeRNN(nn.Module):
     def __init__(self, in_channels, hidden_size, out_channels, num_layers=2, with_linear=False):
         super(EncoderWithCascadeRNN, self).__init__()
         self.out_channels = out_channels[-1]
@@ -98,7 +98,7 @@ class EncoderWithCascadeRNN(nn.Layer):
         return x
 
 
-class EncoderWithFC(nn.Layer):
+class EncoderWithFC(nn.Module):
     def __init__(self, in_channels, hidden_size):
         super(EncoderWithFC, self).__init__()
         self.out_channels = hidden_size
@@ -116,7 +116,7 @@ class EncoderWithFC(nn.Layer):
         return x
 
 
-class EncoderWithSVTR(nn.Layer):
+class EncoderWithSVTR(nn.Module):
     def __init__(
             self,
             in_channels,
@@ -203,7 +203,7 @@ class EncoderWithSVTR(nn.Layer):
         return z
 
 
-class SequenceEncoder(nn.Layer):
+class SequenceEncoder(nn.Module):
     def __init__(self, in_channels, encoder_type, hidden_size=48, **kwargs):
         super(SequenceEncoder, self).__init__()
         self.encoder_reshape = Im2Seq(in_channels)

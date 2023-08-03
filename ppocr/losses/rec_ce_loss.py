@@ -3,7 +3,7 @@ from torch import nn
 import torch.nn.functional as F
 
 
-class CELoss(nn.Layer):
+class CELoss(nn.Module):
     def __init__(self,
                  smoothing=False,
                  with_all=False,

@@ -21,7 +21,7 @@ import torch.nn.functional as F
 from torch import nn
 
 
-class DRRGLoss(nn.Layer):
+class DRRGLoss(nn.Module):
     def __init__(self, ohem_ratio=3.0):
         super().__init__()
         self.ohem_ratio = ohem_ratio

@@ -22,7 +22,7 @@ import torch.nn.functional as F
 import numpy as np
 
 
-class AttentionHead(nn.Layer):
+class AttentionHead(nn.Module):
     def __init__(self, in_channels, out_channels, hidden_size, **kwargs):
         super(AttentionHead, self).__init__()
         self.input_size = in_channels
@@ -79,7 +79,7 @@ class AttentionHead(nn.Layer):
         return probs
 
 
-class AttentionGRUCell(nn.Layer):
+class AttentionGRUCell(nn.Module):
     def __init__(self, input_size, hidden_size, num_embeddings, use_gru=False):
         super(AttentionGRUCell, self).__init__()
         self.i2h = nn.Linear(input_size, hidden_size, bias_attr=False)
@@ -110,7 +110,7 @@ class AttentionGRUCell(nn.Layer):
         return cur_hidden, alpha
 
 
-class AttentionLSTM(nn.Layer):
+class AttentionLSTM(nn.Module):
     def __init__(self, in_channels, out_channels, hidden_size, **kwargs):
         super(AttentionLSTM, self).__init__()
         self.input_size = in_channels
@@ -174,7 +174,7 @@ class AttentionLSTM(nn.Layer):
         return probs
 
 
-class AttentionLSTMCell(nn.Layer):
+class AttentionLSTMCell(nn.Module):
     def __init__(self, input_size, hidden_size, num_embeddings, use_gru=False):
         super(AttentionLSTMCell, self).__init__()
         self.i2h = nn.Linear(input_size, hidden_size, bias_attr=False)

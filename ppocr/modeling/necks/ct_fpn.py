@@ -33,7 +33,7 @@ sys.path.append(__dir__)
 sys.path.insert(0, os.path.abspath(os.path.join(__dir__, '../../..')))
 
 
-class Conv_BN_ReLU(nn.Layer):
+class Conv_BN_ReLU(nn.Module):
     def __init__(self,
                  in_planes,
                  out_planes,
@@ -64,7 +64,7 @@ class Conv_BN_ReLU(nn.Layer):
         return self.relu(self.bn(self.conv(x)))
 
 
-class FPEM(nn.Layer):
+class FPEM(nn.Module):
     def __init__(self, in_channels, out_channels):
         super(FPEM, self).__init__()
         planes = out_channels
@@ -145,7 +145,7 @@ class FPEM(nn.Layer):
         return f1, f2, f3, f4
 
 
-class CTFPN(nn.Layer):
+class CTFPN(nn.Module):
     def __init__(self, in_channels, out_channel=128):
         super(CTFPN, self).__init__()
         self.out_channels = out_channel * 4

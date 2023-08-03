@@ -29,7 +29,7 @@ from .distillation_loss import DistillationLossFromOutput
 from .distillation_loss import DistillationVQADistanceLoss
 
 
-class CombinedLoss(nn.Layer):
+class CombinedLoss(nn.Module):
     """
     CombinedLoss:
         a combionation of loss function

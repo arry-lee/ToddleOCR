@@ -24,7 +24,7 @@ import torch
 from torch import nn
 
 
-class VLLoss(nn.Layer):
+class VLLoss(nn.Module):
     def __init__(self, mode='LF_1', weight_res=0.5, weight_mas=0.5, **kwargs):
         super(VLLoss, self).__init__()
         self.loss_func = torch.nn.loss.CrossEntropyLoss(reduction="mean")

@@ -34,7 +34,7 @@ from .stn import STN as STN_model
 from ppocr.modeling.heads.sr_rensnet_transformer import Transformer
 
 
-class TSRN(nn.Layer):
+class TSRN(nn.Module):
     def __init__(self,
                  in_channels,
                  scale_factor=2,
@@ -147,7 +147,7 @@ class TSRN(nn.Layer):
         return output
 
 
-class RecurrentResidualBlock(nn.Layer):
+class RecurrentResidualBlock(nn.Module):
     def __init__(self, channels):
         super(RecurrentResidualBlock, self).__init__()
         self.conv1 = nn.Conv2D(channels, channels, kernel_size=3, padding=1)
@@ -170,7 +170,7 @@ class RecurrentResidualBlock(nn.Layer):
         return self.gru2(x + residual)
 
 
-class UpsampleBLock(nn.Layer):
+class UpsampleBLock(nn.Module):
     def __init__(self, in_channels, up_scale):
         super(UpsampleBLock, self).__init__()
         self.conv = nn.Conv2D(
@@ -186,7 +186,7 @@ class UpsampleBLock(nn.Layer):
         return x
 
 
-class mish(nn.Layer):
+class mish(nn.Module):
     def __init__(self, ):
         super(mish, self).__init__()
         self.activated = True
@@ -197,7 +197,7 @@ class mish(nn.Layer):
         return x
 
 
-class GruBlock(nn.Layer):
+class GruBlock(nn.Module):
     def __init__(self, in_channels, out_channels):
         super(GruBlock, self).__init__()
         assert out_channels % 2 == 0

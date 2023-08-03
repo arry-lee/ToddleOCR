@@ -27,7 +27,7 @@ from .rec_ctc_head import CTCHead
 from .rec_sar_head import SARHead
 
 
-class MultiHead(nn.Layer):
+class MultiHead(nn.Module):
     def __init__(self, in_channels, out_channels_list, **kwargs):
         super().__init__()
         self.head_list = kwargs.pop('head_list')

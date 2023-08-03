@@ -107,7 +107,7 @@ def iou(a, b, mask, n_class=2, reduce=True):
     return iou
 
 
-class DiceLoss(nn.Layer):
+class DiceLoss(nn.Module):
     def __init__(self, loss_weight=1.0):
         super(DiceLoss, self).__init__()
         self.loss_weight = loss_weight
@@ -137,7 +137,7 @@ class DiceLoss(nn.Layer):
         return loss
 
 
-class SmoothL1Loss(nn.Layer):
+class SmoothL1Loss(nn.Module):
     def __init__(self, beta=1.0, loss_weight=1.0):
         super(SmoothL1Loss, self).__init__()
         self.beta = beta
@@ -233,7 +233,7 @@ class SmoothL1Loss(nn.Layer):
         return loss, iou_text
 
 
-class CTLoss(nn.Layer):
+class CTLoss(nn.Module):
     def __init__(self):
         super(CTLoss, self).__init__()
         self.kernel_loss = DiceLoss()

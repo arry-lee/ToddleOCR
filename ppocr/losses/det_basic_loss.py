@@ -26,7 +26,7 @@ from torch import nn
 import torch.nn.functional as F
 
 
-class BalanceLoss(nn.Layer):
+class BalanceLoss(nn.Module):
     def __init__(self,
                  balance_loss=True,
                  main_loss_type='DiceLoss',
@@ -106,7 +106,7 @@ class BalanceLoss(nn.Layer):
         return balance_loss
 
 
-class DiceLoss(nn.Layer):
+class DiceLoss(nn.Module):
     def __init__(self, eps=1e-6):
         super(DiceLoss, self).__init__()
         self.eps = eps
@@ -129,7 +129,7 @@ class DiceLoss(nn.Layer):
         return loss
 
 
-class MaskL1Loss(nn.Layer):
+class MaskL1Loss(nn.Module):
     def __init__(self, eps=1e-6):
         super(MaskL1Loss, self).__init__()
         self.eps = eps
@@ -143,7 +143,7 @@ class MaskL1Loss(nn.Layer):
         return loss
 
 
-class BCELoss(nn.Layer):
+class BCELoss(nn.Module):
     def __init__(self, reduction='mean'):
         super(BCELoss, self).__init__()
         self.reduction = reduction
