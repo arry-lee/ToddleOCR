@@ -34,7 +34,7 @@ class ConvBNLayer(nn.Module):
         self.bn = nn.BatchNorm2d(
             num_channels=out_channels,
             act=act,
-            param_attr=ParamAttr(name="bn_" + name + "_scale"),
+            
             bias=True,
             moving_mean_name="bn_" + name + "_mean",
             moving_variance_name="bn_" + name + "_variance",
@@ -57,7 +57,7 @@ class DeConvBNLayer(nn.Module):
         self.bn = nn.BatchNorm2d(
             num_channels=out_channels,
             act=act,
-            param_attr=ParamAttr(name="bn_" + name + "_scale"),
+            
             bias=True,
             moving_mean_name="bn_" + name + "_mean",
             moving_variance_name="bn_" + name + "_variance",

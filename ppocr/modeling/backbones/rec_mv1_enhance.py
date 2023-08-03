@@ -46,7 +46,7 @@ class ConvBNLayer(nn.Module):
             bias=False,
         )
 
-        self._batch_norm = BatchNorm2d(num_filters, act=act, param_attr=ParamAttr(regularizer=L2Decay(0.0)), bias=True)
+        self._batch_norm = BatchNorm2d(num_filters, act=act,  bias=True)
 
     def forward(self, inputs):
         y = self._conv(inputs)

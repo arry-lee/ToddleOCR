@@ -36,7 +36,7 @@ class Head(nn.Module):
 
         self.conv1 = nn.Conv2d(in_channels=in_channels, out_channels=in_channels // 4, kernel_size=kernel_list[0], padding=int(kernel_list[0] // 2), bias=False)
         self.conv_bn1 = nn.BatchNorm2d(
-            num_channels=in_channels // 4, param_attr=ParamAttr(initializer=torch.nn.initializer.Constant(value=1.0)), bias=True, act="relu"
+            num_channels=in_channels // 4,  bias=True, act="relu"
         )
         self.conv2 = nn.ConvTranspose2d(
             in_channels=in_channels // 4,
@@ -47,7 +47,7 @@ class Head(nn.Module):
             bias=get_bias_attr(in_channels // 4),
         )
         self.conv_bn2 = nn.BatchNorm2d(
-            num_channels=in_channels // 4, param_attr=ParamAttr(initializer=torch.nn.initializer.Constant(value=1.0)), bias=True, act="relu"
+            num_channels=in_channels // 4,  bias=True, act="relu"
         )
         self.conv3 = nn.ConvTranspose2d(
             in_channels=in_channels // 4,

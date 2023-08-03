@@ -42,7 +42,7 @@ class ConvBNLayer(nn.Module):
         )
         bn_name = "bn_" + name
         self.bn = nn.BatchNorm2d(
-            out_channels, act=act, param_attr=ParamAttr(name=bn_name + "_scale"), bias=True, moving_mean_name=bn_name + "_mean", moving_variance_name=bn_name + "_variance"
+            out_channels, act=act,  bias=True, moving_mean_name=bn_name + "_mean", moving_variance_name=bn_name + "_variance"
         )
 
     def forward(self, x):

@@ -80,7 +80,7 @@ class ConvBNLayer(nn.Module):
             bias=False,
         )
 
-        self.bn = BatchNorm2d(num_filters, param_attr=ParamAttr(regularizer=L2Decay(0.0)), bias=True)
+        self.bn = BatchNorm2d(num_filters,  bias=True)
         self.hardswish = nn.Hardswish()
 
     def forward(self, x):
