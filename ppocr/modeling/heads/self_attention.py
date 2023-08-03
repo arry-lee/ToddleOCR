@@ -268,7 +268,7 @@ class PrepareEncoder(nn.Module):
         src_pos_enc.stop_gradient = True
         enc_input = src_word_emb + src_pos_enc
         if self.dropout_rate:
-            out = F.dropout(x=enc_input, p=self.dropout_rate, mode="downscale_in_infer")
+            out = F.dropout(enc_input, p=self.dropout_rate, mode="downscale_in_infer")
         else:
             out = enc_input
         return out
@@ -301,7 +301,7 @@ class PrepareDecoder(nn.Module):
         src_pos_enc.stop_gradient = True
         enc_input = src_word_emb + src_pos_enc
         if self.dropout_rate:
-            out = F.dropout(x=enc_input, p=self.dropout_rate, mode="downscale_in_infer")
+            out = F.dropout(enc_input, p=self.dropout_rate, mode="downscale_in_infer")
         else:
             out = enc_input
         return out
