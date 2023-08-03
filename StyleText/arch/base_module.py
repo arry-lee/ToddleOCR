@@ -33,9 +33,9 @@ class CBN(nn.Module):
                  act_attr=None):
         super(CBN, self).__init__()
         if use_bias:
-            bias_attr = torch.ParamAttr(name=name + "_bias")
+            bias = torch.ParamAttr(name=name + "_bias")
         else:
-            bias_attr = None
+            bias = None
         self._conv = torch.nn.Conv2d(
             in_channels=in_channels,
             out_channels=out_channels,
@@ -45,7 +45,7 @@ class CBN(nn.Module):
             dilation=dilation,
             groups=groups,
             weight_attr=torch.ParamAttr(name=name + "_weights"),
-            bias_attr=bias_attr)
+            bias=bias)
         if norm_layer:
             self._norm_layer = getattr(torch.nn, norm_layer)(
                 num_features=out_channels, name=name + "_bn")
@@ -85,9 +85,9 @@ class SNConv(nn.Module):
                  act_attr=None):
         super(SNConv, self).__init__()
         if use_bias:
-            bias_attr = torch.ParamAttr(name=name + "_bias")
+            bias = torch.ParamAttr(name=name + "_bias")
         else:
-            bias_attr = None
+            bias = None
         self._sn_conv = spectral_norm(
             torch.nn.Conv2d(
                 in_channels=in_channels,
@@ -98,7 +98,7 @@ class SNConv(nn.Module):
                 dilation=dilation,
                 groups=groups,
                 weight_attr=torch.ParamAttr(name=name + "_weights"),
-                bias_attr=bias_attr))
+                bias=bias))
         if norm_layer:
             self._norm_layer = getattr(torch.nn, norm_layer)(
                 num_features=out_channels, name=name + "_bn")
@@ -139,9 +139,9 @@ class SNConvTranspose(nn.Module):
                  act_attr=None):
         super(SNConvTranspose, self).__init__()
         if use_bias:
-            bias_attr = torch.ParamAttr(name=name + "_bias")
+            bias = torch.ParamAttr(name=name + "_bias")
         else:
-            bias_attr = None
+            bias = None
         self._sn_conv_transpose = spectral_norm(
             torch.nn.ConvTranspose2d(
                 in_channels=in_channels,
@@ -153,7 +153,7 @@ class SNConvTranspose(nn.Module):
                 dilation=dilation,
                 groups=groups,
                 weight_attr=torch.ParamAttr(name=name + "_weights"),
-                bias_attr=bias_attr))
+                bias=bias))
         if norm_layer:
             self._norm_layer = getattr(torch.nn, norm_layer)(
                 num_features=out_channels, name=name + "_bn")

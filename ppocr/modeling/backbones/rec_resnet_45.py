@@ -38,7 +38,7 @@ def conv1x1(in_planes, out_planes, stride=1):
         kernel_size=1,
         stride=1,
         weight_attr=ParamAttr(initializer=KaimingNormal()),
-        bias_attr=False)
+        bias=False)
 
 
 def conv3x3(in_channel, out_channel, stride=1):
@@ -49,7 +49,7 @@ def conv3x3(in_channel, out_channel, stride=1):
         stride=stride,
         padding=1,
         weight_attr=ParamAttr(initializer=KaimingNormal()),
-        bias_attr=False)
+        bias=False)
 
 
 class BasicBlock(nn.Module):
@@ -98,7 +98,7 @@ class ResNet45(nn.Module):
             stride=1,
             padding=1,
             weight_attr=ParamAttr(initializer=KaimingNormal()),
-            bias_attr=False)
+            bias=False)
         self.bn1 = nn.BatchNorm2D(32)
         self.relu = nn.ReLU()
 
@@ -120,7 +120,7 @@ class ResNet45(nn.Module):
                     kernel_size=1,
                     stride=stride,
                     weight_attr=ParamAttr(initializer=KaimingNormal()),
-                    bias_attr=False),
+                    bias=False),
                 nn.BatchNorm2D(planes * block.expansion), )
 
         layers = []

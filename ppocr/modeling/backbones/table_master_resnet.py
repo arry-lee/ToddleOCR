@@ -37,11 +37,11 @@ class BasicBlock(nn.Module):
             kernel_size=3,
             stride=stride,
             padding=1,
-            bias_attr=False)
+            bias=False)
         self.bn1 = nn.BatchNorm2D(planes, momentum=0.9)
         self.relu = nn.ReLU()
         self.conv2 = nn.Conv2d(
-            planes, planes, kernel_size=3, stride=1, padding=1, bias_attr=False)
+            planes, planes, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn2 = nn.BatchNorm2D(planes, momentum=0.9)
         self.downsample = downsample
         self.stride = stride
@@ -100,12 +100,12 @@ class TableResNetExtra(nn.Module):
             kernel_size=3,
             stride=1,
             padding=1,
-            bias_attr=False)
+            bias=False)
         self.bn1 = nn.BatchNorm2D(64)
         self.relu1 = nn.ReLU()
 
         self.conv2 = nn.Conv2d(
-            64, 128, kernel_size=3, stride=1, padding=1, bias_attr=False)
+            64, 128, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn2 = nn.BatchNorm2D(128)
         self.relu2 = nn.ReLU()
 
@@ -119,7 +119,7 @@ class TableResNetExtra(nn.Module):
             gcb_config=get_gcb_config(gcb_config, 0))
 
         self.conv3 = nn.Conv2d(
-            256, 256, kernel_size=3, stride=1, padding=1, bias_attr=False)
+            256, 256, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn3 = nn.BatchNorm2D(256)
         self.relu3 = nn.ReLU()
 
@@ -133,7 +133,7 @@ class TableResNetExtra(nn.Module):
             gcb_config=get_gcb_config(gcb_config, 1))
 
         self.conv4 = nn.Conv2d(
-            256, 256, kernel_size=3, stride=1, padding=1, bias_attr=False)
+            256, 256, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn4 = nn.BatchNorm2D(256)
         self.relu4 = nn.ReLU()
 
@@ -147,7 +147,7 @@ class TableResNetExtra(nn.Module):
             gcb_config=get_gcb_config(gcb_config, 2))
 
         self.conv5 = nn.Conv2d(
-            512, 512, kernel_size=3, stride=1, padding=1, bias_attr=False)
+            512, 512, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn5 = nn.BatchNorm2D(512)
         self.relu5 = nn.ReLU()
 
@@ -159,7 +159,7 @@ class TableResNetExtra(nn.Module):
             gcb_config=get_gcb_config(gcb_config, 3))
 
         self.conv6 = nn.Conv2d(
-            512, 512, kernel_size=3, stride=1, padding=1, bias_attr=False)
+            512, 512, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn6 = nn.BatchNorm2D(512)
         self.relu6 = nn.ReLU()
 
@@ -174,7 +174,7 @@ class TableResNetExtra(nn.Module):
                     planes * block.expansion,
                     kernel_size=1,
                     stride=stride,
-                    bias_attr=False),
+                    bias=False),
                 nn.BatchNorm2D(planes * block.expansion), )
 
         layers = []

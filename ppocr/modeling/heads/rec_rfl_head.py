@@ -36,7 +36,7 @@ class CNTHead(nn.Module):
 
         self.out_channels = out_channels
 
-        self.Wv_fusion = nn.Linear(embed_size, embed_size, bias_attr=False)
+        self.Wv_fusion = nn.Linear(embed_size, embed_size, bias=False)
         self.Prediction_visual = nn.Linear(encode_length * embed_size,
                                            self.out_channels)
 

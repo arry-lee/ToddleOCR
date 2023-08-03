@@ -26,8 +26,8 @@ from torch import ParamAttr
 def get_bias_attr(k):
     stdv = 1.0 / math.sqrt(k * 1.0)
     initializer = torch.nn.initializer.Uniform(-stdv, stdv)
-    bias_attr = ParamAttr(initializer=initializer)
-    return bias_attr
+    bias = ParamAttr(initializer=initializer)
+    return bias
 
 
 class Head(nn.Module):
@@ -40,12 +40,12 @@ class Head(nn.Module):
             kernel_size=kernel_list[0],
             padding=int(kernel_list[0] // 2),
             weight_attr=ParamAttr(),
-            bias_attr=False)
+            bias=False)
         self.conv_bn1 = nn.BatchNorm2d(
             num_channels=in_channels // 4,
             param_attr=ParamAttr(
                 initializer=torch.nn.initializer.Constant(value=1.0)),
-            bias_attr=ParamAttr(
+            bias=ParamAttr(
                 initializer=torch.nn.initializer.Constant(value=1e-4)),
             act='relu')
         self.conv2 = nn.ConvTranspose2d(
@@ -55,12 +55,12 @@ class Head(nn.Module):
             stride=2,
             weight_attr=ParamAttr(
                 initializer=torch.nn.initializer.KaimingUniform()),
-            bias_attr=get_bias_attr(in_channels // 4))
+            bias=get_bias_attr(in_channels // 4))
         self.conv_bn2 = nn.BatchNorm2d(
             num_channels=in_channels // 4,
             param_attr=ParamAttr(
                 initializer=torch.nn.initializer.Constant(value=1.0)),
-            bias_attr=ParamAttr(
+            bias=ParamAttr(
                 initializer=torch.nn.initializer.Constant(value=1e-4)),
             act="relu")
         self.conv3 = nn.ConvTranspose2d(
@@ -70,7 +70,7 @@ class Head(nn.Module):
             stride=2,
             weight_attr=ParamAttr(
                 initializer=torch.nn.initializer.KaimingUniform()),
-            bias_attr=get_bias_attr(in_channels // 4), )
+            bias=get_bias_attr(in_channels // 4), )
 
     def forward(self, x):
         x = self.conv1(x)

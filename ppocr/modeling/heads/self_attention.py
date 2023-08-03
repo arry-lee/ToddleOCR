@@ -198,13 +198,13 @@ class MultiHeadAttention(nn.Module):
         self.d_model = d_model
         self.dropout_rate = dropout_rate
         self.q_fc = torch.nn.Linear(
-            in_features=d_model, out_features=d_key * n_head, bias_attr=False)
+            in_features=d_model, out_features=d_key * n_head, bias=False)
         self.k_fc = torch.nn.Linear(
-            in_features=d_model, out_features=d_key * n_head, bias_attr=False)
+            in_features=d_model, out_features=d_key * n_head, bias=False)
         self.v_fc = torch.nn.Linear(
-            in_features=d_model, out_features=d_value * n_head, bias_attr=False)
+            in_features=d_model, out_features=d_value * n_head, bias=False)
         self.proj_fc = torch.nn.Linear(
-            in_features=d_value * n_head, out_features=d_model, bias_attr=False)
+            in_features=d_value * n_head, out_features=d_model, bias=False)
 
     def _prepare_qkv(self, queries, keys, values, cache=None):
         if keys is None:  # self-attention
@@ -289,7 +289,7 @@ class PrePostProcessLayer(nn.Module):
                             normalized_shape=d_model,
                             weight_attr=torch.ParamAttr(
                                 initializer=torch.nn.initializer.Constant(1.)),
-                            bias_attr=torch.ParamAttr(
+                            bias=torch.ParamAttr(
                                 initializer=torch.nn.initializer.Constant(0.)))))
             elif cmd == "d":  # add dropout
                 self.functors.append(lambda x: F.dropout(

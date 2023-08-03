@@ -34,16 +34,16 @@ class BatchNorm1D(nn.BatchNorm1D):
                  track_running_stats=True):
         momentum = 1 - momentum
         weight_attr = None
-        bias_attr = None
+        bias = None
         if not affine:
             weight_attr = torch.ParamAttr(learning_rate=0.0)
-            bias_attr = torch.ParamAttr(learning_rate=0.0)
+            bias = torch.ParamAttr(learning_rate=0.0)
         super().__init__(
             num_features,
             momentum=momentum,
             epsilon=eps,
             weight_attr=weight_attr,
-            bias_attr=bias_attr,
+            bias=bias,
             use_global_stats=track_running_stats)
 
 

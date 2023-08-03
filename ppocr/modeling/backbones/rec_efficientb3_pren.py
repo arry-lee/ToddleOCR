@@ -145,7 +145,7 @@ class MbConvBlock(nn.Module):
         self.inp = self._block_args.input_filters
         oup = self._block_args.input_filters * self._block_args.expand_ratio
         if self._block_args.expand_ratio != 1:
-            self._expand_conv = nn.Conv2d(self.inp, oup, 1, bias_attr=False)
+            self._expand_conv = nn.Conv2d(self.inp, oup, 1, bias=False)
             self._bn0 = nn.BatchNorm2d(oup)
 
         # depthwise conv phase
@@ -160,7 +160,7 @@ class MbConvBlock(nn.Module):
             kernel_size=k,
             stride=s,
             padding='same',
-            bias_attr=False)
+            bias=False)
         self._bn1 = nn.BatchNorm2d(oup)
 
         # squeeze and excitation layer, if desired
@@ -173,7 +173,7 @@ class MbConvBlock(nn.Module):
 
         # output phase and some util class
         self.final_oup = self._block_args.output_filters
-        self._project_conv = nn.Conv2d(oup, self.final_oup, 1, bias_attr=False)
+        self._project_conv = nn.Conv2d(oup, self.final_oup, 1, bias=False)
         self._bn2 = nn.BatchNorm2d(self.final_oup)
         self._swish = nn.Swish()
 
@@ -233,7 +233,7 @@ class EfficientNetb3_PREN(nn.Module):
         # stem
         out_channels = EffUtils.round_filters(32, self._global_params)
         self._conv_stem = nn.Conv2d(
-            in_channels, out_channels, 3, 2, padding='same', bias_attr=False)
+            in_channels, out_channels, 3, 2, padding='same', bias=False)
         self._bn0 = nn.BatchNorm2d(out_channels)
 
         # build blocks

@@ -45,13 +45,13 @@ class ConvBNLayer(nn.Module):
             padding=(kernel_size - 1) // 2,
             groups=groups,
             weight_attr=ParamAttr(name=name + "_weights"),
-            bias_attr=False)
+            bias=False)
         bn_name = "bn_" + name
         self.bn = nn.BatchNorm2d(
             out_channels,
             act=act,
             param_attr=ParamAttr(name=bn_name + '_scale'),
-            bias_attr=ParamAttr(bn_name + '_offset'),
+            bias=ParamAttr(bn_name + '_offset'),
             moving_mean_name=bn_name + '_mean',
             moving_variance_name=bn_name + '_variance')
 
@@ -101,7 +101,7 @@ class LocalizationNetwork(nn.Module):
                 learning_rate=loc_lr,
                 name=name + "_w",
                 initializer=nn.initializer.Uniform(-stdv, stdv)),
-            bias_attr=ParamAttr(name=name + '.b_0'),
+            bias=ParamAttr(name=name + '.b_0'),
             name=name)
 
         # Init fc2 in LocalizationNetwork
@@ -112,7 +112,7 @@ class LocalizationNetwork(nn.Module):
             learning_rate=loc_lr,
             initializer=nn.initializer.Assign(np.zeros([fc_dim, F * 2])),
             name=name + "_w")
-        bias_attr = ParamAttr(
+        bias = ParamAttr(
             learning_rate=loc_lr,
             initializer=nn.initializer.Assign(initial_bias),
             name=name + "_b")
@@ -120,7 +120,7 @@ class LocalizationNetwork(nn.Module):
             fc_dim,
             F * 2,
             weight_attr=param_attr,
-            bias_attr=bias_attr,
+            bias=bias,
             name=name)
         self.out_channels = F * 2
 
@@ -166,13 +166,13 @@ class GridGenerator(nn.Module):
         initializer = nn.initializer.Constant(value=0.0)
         param_attr = ParamAttr(
             learning_rate=0.0, initializer=initializer, name=name + "_w")
-        bias_attr = ParamAttr(
+        bias = ParamAttr(
             learning_rate=0.0, initializer=initializer, name=name + "_b")
         self.fc = nn.Linear(
             in_channels,
             6,
             weight_attr=param_attr,
-            bias_attr=bias_attr,
+            bias=bias,
             name=name)
 
     def forward(self, batch_C_prime, I_r_size):

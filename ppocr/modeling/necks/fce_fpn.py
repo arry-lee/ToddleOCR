@@ -43,7 +43,7 @@ class ConvNormLayer(nn.Module):
         super(ConvNormLayer, self).__init__()
         assert norm_type in ['bn', 'sync_bn', 'gn']
 
-        bias_attr = False
+        bias = False
 
         self.conv = nn.Conv2d(
             in_channels=ch_in,
@@ -54,27 +54,27 @@ class ConvNormLayer(nn.Module):
             groups=groups,
             weight_attr=ParamAttr(
                 initializer=initializer, learning_rate=1.),
-            bias_attr=bias_attr)
+            bias=bias)
 
         norm_lr = 0. if freeze_norm else 1.
         param_attr = ParamAttr(
             learning_rate=norm_lr,
             regularizer=L2Decay(norm_decay) if norm_decay is not None else None)
-        bias_attr = ParamAttr(
+        bias = ParamAttr(
             learning_rate=norm_lr,
             regularizer=L2Decay(norm_decay) if norm_decay is not None else None)
         if norm_type == 'bn':
             self.norm = nn.BatchNorm2D(
-                ch_out, weight_attr=param_attr, bias_attr=bias_attr)
+                ch_out, weight_attr=param_attr, bias=bias)
         elif norm_type == 'sync_bn':
             self.norm = nn.SyncBatchNorm(
-                ch_out, weight_attr=param_attr, bias_attr=bias_attr)
+                ch_out, weight_attr=param_attr, bias=bias)
         elif norm_type == 'gn':
             self.norm = nn.GroupNorm(
                 num_groups=norm_groups,
                 num_channels=ch_out,
                 weight_attr=param_attr,
-                bias_attr=bias_attr)
+                bias=bias)
 
     def forward(self, inputs):
         out = self.conv(inputs)

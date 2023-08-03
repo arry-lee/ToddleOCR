@@ -28,8 +28,8 @@ def get_para_bias_attr(l2_decay, k):
     stdv = 1.0 / math.sqrt(k * 1.0)
     initializer = nn.initializer.Uniform(-stdv, stdv)
     weight_attr = ParamAttr(regularizer=regularizer, initializer=initializer)
-    bias_attr = ParamAttr(regularizer=regularizer, initializer=initializer)
-    return [weight_attr, bias_attr]
+    bias = ParamAttr(regularizer=regularizer, initializer=initializer)
+    return [weight_attr, bias]
 
 
 class CTCHead(nn.Module):
@@ -42,13 +42,13 @@ class CTCHead(nn.Module):
                  **kwargs):
         super(CTCHead, self).__init__()
         if mid_channels is None:
-            weight_attr, bias_attr = get_para_bias_attr(
+            weight_attr, bias = get_para_bias_attr(
                 l2_decay=fc_decay, k=in_channels)
             self.fc = nn.Linear(
                 in_channels,
                 out_channels,
                 weight_attr=weight_attr,
-                bias_attr=bias_attr)
+                bias=bias)
         else:
             weight_attr1, bias_attr1 = get_para_bias_attr(
                 l2_decay=fc_decay, k=in_channels)
@@ -56,7 +56,7 @@ class CTCHead(nn.Module):
                 in_channels,
                 mid_channels,
                 weight_attr=weight_attr1,
-                bias_attr=bias_attr1)
+                bias=bias_attr1)
 
             weight_attr2, bias_attr2 = get_para_bias_attr(
                 l2_decay=fc_decay, k=mid_channels)
@@ -64,7 +64,7 @@ class CTCHead(nn.Module):
                 mid_channels,
                 out_channels,
                 weight_attr=weight_attr2,
-                bias_attr=bias_attr2)
+                bias=bias_attr2)
         self.out_channels = out_channels
         self.mid_channels = mid_channels
         self.return_feats = return_feats

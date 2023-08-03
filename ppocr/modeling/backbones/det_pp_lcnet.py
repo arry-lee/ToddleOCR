@@ -94,12 +94,12 @@ class ConvBNLayer(nn.Module):
             padding=(filter_size - 1) // 2,
             groups=num_groups,
             weight_attr=ParamAttr(initializer=KaimingNormal()),
-            bias_attr=False)
+            bias=False)
 
         self.bn = BatchNorm(
             num_filters,
             param_attr=ParamAttr(regularizer=L2Decay(0.0)),
-            bias_attr=ParamAttr(regularizer=L2Decay(0.0)))
+            bias=ParamAttr(regularizer=L2Decay(0.0)))
         self.hardswish = nn.Hardswish()
 
     def forward(self, x):

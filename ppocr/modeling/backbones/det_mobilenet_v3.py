@@ -171,7 +171,7 @@ class ConvBNLayer(nn.Module):
             stride=stride,
             padding=padding,
             groups=groups,
-            bias_attr=False)
+            bias=False)
 
         self.bn = nn.BatchNorm2d(num_channels=out_channels, act=None)
 

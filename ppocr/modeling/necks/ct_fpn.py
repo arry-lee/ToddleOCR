@@ -47,7 +47,7 @@ class Conv_BN_ReLU(nn.Module):
             kernel_size=kernel_size,
             stride=stride,
             padding=padding,
-            bias_attr=False)
+            bias=False)
         self.bn = nn.BatchNorm2D(out_planes)
         self.relu = nn.ReLU()
 
@@ -75,7 +75,7 @@ class FPEM(nn.Module):
             stride=1,
             padding=1,
             groups=planes,
-            bias_attr=False)
+            bias=False)
         self.smooth_layer3_1 = Conv_BN_ReLU(planes, planes)
 
         self.dwconv2_1 = nn.Conv2d(
@@ -85,7 +85,7 @@ class FPEM(nn.Module):
             stride=1,
             padding=1,
             groups=planes,
-            bias_attr=False)
+            bias=False)
         self.smooth_layer2_1 = Conv_BN_ReLU(planes, planes)
 
         self.dwconv1_1 = nn.Conv2d(
@@ -95,7 +95,7 @@ class FPEM(nn.Module):
             stride=1,
             padding=1,
             groups=planes,
-            bias_attr=False)
+            bias=False)
         self.smooth_layer1_1 = Conv_BN_ReLU(planes, planes)
 
         self.dwconv2_2 = nn.Conv2d(
@@ -105,7 +105,7 @@ class FPEM(nn.Module):
             stride=2,
             padding=1,
             groups=planes,
-            bias_attr=False)
+            bias=False)
         self.smooth_layer2_2 = Conv_BN_ReLU(planes, planes)
 
         self.dwconv3_2 = nn.Conv2d(
@@ -115,7 +115,7 @@ class FPEM(nn.Module):
             stride=2,
             padding=1,
             groups=planes,
-            bias_attr=False)
+            bias=False)
         self.smooth_layer3_2 = Conv_BN_ReLU(planes, planes)
 
         self.dwconv4_2 = nn.Conv2d(
@@ -125,7 +125,7 @@ class FPEM(nn.Module):
             stride=2,
             padding=1,
             groups=planes,
-            bias_attr=False)
+            bias=False)
         self.smooth_layer4_2 = Conv_BN_ReLU(planes, planes)
 
     def _upsample_add(self, x, y):

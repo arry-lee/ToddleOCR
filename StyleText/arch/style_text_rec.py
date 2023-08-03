@@ -257,7 +257,7 @@ class FusionGeneratorSimple(nn.Module):
             padding=1,
             groups=1,
             weight_attr=torch.ParamAttr(name=name + "_conv_weights"),
-            bias_attr=False)
+            bias=False)
 
         self._res_block = ResBlock(
             name="{}_conv_block".format(name),
@@ -275,7 +275,7 @@ class FusionGeneratorSimple(nn.Module):
             padding=1,
             groups=1,
             weight_attr=torch.ParamAttr(name=name + "_reduce_conv_weights"),
-            bias_attr=False)
+            bias=False)
 
     def forward(self, fake_text, fake_bg):
         fake_concat = torch.concat((fake_text, fake_bg), axis=1)

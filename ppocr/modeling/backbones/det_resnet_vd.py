@@ -38,7 +38,7 @@ class DeformableConvV2(nn.Module):
                  dilation=1,
                  groups=1,
                  weight_attr=None,
-                 bias_attr=None,
+                 bias=None,
                  lr_scale=1,
                  regularizer=None,
                  skip_quant=False,
@@ -48,7 +48,7 @@ class DeformableConvV2(nn.Module):
         self.offset_channel = 2 * kernel_size**2 * groups
         self.mask_channel = kernel_size**2 * groups
 
-        if bias_attr:
+        if bias:
             # in FCOS-DCN head, specifically need learning_rate and regularizer
             dcn_bias_attr = ParamAttr(
                 initializer=Constant(value=0),
@@ -66,7 +66,7 @@ class DeformableConvV2(nn.Module):
             dilation=dilation,
             deformable_groups=groups,
             weight_attr=weight_attr,
-            bias_attr=dcn_bias_attr)
+            bias=dcn_bias_attr)
 
         if lr_scale == 1 and regularizer is None:
             offset_bias_attr = ParamAttr(initializer=Constant(0.))
@@ -82,7 +82,7 @@ class DeformableConvV2(nn.Module):
             stride=stride,
             padding=(kernel_size - 1) // 2,
             weight_attr=ParamAttr(initializer=Constant(0.0)),
-            bias_attr=offset_bias_attr)
+            bias=offset_bias_attr)
         if skip_quant:
             self.conv_offset.skip_quant = True
 
@@ -121,7 +121,7 @@ class ConvBNLayer(nn.Module):
                 stride=stride,
                 padding=(kernel_size - 1) // 2,
                 groups=groups,
-                bias_attr=False)
+                bias=False)
         else:
             self._conv = DeformableConvV2(
                 in_channels=in_channels,
@@ -130,7 +130,7 @@ class ConvBNLayer(nn.Module):
                 stride=stride,
                 padding=(kernel_size - 1) // 2,
                 groups=dcn_groups,  #groups,
-                bias_attr=False)
+                bias=False)
         self._batch_norm = nn.BatchNorm2d(out_channels, act=act)
 
     def forward(self, inputs):

@@ -64,7 +64,7 @@ class FCEHead(nn.Module):
                 name='cls_weights',
                 initializer=Normal(
                     mean=0., std=0.01)),
-            bias_attr=True)
+            bias=True)
         self.out_conv_reg = nn.Conv2d(
             in_channels=self.in_channels,
             out_channels=self.out_channels_reg,
@@ -76,7 +76,7 @@ class FCEHead(nn.Module):
                 name='reg_weights',
                 initializer=Normal(
                     mean=0., std=0.01)),
-            bias_attr=True)
+            bias=True)
 
     def forward(self, feats, targets=None):
         cls_res, reg_res = multi_apply(self.forward_single, feats)

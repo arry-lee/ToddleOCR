@@ -67,7 +67,7 @@ class PVAM(nn.Module):
             num_embeddings=self.max_length, embedding_dim=in_channels)
         self.flatten1 = torch.nn.Flatten(start_axis=0, stop_axis=2)
         self.fc1 = torch.nn.Linear(
-            in_features=in_channels, out_features=1, bias_attr=False)
+            in_features=in_channels, out_features=1, bias=False)
 
     def forward(self, inputs, encoder_word_pos, gsrm_word_pos):
         b, c, h, w = inputs.shape

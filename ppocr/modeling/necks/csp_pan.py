@@ -43,7 +43,7 @@ class ConvBNLayer(nn.Module):
             padding=(kernel_size - 1) // 2,
             stride=stride,
             weight_attr=ParamAttr(initializer=initializer),
-            bias_attr=False)
+            bias=False)
         self.bn = nn.BatchNorm2D(out_channel)
 
     def forward(self, x):
@@ -84,7 +84,7 @@ class DPModule(nn.Module):
             padding=(kernel_size - 1) // 2,
             stride=stride,
             weight_attr=ParamAttr(initializer=initializer),
-            bias_attr=False)
+            bias=False)
         self.bn1 = nn.BatchNorm2D(out_channel)
         self.pwconv = nn.Conv2d(
             in_channels=out_channel,
@@ -93,7 +93,7 @@ class DPModule(nn.Module):
             groups=1,
             padding=0,
             weight_attr=ParamAttr(initializer=initializer),
-            bias_attr=False)
+            bias=False)
         self.bn2 = nn.BatchNorm2D(out_channel)
 
     def act_func(self, x):

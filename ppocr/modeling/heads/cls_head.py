@@ -41,7 +41,7 @@ class ClsHead(nn.Module):
             weight_attr=ParamAttr(
                 name="fc_0.w_0",
                 initializer=nn.initializer.Uniform(-stdv, stdv)),
-            bias_attr=ParamAttr(name="fc_0.b_0"), )
+            bias=ParamAttr(name="fc_0.b_0"), )
 
     def forward(self, x, targets=None):
         x = self.pool(x)

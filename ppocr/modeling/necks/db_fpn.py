@@ -53,7 +53,7 @@ class DSConv(nn.Module):
             stride=stride,
             padding=padding,
             groups=groups,
-            bias_attr=False)
+            bias=False)
 
         self.bn1 = nn.BatchNorm2d(num_channels=in_channels, act=None)
 
@@ -62,7 +62,7 @@ class DSConv(nn.Module):
             out_channels=int(in_channels * 4),
             kernel_size=1,
             stride=1,
-            bias_attr=False)
+            bias=False)
 
         self.bn2 = nn.BatchNorm2d(num_channels=int(in_channels * 4), act=None)
 
@@ -71,7 +71,7 @@ class DSConv(nn.Module):
             out_channels=out_channels,
             kernel_size=1,
             stride=1,
-            bias_attr=False)
+            bias=False)
         self._c = [in_channels, out_channels]
         if in_channels != out_channels:
             self.conv_end = nn.Conv2d(
@@ -79,7 +79,7 @@ class DSConv(nn.Module):
                 out_channels=out_channels,
                 kernel_size=1,
                 stride=1,
-                bias_attr=False)
+                bias=False)
 
     def forward(self, inputs):
 
@@ -116,53 +116,53 @@ class DBFPN(nn.Module):
             out_channels=self.out_channels,
             kernel_size=1,
             weight_attr=ParamAttr(initializer=weight_attr),
-            bias_attr=False)
+            bias=False)
         self.in3_conv = nn.Conv2d(
             in_channels=in_channels[1],
             out_channels=self.out_channels,
             kernel_size=1,
             weight_attr=ParamAttr(initializer=weight_attr),
-            bias_attr=False)
+            bias=False)
         self.in4_conv = nn.Conv2d(
             in_channels=in_channels[2],
             out_channels=self.out_channels,
             kernel_size=1,
             weight_attr=ParamAttr(initializer=weight_attr),
-            bias_attr=False)
+            bias=False)
         self.in5_conv = nn.Conv2d(
             in_channels=in_channels[3],
             out_channels=self.out_channels,
             kernel_size=1,
             weight_attr=ParamAttr(initializer=weight_attr),
-            bias_attr=False)
+            bias=False)
         self.p5_conv = nn.Conv2d(
             in_channels=self.out_channels,
             out_channels=self.out_channels // 4,
             kernel_size=3,
             padding=1,
             weight_attr=ParamAttr(initializer=weight_attr),
-            bias_attr=False)
+            bias=False)
         self.p4_conv = nn.Conv2d(
             in_channels=self.out_channels,
             out_channels=self.out_channels // 4,
             kernel_size=3,
             padding=1,
             weight_attr=ParamAttr(initializer=weight_attr),
-            bias_attr=False)
+            bias=False)
         self.p3_conv = nn.Conv2d(
             in_channels=self.out_channels,
             out_channels=self.out_channels // 4,
             kernel_size=3,
             padding=1,
             weight_attr=ParamAttr(initializer=weight_attr),
-            bias_attr=False)
+            bias=False)
         self.p2_conv = nn.Conv2d(
             in_channels=self.out_channels,
             out_channels=self.out_channels // 4,
             kernel_size=3,
             padding=1,
             weight_attr=ParamAttr(initializer=weight_attr),
-            bias_attr=False)
+            bias=False)
 
         if self.use_asf is True:
             self.asf = ASFBlock(self.out_channels, self.out_channels // 4)
@@ -209,7 +209,7 @@ class RSELayer(nn.Module):
             kernel_size=kernel_size,
             padding=int(kernel_size // 2),
             weight_attr=ParamAttr(initializer=weight_attr),
-            bias_attr=False)
+            bias=False)
         self.se_block = SEModule(self.out_channels)
         self.shortcut = shortcut
 
@@ -299,7 +299,7 @@ class LKPAN(nn.Module):
                     out_channels=self.out_channels,
                     kernel_size=1,
                     weight_attr=ParamAttr(initializer=weight_attr),
-                    bias_attr=False))
+                    bias=False))
 
             self.inp_conv.append(
                 p_layer(
@@ -308,7 +308,7 @@ class LKPAN(nn.Module):
                     kernel_size=9,
                     padding=4,
                     weight_attr=ParamAttr(initializer=weight_attr),
-                    bias_attr=False))
+                    bias=False))
 
             if i > 0:
                 self.pan_head_conv.append(
@@ -319,7 +319,7 @@ class LKPAN(nn.Module):
                         padding=1,
                         stride=2,
                         weight_attr=ParamAttr(initializer=weight_attr),
-                        bias_attr=False))
+                        bias=False))
             self.pan_lat_conv.append(
                 p_layer(
                     in_channels=self.out_channels // 4,
@@ -327,7 +327,7 @@ class LKPAN(nn.Module):
                     kernel_size=9,
                     padding=4,
                     weight_attr=ParamAttr(initializer=weight_attr),
-                    bias_attr=False))
+                    bias=False))
 
     def forward(self, x):
         c2, c3, c4, c5 = x
@@ -393,7 +393,7 @@ class ASFBlock(nn.Module):
                 in_channels=1,
                 out_channels=1,
                 kernel_size=3,
-                bias_attr=False,
+                bias=False,
                 padding=1,
                 weight_attr=ParamAttr(initializer=weight_attr)),
             nn.ReLU(),
@@ -401,7 +401,7 @@ class ASFBlock(nn.Module):
                 in_channels=1,
                 out_channels=1,
                 kernel_size=1,
-                bias_attr=False,
+                bias=False,
                 weight_attr=ParamAttr(initializer=weight_attr)),
             nn.Sigmoid())
 
@@ -410,7 +410,7 @@ class ASFBlock(nn.Module):
                 in_channels=inter_channels,
                 out_channels=out_features_num,
                 kernel_size=1,
-                bias_attr=False,
+                bias=False,
                 weight_attr=ParamAttr(initializer=weight_attr)),
             nn.Sigmoid())
 

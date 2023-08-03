@@ -39,7 +39,7 @@ class BCNLanguage(nn.Module):
         self.d_model = d_model
         self.detach = detach
         self.max_length = max_length + 1  # additional stop token
-        self.proj = nn.Linear(num_classes, d_model, bias_attr=False)
+        self.proj = nn.Linear(num_classes, d_model, bias=False)
         self.token_encoder = PositionalEncoding(
             dropout=0.1, dim=d_model, max_len=self.max_length)
         self.pos_encoder = PositionalEncoding(

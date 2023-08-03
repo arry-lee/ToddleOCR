@@ -33,7 +33,7 @@ class Encoder(nn.Module):
             kernel_size=3,
             stride=1,
             padding=1,
-            bias_attr=False)
+            bias=False)
         self.bn1 = nn.BatchNorm2d(num_filters, act='relu')
 
         self.conv2 = nn.Conv2d(
@@ -42,7 +42,7 @@ class Encoder(nn.Module):
             kernel_size=3,
             stride=1,
             padding=1,
-            bias_attr=False)
+            bias=False)
         self.bn2 = nn.BatchNorm2d(num_filters, act='relu')
 
         self.pool = nn.MaxPool2D(kernel_size=3, stride=2, padding=1)
@@ -66,7 +66,7 @@ class Decoder(nn.Module):
             kernel_size=3,
             stride=1,
             padding=1,
-            bias_attr=False)
+            bias=False)
         self.bn1 = nn.BatchNorm2d(num_filters, act='relu')
 
         self.conv2 = nn.Conv2d(
@@ -75,7 +75,7 @@ class Decoder(nn.Module):
             kernel_size=3,
             stride=1,
             padding=1,
-            bias_attr=False)
+            bias=False)
         self.bn2 = nn.BatchNorm2d(num_filters, act='relu')
 
         self.conv0 = nn.Conv2d(
@@ -84,7 +84,7 @@ class Decoder(nn.Module):
             kernel_size=1,
             stride=1,
             padding=0,
-            bias_attr=False)
+            bias=False)
         self.bn0 = nn.BatchNorm2d(num_filters, act='relu')
 
     def forward(self, inputs_prev, inputs):

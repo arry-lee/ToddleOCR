@@ -39,7 +39,7 @@ def conv3x3_block(in_channels, out_channels, stride=1):
         padding=1,
         weight_attr=nn.initializer.Normal(
             mean=0.0, std=w),
-        bias_attr=nn.initializer.Constant(0))
+        bias=nn.initializer.Constant(0))
     block = nn.Sequential(conv_layer, nn.BatchNorm2D(out_channels), nn.ReLU())
     return block
 
@@ -72,7 +72,7 @@ class STN(nn.Module):
                 2 * 256,
                 512,
                 weight_attr=nn.initializer.Normal(0, 0.001),
-                bias_attr=nn.initializer.Constant(0)),
+                bias=nn.initializer.Constant(0)),
             nn.BatchNorm1D(512),
             nn.ReLU())
         fc2_bias = self.init_stn()
@@ -80,7 +80,7 @@ class STN(nn.Module):
             512,
             num_ctrlpoints * 2,
             weight_attr=nn.initializer.Constant(0.0),
-            bias_attr=nn.initializer.Assign(fc2_bias))
+            bias=nn.initializer.Assign(fc2_bias))
 
     def init_stn(self):
         margin = 0.01

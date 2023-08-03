@@ -47,7 +47,7 @@ class ConvBNLayer(nn.Module):
                  kernel_size=3,
                  stride=1,
                  padding=0,
-                 bias_attr=False,
+                 bias=False,
                  groups=1,
                  act=nn.GELU):
         super().__init__()
@@ -60,7 +60,7 @@ class ConvBNLayer(nn.Module):
             groups=groups,
             weight_attr=torch.ParamAttr(
                 initializer=nn.initializer.KaimingUniform()),
-            bias_attr=bias_attr)
+            bias=bias)
         self.norm = nn.BatchNorm2D(out_channels)
         self.act = act()
 
@@ -158,7 +158,7 @@ class Attention(nn.Module):
         head_dim = dim // num_heads
         self.scale = qk_scale or head_dim**-0.5
 
-        self.qkv = nn.Linear(dim, dim * 3, bias_attr=qkv_bias)
+        self.qkv = nn.Linear(dim, dim * 3, bias=qkv_bias)
         self.attn_drop = nn.Dropout(attn_drop)
         self.proj = nn.Linear(dim, dim)
         self.proj_drop = nn.Dropout(proj_drop)
@@ -294,7 +294,7 @@ class PatchEmbed(nn.Module):
                         stride=2,
                         padding=1,
                         act=nn.GELU,
-                        bias_attr=None),
+                        bias=None),
                     ConvBNLayer(
                         in_channels=embed_dim // 2,
                         out_channels=embed_dim,
@@ -302,7 +302,7 @@ class PatchEmbed(nn.Module):
                         stride=2,
                         padding=1,
                         act=nn.GELU,
-                        bias_attr=None))
+                        bias=None))
             if sub_num == 3:
                 self.proj = nn.Sequential(
                     ConvBNLayer(
@@ -312,7 +312,7 @@ class PatchEmbed(nn.Module):
                         stride=2,
                         padding=1,
                         act=nn.GELU,
-                        bias_attr=None),
+                        bias=None),
                     ConvBNLayer(
                         in_channels=embed_dim // 4,
                         out_channels=embed_dim // 2,
@@ -320,7 +320,7 @@ class PatchEmbed(nn.Module):
                         stride=2,
                         padding=1,
                         act=nn.GELU,
-                        bias_attr=None),
+                        bias=None),
                     ConvBNLayer(
                         in_channels=embed_dim // 2,
                         out_channels=embed_dim,
@@ -328,7 +328,7 @@ class PatchEmbed(nn.Module):
                         stride=2,
                         padding=1,
                         act=nn.GELU,
-                        bias_attr=None))
+                        bias=None))
         elif mode == 'linear':
             self.proj = nn.Conv2d(
                 1, embed_dim, kernel_size=patch_size, stride=patch_size)
@@ -525,7 +525,7 @@ class SVTRNet(nn.Module):
                 kernel_size=1,
                 stride=1,
                 padding=0,
-                bias_attr=False)
+                bias=False)
             self.hardswish = nn.Hardswish()
             self.dropout = nn.Dropout(p=last_drop, mode="downscale_in_infer")
         if not prenorm:

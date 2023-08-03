@@ -30,13 +30,13 @@ def conv3x3(in_planes, out_planes, stride=1):
         kernel_size=3,
         stride=stride,
         padding=1,
-        bias_attr=False)
+        bias=False)
 
 
 def conv1x1(in_planes, out_planes, stride=1):
     """1x1 convolution"""
     return nn.Conv2d(
-        in_planes, out_planes, kernel_size=1, stride=stride, bias_attr=False)
+        in_planes, out_planes, kernel_size=1, stride=stride, bias=False)
 
 
 def get_sinusoid_encoding(n_position, feat_dim, wave_length=10000):
@@ -96,7 +96,7 @@ class ResNet_ASTER(nn.Module):
                 kernel_size=(3, 3),
                 stride=1,
                 padding=1,
-                bias_attr=False),
+                bias=False),
             nn.BatchNorm2D(32),
             nn.ReLU())
 

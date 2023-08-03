@@ -115,7 +115,7 @@ class ResNetFPN(nn.Module):
                         out_channels=out_ch_list[i],
                         kernel_size=1,
                         weight_attr=ParamAttr(trainable=True),
-                        bias_attr=ParamAttr(trainable=True))))
+                        bias=ParamAttr(trainable=True))))
             self.base_block.append(
                 self.add_sublayer(
                     "F_{}_base_block_1".format(i),
@@ -125,7 +125,7 @@ class ResNetFPN(nn.Module):
                         kernel_size=3,
                         padding=1,
                         weight_attr=ParamAttr(trainable=True),
-                        bias_attr=ParamAttr(trainable=True))))
+                        bias=ParamAttr(trainable=True))))
             self.base_block.append(
                 self.add_sublayer(
                     "F_{}_base_block_2".format(i),
@@ -133,7 +133,7 @@ class ResNetFPN(nn.Module):
                         num_channels=out_ch_list[i],
                         act="relu",
                         param_attr=ParamAttr(trainable=True),
-                        bias_attr=ParamAttr(trainable=True))))
+                        bias=ParamAttr(trainable=True))))
         self.base_block.append(
             self.add_sublayer(
                 "F_{}_base_block_3".format(i),
@@ -141,7 +141,7 @@ class ResNetFPN(nn.Module):
                     in_channels=out_ch_list[i],
                     out_channels=512,
                     kernel_size=1,
-                    bias_attr=ParamAttr(trainable=True),
+                    bias=ParamAttr(trainable=True),
                     weight_attr=ParamAttr(trainable=True))))
         self.out_channels = 512
 
@@ -193,7 +193,7 @@ class ConvBNLayer(nn.Module):
             padding=(kernel_size - 1) // 2,
             groups=groups,
             weight_attr=ParamAttr(name=name + '.conv2d.output.1.w_0'),
-            bias_attr=False, )
+            bias=False, )
 
         if name == "conv1":
             bn_name = "bn_" + name
@@ -203,7 +203,7 @@ class ConvBNLayer(nn.Module):
             num_channels=out_channels,
             act=act,
             param_attr=ParamAttr(name=name + '.output.1.w_0'),
-            bias_attr=ParamAttr(name=name + '.output.1.b_0'),
+            bias=ParamAttr(name=name + '.output.1.b_0'),
             moving_mean_name=bn_name + "_mean",
             moving_variance_name=bn_name + "_variance")
 

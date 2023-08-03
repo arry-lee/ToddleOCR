@@ -361,7 +361,7 @@ class DecoderUnit(nn.Module):
             sDim,
             yDim,
             weight_attr=nn.initializer.Normal(std=0.01),
-            bias_attr=nn.initializer.Constant(value=0))
+            bias=nn.initializer.Constant(value=0))
         self.embed_fc = nn.Linear(300, self.sDim)
 
     def get_initial_state(self, embed, tile_times=1):

@@ -105,14 +105,14 @@ class SpatialSepConvSF(nn.Module):
             nn.Conv2d(
                 inp,
                 oup1, (kernel_size, 1), (stride, 1), (kernel_size // 2, 0),
-                bias_attr=False,
+                bias=False,
                 groups=1),
             nn.BatchNorm2D(oup1),
             nn.Conv2d(
                 oup1,
                 oup1 * oup2, (1, kernel_size), (1, stride),
                 (0, kernel_size // 2),
-                bias_attr=False,
+                bias=False,
                 groups=oup1),
             nn.BatchNorm2D(oup1 * oup2),
             ChannelShuffle(oup1), )
@@ -169,14 +169,14 @@ class DepthSpatialSepConv(nn.Module):
                 inp,
                 inp * exp1, (kernel_size, 1), (stride, 1),
                 (kernel_size // 2, 0),
-                bias_attr=False,
+                bias=False,
                 groups=inp),
             nn.BatchNorm2D(inp * exp1),
             nn.Conv2d(
                 hidden_dim,
                 oup, (1, kernel_size),
                 1, (0, kernel_size // 2),
-                bias_attr=False,
+                bias=False,
                 groups=hidden_dim),
             nn.BatchNorm2D(oup))
 
@@ -193,7 +193,7 @@ class GroupConv(nn.Module):
         self.groups = groups
         self.conv = nn.Sequential(
             nn.Conv2d(
-                inp, oup, 1, 1, 0, bias_attr=False, groups=self.groups[0]),
+                inp, oup, 1, 1, 0, bias=False, groups=self.groups[0]),
             nn.BatchNorm2D(oup))
 
     def forward(self, x):
@@ -211,7 +211,7 @@ class DepthConv(nn.Module):
                 kernel_size,
                 stride,
                 kernel_size // 2,
-                bias_attr=False,
+                bias=False,
                 groups=inp),
             nn.BatchNorm2D(oup))
 

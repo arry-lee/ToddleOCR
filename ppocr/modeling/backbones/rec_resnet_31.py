@@ -37,7 +37,7 @@ def conv3x3(in_channel, out_channel, stride=1, conv_weight_attr=None):
         stride=stride,
         padding=1,
         weight_attr=conv_weight_attr,
-        bias_attr=False)
+        bias=False)
 
 
 class BasicBlock(nn.Module):
@@ -61,7 +61,7 @@ class BasicBlock(nn.Module):
                     1,
                     stride,
                     weight_attr=conv_weight_attr,
-                    bias_attr=False),
+                    bias=False),
                 nn.BatchNorm2D(channels * self.expansion, weight_attr=bn_weight_attr))
         else:
             self.downsample = nn.Sequential()
@@ -188,7 +188,7 @@ class ResNet31(nn.Module):
                         kernel_size=1,
                         stride=1,
                         weight_attr=conv_weight_attr,
-                        bias_attr=False),
+                        bias=False),
                     nn.BatchNorm2D(output_channels, weight_attr=bn_weight_attr))
 
             layers.append(

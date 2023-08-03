@@ -35,8 +35,8 @@ def get_para_bias_attr(l2_decay, k):
         regularizer = None
         initializer = None
     weight_attr = ParamAttr(regularizer=regularizer, initializer=initializer)
-    bias_attr = ParamAttr(regularizer=regularizer, initializer=initializer)
-    return [weight_attr, bias_attr]
+    bias = ParamAttr(regularizer=regularizer, initializer=initializer)
+    return [weight_attr, bias]
 
 
 class TableAttentionHead(nn.Module):
@@ -153,7 +153,7 @@ class SLAHead(nn.Module):
         # structure
         self.structure_attention_cell = AttentionGRUCell(
             in_channels, hidden_size, self.num_embeddings)
-        weight_attr, bias_attr = get_para_bias_attr(
+        weight_attr, bias = get_para_bias_attr(
             l2_decay=fc_decay, k=hidden_size)
         weight_attr1_1, bias_attr1_1 = get_para_bias_attr(
             l2_decay=fc_decay, k=hidden_size)
@@ -164,12 +164,12 @@ class SLAHead(nn.Module):
                 self.hidden_size,
                 self.hidden_size,
                 weight_attr=weight_attr1_2,
-                bias_attr=bias_attr1_2),
+                bias=bias_attr1_2),
             nn.Linear(
                 hidden_size,
                 out_channels,
                 weight_attr=weight_attr,
-                bias_attr=bias_attr))
+                bias=bias))
         # loc
         weight_attr1, bias_attr1 = get_para_bias_attr(
             l2_decay=fc_decay, k=self.hidden_size)
@@ -180,12 +180,12 @@ class SLAHead(nn.Module):
                 self.hidden_size,
                 self.hidden_size,
                 weight_attr=weight_attr1,
-                bias_attr=bias_attr1),
+                bias=bias_attr1),
             nn.Linear(
                 self.hidden_size,
                 loc_reg_num,
                 weight_attr=weight_attr2,
-                bias_attr=bias_attr2),
+                bias=bias_attr2),
             nn.Sigmoid())
 
     def forward(self, inputs, targets=None):

@@ -36,7 +36,7 @@ class Conv_BN_ReLU(nn.Module):
             kernel_size=kernel_size,
             stride=stride,
             padding=padding,
-            bias_attr=False)
+            bias=False)
         self.bn = nn.BatchNorm2D(out_planes, momentum=0.1)
         self.relu = nn.ReLU()
 

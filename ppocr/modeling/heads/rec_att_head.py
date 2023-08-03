@@ -82,9 +82,9 @@ class AttentionHead(nn.Module):
 class AttentionGRUCell(nn.Module):
     def __init__(self, input_size, hidden_size, num_embeddings, use_gru=False):
         super(AttentionGRUCell, self).__init__()
-        self.i2h = nn.Linear(input_size, hidden_size, bias_attr=False)
+        self.i2h = nn.Linear(input_size, hidden_size, bias=False)
         self.h2h = nn.Linear(hidden_size, hidden_size)
-        self.score = nn.Linear(hidden_size, 1, bias_attr=False)
+        self.score = nn.Linear(hidden_size, 1, bias=False)
 
         self.rnn = nn.GRUCell(
             input_size=input_size + num_embeddings, hidden_size=hidden_size)
@@ -177,9 +177,9 @@ class AttentionLSTM(nn.Module):
 class AttentionLSTMCell(nn.Module):
     def __init__(self, input_size, hidden_size, num_embeddings, use_gru=False):
         super(AttentionLSTMCell, self).__init__()
-        self.i2h = nn.Linear(input_size, hidden_size, bias_attr=False)
+        self.i2h = nn.Linear(input_size, hidden_size, bias=False)
         self.h2h = nn.Linear(hidden_size, hidden_size)
-        self.score = nn.Linear(hidden_size, 1, bias_attr=False)
+        self.score = nn.Linear(hidden_size, 1, bias=False)
         if not use_gru:
             self.rnn = nn.LSTMCell(
                 input_size=input_size + num_embeddings, hidden_size=hidden_size)

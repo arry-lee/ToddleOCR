@@ -49,10 +49,10 @@ class PoolAggregate(nn.Module):
                     '{}'.format(i),
                     nn.Sequential(
                         ('conv1', nn.Conv2d(
-                            self.d_in, self.d_middle, 3, 2, 1, bias_attr=False)
+                            self.d_in, self.d_middle, 3, 2, 1, bias=False)
                          ), ('bn1', nn.BatchNorm2d(self.d_middle)),
                         ('act', self.act), ('conv2', nn.Conv2d(
-                            self.d_middle, self.d_out, 3, 2, 1, bias_attr=False
+                            self.d_middle, self.d_out, 3, 2, 1, bias=False
                         )), ('bn2', nn.BatchNorm2d(self.d_out)))))
         return aggs
 
@@ -82,17 +82,17 @@ class WeightAggregate(nn.Module):
         self.conv_n = nn.Sequential(
             ('conv1', nn.Conv2d(
                 d_in, d_in, 3, 1, 1,
-                bias_attr=False)), ('bn1', nn.BatchNorm2d(d_in)),
+                bias=False)), ('bn1', nn.BatchNorm2d(d_in)),
             ('act1', self.act), ('conv2', nn.Conv2d(
-                d_in, n_r, 1, bias_attr=False)), ('bn2', nn.BatchNorm2d(n_r)),
+                d_in, n_r, 1, bias=False)), ('bn2', nn.BatchNorm2d(n_r)),
             ('act2', nn.Sigmoid()))
         self.conv_d = nn.Sequential(
             ('conv1', nn.Conv2d(
                 d_in, d_middle, 3, 1, 1,
-                bias_attr=False)), ('bn1', nn.BatchNorm2d(d_middle)),
+                bias=False)), ('bn1', nn.BatchNorm2d(d_middle)),
             ('act1', self.act), ('conv2', nn.Conv2d(
                 d_middle, d_out, 1,
-                bias_attr=False)), ('bn2', nn.BatchNorm2d(d_out)))
+                bias=False)), ('bn2', nn.BatchNorm2d(d_out)))
 
     def forward(self, x):
         b, _, h, w = x.shape

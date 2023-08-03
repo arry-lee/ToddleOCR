@@ -35,7 +35,7 @@ class S2VAdaptor(nn.Module):
 
         # feature strengthen module, channel attention
         self.channel_inter = nn.Linear(
-            self.in_channels, self.in_channels, bias_attr=False)
+            self.in_channels, self.in_channels, bias=False)
         self.channel_bn = nn.BatchNorm1D(self.in_channels)
         self.channel_act = nn.ReLU()
         self.apply(self.init_weights)
@@ -79,7 +79,7 @@ class V2SAdaptor(nn.Module):
 
         # output transformation
         self.channel_inter = nn.Linear(
-            self.in_channels, self.in_channels, bias_attr=False)
+            self.in_channels, self.in_channels, bias=False)
         self.channel_bn = nn.BatchNorm1D(self.in_channels)
         self.channel_act = nn.ReLU()
 

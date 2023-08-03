@@ -51,13 +51,13 @@ class ConvBNLayer(nn.Module):
             padding=padding,
             groups=num_groups,
             weight_attr=ParamAttr(initializer=KaimingNormal()),
-            bias_attr=False)
+            bias=False)
 
         self._batch_norm = BatchNorm(
             num_filters,
             act=act,
             param_attr=ParamAttr(regularizer=L2Decay(0.0)),
-            bias_attr=ParamAttr(regularizer=L2Decay(0.0)))
+            bias=ParamAttr(regularizer=L2Decay(0.0)))
 
     def forward(self, inputs):
         y = self._conv(inputs)
@@ -237,7 +237,7 @@ class SEModule(nn.Module):
             stride=1,
             padding=0,
             weight_attr=ParamAttr(),
-            bias_attr=ParamAttr())
+            bias=ParamAttr())
         self.conv2 = Conv2D(
             in_channels=channel // reduction,
             out_channels=channel,
@@ -245,7 +245,7 @@ class SEModule(nn.Module):
             stride=1,
             padding=0,
             weight_attr=ParamAttr(),
-            bias_attr=ParamAttr())
+            bias=ParamAttr())
 
     def forward(self, inputs):
         outputs = self.avg_pool(inputs)

@@ -60,14 +60,14 @@ class CountingDecoder(nn.Module):
                 512,
                 kernel_size=kernel_size,
                 padding=kernel_size // 2,
-                bias_attr=False),
+                bias=False),
             nn.BatchNorm2D(512))
 
         self.channel_att = ChannelAtt(512, 16)
 
         self.pred_layer = nn.Sequential(
             nn.Conv2d(
-                512, self.out_channel, kernel_size=1, bias_attr=False),
+                512, self.out_channel, kernel_size=1, bias=False),
             nn.Sigmoid())
 
     def forward(self, x, mask):
@@ -257,9 +257,9 @@ class Attention(nn.Module):
         self.attention_dim = attention_dim
         self.hidden_weight = nn.Linear(self.hidden, self.attention_dim)
         self.attention_conv = nn.Conv2d(
-            1, 512, kernel_size=11, padding=5, bias_attr=False)
+            1, 512, kernel_size=11, padding=5, bias=False)
         self.attention_weight = nn.Linear(
-            512, self.attention_dim, bias_attr=False)
+            512, self.attention_dim, bias=False)
         self.alpha_convert = nn.Linear(self.attention_dim, 1)
 
     def forward(self,

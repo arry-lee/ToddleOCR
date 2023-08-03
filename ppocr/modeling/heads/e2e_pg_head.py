@@ -45,13 +45,13 @@ class ConvBNLayer(nn.Module):
             padding=padding,
             groups=groups,
             weight_attr=ParamAttr(name=name + '_weights'),
-            bias_attr=False)
+            bias=False)
 
         self.bn = nn.BatchNorm2d(
             num_channels=out_channels,
             act=act,
             param_attr=ParamAttr(name="bn_" + name + "_scale"),
-            bias_attr=ParamAttr(name="bn_" + name + "_offset"),
+            bias=ParamAttr(name="bn_" + name + "_offset"),
             moving_mean_name="bn_" + name + "_mean",
             moving_variance_name="bn_" + name + "_variance",
             use_global_stats=False)
@@ -110,7 +110,7 @@ class PGHead(nn.Module):
             padding=1,
             groups=1,
             weight_attr=ParamAttr(name="conv_f_score{}".format(4)),
-            bias_attr=False)
+            bias=False)
 
         self.conv_f_boder1 = ConvBNLayer(
             in_channels=in_channels,
@@ -144,7 +144,7 @@ class PGHead(nn.Module):
             padding=1,
             groups=1,
             weight_attr=ParamAttr(name="conv_f_boder{}".format(4)),
-            bias_attr=False)
+            bias=False)
         self.conv_f_char1 = ConvBNLayer(
             in_channels=in_channels,
             out_channels=128,
@@ -193,7 +193,7 @@ class PGHead(nn.Module):
             padding=1,
             groups=1,
             weight_attr=ParamAttr(name="conv_f_char{}".format(6)),
-            bias_attr=False)
+            bias=False)
 
         self.conv_f_direc1 = ConvBNLayer(
             in_channels=in_channels,
@@ -227,7 +227,7 @@ class PGHead(nn.Module):
             padding=1,
             groups=1,
             weight_attr=ParamAttr(name="conv_f_direc{}".format(4)),
-            bias_attr=False)
+            bias=False)
 
     def forward(self, x, targets=None):
         f_score = self.conv_f_score1(x)

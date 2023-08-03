@@ -95,7 +95,7 @@ class BasicBlock(nn.Module):
         return nn.Conv2d(in_planes, out_planes,
                          kernel_size=3, stride=stride,
                          padding=1, weight_attr=conv_weight_attr,
-                         bias_attr=False)
+                         bias=False)
 
     def forward(self, x):
         residual = x
@@ -138,13 +138,13 @@ class ResNet(nn.Module):
                                  kernel_size=3, stride=1, 
                                  padding=1, 
                                  weight_attr=conv_weight_attr,
-                                 bias_attr=False)
+                                 bias=False)
         self.bn0_1 = nn.BatchNorm2D(int(output_channel / 16))
         self.conv0_2 = nn.Conv2d(int(output_channel / 16), self.inplanes,
                                  kernel_size=3, stride=1,
                                  padding=1, 
                                  weight_attr=conv_weight_attr,
-                                 bias_attr=False)
+                                 bias=False)
         self.bn0_2 = nn.BatchNorm2D(self.inplanes)
         self.relu = nn.ReLU()
 
@@ -157,7 +157,7 @@ class ResNet(nn.Module):
                                kernel_size=3, stride=1,
                                padding=1, 
                                weight_attr=conv_weight_attr,
-                               bias_attr=False)
+                               bias=False)
         self.bn1 = nn.BatchNorm2D(self.output_channel_block[0])
 
         self.maxpool2 = nn.MaxPool2D(kernel_size=2, stride=2, padding=0)
@@ -169,7 +169,7 @@ class ResNet(nn.Module):
                                kernel_size=3, stride=1,
                                padding=1, 
                                weight_attr=conv_weight_attr,
-                               bias_attr=False,)
+                               bias=False,)
         self.bn2 = nn.BatchNorm2D(self.output_channel_block[1])
 
         self.maxpool3 = nn.MaxPool2D(kernel_size=2,
@@ -182,7 +182,7 @@ class ResNet(nn.Module):
                                kernel_size=3, stride=1,
                                padding=1, 
                                weight_attr=conv_weight_attr,
-                               bias_attr=False)
+                               bias=False)
         self.bn3 = nn.BatchNorm2D(self.output_channel_block[2])
 
         self.layer4 = self._make_layer(block, self.output_channel_block[3],
@@ -192,14 +192,14 @@ class ResNet(nn.Module):
                                  kernel_size=2, stride=(2, 1),
                                  padding=(0, 1), 
                                  weight_attr=conv_weight_attr,
-                                 bias_attr=False)
+                                 bias=False)
         self.bn4_1 = nn.BatchNorm2D(self.output_channel_block[3])
         self.conv4_2 = nn.Conv2d(self.output_channel_block[3],
                                  self.output_channel_block[3],
                                  kernel_size=2, stride=1,
                                  padding=0, 
                                  weight_attr=conv_weight_attr,
-                                 bias_attr=False)
+                                 bias=False)
         self.bn4_2 = nn.BatchNorm2D(self.output_channel_block[3])
 
     def _make_layer(self, block, planes, blocks, stride=1):
@@ -221,7 +221,7 @@ class ResNet(nn.Module):
                 nn.Conv2d(self.inplanes, planes * block.expansion,
                           kernel_size=1, stride=stride,
                           weight_attr=conv_weight_attr, 
-                          bias_attr=False),
+                          bias=False),
                 nn.BatchNorm2D(planes * block.expansion),
             )
 

@@ -93,7 +93,7 @@ class Transformer(nn.Module):
         self.d_model = d_model
         self.nhead = nhead
         self.tgt_word_prj = nn.Linear(
-            d_model, self.out_channels, bias_attr=False)
+            d_model, self.out_channels, bias=False)
         w0 = np.random.normal(0.0, d_model**-0.5,
                               (d_model, self.out_channels)).astype(np.float32)
         self.tgt_word_prj.weight.set_value(w0)
