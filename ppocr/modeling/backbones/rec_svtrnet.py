@@ -430,14 +430,14 @@ class SVTRNet(nn.Module):
             self.avg_pool = nn.AdaptiveAvgPool2d([1, out_char_num])
             self.last_conv = nn.Conv2d(in_channels=embed_dim[2], out_channels=self.out_channels, kernel_size=1, stride=1, padding=0, bias=False)
             self.hardswish = nn.Hardswish()
-            self.dropout = nn.Dropout(p=last_drop, mode="downscale_in_infer")
+            self.dropout = nn.Dropout(p=last_drop)
         if not prenorm:
             self.norm = eval(norm_layer)(embed_dim[-1], epsilon=epsilon)
         self.use_lenhead = use_lenhead
         if use_lenhead:
             self.len_conv = nn.Linear(embed_dim[2], self.out_channels)
             self.hardswish_len = nn.Hardswish()
-            self.dropout_len = nn.Dropout(p=last_drop, mode="downscale_in_infer")
+            self.dropout_len = nn.Dropout(p=last_drop)
 
         trunc_normal_(self.pos_embed)
         self.apply(self._init_weights)

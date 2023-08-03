@@ -205,7 +205,7 @@ class MultiHeadAttention(nn.Module):
             product += attn_bias
         weights = F.softmax(product)
         if self.dropout_rate:
-            weights = F.dropout(weights, p=self.dropout_rate, mode="downscale_in_infer")
+            weights = F.dropout(weights, p=self.dropout_rate)
         out = torch.matmul(weights, v)
 
         # combine heads
@@ -240,7 +240,7 @@ class PrePostProcessLayer(nn.Module):
                     )
                 )
             elif cmd == "d":  # add dropout
-                self.functors.append(lambda x: F.dropout(x, p=dropout_rate, mode="downscale_in_infer") if dropout_rate else x)
+                self.functors.append(lambda x: F.dropout(x, p=dropout_rate) if dropout_rate else x)
 
     def forward(self, x, residual=None):
         for i, cmd in enumerate(self.process_cmd):
@@ -268,7 +268,7 @@ class PrepareEncoder(nn.Module):
         src_pos_enc.stop_gradient = True
         enc_input = src_word_emb + src_pos_enc
         if self.dropout_rate:
-            out = F.dropout(enc_input, p=self.dropout_rate, mode="downscale_in_infer")
+            out = F.dropout(enc_input, p=self.dropout_rate)
         else:
             out = enc_input
         return out
@@ -301,7 +301,7 @@ class PrepareDecoder(nn.Module):
         src_pos_enc.stop_gradient = True
         enc_input = src_word_emb + src_pos_enc
         if self.dropout_rate:
-            out = F.dropout(enc_input, p=self.dropout_rate, mode="downscale_in_infer")
+            out = F.dropout(enc_input, p=self.dropout_rate)
         else:
             out = enc_input
         return out
@@ -322,6 +322,6 @@ class FFN(nn.Module):
         hidden = self.fc1(x)
         hidden = F.relu(hidden)
         if self.dropout_rate:
-            hidden = F.dropout(hidden, p=self.dropout_rate, mode="downscale_in_infer")
+            hidden = F.dropout(hidden, p=self.dropout_rate)
         out = self.fc2(hidden)
         return out

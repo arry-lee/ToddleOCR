@@ -67,7 +67,7 @@ class MultiHeadedAttention(nn.Module):
         self.h = h
         self.linears = clones(nn.Linear(d_model, d_model), 4)
         self.attn = None
-        self.dropout = nn.Dropout(p=dropout, mode="downscale_in_infer")
+        self.dropout = nn.Dropout(p=dropout)
         self.compress_attention = compress_attention
         self.compress_attention_linear = nn.Linear(h, 1)
 
@@ -202,7 +202,7 @@ class PositionalEncoding(nn.Module):
 
     def __init__(self, dropout, dim, max_len=5000):
         super(PositionalEncoding, self).__init__()
-        self.dropout = nn.Dropout(p=dropout, mode="downscale_in_infer")
+        self.dropout = nn.Dropout(p=dropout)
 
         pe = torch.zeros([max_len, dim])
         position = torch.arange(0, max_len, dtype=torch.float32).unsqueeze(1)
@@ -224,7 +224,7 @@ class PositionwiseFeedForward(nn.Module):
         super(PositionwiseFeedForward, self).__init__()
         self.w_1 = nn.Linear(d_model, d_ff)
         self.w_2 = nn.Linear(d_ff, d_model)
-        self.dropout = nn.Dropout(dropout, mode="downscale_in_infer")
+        self.dropout = nn.Dropout(dropout)
 
     def forward(self, x):
         return self.w_2(self.dropout(F.relu(self.w_1(x))))
