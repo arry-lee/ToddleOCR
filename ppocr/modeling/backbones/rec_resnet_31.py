@@ -98,7 +98,7 @@ class ResNet31(nn.Module):
             support_dict = ["KaimingNormal"]
             assert init_type in support_dict, Exception("resnet31 only support {}".format(support_dict))
             conv_weight_attr = nn.initializer.KaimingNormal()
-            bn_weight_attr = ParamAttr(initializer=nn.initializer.Uniform(), learning_rate=1)
+
 
         # conv 1 (Conv Conv)
         self.conv1_1 = nn.Conv2d(in_channels, channels[0], kernel_size=3, stride=1, padding=1, weight_attr=conv_weight_attr)

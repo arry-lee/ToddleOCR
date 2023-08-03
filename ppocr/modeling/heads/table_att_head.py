@@ -34,8 +34,8 @@ def get_para_bias_attr(l2_decay, k):
     else:
         regularizer = None
         initializer = None
-    weight_attr = ParamAttr(regularizer=regularizer, initializer=initializer)
-    bias = ParamAttr(regularizer=regularizer, initializer=initializer)
+
+
     return [weight_attr, bias]
 
 

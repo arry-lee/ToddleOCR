@@ -27,8 +27,8 @@ def get_para_bias_attr(l2_decay, k):
     regularizer = torch.regularizer.L2Decay(l2_decay)
     stdv = 1.0 / math.sqrt(k * 1.0)
     initializer = nn.initializer.Uniform(-stdv, stdv)
-    weight_attr = ParamAttr(regularizer=regularizer, initializer=initializer)
-    bias = ParamAttr(regularizer=regularizer, initializer=initializer)
+
+
     return [weight_attr, bias]
 
 

@@ -85,8 +85,8 @@ class LocalizationNetwork(nn.Module):
         initial_bias = self.get_initial_fiducials()
         initial_bias = initial_bias.reshape(-1)
         name = "loc_fc2"
-        param_attr = ParamAttr(learning_rate=loc_lr, initializer=nn.initializer.Assign(np.zeros([fc_dim, F * 2])), name=name + "_w")
-        bias = ParamAttr(learning_rate=loc_lr, initializer=nn.initializer.Assign(initial_bias), name=name + "_b")
+
+
         self.fc2 = nn.Linear(fc_dim, F * 2, weight_attr=param_attr, bias=bias, name=name)
         self.out_channels = F * 2
 
@@ -130,8 +130,8 @@ class GridGenerator(nn.Module):
 
         name = "ex_fc"
         initializer = nn.initializer.Constant(value=0.0)
-        param_attr = ParamAttr(learning_rate=0.0, initializer=initializer, name=name + "_w")
-        bias = ParamAttr(learning_rate=0.0, initializer=initializer, name=name + "_b")
+
+
         self.fc = nn.Linear(in_channels, 6, weight_attr=param_attr, bias=bias, name=name)
 
     def forward(self, batch_C_prime, I_r_size):

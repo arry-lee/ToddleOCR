@@ -45,8 +45,8 @@ class ConvNormLayer(nn.Module):
         )
 
         norm_lr = 0.0 if freeze_norm else 1.0
-        param_attr = ParamAttr(learning_rate=norm_lr, regularizer=L2Decay(norm_decay) if norm_decay is not None else None)
-        bias = ParamAttr(learning_rate=norm_lr, regularizer=L2Decay(norm_decay) if norm_decay is not None else None)
+
+
         if norm_type == "bn":
             self.norm = nn.BatchNorm2d(ch_out, weight_attr=param_attr, bias=bias)
         elif norm_type == "sync_bn":

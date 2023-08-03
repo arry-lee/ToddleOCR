@@ -185,8 +185,8 @@ class GA_SPIN_Transformer(nn.Module):
             # Init structure_fc2 in LocalizationNetwork
             initial_bias = self.init_spin(default_type * 2)
             initial_bias = initial_bias.reshape(-1)
-            param_attr = ParamAttr(learning_rate=loc_lr, initializer=nn.initializer.Assign(np.zeros([256, self.out_weight])))
-            bias = ParamAttr(learning_rate=loc_lr, initializer=nn.initializer.Assign(initial_bias))
+
+
             self.stucture_fc2 = nn.Linear(256, self.out_weight, weight_attr=param_attr, bias=bias)
             self.sigmoid = nn.Sigmoid()
 

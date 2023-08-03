@@ -52,7 +52,7 @@ class DeformableConvV2(nn.Module):
 
         if bias:
             # in FCOS-DCN head, specifically need learning_rate and regularizer
-            dcn_bias_attr = ParamAttr(initializer=Constant(value=0), regularizer=dcn_bias_regularizer, learning_rate=dcn_bias_lr_scale)
+
         else:
             # in ResNet backbone, do not need bias
             dcn_bias_attr = False
@@ -61,9 +61,9 @@ class DeformableConvV2(nn.Module):
         )
 
         if lr_scale == 1 and regularizer is None:
-            offset_bias_attr = ParamAttr(initializer=Constant(0.0))
+
         else:
-            offset_bias_attr = ParamAttr(initializer=Constant(0.0), learning_rate=lr_scale, regularizer=regularizer)
+
         self.conv_offset = nn.Conv2d(
             in_channels, groups * 3 * kernel_size**2, kernel_size, stride=stride, padding=(kernel_size - 1) // 2,  bias=offset_bias_attr
         )

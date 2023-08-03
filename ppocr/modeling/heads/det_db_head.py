@@ -26,7 +26,7 @@ import torch.nn.functional as F
 def get_bias_attr(k):
     stdv = 1.0 / math.sqrt(k * 1.0)
     initializer = torch.nn.initializer.Uniform(-stdv, stdv)
-    bias = ParamAttr(initializer=initializer)
+
     return bias
 
 
