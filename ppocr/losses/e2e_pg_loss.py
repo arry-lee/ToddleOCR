@@ -33,7 +33,7 @@ class PGLoss(nn.Module):
         self.dice_loss = DiceLoss(eps=eps)
 
     def border_loss(self, f_border, l_border, l_score, l_mask):
-        l_border_split, l_border_norm = torch.tensor.split(l_border, num_or_sections=[4, 1], dim=1)
+        l_border_split, l_border_norm = torch.tensor.split(l_border, [4, 1], dim=1)
         f_border_split = f_border
         b, c, h, w = l_border_norm.shape
         l_border_norm_split = torch.unsqueeze(l_border_norm, 0).repeat(b, 4 * c, h, w)
@@ -52,7 +52,7 @@ class PGLoss(nn.Module):
         return border_loss
 
     def direction_loss(self, f_direction, l_direction, l_score, l_mask):
-        l_direction_split, l_direction_norm = torch.tensor.split(l_direction, num_or_sections=[2, 1], dim=1)
+        l_direction_split, l_direction_norm = torch.tensor.split(l_direction, [2, 1], dim=1)
         f_direction_split = f_direction
         b, c, h, w = l_direction_norm.shape
         l_direction_norm_split = torch.unsqueeze(l_direction_norm, 0).repeat(b, 2 * c, h, w)
