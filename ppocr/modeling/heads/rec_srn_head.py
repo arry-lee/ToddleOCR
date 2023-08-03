@@ -91,7 +91,7 @@ class PVAM(nn.Module):
         y = F.tanh(y)
         attention_weight = self.fc1(y)
         attention_weight = torch.reshape(attention_weight, shape=[-1, self.max_length, t])
-        attention_weight = F.softmax(attention_weight, axis=-1)
+        attention_weight = F.softmax(attention_weight,dim=-1)
         pvam_features = torch.matmul(attention_weight, word_features)  # [b, max_length, c]
         return pvam_features
 

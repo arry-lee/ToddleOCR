@@ -114,7 +114,7 @@ class PositionAttention(nn.Module):
         # calculate attention
         attn_scores = q @ k.flatten(2)  # (B, N, (H*W))
         attn_scores = attn_scores / (C**0.5)
-        attn_scores = F.softmax(attn_scores, axis=-1)
+        attn_scores = F.softmax(attn_scores,dim=-1)
 
         v = v.flatten(2).transpose([0, 2, 1])  # (B, (H*W), C)
         attn_vecs = attn_scores @ v  # (B, N, C)
@@ -159,7 +159,7 @@ class ABINetHead(nn.Module):
             align_lengths = vis_lengths
             all_l_res, all_a_res = [], []
             for i in range(self.iter_size):
-                tokens = F.softmax(align_logits, axis=-1)
+                tokens = F.softmax(align_logits,dim=-1)
                 lengths = align_lengths
                 lengths = torch.clip(lengths, 2, self.max_length)  # TODO:move to langauge model
                 l_feature, l_logits = self.language(tokens, lengths)

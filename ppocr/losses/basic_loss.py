@@ -46,7 +46,7 @@ class CELoss(nn.Module):
             loss = torch.sum(x * label, dim=-1)
         else:
             if label.shape[-1] == x.shape[-1]:
-                label = F.softmax(label, axis=-1)
+                label = F.softmax(label,dim=-1)
                 soft_label = True
             else:
                 soft_label = False

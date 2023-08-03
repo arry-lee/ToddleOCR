@@ -144,7 +144,7 @@ class Transformer(nn.Module):
                 tgt = decoder_layer(tgt, memory, self_mask=tgt_mask)
             dec_output = tgt
             dec_output = dec_output[:, -1, :]
-            word_prob = F.softmax(self.tgt_word_prj(dec_output), axis=-1)
+            word_prob = F.softmax(self.tgt_word_prj(dec_output),dim=-1)
             preds_idx = torch.argmax(word_prob, dim=-1)
             if torch.equal_all(preds_idx, torch.full(preds_idx.shape, 3, dtype="int64")):
                 break
@@ -321,7 +321,7 @@ class MultiheadAttention(nn.Module):
         if attn_mask is not None:
             attn += attn_mask
 
-        attn = F.softmax(attn, axis=-1)
+        attn = F.softmax(attn,dim=-1)
         attn = self.attn_drop(attn)
 
         x = (attn.matmul(v)).transpose((0, 2, 1, 3)).reshape((0, qN, self.embed_dim))

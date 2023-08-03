@@ -52,7 +52,7 @@ def attention(query, key, value, mask=None, dropout=None, attention_map=None):
     else:
         pass
 
-    p_attn = F.softmax(scores, axis=-1)
+    p_attn = F.softmax(scores,dim=-1)
 
     if dropout is not None:
         p_attn = dropout(p_attn)

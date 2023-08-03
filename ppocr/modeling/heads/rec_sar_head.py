@@ -210,7 +210,7 @@ class ParallelSARDecoder(BaseDecoder):
                     attn_weight[i, :, :, valid_width:, :] = float("-inf")
 
         attn_weight = torch.reshape(attn_weight, [bsz, T, -1])
-        attn_weight = F.softmax(attn_weight, axis=-1)
+        attn_weight = F.softmax(attn_weight,dim=-1)
 
         attn_weight = torch.reshape(attn_weight, [bsz, T, h, w, c])
         attn_weight = torch.transpose(attn_weight, perm=[0, 1, 4, 2, 3])

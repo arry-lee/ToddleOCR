@@ -95,7 +95,7 @@ class TableMasterHead(nn.Module):
         for i in range(max_text_length + 1):
             target_mask = self.make_mask(input)
             out_step, bbox_output_step = self.decode(input, feature, None, target_mask)
-            prob = F.softmax(out_step, axis=-1)
+            prob = F.softmax(out_step,dim=-1)
             next_word = prob.argmax(axis=2, dtype="int64")
             input = torch.concat([input, next_word[:, -1].unsqueeze(-1)], dim=1)
             if i == self.max_text_length:
@@ -214,7 +214,7 @@ def self_attention(query, key, value, mask=None, dropout=None):
         # score = score.masked_fill(mask == 0, -1e9) # b, h, L, L
         score = masked_fill(score, mask == 0, -6.55e4)  # for fp16
 
-    p_attn = F.softmax(score, axis=-1)
+    p_attn = F.softmax(score,dim=-1)
 
     if dropout is not None:
         p_attn = dropout(p_attn)

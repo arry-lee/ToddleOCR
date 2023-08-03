@@ -171,7 +171,7 @@ class Attention(nn.Module):
         attn = q.matmul(k.transpose((0, 1, 3, 2)))
         if self.mixer == "Local":
             attn += self.mask
-        attn = nn.functional.softmax(attn, axis=-1)
+        attn = nn.functional.softmax(attn,dim=-1)
         attn = self.attn_drop(attn)
 
         x = (attn.matmul(v)).transpose((0, 2, 1, 3)).reshape((0, N, C))
