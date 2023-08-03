@@ -41,7 +41,7 @@ class RFLLoss(nn.Module):
             cnt_outputs, seq_outputs = predicts, None
         # batch [image, label, length, cnt_label]
         if cnt_outputs is not None:
-            cnt_loss = self.cnt_loss(cnt_outputs, torch.cast(batch[3], torch.float32))
+            cnt_loss = self.cnt_loss(cnt_outputs, batch[3].type(torch.float32))
             self.total_loss["cnt_loss"] = cnt_loss
             total_loss += cnt_loss
 

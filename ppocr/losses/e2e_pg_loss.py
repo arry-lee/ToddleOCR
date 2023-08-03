@@ -73,7 +73,7 @@ class PGLoss(nn.Module):
     def ctcloss(self, f_char, tcl_pos, tcl_mask, tcl_label, label_t):
         f_char = f_char.permute(0, 2, 3, 1)
         tcl_pos = torch.reshape(tcl_pos, [-1, 3])
-        tcl_pos = torch.cast(tcl_pos, dtype=int)
+        tcl_pos = tcl_pos.type(torch.int)
         f_tcl_char = torch.gather_nd(f_char, tcl_pos)
         f_tcl_char = torch.reshape(f_tcl_char, [-1, 64, self.pad_num + 1])  # len(Lexicon_Table)+1
         f_tcl_char_fg, f_tcl_char_bg = torch.split(f_tcl_char, [self.pad_num, 1], dim=2)

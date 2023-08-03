@@ -83,11 +83,11 @@ class TPSSpatialTransformer(nn.Module):
         # create padded kernel matrix
         forward_kernel = torch.zeros([N + 3, N + 3])
         target_control_partial_repr = compute_partial_repr(target_control_points, target_control_points)
-        target_control_partial_repr = torch.cast(target_control_partial_repr, forward_kernel.dtype)
+        target_control_partial_repr = target_control_partial_repr.type(forward_kernel.dtype)
         forward_kernel[:N, :N] = target_control_partial_repr
         forward_kernel[:N, -3] = 1
         forward_kernel[-3, :N] = 1
-        target_control_points = torch.cast(target_control_points, forward_kernel.dtype)
+        target_control_points = target_control_points.type(forward_kernel.dtype)
         forward_kernel[:N, -2:] = target_control_points
         forward_kernel[-2:, :N] = target_control_points.permute(1, 0)
         # compute inverse matrix
