@@ -42,7 +42,7 @@ class CELoss(nn.Module):
         if self.epsilon is not None:
             class_num = x.shape[-1]
             label = self._labelsmoothing(label, class_num)
-            x = -F.log_softmax(x, axis=-1)
+            x = -F.log_softmax(x, dim=-1)
             loss = torch.sum(x * label, dim=-1)
         else:
             if label.shape[-1] == x.shape[-1]:

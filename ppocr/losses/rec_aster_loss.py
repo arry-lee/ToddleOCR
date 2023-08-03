@@ -71,7 +71,7 @@ class AsterLoss(nn.Module):
         targets = targets[:, :max_length]
         mask = mask[:, :max_length]
         rec_pred = torch.reshape(rec_pred, [-1, rec_pred.shape[2]])
-        input = nn.functional.log_softmax(rec_pred, axis=1)
+        input = nn.functional.log_softmax(rec_pred, dim=1)
         targets = torch.reshape(targets, [-1, 1])
         mask = torch.reshape(mask, [-1, 1])
         output = -torch.index_sample(input, index=targets) * mask
