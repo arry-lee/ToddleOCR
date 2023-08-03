@@ -19,7 +19,7 @@ from __future__ import print_function
 import torch
 from torch import nn
 
-from ppocr.modeling.heads.rec_ctc_head import get_para_bias_attr
+
 from ppocr.modeling.backbones.rec_svtrnet import Block, ConvBNLayer, trunc_normal_, zeros_, ones_
 
 
@@ -81,7 +81,7 @@ class EncoderWithFC(nn.Module):
     def __init__(self, in_channels, hidden_size):
         super(EncoderWithFC, self).__init__()
         self.out_channels = hidden_size
-        weight_attr, bias = get_para_bias_attr(l2_decay=0.00001, k=in_channels)
+
         self.fc = nn.Linear(in_channels, hidden_size, bias=True, name="reduce_encoder_fea")
 
     def forward(self, x):
