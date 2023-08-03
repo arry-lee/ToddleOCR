@@ -22,7 +22,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.nn import Conv2d, BatchNorm2d, Linear, Dropout
-from torch.nn import AdaptiveAvgPool2D, MaxPool2D, AvgPool2D
+from torch.nn import AdaptiveAvgPool2d, MaxPool2d, AvgPool2d
 from torch.nn.initializer import Uniform
 
 import math
@@ -142,7 +142,7 @@ class ResNet(nn.Module):
             stride=2,
             act="relu",
         )
-        self.pool2d_max = MaxPool2D(
+        self.pool2d_max = MaxPool2d(
             kernel_size=3,
             stride=2,
             padding=1,

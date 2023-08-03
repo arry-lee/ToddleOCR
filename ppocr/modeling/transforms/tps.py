@@ -70,9 +70,9 @@ class LocalizationNetwork(nn.Module):
             conv = self.add_sublayer(name, ConvBNLayer(in_channels=in_channels, out_channels=num_filters, kernel_size=3, act="relu", name=name))
             self.block_list.append(conv)
             if fno == len(num_filters_list) - 1:
-                pool = nn.AdaptiveAvgPool2D(1)
+                pool = nn.AdaptiveAvgPool2d(1)
             else:
-                pool = nn.MaxPool2D(kernel_size=2, stride=2, padding=0)
+                pool = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
             in_channels = num_filters
             self.block_list.append(pool)
         name = "loc_fc1"

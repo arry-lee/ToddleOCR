@@ -141,32 +141,32 @@ class GA_SPIN_Transformer(nn.Module):
                 nn.Conv2d(in_channels, 32, 3, 1, 1, bias=False),
                 norm_layer(32),
                 nn.ReLU(),
-                nn.MaxPool2D(kernel_size=2, stride=2),
+                nn.MaxPool2d(kernel_size=2, stride=2),
                 # 16*50
                 nn.Conv2d(32, 64, 3, 1, 1, bias=False),
                 norm_layer(64),
                 nn.ReLU(),
-                nn.MaxPool2D(kernel_size=2, stride=2),
+                nn.MaxPool2d(kernel_size=2, stride=2),
                 # 8*25
                 nn.Conv2d(64, 128, 3, 1, 1, bias=False),
                 norm_layer(128),
                 nn.ReLU(),
-                nn.MaxPool2D(kernel_size=2, stride=2),
+                nn.MaxPool2d(kernel_size=2, stride=2),
                 # 4*12
             )
             self.stucture_fc1 = nn.Sequential(
                 nn.Conv2d(128, 256, 3, 1, 1, bias=False),
                 norm_layer(256),
                 nn.ReLU(),
-                nn.MaxPool2D(kernel_size=2, stride=2),
+                nn.MaxPool2d(kernel_size=2, stride=2),
                 nn.Conv2d(256, 256, 3, 1, 1, bias=False),
                 norm_layer(256),
                 nn.ReLU(),  # 2*6
-                nn.MaxPool2D(kernel_size=2, stride=2),
+                nn.MaxPool2d(kernel_size=2, stride=2),
                 nn.Conv2d(256, 512, 3, 1, 1, bias=False),
                 norm_layer(512),
                 nn.ReLU(),  # 1*3
-                nn.AdaptiveAvgPool2D(1),
+                nn.AdaptiveAvgPool2d(1),
                 nn.Flatten(1, -1),  # batch_size x 512
                 nn.Linear(512, 256, weight_attr=nn.initializer.Normal(0.001)),
                 nn.BatchNorm1D(256),
@@ -197,7 +197,7 @@ class GA_SPIN_Transformer(nn.Module):
                     nn.ReLU(),
                 )
                 self.offset_fc2 = nn.Conv2d(16, in_channels, 3, 1, 1)
-                self.pool = nn.MaxPool2D(2, 2)
+                self.pool = nn.MaxPool2d(2, 2)
 
     def init_spin(self, nz):
         """

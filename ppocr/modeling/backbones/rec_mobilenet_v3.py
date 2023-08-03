@@ -90,7 +90,7 @@ class MobileNetV3(nn.Module):
 
         self.conv2 = ConvBNLayer(in_channels=inplanes, out_channels=make_divisible(scale * cls_ch_squeeze), kernel_size=1, stride=1, padding=0, groups=1, if_act=True, act="hardswish")
 
-        self.pool = nn.MaxPool2D(kernel_size=2, stride=2, padding=0)
+        self.pool = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
         self.out_channels = make_divisible(scale * cls_ch_squeeze)
 
     def forward(self, x):

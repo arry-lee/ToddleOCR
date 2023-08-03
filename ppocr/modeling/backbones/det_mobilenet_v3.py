@@ -170,7 +170,7 @@ class ResidualUnit(nn.Module):
 class SEModule(nn.Module):
     def __init__(self, in_channels, reduction=4):
         super(SEModule, self).__init__()
-        self.avg_pool = nn.AdaptiveAvgPool2D(1)
+        self.avg_pool = nn.AdaptiveAvgPool2d(1)
         self.conv1 = nn.Conv2d(in_channels=in_channels, out_channels=in_channels // reduction, kernel_size=1, stride=1, padding=0)
         self.conv2 = nn.Conv2d(in_channels=in_channels // reduction, out_channels=in_channels, kernel_size=1, stride=1, padding=0)
 

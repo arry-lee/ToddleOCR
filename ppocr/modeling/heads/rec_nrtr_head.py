@@ -440,10 +440,10 @@ class PositionalEncoding_2d(nn.Module):
         pe = torch.transpose(torch.unsqueeze(pe, 0), [1, 0, 2])
         self.register_buffer("pe", pe)
 
-        self.avg_pool_1 = nn.AdaptiveAvgPool2D((1, 1))
+        self.avg_pool_1 = nn.AdaptiveAvgPool2d((1, 1))
         self.linear1 = nn.Linear(dim, dim)
         self.linear1.weight.data.fill_(1.0)
-        self.avg_pool_2 = nn.AdaptiveAvgPool2D((1, 1))
+        self.avg_pool_2 = nn.AdaptiveAvgPool2d((1, 1))
         self.linear2 = nn.Linear(dim, dim)
         self.linear2.weight.data.fill_(1.0)
 

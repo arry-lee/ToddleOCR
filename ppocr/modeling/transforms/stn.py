@@ -44,15 +44,15 @@ class STN(nn.Module):
         self.activation = activation
         self.stn_convnet = nn.Sequential(
             conv3x3_block(in_channels, 32),  # 32x64
-            nn.MaxPool2D(kernel_size=2, stride=2),
+            nn.MaxPool2d(kernel_size=2, stride=2),
             conv3x3_block(32, 64),  # 16x32
-            nn.MaxPool2D(kernel_size=2, stride=2),
+            nn.MaxPool2d(kernel_size=2, stride=2),
             conv3x3_block(64, 128),  # 8*16
-            nn.MaxPool2D(kernel_size=2, stride=2),
+            nn.MaxPool2d(kernel_size=2, stride=2),
             conv3x3_block(128, 256),  # 4*8
-            nn.MaxPool2D(kernel_size=2, stride=2),
+            nn.MaxPool2d(kernel_size=2, stride=2),
             conv3x3_block(256, 256),  # 2*4,
-            nn.MaxPool2D(kernel_size=2, stride=2),
+            nn.MaxPool2d(kernel_size=2, stride=2),
             conv3x3_block(256, 256),
         )  # 1*2
         self.stn_fc1 = nn.Sequential(nn.Linear(2 * 256, 512, bias=nn.initializer.Constant(0)), nn.BatchNorm1D(512), nn.ReLU())

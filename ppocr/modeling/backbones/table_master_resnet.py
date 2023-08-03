@@ -85,7 +85,7 @@ class TableResNetExtra(nn.Module):
         self.bn2 = nn.BatchNorm2d(128)
         self.relu2 = nn.ReLU()
 
-        self.maxpool1 = nn.MaxPool2D(kernel_size=2, stride=2)
+        self.maxpool1 = nn.MaxPool2d(kernel_size=2, stride=2)
 
         self.layer1 = self._make_layer(BasicBlock, 256, layers[0], stride=1, gcb_config=get_gcb_config(gcb_config, 0))
 
@@ -93,7 +93,7 @@ class TableResNetExtra(nn.Module):
         self.bn3 = nn.BatchNorm2d(256)
         self.relu3 = nn.ReLU()
 
-        self.maxpool2 = nn.MaxPool2D(kernel_size=2, stride=2)
+        self.maxpool2 = nn.MaxPool2d(kernel_size=2, stride=2)
 
         self.layer2 = self._make_layer(BasicBlock, 256, layers[1], stride=1, gcb_config=get_gcb_config(gcb_config, 1))
 
@@ -101,7 +101,7 @@ class TableResNetExtra(nn.Module):
         self.bn4 = nn.BatchNorm2d(256)
         self.relu4 = nn.ReLU()
 
-        self.maxpool3 = nn.MaxPool2D(kernel_size=2, stride=2)
+        self.maxpool3 = nn.MaxPool2d(kernel_size=2, stride=2)
 
         self.layer3 = self._make_layer(BasicBlock, 512, layers[2], stride=1, gcb_config=get_gcb_config(gcb_config, 2))
 
@@ -197,7 +197,7 @@ class MultiAspectGCAttention(nn.Module):
             self.conv_mask = nn.Conv2d(self.single_header_inplanes, 1, kernel_size=1)
             self.softmax = nn.Softmax(axis=2)
         else:
-            self.avg_pool = nn.AdaptiveAvgPool2D(1)
+            self.avg_pool = nn.AdaptiveAvgPool2d(1)
 
         if fusion_type == "channel_add":
             self.channel_add_conv = nn.Sequential(

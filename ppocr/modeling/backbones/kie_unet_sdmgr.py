@@ -33,7 +33,7 @@ class Encoder(nn.Module):
         self.conv2 = nn.Conv2d(num_filters, num_filters, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn2 = nn.BatchNorm2d(num_filters, act="relu")
 
-        self.pool = nn.MaxPool2D(kernel_size=3, stride=2, padding=1)
+        self.pool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
 
     def forward(self, inputs):
         x = self.conv1(inputs)
@@ -103,7 +103,7 @@ class Kie_backbone(nn.Module):
         super(Kie_backbone, self).__init__()
         self.out_channels = 16
         self.img_feat = UNet()
-        self.maxpool = nn.MaxPool2D(kernel_size=7)
+        self.maxpool = nn.MaxPool2d(kernel_size=7)
 
     def bbox2roi(self, bbox_list):
         rois_list = []

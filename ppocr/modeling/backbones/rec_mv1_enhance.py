@@ -25,7 +25,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.nn import Conv2d, BatchNorm2d, Linear, Dropout
-from torch.nn import AdaptiveAvgPool2D, MaxPool2D, AvgPool2D
+from torch.nn import AdaptiveAvgPool2d, MaxPool2d, AvgPool2d
 from torch.nn.initializer import KaimingNormal
 from torch.regularizer import L2Decay
 from torch.nn.functional import hardswish, hardsigmoid
@@ -109,9 +109,9 @@ class MobileNetV1Enhance(nn.Module):
 
         self.block_list = nn.Sequential(*self.block_list)
         if last_pool_type == "avg":
-            self.pool = nn.AvgPool2D(kernel_size=2, stride=2, padding=0)
+            self.pool = nn.AvgPool2d(kernel_size=2, stride=2, padding=0)
         else:
-            self.pool = nn.MaxPool2D(kernel_size=2, stride=2, padding=0)
+            self.pool = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
         self.out_channels = int(1024 * scale)
 
     def forward(self, inputs):
@@ -124,7 +124,7 @@ class MobileNetV1Enhance(nn.Module):
 class SEModule(nn.Module):
     def __init__(self, channel, reduction=4):
         super(SEModule, self).__init__()
-        self.avg_pool = AdaptiveAvgPool2D(1)
+        self.avg_pool = AdaptiveAvgPool2d(1)
         self.conv1 = Conv2d(in_channels=channel, out_channels=channel // reduction, kernel_size=1, stride=1, padding=0,  bias=True)
         self.conv2 = Conv2d(in_channels=channel // reduction, out_channels=channel, kernel_size=1, stride=1, padding=0,  bias=True)
 

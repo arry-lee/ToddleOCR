@@ -195,7 +195,7 @@ class DYShiftMax(nn.Module):
         self.oup = oup
         self.act_max = act_max * 2
         self.act_relu = act_relu
-        self.avg_pool = nn.Sequential(nn.ReLU() if relu_before_pool == True else nn.Sequential(), nn.AdaptiveAvgPool2D(1))
+        self.avg_pool = nn.Sequential(nn.ReLU() if relu_before_pool == True else nn.Sequential(), nn.AdaptiveAvgPool2d(1))
 
         self.exp = 4 if act_relu else 2
         self.init_a = init_a
@@ -418,7 +418,7 @@ class MicroNet(nn.Module):
                 input_channel = output_channel
         self.features = nn.Sequential(*layers)
 
-        self.pool = nn.MaxPool2D(kernel_size=2, stride=2, padding=0)
+        self.pool = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
 
         self.out_channels = make_divisible(out_ch)
 

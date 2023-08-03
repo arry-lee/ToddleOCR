@@ -83,7 +83,7 @@ class ConvBNLayer(nn.Module):
         super(ConvBNLayer, self).__init__()
 
         self.is_vd_mode = is_vd_mode
-        self._pool2d_avg = nn.AvgPool2D(kernel_size=2, stride=2, padding=0, ceil_mode=True)
+        self._pool2d_avg = nn.AvgPool2d(kernel_size=2, stride=2, padding=0, ceil_mode=True)
         if not is_dcn:
             self._conv = nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size, stride=stride, padding=(kernel_size - 1) // 2, groups=groups, bias=False)
         else:
@@ -194,7 +194,7 @@ class ResNet_vd(nn.Module):
         self.conv1_1 = ConvBNLayer(in_channels=in_channels, out_channels=32, kernel_size=3, stride=2, act="relu")
         self.conv1_2 = ConvBNLayer(in_channels=32, out_channels=32, kernel_size=3, stride=1, act="relu")
         self.conv1_3 = ConvBNLayer(in_channels=32, out_channels=64, kernel_size=3, stride=1, act="relu")
-        self.pool2d_max = nn.MaxPool2D(kernel_size=3, stride=2, padding=1)
+        self.pool2d_max = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
 
         self.stages = []
         self.out_channels = []

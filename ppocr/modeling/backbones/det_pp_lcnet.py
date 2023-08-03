@@ -18,7 +18,7 @@ import os
 import torch
 import torch.nn as nn
 
-from torch.nn import AdaptiveAvgPool2D, BatchNorm2d, Conv2d, Dropout, Linear
+from torch.nn import AdaptiveAvgPool2d, BatchNorm2d, Conv2d, Dropout, Linear
 from torch.regularizer import L2Decay
 from torch.nn.initializer import KaimingNormal
 from torch.utils.download import get_path_from_url
@@ -110,7 +110,7 @@ class DepthwiseSeparable(nn.Module):
 class SEModule(nn.Module):
     def __init__(self, channel, reduction=4):
         super().__init__()
-        self.avg_pool = AdaptiveAvgPool2D(1)
+        self.avg_pool = AdaptiveAvgPool2d(1)
         self.conv1 = Conv2d(in_channels=channel, out_channels=channel // reduction, kernel_size=1, stride=1, padding=0)
         self.relu = nn.ReLU()
         self.conv2 = Conv2d(in_channels=channel // reduction, out_channels=channel, kernel_size=1, stride=1, padding=0)

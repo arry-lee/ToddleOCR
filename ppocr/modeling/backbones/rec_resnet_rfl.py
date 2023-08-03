@@ -96,7 +96,7 @@ class ResNetRFL(nn.Module):
 
         self.relu = nn.ReLU()
         if self.use_seq:
-            self.maxpool3 = nn.MaxPool2D(kernel_size=2, stride=(2, 1), padding=(0, 1))
+            self.maxpool3 = nn.MaxPool2d(kernel_size=2, stride=(2, 1), padding=(0, 1))
             self.layer3 = self._make_layer(block, self.out_channels_block[2], layers[2], stride=1)
             self.conv3 = nn.Conv2d(self.out_channels_block[2], self.out_channels_block[2], kernel_size=3, stride=1, padding=1, bias=False)
             self.bn3 = nn.BatchNorm2d(self.out_channels_block[2])
@@ -109,7 +109,7 @@ class ResNetRFL(nn.Module):
 
         if self.use_cnt:
             self.inplanes = int(self.out_channels // 2)
-            self.v_maxpool3 = nn.MaxPool2D(kernel_size=2, stride=(2, 1), padding=(0, 1))
+            self.v_maxpool3 = nn.MaxPool2d(kernel_size=2, stride=(2, 1), padding=(0, 1))
             self.v_layer3 = self._make_layer(block, self.out_channels_block[2], layers[2], stride=1)
             self.v_conv3 = nn.Conv2d(self.out_channels_block[2], self.out_channels_block[2], kernel_size=3, stride=1, padding=1, bias=False)
             self.v_bn3 = nn.BatchNorm2d(self.out_channels_block[2])
@@ -188,12 +188,12 @@ class ResNetBase(nn.Module):
         self.bn0_2 = nn.BatchNorm2d(self.inplanes)
         self.relu = nn.ReLU()
 
-        self.maxpool1 = nn.MaxPool2D(kernel_size=2, stride=2, padding=0)
+        self.maxpool1 = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
         self.layer1 = self._make_layer(block, self.out_channels_block[0], layers[0])
         self.conv1 = nn.Conv2d(self.out_channels_block[0], self.out_channels_block[0], kernel_size=3, stride=1, padding=1, bias=False)
         self.bn1 = nn.BatchNorm2d(self.out_channels_block[0])
 
-        self.maxpool2 = nn.MaxPool2D(kernel_size=2, stride=2, padding=0)
+        self.maxpool2 = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
         self.layer2 = self._make_layer(block, self.out_channels_block[1], layers[1], stride=1)
         self.conv2 = nn.Conv2d(self.out_channels_block[1], self.out_channels_block[1], kernel_size=3, stride=1, padding=1, bias=False)
         self.bn2 = nn.BatchNorm2d(self.out_channels_block[1])

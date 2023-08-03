@@ -263,8 +263,8 @@ class SubSample(nn.Module):
         super().__init__()
         self.types = types
         if types == "Pool":
-            self.avgpool = nn.AvgPool2D(kernel_size=[3, 5], stride=stride, padding=[1, 2])
-            self.maxpool = nn.MaxPool2D(kernel_size=[3, 5], stride=stride, padding=[1, 2])
+            self.avgpool = nn.AvgPool2d(kernel_size=[3, 5], stride=stride, padding=[1, 2])
+            self.maxpool = nn.MaxPool2d(kernel_size=[3, 5], stride=stride, padding=[1, 2])
             self.proj = nn.Linear(in_channels, out_channels)
         else:
             self.conv = nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=stride, padding=1, )
@@ -415,7 +415,7 @@ class SVTRNet(nn.Module):
         )
         self.last_stage = last_stage
         if last_stage:
-            self.avg_pool = nn.AdaptiveAvgPool2D([1, out_char_num])
+            self.avg_pool = nn.AdaptiveAvgPool2d([1, out_char_num])
             self.last_conv = nn.Conv2d(in_channels=embed_dim[2], out_channels=self.out_channels, kernel_size=1, stride=1, padding=0, bias=False)
             self.hardswish = nn.Hardswish()
             self.dropout = nn.Dropout(p=last_drop, mode="downscale_in_infer")

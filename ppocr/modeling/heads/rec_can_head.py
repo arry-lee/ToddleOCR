@@ -36,7 +36,7 @@ Counting Module
 class ChannelAtt(nn.Module):
     def __init__(self, channel, reduction):
         super(ChannelAtt, self).__init__()
-        self.avg_pool = nn.AdaptiveAvgPool2D(1)
+        self.avg_pool = nn.AdaptiveAvgPool2d(1)
 
         self.fc = nn.Sequential(nn.Linear(channel, channel // reduction), nn.ReLU(), nn.Linear(channel // reduction, channel), nn.Sigmoid())
 
