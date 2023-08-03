@@ -149,7 +149,7 @@ class GSRM(nn.Module):
         pvam_features = torch.reshape(inputs, [-1, c])
         word_out = self.fc0(pvam_features)
         word_ids = torch.argmax(F.softmax(word_out), dim=1)
-        word_ids = torch.reshape(x=word_ids, shape=[-1, t, 1])
+        word_ids = torch.reshape(word_ids, shape=[-1, t, 1])
 
         # ===== GSRM Semantic reasoning block =====
         """

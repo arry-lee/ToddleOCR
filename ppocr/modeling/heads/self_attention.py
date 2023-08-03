@@ -164,7 +164,7 @@ class MultiHeadAttention(nn.Module):
             static_kv = True
 
         q = self.q_fc(queries)
-        q = torch.reshape(x=q, shape=[0, 0, self.n_head, self.d_key])
+        q = torch.reshape(q, shape=[0, 0, self.n_head, self.d_key])
         q = torch.transpose(x=q, perm=[0, 2, 1, 3])
 
         if cache is not None and static_kv and "static_k" in cache:
@@ -174,9 +174,9 @@ class MultiHeadAttention(nn.Module):
         else:
             k = self.k_fc(keys)
             v = self.v_fc(values)
-            k = torch.reshape(x=k, shape=[0, 0, self.n_head, self.d_key])
+            k = torch.reshape(k, shape=[0, 0, self.n_head, self.d_key])
             k = torch.transpose(x=k, perm=[0, 2, 1, 3])
-            v = torch.reshape(x=v, shape=[0, 0, self.n_head, self.d_value])
+            v = torch.reshape(v, shape=[0, 0, self.n_head, self.d_value])
             v = torch.transpose(x=v, perm=[0, 2, 1, 3])
 
         if cache is not None:
@@ -210,7 +210,7 @@ class MultiHeadAttention(nn.Module):
 
         # combine heads
         out = torch.transpose(out, perm=[0, 2, 1, 3])
-        out = torch.reshape(x=out, shape=[0, 0, out.shape[2] * out.shape[3]])
+        out = torch.reshape(out, shape=[0, 0, out.shape[2] * out.shape[3]])
 
         # project to output
         out = self.proj_fc(out)
