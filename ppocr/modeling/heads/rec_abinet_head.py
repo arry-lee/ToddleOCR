@@ -216,7 +216,7 @@ def _get_mask(length, max_length):
     Unmasked positions are filled with float(0.0).
     """
     length = length.unsqueeze(-1)
-    B = torch.shape(length)[0]
+    B = length.shape[0]
     grid = torch.arange(0, max_length).unsqueeze(0).tile([B, 1])
     zero_mask = torch.zeros([B, max_length], dtype="float32")
     inf_mask = torch.full([B, max_length], "-inf", dtype="float32")

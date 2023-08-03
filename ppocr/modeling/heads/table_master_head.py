@@ -61,7 +61,7 @@ class TableMasterHead(nn.Module):
         """
         trg_pad_mask = (tgt != self.PAD).unsqueeze(1).unsqueeze(3)
 
-        tgt_len = torch.shape(tgt)[1]
+        tgt_len = tgt.shape[1]
         trg_sub_mask = torch.tril(torch.ones(([tgt_len, tgt_len]), dtype=torch.float32))
 
         tgt_mask = torch.logical_and(trg_pad_mask.astype(torch.float32), trg_sub_mask)
@@ -254,5 +254,5 @@ class PositionalEncoding(nn.Module):
         self.register_buffer("pe", pe)
 
     def forward(self, feat, **kwargs):
-        feat = feat + self.pe[:, : torch.shape(feat)[1]]  # pe 1*5000*512
+        feat = feat + self.pe[:, : feat.shape[1]]  # pe 1*5000*512
         return self.dropout(feat)

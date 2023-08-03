@@ -70,7 +70,7 @@ class SAREncoder(nn.Module):
 
     def forward(self, feat, img_metas=None):
         if img_metas is not None:
-            assert len(img_metas[0]) == torch.shape(feat)[0]
+            assert len(img_metas[0]) == feat.shape[0]
 
         valid_ratios = None
         if img_metas is not None and self.mask:
@@ -84,8 +84,8 @@ class SAREncoder(nn.Module):
 
         if valid_ratios is not None:
             valid_hf = []
-            T = torch.shape(holistic_feat)[1]
-            for i in range(torch.shape(valid_ratios)[0]):
+            T = holistic_feat.shape[1]
+            for i in range(valid_ratios.shape[0]):
                 valid_step = torch.minimum(T, torch.ceil(valid_ratios[i] * T).astype("int32")) - 1
                 valid_hf.append(holistic_feat[i, valid_step, :])
             valid_hf = torch.stack(valid_hf, axis=0)
@@ -214,12 +214,12 @@ class ParallelSARDecoder(BaseDecoder):
         # bsz * (seq_len + 1) * h * w * attn_size
         attn_weight = self.conv1x1_2(attn_weight)
         # bsz * (seq_len + 1) * h * w * 1
-        bsz, T, h, w, c = torch.shape(attn_weight)
+        bsz, T, h, w, c = attn_weight.shape
         assert c == 1
 
         if valid_ratios is not None:
             # cal mask of attention weight
-            for i in range(torch.shape(valid_ratios)[0]):
+            for i in range(valid_ratios.shape[0]):
                 valid_width = torch.minimum(w, torch.ceil(valid_ratios[i] * w).astype("int32"))
                 if valid_width < w:
                     attn_weight[i, :, :, valid_width:, :] = float("-inf")
@@ -252,7 +252,7 @@ class ParallelSARDecoder(BaseDecoder):
         img_metas: [label, valid_ratio]
         """
         if img_metas is not None:
-            assert torch.shape(img_metas[0])[0] == torch.shape(feat)[0]
+            assert img_metas[0].shape[0] == feat.shape[0]
 
         valid_ratios = None
         if img_metas is not None and self.mask:

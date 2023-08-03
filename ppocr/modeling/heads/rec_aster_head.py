@@ -68,7 +68,7 @@ class Embedding(nn.Module):
         self.eEmbed = nn.Linear(in_timestep * in_planes, self.embed_dim)  # Embed encoder output to a word-embedding like
 
     def forward(self, x):
-        x = torch.reshape(x, [torch.shape(x)[0], -1])
+        x = torch.reshape(x, [x.shape[0], -1])
         x = self.eEmbed(x)
         return x
 
@@ -91,7 +91,7 @@ class AttentionRecognitionHead(nn.Module):
 
     def forward(self, x, embed):
         x, targets, lengths = x
-        batch_size = torch.shape(x)[0]
+        batch_size = x.shape[0]
         # Decoder
         state = self.decoder.get_initial_state(embed)
         outputs = []

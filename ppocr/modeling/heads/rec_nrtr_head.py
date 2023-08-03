@@ -129,7 +129,7 @@ class Transformer(nn.Module):
                 return self.forward_test(src)
 
     def forward_test(self, src):
-        bs = torch.shape(src)[0]
+        bs = src.shape[0]
         if self.encoder is not None:
             src = self.positional_encoding(src)
             for encoder_layer in self.encoder:
@@ -142,7 +142,7 @@ class Transformer(nn.Module):
         for len_dec_seq in range(1, torch.Tensor(self.max_len)):
             dec_seq_embed = self.embedding(dec_seq)
             dec_seq_embed = self.positional_encoding(dec_seq_embed)
-            tgt_mask = self.generate_square_subsequent_mask(torch.shape(dec_seq_embed)[1])
+            tgt_mask = self.generate_square_subsequent_mask(dec_seq_embed.shape[1])
             tgt = dec_seq_embed
             for decoder_layer in self.decoder:
                 tgt = decoder_layer(tgt, memory, self_mask=tgt_mask)
@@ -150,7 +150,7 @@ class Transformer(nn.Module):
             dec_output = dec_output[:, -1, :]
             word_prob = F.softmax(self.tgt_word_prj(dec_output), axis=-1)
             preds_idx = torch.argmax(word_prob, axis=-1)
-            if torch.equal_all(preds_idx, torch.full(torch.shape(preds_idx), 3, dtype="int64")):
+            if torch.equal_all(preds_idx, torch.full(preds_idx.shape, 3, dtype="int64")):
                 break
             preds_prob = torch.max(word_prob, axis=-1)
             dec_seq = torch.concat([dec_seq, torch.reshape(preds_idx, [-1, 1])], dim=1)
@@ -167,7 +167,7 @@ class Transformer(nn.Module):
         def collect_active_part(beamed_tensor, curr_active_inst_idx, n_prev_active_inst, n_bm):
             """Collect tensor parts associated to active instances."""
 
-            beamed_tensor_shape = torch.shape(beamed_tensor)
+            beamed_tensor_shape = beamed_tensor.shape
             n_curr_active_inst = len(curr_active_inst_idx)
             new_shape = (n_curr_active_inst * n_bm, beamed_tensor_shape[1], beamed_tensor_shape[2])
 
@@ -200,7 +200,7 @@ class Transformer(nn.Module):
             def predict_word(dec_seq, enc_output, n_active_inst, n_bm):
                 dec_seq = self.embedding(dec_seq)
                 dec_seq = self.positional_encoding(dec_seq)
-                tgt_mask = self.generate_square_subsequent_mask(torch.shape(dec_seq)[1])
+                tgt_mask = self.generate_square_subsequent_mask(dec_seq.shape[1])
                 tgt = dec_seq
                 for decoder_layer in self.decoder:
                     tgt = decoder_layer(tgt, enc_output, self_mask=tgt_mask)
@@ -244,7 +244,7 @@ class Transformer(nn.Module):
                 src_enc = images
 
             n_bm = self.beam_size
-            src_shape = torch.shape(src_enc)
+            src_shape = src_enc.shape
             inst_dec_beams = [Beam(n_bm) for _ in range(1)]
             active_inst_idx_list = list(range(1))
             # Repeat data for beam search
@@ -407,7 +407,7 @@ class PositionalEncoding(nn.Module):
             >>> output = pos_encoder(x)
         """
         x = x.transpose([1, 0, 2])
-        x = x + self.pe[: torch.shape(x)[0], :]
+        x = x + self.pe[: x.shape[0], :]
         return self.dropout(x).transpose([1, 0, 2])
 
 
@@ -457,13 +457,13 @@ class PositionalEncoding_2d(nn.Module):
         Examples:
             >>> output = pos_encoder(x)
         """
-        w_pe = self.pe[: torch.shape(x)[-1], :]
+        w_pe = self.pe[: x.shape[-1], :]
         w1 = self.linear1(self.avg_pool_1(x).squeeze()).unsqueeze(0)
         w_pe = w_pe * w1
         w_pe = torch.transpose(w_pe, [1, 2, 0])
         w_pe = torch.unsqueeze(w_pe, 2)
 
-        h_pe = self.pe[: torch.shape(x).shape[-2], :]
+        h_pe = self.pe[: x.shape.shape[-2], :]
         w2 = self.linear2(self.avg_pool_2(x).squeeze()).unsqueeze(0)
         h_pe = h_pe * w2
         h_pe = torch.transpose(h_pe, [1, 2, 0])

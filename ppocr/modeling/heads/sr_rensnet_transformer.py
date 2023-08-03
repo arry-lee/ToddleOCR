@@ -213,7 +213,7 @@ class PositionalEncoding(nn.Module):
         self.register_buffer("pe", pe)
 
     def forward(self, x):
-        x = x + self.pe[:, : torch.shape(x)[1]]
+        x = x + self.pe[:, : x.shape[1]]
         return self.dropout(x)
 
 

@@ -220,7 +220,7 @@ class CSPPAN(nn.Module):
         for idx in range(len(self.in_channels) - 1, 0, -1):
             feat_heigh = inner_outs[0]
             feat_low = inputs[idx - 1]
-            upsample_feat = F.upsample(feat_heigh, size=torch.shape(feat_low)[2:4], mode="nearest")
+            upsample_feat = F.upsample(feat_heigh, size=feat_low.shape[2:4], mode="nearest")
 
             inner_out = self.top_down_blocks[len(self.in_channels) - 1 - idx](torch.concat([upsample_feat, feat_low], 1))
             inner_outs.insert(0, inner_out)

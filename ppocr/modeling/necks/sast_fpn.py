@@ -203,7 +203,7 @@ class Cross_Attention(nn.Module):
         return f_weight
 
     def forward(self, f_common):
-        f_shape = torch.shape(f_common)
+        f_shape = f_common.shape
         # print('f_shape: ', f_shape)
 
         f_theta = self.theta_conv(f_common)
