@@ -32,7 +32,7 @@ class UpBlock(nn.Module):
             in_channels, in_channels, kernel_size=1, stride=1, padding=0)
         self.conv3x3 = nn.Conv2d(
             in_channels, out_channels, kernel_size=3, stride=1, padding=1)
-        self.deconv = nn.Conv2DTranspose(
+        self.deconv = nn.ConvTranspose2d(
             out_channels, out_channels, kernel_size=4, stride=2, padding=1)
 
     def forward(self, x):
@@ -57,7 +57,7 @@ class FPN_UNet(nn.Module):
             in_channels[i] + blocks_out_channels[i + 2] for i in range(3)
         ] + [in_channels[3]]
 
-        self.up4 = nn.Conv2DTranspose(
+        self.up4 = nn.ConvTranspose2d(
             blocks_in_channels[4],
             blocks_out_channels[4],
             kernel_size=4,

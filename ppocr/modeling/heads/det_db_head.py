@@ -48,7 +48,7 @@ class Head(nn.Module):
             bias_attr=ParamAttr(
                 initializer=torch.nn.initializer.Constant(value=1e-4)),
             act='relu')
-        self.conv2 = nn.Conv2DTranspose(
+        self.conv2 = nn.ConvTranspose2d(
             in_channels=in_channels // 4,
             out_channels=in_channels // 4,
             kernel_size=kernel_list[1],
@@ -63,7 +63,7 @@ class Head(nn.Module):
             bias_attr=ParamAttr(
                 initializer=torch.nn.initializer.Constant(value=1e-4)),
             act="relu")
-        self.conv3 = nn.Conv2DTranspose(
+        self.conv3 = nn.ConvTranspose2d(
             in_channels=in_channels // 4,
             out_channels=1,
             kernel_size=kernel_list[2],

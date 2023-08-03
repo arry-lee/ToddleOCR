@@ -143,7 +143,7 @@ class SNConvTranspose(nn.Module):
         else:
             bias_attr = None
         self._sn_conv_transpose = spectral_norm(
-            torch.nn.Conv2DTranspose(
+            torch.nn.ConvTranspose2d(
                 in_channels=in_channels,
                 out_channels=out_channels,
                 kernel_size=kernel_size,

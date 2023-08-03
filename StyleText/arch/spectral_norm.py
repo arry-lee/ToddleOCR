@@ -141,7 +141,7 @@ def spectral_norm(module,
                   dim=None):
 
     if dim is None:
-        if isinstance(module, (nn.Conv1DTranspose, nn.Conv2DTranspose,
+        if isinstance(module, (nn.Conv1DTranspose, nn.ConvTranspose2d,
                                nn.Conv3DTranspose, nn.Linear)):
             dim = 1
         else:

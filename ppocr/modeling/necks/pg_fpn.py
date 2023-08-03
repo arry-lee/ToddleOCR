@@ -80,7 +80,7 @@ class DeConvBNLayer(nn.Module):
 
         self.if_act = if_act
         self.act = act
-        self.deconv = nn.Conv2DTranspose(
+        self.deconv = nn.ConvTranspose2d(
             in_channels=in_channels,
             out_channels=out_channels,
             kernel_size=kernel_size,
