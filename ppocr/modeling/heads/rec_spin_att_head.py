@@ -55,7 +55,7 @@ class SPINAttentionHead(nn.Module):
             output = torch.concat(output_hiddens, axis=1)
             probs = self.generator(output)
         else:
-            targets = torch.zeros(shape=[batch_size], dtype="int32")
+            targets = torch.zeros([batch_size], dtype="int32")
             probs = None
             char_onehots = None
             outputs = None

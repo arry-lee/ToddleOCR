@@ -81,7 +81,7 @@ class TPSSpatialTransformer(nn.Module):
         N = num_control_points
 
         # create padded kernel matrix
-        forward_kernel = torch.zeros(shape=[N + 3, N + 3])
+        forward_kernel = torch.zeros([N + 3, N + 3])
         target_control_partial_repr = compute_partial_repr(target_control_points, target_control_points)
         target_control_partial_repr = torch.cast(target_control_partial_repr, forward_kernel.dtype)
         forward_kernel[:N, :N] = target_control_partial_repr
@@ -106,7 +106,7 @@ class TPSSpatialTransformer(nn.Module):
 
         # register precomputed matrices
         self.inverse_kernel = inverse_kernel
-        self.padding_matrix = torch.zeros(shape=[3, 2])
+        self.padding_matrix = torch.zeros([3, 2])
         self.target_coordinate_repr = target_coordinate_repr
         self.target_control_points = target_control_points
 

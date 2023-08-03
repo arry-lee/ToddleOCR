@@ -783,8 +783,8 @@ class VLLabelDecode(BaseRecLabelDecode):
             if not isinstance(text_pre, torch.Tensor):
                 text_pre = torch.Tensor(text_pre, dtype="float32")
 
-            out_res = torch.zeros(shape=[lenText, b, self.nclass], dtype=x.dtype)
-            out_length = torch.zeros(shape=[b], dtype=x.dtype)
+            out_res = torch.zeros([lenText, b, self.nclass], dtype=x.dtype)
+            out_length = torch.zeros([b], dtype=x.dtype)
             now_step = 0
             for _ in range(nsteps):
                 if 0 in out_length and now_step < nsteps:
@@ -799,7 +799,7 @@ class VLLabelDecode(BaseRecLabelDecode):
                 if int(out_length[j]) == 0:
                     out_length[j] = nsteps
             start = 0
-            output = torch.zeros(shape=[int(out_length.sum()), self.nclass], dtype=x.dtype)
+            output = torch.zeros([int(out_length.sum()), self.nclass], dtype=x.dtype)
             for i in range(0, b):
                 cur_length = int(out_length[i])
                 output[start : start + cur_length] = out_res[0:cur_length, i, :]
