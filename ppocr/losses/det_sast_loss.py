@@ -59,7 +59,7 @@ class SASTLoss(nn.Module):
         border_diff = l_border_split - f_border_split
         abs_border_diff = torch.abs(border_diff)
         border_sign = abs_border_diff < 1.0
-        border_sign = torch.cast(border_sign, dtype="float32")
+        border_sign = border_sign.type(dtype=torch.float32)
         border_sign.stop_gradient = True
         border_in_loss = 0.5 * abs_border_diff * abs_border_diff * border_sign + (abs_border_diff - 0.5) * (1.0 - border_sign)
         border_out_loss = l_border_norm_split * border_in_loss
@@ -76,7 +76,7 @@ class SASTLoss(nn.Module):
         tvo_geo_diff = l_tvo_split - f_tvo_split
         abs_tvo_geo_diff = torch.abs(tvo_geo_diff)
         tvo_sign = abs_tvo_geo_diff < 1.0
-        tvo_sign = torch.cast(tvo_sign, dtype="float32")
+        tvo_sign = tvo_sign.type(dtype=torch.float32)
         tvo_sign.stop_gradient = True
         tvo_in_loss = 0.5 * abs_tvo_geo_diff * abs_tvo_geo_diff * tvo_sign + (abs_tvo_geo_diff - 0.5) * (1.0 - tvo_sign)
         tvo_out_loss = l_tvo_norm_split * tvo_in_loss
@@ -93,7 +93,7 @@ class SASTLoss(nn.Module):
         tco_geo_diff = l_tco_split - f_tco_split
         abs_tco_geo_diff = torch.abs(tco_geo_diff)
         tco_sign = abs_tco_geo_diff < 1.0
-        tco_sign = torch.cast(tco_sign, dtype="float32")
+        tco_sign = tco_sign.type(dtype=torch.float32)
         tco_sign.stop_gradient = True
         tco_in_loss = 0.5 * abs_tco_geo_diff * abs_tco_geo_diff * tco_sign + (abs_tco_geo_diff - 0.5) * (1.0 - tco_sign)
         tco_out_loss = l_tco_norm_split * tco_in_loss

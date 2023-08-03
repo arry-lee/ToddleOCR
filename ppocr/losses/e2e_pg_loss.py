@@ -44,7 +44,7 @@ class PGLoss(nn.Module):
         border_diff = l_border_split - f_border_split
         abs_border_diff = torch.abs(border_diff)
         border_sign = abs_border_diff < 1.0
-        border_sign = torch.cast(border_sign, dtype="float32")
+        border_sign = border_sign.type(dtype=torch.float32)
         border_sign.stop_gradient = True
         border_in_loss = 0.5 * abs_border_diff * abs_border_diff * border_sign + (abs_border_diff - 0.5) * (1.0 - border_sign)
         border_out_loss = l_border_norm_split * border_in_loss
@@ -63,7 +63,7 @@ class PGLoss(nn.Module):
         direction_diff = l_direction_split - f_direction_split
         abs_direction_diff = torch.abs(direction_diff)
         direction_sign = abs_direction_diff < 1.0
-        direction_sign = torch.cast(direction_sign, dtype="float32")
+        direction_sign = direction_sign.type(dtype=torch.float32)
         direction_sign.stop_gradient = True
         direction_in_loss = 0.5 * abs_direction_diff * abs_direction_diff * direction_sign + (abs_direction_diff - 0.5) * (1.0 - direction_sign)
         direction_out_loss = l_direction_norm_split * direction_in_loss

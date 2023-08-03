@@ -261,7 +261,7 @@ class PrepareEncoder(nn.Module):
 
     def forward(self, src_word, src_pos):
         src_word_emb = src_word
-        src_word_emb = torch.cast(src_word_emb, "float32")
+        src_word_emb = src_word_emb.type(dtype=torch.float32)
         src_word_emb = torch.scale(x=src_word_emb, scale=self.src_emb_dim**0.5)
         src_pos = torch.squeeze(src_pos, dim=-1)
         src_pos_enc = self.emb(src_pos)
@@ -292,7 +292,7 @@ class PrepareDecoder(nn.Module):
         self.dropout_rate = dropout_rate
 
     def forward(self, src_word, src_pos):
-        src_word = torch.cast(src_word, "int64")
+        src_word = src_word.type(dtype=torch.int64)
         src_word = torch.squeeze(src_word, dim=-1)
         src_word_emb = self.emb0(src_word)
         src_word_emb = torch.scale(x=src_word_emb, scale=self.src_emb_dim**0.5)

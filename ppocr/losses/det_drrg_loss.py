@@ -128,13 +128,13 @@ class DRRGLoss(nn.Module):
 
         # bitmask 2 tensor
         mapping = {
-            "gt_text_mask": torch.cast(gt_text_mask, "float32"),
-            "gt_center_region_mask": torch.cast(gt_center_region_mask, "float32"),
-            "gt_mask": torch.cast(gt_mask, "float32"),
-            "gt_top_height_map": torch.cast(gt_top_height_map, "float32"),
-            "gt_bot_height_map": torch.cast(gt_bot_height_map, "float32"),
-            "gt_sin_map": torch.cast(gt_sin_map, "float32"),
-            "gt_cos_map": torch.cast(gt_cos_map, "float32"),
+            "gt_text_mask": gt_text_mask.type(dtype=torch.float32),
+            "gt_center_region_mask": gt_center_region_mask.type(dtype=torch.float32),
+            "gt_mask": gt_mask.type(dtype=torch.float32),
+            "gt_top_height_map": gt_top_height_map.type(dtype=torch.float32),
+            "gt_bot_height_map": gt_bot_height_map.type(dtype=torch.float32),
+            "gt_sin_map": gt_sin_map.type(dtype=torch.float32),
+            "gt_cos_map": gt_cos_map.type(dtype=torch.float32),
         }
         gt = {}
         for key, value in mapping.items():

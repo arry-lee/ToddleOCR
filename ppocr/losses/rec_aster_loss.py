@@ -65,7 +65,7 @@ class AsterLoss(nn.Module):
         mask = torch.zeros([batch_size, def_max_length])
         for i in range(batch_size):
             mask[i, : label_lengths[i]] = 1
-        mask = torch.cast(mask, "float32")
+        mask = mask.type(dtype=torch.float32)
         max_length = max(label_lengths)
         assert max_length == rec_pred.shape[1]
         targets = targets[:, :max_length]

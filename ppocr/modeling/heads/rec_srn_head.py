@@ -158,9 +158,9 @@ class GSRM(nn.Module):
         """
         pad_idx = self.char_num
 
-        word1 = torch.cast(word_ids, "float32")
+        word1 = word_ids.type(dtype=torch.float32)
         word1 = F.pad(word1, [1, 0], value=1.0 * pad_idx, data_format="NLC")
-        word1 = torch.cast(word1, "int64")
+        word1 = word1.type(dtype=torch.int64)
         word1 = word1[:, :-1, :]
         word2 = word_ids
 

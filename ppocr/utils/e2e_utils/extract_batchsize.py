@@ -76,9 +76,9 @@ def pre_process(label_list, pos_list, pos_mask, max_text_length, max_text_nums, 
                 break
         label.append(k)
     label = torch.Tensor(label)
-    label = torch.cast(label, dtype="int64")
+    label = label.type(dtype=torch.int64)
     pos_list = torch.Tensor(pos_list)
     pos_mask = torch.Tensor(pos_mask)
     label_list = torch.squeeze(torch.Tensor(label_list), dim=2)
-    label_list = torch.cast(label_list, dtype="int32")
+    label_list = label_list.type(dtype=torch.int32)
     return pos_list, pos_mask, label_list, label

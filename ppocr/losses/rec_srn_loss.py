@@ -31,7 +31,7 @@ class SRNLoss(nn.Module):
         gsrm_predict = predicts["gsrm_out"]
         label = batch[1]
 
-        casted_label = torch.cast(x=label, dtype="int64")
+        casted_label = label.type(dtype=torch.int64)
         casted_label = torch.reshape(casted_label, shape=[-1, 1])
 
         cost_word = self.loss_func(word_predict, label=casted_label)

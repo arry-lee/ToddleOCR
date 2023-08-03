@@ -34,7 +34,7 @@ def ohem_single(score, gt_text, training_mask):
     if pos_num == 0:
         # selected_mask = gt_text.copy() * 0 # may be not good
         selected_mask = training_mask
-        selected_mask = torch.cast(selected_mask.reshape((1, selected_mask.shape[0], selected_mask.shape[1])), "float32")
+        selected_mask = selected_mask.reshape((1, selected_mask.shape[0], selected_mask.shape[1])).type(dtype=torch.float32)
         return selected_mask
 
     neg_num = int(torch.sum((gt_text <= 0.5) & (training_mask > 0.5)))
@@ -42,7 +42,7 @@ def ohem_single(score, gt_text, training_mask):
 
     if neg_num == 0:
         selected_mask = training_mask
-        selected_mask = torch.cast(selected_mask.reshape((1, selected_mask.shape[0], selected_mask.shape[1])), "float32")
+        selected_mask = selected_mask.reshape((1, selected_mask.shape[0], selected_mask.shape[1])).type(dtype=torch.float32)
         return selected_mask
 
     # hard example
@@ -51,7 +51,7 @@ def ohem_single(score, gt_text, training_mask):
     threshold = -neg_score_sorted[neg_num - 1]
 
     selected_mask = ((score >= threshold) | (gt_text > 0.5)) & (training_mask > 0.5)
-    selected_mask = torch.cast(selected_mask.reshape((1, selected_mask.shape[0], selected_mask.shape[1])), "float32")
+    selected_mask = selected_mask.reshape((1, selected_mask.shape[0], selected_mask.shape[1])).type(dtype=torch.float32)
     return selected_mask
 
 
@@ -60,7 +60,7 @@ def ohem_batch(scores, gt_texts, training_masks):
     for i in range(scores.shape[0]):
         selected_masks.append(ohem_single(scores[i, :, :], gt_texts[i, :, :], training_masks[i, :, :]))
 
-    selected_masks = torch.cast(torch.concat(selected_masks, 0), "float32")
+    selected_masks = torch.concat(selected_masks, 0).type(dtype=torch.float32)
     return selected_masks
 
 
@@ -73,8 +73,8 @@ def iou_single(a, b, mask, n_class):
 
     # iou of each class
     for i in range(n_class):
-        inter = torch.cast(((a == i) & (b == i)), "float32")
-        union = torch.cast(((a == i) | (b == i)), "float32")
+        inter = ((a == i) & (b == i)).type(dtype=torch.float32)
+        union = ((a == i) | (b == i)).type(dtype=torch.float32)
 
         miou.append(torch.sum(inter) / (torch.sum(union) + EPS))
     miou = sum(miou) / len(miou)
@@ -107,8 +107,8 @@ class DiceLoss(nn.Module):
         input = F.sigmoid(input)  # scale to 0-1
 
         input = input.reshape((batch_size, -1))
-        target = torch.cast(target.reshape((batch_size, -1)), "float32")
-        mask = torch.cast(mask.reshape((batch_size, -1)), "float32")
+        target = target.reshape((batch_size, -1)).type(dtype=torch.float32)
+        mask = mask.reshape((batch_size, -1)).type(dtype=torch.float32)
 
         input = input * mask
         target = target * mask
@@ -148,8 +148,8 @@ class SmoothL1Loss(nn.Module):
 
         diff = torch.abs(input - target) * mask.unsqueeze(1)
         loss = torch.where(diff < beta, 0.5 * diff * diff / beta, diff - 0.5 * beta)
-        loss = torch.cast(loss.reshape((batch_size, -1)), "float32")
-        mask = torch.cast(mask.reshape((batch_size, -1)), "float32")
+        loss = loss.reshape((batch_size, -1)).type(dtype=torch.float32)
+        mask = mask.reshape((batch_size, -1)).type(dtype=torch.float32)
         loss = torch.sum(loss, dim=-1)
         loss = loss / (mask.sum(axis=-1) + eps)
 
@@ -166,13 +166,13 @@ class SmoothL1Loss(nn.Module):
                 select_distance_list.append(tmp2.unsqueeze(0))
             select_distance = torch.concat(select_distance_list, dim=0)
 
-            off_points = torch.cast(self.coord, "float32") + 10 * select_distance.transpose((1, 0))
+            off_points = self.coord.type(dtype=torch.float32) + 10 * select_distance.transpose((1, 0))
 
-            off_points = torch.cast(off_points, "int64")
+            off_points = off_points.type(dtype=torch.int64)
             off_points = torch.clip(off_points, 0, distance.shape[-1] - 1)
 
             selected_mask = gt_instance[self.coord[:, 1], self.coord[:, 0]] != gt_kernel_instance[off_points[:, 1], off_points[:, 0]]
-            selected_mask = torch.cast(selected_mask.reshape((1, -1, distance.shape[-1])), "int64")
+            selected_mask = selected_mask.reshape((1, -1, distance.shape[-1])).type(dtype=torch.int64)
             selected_training_mask = selected_mask * training_mask
 
             return selected_training_mask
@@ -181,7 +181,7 @@ class SmoothL1Loss(nn.Module):
         selected_training_masks = []
         for i in range(distances.shape[0]):
             selected_training_masks.append(self.select_single(distances[i, :, :, :], gt_instances[i, :, :], gt_kernel_instances[i, :, :], training_masks[i, :, :]))
-        selected_training_masks = torch.cast(torch.concat(selected_training_masks, 0), "float32")
+        selected_training_masks = torch.concat(selected_training_masks, 0).type(dtype=torch.float32)
 
         loss = self.forward_single(distances, gt_distances, selected_training_masks, self.beta)
         loss = self.loss_weight * loss
@@ -190,7 +190,7 @@ class SmoothL1Loss(nn.Module):
             batch_size = distances.shape[0]
             false_num = selected_training_masks.reshape((batch_size, -1))
             false_num = false_num.sum(axis=-1)
-            total_num = torch.cast(training_masks.reshape((batch_size, -1)), "float32")
+            total_num = training_masks.reshape((batch_size, -1)).type(dtype=torch.float32)
             total_num = total_num.sum(axis=-1)
             iou_text = (total_num - false_num) / (total_num + 1e-6)
 
@@ -219,7 +219,7 @@ class CTLoss(nn.Module):
 
         loss_kernel = self.kernel_loss(kernels, gt_kernels, selected_masks, reduce=False)
 
-        iou_kernel = iou(torch.cast((kernels > 0), "int64"), gt_kernels, training_masks, reduce=False)
+        iou_kernel = iou((kernels > 0).type(dtype=torch.int64), gt_kernels, training_masks, reduce=False)
         losses = dict(
             loss_kernels=loss_kernel,
         )

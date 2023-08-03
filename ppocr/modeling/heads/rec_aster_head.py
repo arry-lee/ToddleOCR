@@ -174,7 +174,7 @@ class AttentionRecognitionHead(nn.Module):
 
             # Update fields for next timestep
             pos_index = torch.expand_as(pos_index, candidates)
-            predecessors = torch.cast(candidates / self.num_classes + pos_index, dtype="int64")
+            predecessors = candidates / self.num_classes + pos_index.type(dtype=torch.int64)
             predecessors = torch.reshape(predecessors, shape=[batch_size * beam_width, 1])
             state = torch.index_select(state, index=predecessors.squeeze(), dim=1)
 
@@ -324,7 +324,7 @@ class DecoderUnit(nn.Module):
         batch_size, T, _ = x.shape
         alpha = self.attention_unit(x, sPrev)
         context = torch.squeeze(torch.matmul(alpha.unsqueeze(1), x), dim=1)
-        yPrev = torch.cast(yPrev, dtype="int64")
+        yPrev = yPrev.type(dtype=torch.int64)
         yProj = self.tgt_embedding(yPrev)
 
         concat_context = torch.concat([yProj, context], 1)

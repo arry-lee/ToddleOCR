@@ -282,7 +282,7 @@ class ProposalLocalGraphs:
             pivot_ind = pivot_local_graph[0]
             node2ind_map = {j: i for i, j in enumerate(pivot_local_graph)}
 
-            knn_inds = torch.cast(torch.Tensor([node2ind_map[i] for i in pivot_knn[1:]]), "int64")
+            knn_inds = torch.Tensor([node2ind_map[i] for i in pivot_knn[1:]]).type(dtype=torch.int64)
             pivot_feats = node_feats[pivot_ind]
             normalized_feats = node_feats[torch.Tensor(pivot_local_graph)] - pivot_feats
 
@@ -298,7 +298,7 @@ class ProposalLocalGraphs:
             pad_adjacent_matrix = torch.zeros(
                 (num_max_nodes, num_max_nodes),
             )
-            pad_adjacent_matrix[:num_nodes, :num_nodes] = torch.cast(torch.Tensor(adjacent_matrix), "float32")
+            pad_adjacent_matrix[:num_nodes, :num_nodes] = torch.Tensor(adjacent_matrix).type(dtype=torch.float32)
 
             pad_normalized_feats = torch.concat(
                 [
