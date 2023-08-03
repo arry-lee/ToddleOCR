@@ -104,8 +104,8 @@ class SpectralNorm(object):
             u = normal_(u, 0.0, 1.0)
             v = module.create_parameter([w])
             v = normal_(v, 0.0, 1.0)
-            u = F.normalize(u, axis=0, epsilon=fn.eps)
-            v = F.normalize(v, axis=0, epsilon=fn.eps)
+            u = F.normalize(u, dim=0, eps=fn.eps)
+            v = F.normalize(v, dim=0, eps=fn.eps)
 
         # delete fn.name form parameters, otherwise you can not set attribute
         del module._parameters[fn.name]
