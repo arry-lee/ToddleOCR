@@ -32,7 +32,7 @@ class CBN(nn.Module):
             padding=padding,
             dilation=dilation,
             groups=groups,
-            weight_attr=torch.ParamAttr(name=name + "_weights"),
+            
             bias=True,
         )
         if norm_layer:
@@ -72,7 +72,7 @@ class SNConv(nn.Module):
                 padding=padding,
                 dilation=dilation,
                 groups=groups,
-                weight_attr=torch.ParamAttr(name=name + "_weights"),
+                
                 bias=True,
             )
         )
@@ -114,7 +114,7 @@ class SNConvTranspose(nn.Module):
                 output_padding=output_padding,
                 dilation=dilation,
                 groups=groups,
-                weight_attr=torch.ParamAttr(name=name + "_weights"),
+                
                 bias=True,
             )
         )
