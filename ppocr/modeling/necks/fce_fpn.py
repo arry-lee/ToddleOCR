@@ -143,7 +143,7 @@ class FCEFPN(nn.Module):
                     ),
                 )
             else:
-                lateral = self.add_sublayer(lateral_name, nn.Conv2d(in_channels=in_c, out_channels=out_channels, kernel_size=1, )
+                lateral = self.add_sublayer(lateral_name, nn.Conv2d(in_channels=in_c, out_channels=out_channels, kernel_size=1, ))
             self.lateral_convs.append(lateral)
 
         for i in range(st_stage, ed_stage + 1):
@@ -164,7 +164,7 @@ class FCEFPN(nn.Module):
                 )
             else:
                 fpn_conv = self.add_sublayer(
-                    fpn_name, nn.Conv2d(in_channels=out_channels, out_channels=out_channels, kernel_size=3, padding=1, )
+                    fpn_name, nn.Conv2d(in_channels=out_channels, out_channels=out_channels, kernel_size=3, padding=1)
                 )
             self.fpn_convs.append(fpn_conv)
 
