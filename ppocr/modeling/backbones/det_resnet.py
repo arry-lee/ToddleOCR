@@ -21,7 +21,7 @@ import torch
 from torch import ParamAttr
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.nn import Conv2D, BatchNorm2d, Linear, Dropout
+from torch.nn import Conv2d, BatchNorm2d, Linear, Dropout
 from torch.nn import AdaptiveAvgPool2D, MaxPool2D, AvgPool2D
 from torch.nn.initializer import Uniform
 

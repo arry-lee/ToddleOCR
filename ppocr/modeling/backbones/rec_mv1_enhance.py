@@ -24,7 +24,7 @@ import torch
 from torch import ParamAttr, reshape, transpose
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.nn import Conv2D, BatchNorm2d, Linear, Dropout
+from torch.nn import Conv2d, BatchNorm2d, Linear, Dropout
 from torch.nn import AdaptiveAvgPool2D, MaxPool2D, AvgPool2D
 from torch.nn.initializer import KaimingNormal
 from torch.regularizer import L2Decay
@@ -35,7 +35,7 @@ class ConvBNLayer(nn.Module):
     def __init__(self, num_channels, filter_size, num_filters, stride, padding, channels=None, num_groups=1, act="hard_swish"):
         super(ConvBNLayer, self).__init__()
 
-        self._conv = Conv2D(
+        self._conv = Conv2d(
             in_channels=num_channels,
             out_channels=num_filters,
             kernel_size=filter_size,
@@ -125,8 +125,8 @@ class SEModule(nn.Module):
     def __init__(self, channel, reduction=4):
         super(SEModule, self).__init__()
         self.avg_pool = AdaptiveAvgPool2D(1)
-        self.conv1 = Conv2D(in_channels=channel, out_channels=channel // reduction, kernel_size=1, stride=1, padding=0,  bias=ParamAttr())
-        self.conv2 = Conv2D(in_channels=channel // reduction, out_channels=channel, kernel_size=1, stride=1, padding=0,  bias=ParamAttr())
+        self.conv1 = Conv2d(in_channels=channel, out_channels=channel // reduction, kernel_size=1, stride=1, padding=0,  bias=ParamAttr())
+        self.conv2 = Conv2d(in_channels=channel // reduction, out_channels=channel, kernel_size=1, stride=1, padding=0,  bias=ParamAttr())
 
     def forward(self, inputs):
         outputs = self.avg_pool(inputs)
