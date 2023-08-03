@@ -323,7 +323,7 @@ class DecoderUnit(nn.Module):
         # x: feature sequence from the image decoder.
         batch_size, T, _ = x.shape
         alpha = self.attention_unit(x, sPrev)
-        context = torch.squeeze(torch.matmul(alpha.unsqueeze(1), x), axis=1)
+        context = torch.squeeze(torch.matmul(alpha.unsqueeze(1), x), dim=1)
         yPrev = torch.cast(yPrev, dtype="int64")
         yProj = self.tgt_embedding(yPrev)
 
@@ -331,6 +331,6 @@ class DecoderUnit(nn.Module):
         concat_context = torch.squeeze(concat_context, 1)
         sPrev = torch.squeeze(sPrev, 0)
         output, state = self.gru(concat_context, sPrev)
-        output = torch.squeeze(output, axis=1)
+        output = torch.squeeze(output, dim=1)
         output = self.fc(output)
         return output, state
