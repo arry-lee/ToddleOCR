@@ -79,7 +79,7 @@ class SAREncoder(nn.Module):
         h_feat = feat.shape[2]  # bsz c h w
         feat_v = F.max_pool2d(feat, kernel_size=(h_feat, 1), stride=1, padding=0)
         feat_v = feat_v.squeeze(2)  # bsz * C * W
-        feat_v = torch.transpose(feat_v, perm=[0, 2, 1])  # bsz * W * C
+        feat_v = feat_v.permute(0, 2, 1)  # bsz * W * C
         holistic_feat = self.rnn_encoder(feat_v)[0]  # bsz * T * C
 
         if valid_ratios is not None:
@@ -195,7 +195,7 @@ class ParallelSARDecoder(BaseDecoder):
         attn_weight = torch.tanh(torch.add(attn_key, attn_query))
 
         # bsz * (seq_len + 1) * attn_size * h * w
-        attn_weight = torch.transpose(attn_weight, perm=[0, 1, 3, 4, 2])
+        attn_weight = attn_weight.permute(0, 1, 3, 4, 2)
         # bsz * (seq_len + 1) * h * w * attn_size
         attn_weight = self.conv1x1_2(attn_weight)
         # bsz * (seq_len + 1) * h * w * 1
@@ -213,7 +213,7 @@ class ParallelSARDecoder(BaseDecoder):
         attn_weight = F.softmax(attn_weight,dim=-1)
 
         attn_weight = torch.reshape(attn_weight, [bsz, T, h, w, c])
-        attn_weight = torch.transpose(attn_weight, perm=[0, 1, 4, 2, 3])
+        attn_weight = attn_weight.permute(0, 1, 4, 2, 3)
         # attn_weight: bsz * T * c * h * w
         # feat: bsz * c * h * w
         attn_feat = torch.sum(torch.multiply(feat.unsqueeze(1), attn_weight), (3, 4), keepdim=False)

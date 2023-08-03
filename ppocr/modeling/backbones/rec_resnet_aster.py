@@ -116,7 +116,7 @@ class ResNet_ASTER(nn.Module):
         x5 = self.layer5(x4)
 
         cnn_feat = x5.squeeze(2)  # [N, c, w]
-        cnn_feat = torch.transpose(cnn_feat, perm=[0, 2, 1])
+        cnn_feat = cnn_feat.permute(0, 2, 1)
         if self.with_lstm:
             rnn_feat, _ = self.rnn(cnn_feat)
             return rnn_feat

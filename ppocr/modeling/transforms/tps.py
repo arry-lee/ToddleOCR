@@ -173,7 +173,7 @@ class GridGenerator(nn.Module):
 
         # P: self.I_r_width x self.I_r_height x 2
         P = torch.stack(torch.meshgrid(I_r_grid_x, I_r_grid_y), dim=2)
-        P = torch.transpose(P, perm=[1, 0, 2])
+        P = P.permute(1, 0, 2)
         # n (= self.I_r_width x self.I_r_height) x 2
         return P.reshape([-1, 2])
 
@@ -186,7 +186,7 @@ class GridGenerator(nn.Module):
         delta_C = torch.concat(  # F+3 x F+3
             [
                 torch.concat([torch.ones((F, 1), dtype="float64"), C, hat_C], dim=1),  # F x F+3
-                torch.concat([torch.zeros((2, 3), dtype="float64"), torch.transpose(C, perm=[1, 0])], dim=1),  # 2 x F+3
+                torch.concat([torch.zeros((2, 3), dtype="float64"), C.permute(1, 0)], dim=1),  # 2 x F+3
                 torch.concat([torch.zeros((1, 3), dtype="float64"), torch.ones((1, F), dtype="float64")], dim=1),  # 1 x F+3
             ],
             axis=0,

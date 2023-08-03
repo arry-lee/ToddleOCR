@@ -58,7 +58,7 @@ class ScaledDotProductAttention(nn.Module):
         self.softmax = nn.Softmax(axis=2)
 
     def forward(self, q, k, v, mask=None):
-        k = torch.transpose(k, perm=[0, 2, 1])
+        k = k.permute(0, 2, 1)
         attn = torch.bmm(q, k)
         attn = attn / self.temperature
         if mask is not None:
@@ -108,17 +108,17 @@ class MultiHeadAttention(nn.Module):
         v = self.w_vs(v)
         v = torch.reshape(v, shape=[-1, len_v, n_head, d_v])
 
-        q = torch.transpose(q, perm=[2, 0, 1, 3])
+        q = q.permute(2, 0, 1, 3)
         q = torch.reshape(q, shape=[-1, len_q, d_k])  # (n*b) x lq x dk
-        k = torch.transpose(k, perm=[2, 0, 1, 3])
+        k = k.permute(2, 0, 1, 3)
         k = torch.reshape(k, shape=[-1, len_k, d_k])  # (n*b) x lk x dk
-        v = torch.transpose(v, perm=[2, 0, 1, 3])
+        v = v.permute(2, 0, 1, 3)
         v = torch.reshape(v, shape=[-1, len_v, d_v])  # (n*b) x lv x dv
 
         mask = torch.tile(mask, [n_head, 1, 1]) if mask is not None else None  # (n*b) x .. x ..
         output = self.attention(q, k, v, mask=mask)
         output = torch.reshape(output, shape=[n_head, -1, len_q, d_v])
-        output = torch.transpose(output, perm=[1, 2, 0, 3])
+        output = output.permute(1, 2, 0, 3)
         output = torch.reshape(output, shape=[-1, len_q, n_head * d_v])  # b x lq x (n*dv)
         output = self.dropout(self.fc(output))
         output = self.layer_norm(output + residual)
@@ -135,9 +135,9 @@ class PositionwiseFeedForward(nn.Module):
 
     def forward(self, x):
         residual = x
-        x = torch.transpose(x, perm=[0, 2, 1])
+        x = x.permute(0, 2, 1)
         x = self.w_2(F.relu(self.w_1(x)))
-        x = torch.transpose(x, perm=[0, 2, 1])
+        x = x.permute(0, 2, 1)
         x = self.dropout(x)
         x = self.layer_norm(x + residual)
         return x
@@ -191,9 +191,9 @@ class PP_layer(nn.Module):
         reading_order = self.f0_embedding(reading_order)  # b,25,512
 
         # calculate attention
-        reading_order = torch.transpose(reading_order, perm=[0, 2, 1])
+        reading_order = reading_order.permute(0, 2, 1)
         t = self.w0(reading_order)  # b,512,256
-        t = self.active(torch.transpose(t, perm=[0, 2, 1]) + self.wv(enc_output))  # b,256,512
+        t = self.active(t.permute(0, 2, 1) + self.wv(enc_output))  # b,256,512
         t = self.we(t)  # b,256,25
         t = self.softmax(torch.transpose(t, perm=[0, 2, 1]))  # b,25,256
         g_output = torch.bmm(t, enc_output)  # b,25,512
@@ -251,15 +251,15 @@ class MLM(nn.Module):
         label_pos = torch.Tensor(label_pos, dtype="int64")
         pos_emb = self.pos_embedding(label_pos)
         pos_emb = self.w0_linear(torch.unsqueeze(pos_emb, dim=2))
-        pos_emb = torch.transpose(pos_emb, perm=[0, 2, 1])
+        pos_emb = pos_emb.permute(0, 2, 1)
         # fusion position embedding with features V & generate mask_c
         att_map_sub = self.active(pos_emb + self.wv(feature_v_seq))
         att_map_sub = self.we(att_map_sub)  # b,256,1
-        att_map_sub = torch.transpose(att_map_sub, perm=[0, 2, 1])
+        att_map_sub = att_map_sub.permute(0, 2, 1)
         att_map_sub = self.sigmoid(att_map_sub)  # b,1,256
         # WCL
         ## generate inputs for WCL
-        att_map_sub = torch.transpose(att_map_sub, perm=[0, 2, 1])
+        att_map_sub = att_map_sub.permute(0, 2, 1)
         f_res = x * (1 - att_map_sub)  # second path with remaining string
         f_sub = x * att_map_sub  # first path with occluded character
         ## transformer units in WCL
@@ -270,9 +270,9 @@ class MLM(nn.Module):
 
 def trans_1d_2d(x):
     b, w_h, c = x.shape  # b, 256, 512
-    x = torch.transpose(x, perm=[0, 2, 1])
+    x = x.permute(0, 2, 1)
     x = torch.reshape(x, [-1, c, 32, 8])
-    x = torch.transpose(x, perm=[0, 1, 3, 2])  # [b, c, 8, 32]
+    x = x.permute(0, 1, 3, 2)  # [b, c, 8, 32]
     return x
 
 
@@ -302,9 +302,9 @@ class MLM_VRM(nn.Module):
     def forward(self, x, label_pos, training_step, train_mode=False):
         b, c, h, w = x.shape
         nT = self.max_text_length
-        x = torch.transpose(x, perm=[0, 1, 3, 2])
+        x = x.permute(0, 1, 3, 2)
         x = torch.reshape(x, [-1, c, h * w])
-        x = torch.transpose(x, perm=[0, 2, 1])
+        x = x.permute(0, 2, 1)
         if train_mode:
             if training_step == "LF_1":
                 f_res = 0
@@ -347,7 +347,7 @@ class MLM_VRM(nn.Module):
             f_sub = 0
             contextual_feature = self.SequenceModeling(x, src_mask=None)
             text_pre = self.Prediction(contextual_feature, f_res, f_sub, train_mode=False, use_mlm=False)
-            text_pre = torch.transpose(text_pre, perm=[1, 0, 2])  # (26, b, 37))
+            text_pre = text_pre.permute(1, 0, 2)  # (26, b, 37))
             return text_pre, x
 
 

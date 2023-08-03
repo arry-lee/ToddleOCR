@@ -72,7 +72,7 @@ class PVAM(nn.Module):
     def forward(self, inputs, encoder_word_pos, gsrm_word_pos):
         b, c, h, w = inputs.shape
         conv_features = torch.reshape(inputs, shape=[-1, c, h * w])
-        conv_features = torch.transpose(conv_features, perm=[0, 2, 1])
+        conv_features = conv_features.permute(0, 2, 1)
         # transformer encoder
         b, t, c = conv_features.shape
 

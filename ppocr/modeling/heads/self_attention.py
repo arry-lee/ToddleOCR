@@ -165,7 +165,7 @@ class MultiHeadAttention(nn.Module):
 
         q = self.q_fc(queries)
         q = torch.reshape(q, shape=[0, 0, self.n_head, self.d_key])
-        q = torch.transpose(q, perm=[0, 2, 1, 3])
+        q = q.permute(0, 2, 1, 3)
 
         if cache is not None and static_kv and "static_k" in cache:
             # for encoder-decoder attention in inference and has cached
@@ -175,9 +175,9 @@ class MultiHeadAttention(nn.Module):
             k = self.k_fc(keys)
             v = self.v_fc(values)
             k = torch.reshape(k, shape=[0, 0, self.n_head, self.d_key])
-            k = torch.transpose(k, perm=[0, 2, 1, 3])
+            k = k.permute(0, 2, 1, 3)
             v = torch.reshape(v, shape=[0, 0, self.n_head, self.d_value])
-            v = torch.transpose(v, perm=[0, 2, 1, 3])
+            v = v.permute(0, 2, 1, 3)
 
         if cache is not None:
             if static_kv and not "static_k" in cache:
@@ -209,7 +209,7 @@ class MultiHeadAttention(nn.Module):
         out = torch.matmul(weights, v)
 
         # combine heads
-        out = torch.transpose(out, perm=[0, 2, 1, 3])
+        out = out.permute(0, 2, 1, 3)
         out = torch.reshape(out, shape=[0, 0, out.shape[2] * out.shape[3]])
 
         # project to output

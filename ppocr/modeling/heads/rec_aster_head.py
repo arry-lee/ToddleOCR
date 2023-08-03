@@ -138,8 +138,8 @@ class AttentionRecognitionHead(nn.Module):
 
         # https://github.com/IBM/pytorch-seq2seq/blob/fede87655ddce6c94b38886089e05321dc9802af/seq2seq/models/TopKDecoder.py
         batch_size, l, d = x.shape
-        x = torch.tile(torch.transpose(x.unsqueeze(1), perm=[1, 0, 2, 3]), [beam_width, 1, 1, 1])
-        inflated_encoder_feats = torch.reshape(torch.transpose(x, perm=[1, 0, 2, 3]), [-1, l, d])
+        x = torch.tile(x.unsqueeze(1).permute(1, 0, 2, 3), [beam_width, 1, 1, 1])
+        inflated_encoder_feats = torch.reshape(x.permute(1, 0, 2, 3), [-1, l, d])
 
         # Initialize the decoder
         state = self.decoder.get_initial_state(embed, tile_times=beam_width)
@@ -312,9 +312,9 @@ class DecoderUnit(nn.Module):
         state = self.embed_fc(embed)  # N * sDim
         if tile_times != 1:
             state = state.unsqueeze(1)
-            trans_state = torch.transpose(state, perm=[1, 0, 2])
+            trans_state = state.permute(1, 0, 2)
             state = torch.tile(trans_state, repeat_times=[tile_times, 1, 1])
-            trans_state = torch.transpose(state, perm=[1, 0, 2])
+            trans_state = state.permute(1, 0, 2)
             state = torch.reshape(trans_state, shape=[-1, self.sDim])
         state = state.unsqueeze(0)  # 1 * N * sDim
         return state

@@ -89,7 +89,7 @@ class TPSSpatialTransformer(nn.Module):
         forward_kernel[-3, :N] = 1
         target_control_points = torch.cast(target_control_points, forward_kernel.dtype)
         forward_kernel[:N, -2:] = target_control_points
-        forward_kernel[-2:, :N] = torch.transpose(target_control_points, perm=[1, 0])
+        forward_kernel[-2:, :N] = target_control_points.permute(1, 0)
         # compute inverse matrix
         inverse_kernel = torch.inverse(forward_kernel)
 
