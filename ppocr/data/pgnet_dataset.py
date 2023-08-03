@@ -11,11 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import numpy as np
 import os
-from torch.utils.data import Dataset
-from .imaug import transform, create_operators
 import random
+
+import numpy as np
+from torch.utils.data import Dataset
+
+from .imaug import create_operators, transform
 
 
 class PGDataSet(Dataset):
@@ -91,7 +93,9 @@ class PGDataSet(Dataset):
                 data["image"] = img
             outs = transform(data, self.ops)
         except Exception as e:
-            self.logger.error("When parsing line {}, error happened with msg: {}".format(self.data_idx_order_list[idx], e))
+            self.logger.error(
+                "When parsing line {}, error happened with msg: {}".format(self.data_idx_order_list[idx], e)
+            )
             outs = None
         if outs is None:
             return self.__getitem__(np.random.randint(self.__len__()))

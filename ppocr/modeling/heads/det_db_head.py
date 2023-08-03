@@ -17,9 +17,10 @@ from __future__ import division
 from __future__ import print_function
 
 import math
+
 import torch
-from torch import nn
 import torch.nn.functional as F
+from torch import nn
 
 
 def get_bias_attr(k):
@@ -33,7 +34,13 @@ class Head(nn.Module):
     def __init__(self, in_channels, kernel_list=[3, 2, 2], **kwargs):
         super(Head, self).__init__()
 
-        self.conv1 = nn.Conv2d(in_channels=in_channels, out_channels=in_channels // 4, kernel_size=kernel_list[0], padding=int(kernel_list[0] // 2), bias=False)
+        self.conv1 = nn.Conv2d(
+            in_channels=in_channels,
+            out_channels=in_channels // 4,
+            kernel_size=kernel_list[0],
+            padding=int(kernel_list[0] // 2),
+            bias=False,
+        )
         self.conv_bn1 = nn.BatchNorm2d(num_channels=in_channels // 4, bias=True, act="relu")
         self.conv2 = nn.ConvTranspose2d(
             in_channels=in_channels // 4,

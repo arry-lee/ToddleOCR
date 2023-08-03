@@ -20,9 +20,10 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import collections
 import math
 import re
-import collections
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -31,10 +32,24 @@ __all__ = ["EfficientNetb3"]
 
 GlobalParams = collections.namedtuple(
     "GlobalParams",
-    ["batch_norm_momentum", "batch_norm_epsilon", "dropout_rate", "num_classes", "width_coefficient", "depth_coefficient", "depth_divisor", "min_depth", "drop_connect_rate", "image_size"],
+    [
+        "batch_norm_momentum",
+        "batch_norm_epsilon",
+        "dropout_rate",
+        "num_classes",
+        "width_coefficient",
+        "depth_coefficient",
+        "depth_divisor",
+        "min_depth",
+        "drop_connect_rate",
+        "image_size",
+    ],
 )
 
-BlockArgs = collections.namedtuple("BlockArgs", ["kernel_size", "num_repeat", "input_filters", "output_filters", "expand_ratio", "id_skip", "stride", "se_ratio"])
+BlockArgs = collections.namedtuple(
+    "BlockArgs",
+    ["kernel_size", "num_repeat", "input_filters", "output_filters", "expand_ratio", "id_skip", "stride", "se_ratio"],
+)
 
 
 class BlockDecoder:
@@ -50,7 +65,9 @@ class BlockDecoder:
                 key, value = splits[:2]
                 options[key] = value
 
-        assert ("s" in options and len(options["s"]) == 1) or (len(options["s"]) == 2 and options["s"][0] == options["s"][1])
+        assert ("s" in options and len(options["s"]) == 1) or (
+            len(options["s"]) == 2 and options["s"][0] == options["s"][1]
+        )
 
         return BlockArgs(
             kernel_size=int(options["k"]),
@@ -72,7 +89,14 @@ class BlockDecoder:
         return blocks_args
 
 
-def efficientnet(width_coefficient=None, depth_coefficient=None, dropout_rate=0.2, drop_connect_rate=0.2, image_size=None, num_classes=1000):
+def efficientnet(
+    width_coefficient=None,
+    depth_coefficient=None,
+    dropout_rate=0.2,
+    drop_connect_rate=0.2,
+    image_size=None,
+    num_classes=1000,
+):
     blocks_args = [
         "r1_k3_s11_e1_i32_o16_se0.25",
         "r2_k3_s22_e6_i16_o24_se0.25",
@@ -202,7 +226,9 @@ class EfficientNetb3_PREN(nn.Module):
         here is changed from 300 to 64.
         """
         w, d, s, p = 1.2, 1.4, 64, 0.3
-        self._blocks_args, self._global_params = efficientnet(width_coefficient=w, depth_coefficient=d, dropout_rate=p, image_size=s)
+        self._blocks_args, self._global_params = efficientnet(
+            width_coefficient=w, depth_coefficient=d, dropout_rate=p, image_size=s
+        )
         self.out_channels = []
         # stem
         out_channels = EffUtils.round_filters(32, self._global_params)

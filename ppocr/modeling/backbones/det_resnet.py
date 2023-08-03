@@ -21,16 +21,11 @@ import torch
 
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.nn import Conv2d, BatchNorm2d, Linear, Dropout
-from torch.nn import AdaptiveAvgPool2d, MaxPool2d, AvgPool2d
+from torch.nn import MaxPool2d, AvgPool2d
 from torch.nn.initializer import Uniform
 
-import math
-
 from torch.vision.ops import DeformConv2D
-from torch.regularizer import L2Decay
-from torch.nn.initializer import Normal, Constant, XavierUniform
-from .det_resnet_vd import DeformableConvV2, ConvBNLayer
+from .det_resnet_vd import ConvBNLayer
 
 
 class BottleneckBlock(nn.Module):
@@ -90,7 +85,9 @@ class BasicBlock(nn.Module):
     def __init__(self, num_channels, num_filters, stride, shortcut=True, name=None):
         super(BasicBlock, self).__init__()
         self.stride = stride
-        self.conv0 = ConvBNLayer(in_channels=num_channels, out_channels=num_filters, kernel_size=3, stride=stride, act="relu")
+        self.conv0 = ConvBNLayer(
+            in_channels=num_channels, out_channels=num_filters, kernel_size=3, stride=stride, act="relu"
+        )
         self.conv1 = ConvBNLayer(in_channels=num_filters, out_channels=num_filters, kernel_size=3, act=None)
 
         if not shortcut:
@@ -119,7 +116,9 @@ class ResNet(nn.Module):
         self.input_image_channel = in_channels
 
         supported_layers = [18, 34, 50, 101, 152]
-        assert layers in supported_layers, "supported layers are {} but input layer is {}".format(supported_layers, layers)
+        assert layers in supported_layers, "supported layers are {} but input layer is {}".format(
+            supported_layers, layers
+        )
 
         if layers == 18:
             depth = [2, 2, 2, 2]
@@ -186,7 +185,12 @@ class ResNet(nn.Module):
                     conv_name = "res" + str(block + 2) + chr(97 + i)
                     basic_block = self.add_sublayer(
                         conv_name,
-                        BasicBlock(num_channels=num_channels[block] if i == 0 else num_filters[block], num_filters=num_filters[block], stride=2 if i == 0 and block != 0 else 1, shortcut=shortcut),
+                        BasicBlock(
+                            num_channels=num_channels[block] if i == 0 else num_filters[block],
+                            num_filters=num_filters[block],
+                            stride=2 if i == 0 and block != 0 else 1,
+                            shortcut=shortcut,
+                        ),
                     )
                     block_list.append(basic_block)
                     shortcut = True

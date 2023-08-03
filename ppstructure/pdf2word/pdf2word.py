@@ -12,21 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import sys
-import tarfile
-import os
-import time
 import datetime
 import functools
-import cv2
+import os
 import platform
-import numpy as np
+import sys
+import tarfile
+import time
+
+import cv2
 import fitz
+import numpy as np
 from PIL import Image
 from pdf2docx.converter import Converter
-from qtpy.QtWidgets import QApplication, QWidget, QPushButton, QProgressBar, QGridLayout, QMessageBox, QLabel, QFileDialog, QCheckBox
-from qtpy.QtCore import Signal, QThread, QObject
-from qtpy.QtGui import QImage, QPixmap, QIcon
+from qtpy.QtCore import QThread, Signal
+from qtpy.QtGui import QIcon, QImage, QPixmap
+from qtpy.QtWidgets import (QApplication, QFileDialog, QGridLayout, QLabel, QMessageBox, QProgressBar, QPushButton,
+                            QWidget)
 
 file = os.path.dirname(os.path.abspath(__file__))
 root = os.path.abspath(os.path.join(file, "../../"))
@@ -34,7 +36,7 @@ sys.path.append(file)
 sys.path.insert(0, root)
 
 from ppstructure.predict_system import StructureSystem, save_structure_res
-from ppstructure.utility import parse_args, draw_structure_result
+from ppstructure.utility import parse_args
 from ppocr.utils.network import download_with_progressbar
 from ppstructure.recovery.recovery_to_doc import sorted_layout_boxes, convert_info_docx
 
@@ -306,7 +308,14 @@ class APP_Image2Doc(QWidget):
 
     def downloadModels(self, URLs):
         # using custom model
-        tar_file_name_list = ["inference.pdiparams", "inference.pdiparams.info", "inference.pdmodel", "model.pdiparams", "model.pdiparams.info", "model.pdmodel"]
+        tar_file_name_list = [
+            "inference.pdiparams",
+            "inference.pdiparams.info",
+            "inference.pdmodel",
+            "model.pdiparams",
+            "model.pdiparams.info",
+            "model.pdmodel",
+        ]
         model_path = os.path.join(root, "inference")
         os.makedirs(model_path, exist_ok=True)
 
@@ -369,7 +378,9 @@ class APP_Image2Doc(QWidget):
         else:
             raise ValueError("Unsupported language")
         args.rec_char_dict_path = os.path.join(root, "ppocr", "utils", lang_dict["rec_char_dict_path"])
-        args.layout_dict_path = os.path.join(root, "ppocr", "utils", "dict", "layout_dict", lang_dict["layout_dict_path"])
+        args.layout_dict_path = os.path.join(
+            root, "ppocr", "utils", "dict", "layout_dict", lang_dict["layout_dict_path"]
+        )
         # init predictor
         return StructureSystem(args)
 
@@ -405,7 +416,9 @@ class APP_Image2Doc(QWidget):
             QMessageBox.information(self, "Information", "文档提取完成")
         elif len(self.imagePaths) > 0:  # for image file selection
             # Must set image path list and language before start
-            self.output_dir = os.path.join(os.path.dirname(self.imagePaths[0]), "output")  # output_dir shold be same as imagepath
+            self.output_dir = os.path.join(
+                os.path.dirname(self.imagePaths[0]), "output"
+            )  # output_dir shold be same as imagepath
             self._thread.setOutputDir(self.output_dir)
             self._thread.setImagePath(self.imagePaths)
             self._thread.setLang(lang)

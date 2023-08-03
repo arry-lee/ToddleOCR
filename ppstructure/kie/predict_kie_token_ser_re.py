@@ -22,7 +22,6 @@ os.environ["FLAGS_allocator_strategy"] = "auto_growth"
 
 import cv2
 import json
-import numpy as np
 import time
 
 import tools.infer.utility as utility
@@ -44,7 +43,9 @@ class SerRePredictor(object):
         if args.re_model_dir is not None:
             postprocess_params = {"name": "VQAReTokenLayoutLMPostProcess"}
             self.postprocess_op = build_post_process(postprocess_params)
-            self.predictor, self.input_tensor, self.output_tensors, self.config = utility.create_predictor(args, "re", logger)
+            self.predictor, self.input_tensor, self.output_tensors, self.config = utility.create_predictor(
+                args, "re", logger
+            )
         else:
             self.predictor = None
 
@@ -108,10 +109,14 @@ def main(args):
             f_w.write(res_str)
             if ser_re_predictor.predictor is not None:
                 img_res = draw_re_results(image_file, re_res, font_path=args.vis_font_path)
-                img_save_path = os.path.join(args.output, os.path.splitext(os.path.basename(image_file))[0] + "_ser_re.jpg")
+                img_save_path = os.path.join(
+                    args.output, os.path.splitext(os.path.basename(image_file))[0] + "_ser_re.jpg"
+                )
             else:
                 img_res = draw_ser_results(image_file, re_res, font_path=args.vis_font_path)
-                img_save_path = os.path.join(args.output, os.path.splitext(os.path.basename(image_file))[0] + "_ser.jpg")
+                img_save_path = os.path.join(
+                    args.output, os.path.splitext(os.path.basename(image_file))[0] + "_ser.jpg"
+                )
 
             cv2.imwrite(img_save_path, img_res)
             logger.info("save vis result to {}".format(img_save_path))

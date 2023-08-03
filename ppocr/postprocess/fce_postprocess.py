@@ -17,9 +17,10 @@ https://github.com/open-mmlab/mmocr/blob/v0.3.0/mmocr/models/textdet/postprocess
 """
 
 import cv2
-import torch
 import numpy as np
+import torch
 from numpy.fft import ifft
+
 from ppocr.utils.poly_nms import poly_nms, valid_boundary
 
 
@@ -65,7 +66,19 @@ class FCEPostProcess(object):
     The post process for FCENet.
     """
 
-    def __init__(self, scales, fourier_degree=5, num_reconstr_points=50, decoding_type="fcenet", score_thr=0.3, nms_thr=0.1, alpha=1.0, beta=1.0, box_type="poly", **kwargs):
+    def __init__(
+        self,
+        scales,
+        fourier_degree=5,
+        num_reconstr_points=50,
+        decoding_type="fcenet",
+        score_thr=0.3,
+        nms_thr=0.1,
+        alpha=1.0,
+        beta=1.0,
+        box_type="poly",
+        **kwargs
+    ):
         self.scales = scales
         self.fourier_degree = fourier_degree
         self.num_reconstr_points = num_reconstr_points
@@ -104,7 +117,11 @@ class FCEPostProcess(object):
             sz = len(b)
             valid_boundary(b, True)
             scores.append(b[-1])
-            b = (np.array(b[: sz - 1]) * (np.tile(scale_factor[:2], int((sz - 1) / 2)).reshape(1, sz - 1))).flatten().tolist()
+            b = (
+                (np.array(b[: sz - 1]) * (np.tile(scale_factor[:2], int((sz - 1) / 2)).reshape(1, sz - 1)))
+                .flatten()
+                .tolist()
+            )
             boxes.append(np.array(b).reshape([-1, 2]))
 
         return np.array(boxes, dtype=np.float32), scores
@@ -139,7 +156,18 @@ class FCEPostProcess(object):
             nms_thr=self.nms_thr,
         )
 
-    def fcenet_decode(self, preds, fourier_degree, num_reconstr_points, scale, alpha=1.0, beta=2.0, box_type="poly", score_thr=0.3, nms_thr=0.1):
+    def fcenet_decode(
+        self,
+        preds,
+        fourier_degree,
+        num_reconstr_points,
+        scale,
+        alpha=1.0,
+        beta=2.0,
+        box_type="poly",
+        score_thr=0.3,
+        nms_thr=0.1,
+    ):
         """Decoding predictions of FCENet to instances.
 
         Args:

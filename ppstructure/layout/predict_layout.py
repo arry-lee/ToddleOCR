@@ -30,7 +30,6 @@ from ppocr.postprocess import build_post_process
 from ppocr.utils.logging import get_logger
 from ppocr.utils.utility import get_image_file_list, check_and_read
 from ppstructure.utility import parse_args
-from picodet_postprocess import PicoDetPostProcess
 
 logger = get_logger()
 
@@ -39,7 +38,14 @@ class LayoutPredictor(object):
     def __init__(self, args):
         pre_process_list = [
             {"Resize": {"size": [800, 608]}},
-            {"NormalizeImage": {"std": [0.229, 0.224, 0.225], "mean": [0.485, 0.456, 0.406], "scale": "1./255.", "order": "hwc"}},
+            {
+                "NormalizeImage": {
+                    "std": [0.229, 0.224, 0.225],
+                    "mean": [0.485, 0.456, 0.406],
+                    "scale": "1./255.",
+                    "order": "hwc",
+                }
+            },
             {"ToCHWImage": None},
             {"KeepKeys": {"keep_keys": ["image"]}},
         ]
@@ -52,7 +58,9 @@ class LayoutPredictor(object):
 
         self.preprocess_op = create_operators(pre_process_list)
         self.postprocess_op = build_post_process(postprocess_params)
-        self.predictor, self.input_tensor, self.output_tensors, self.config = utility.create_predictor(args, "layout", logger)
+        self.predictor, self.input_tensor, self.output_tensors, self.config = utility.create_predictor(
+            args, "layout", logger
+        )
 
     def __call__(self, img):
         ori_im = img.copy()

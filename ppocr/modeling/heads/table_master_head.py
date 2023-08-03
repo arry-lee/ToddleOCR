@@ -30,7 +30,17 @@ class TableMasterHead(nn.Module):
     Bbox_layer is used to regress bbox coord.
     """
 
-    def __init__(self, in_channels, out_channels=30, headers=8, d_ff=2048, dropout=0, max_text_length=500, loc_reg_num=4, **kwargs):
+    def __init__(
+        self,
+        in_channels,
+        out_channels=30,
+        headers=8,
+        d_ff=2048,
+        dropout=0,
+        max_text_length=500,
+        loc_reg_num=4,
+        **kwargs
+    ):
         super(TableMasterHead, self).__init__()
         hidden_size = in_channels[-1]
         self.layers = clones(DecoderLayer(headers, hidden_size, dropout, d_ff), 2)
@@ -95,7 +105,7 @@ class TableMasterHead(nn.Module):
         for i in range(max_text_length + 1):
             target_mask = self.make_mask(input)
             out_step, bbox_output_step = self.decode(input, feature, None, target_mask)
-            prob = F.softmax(out_step,dim=-1)
+            prob = F.softmax(out_step, dim=-1)
             next_word = prob.argmax(axis=2, dtype="int64")
             input = torch.concat([input, next_word[:, -1].unsqueeze(-1)], dim=1)
             if i == self.max_text_length:
@@ -165,7 +175,10 @@ class MultiHeadAttention(nn.Module):
         B = query.shape[0]
 
         # 1) Do all the linear projections in batch from d_model => h x d_k
-        query, key, value = [l(x).reshape([B, 0, self.headers, self.d_k]).transpose([0, 2, 1, 3]) for l, x in zip(self.linears, (query, key, value))]
+        query, key, value = [
+            l(x).reshape([B, 0, self.headers, self.d_k]).transpose([0, 2, 1, 3])
+            for l, x in zip(self.linears, (query, key, value))
+        ]
         # 2) Apply attention on all the projected vectors in batch
         x, self.attn = self_attention(query, key, value, mask=mask, dropout=self.dropout)
         x = x.transpose([0, 2, 1, 3]).reshape([B, 0, self.headers * self.d_k])
@@ -214,7 +227,7 @@ def self_attention(query, key, value, mask=None, dropout=None):
         # score = score.masked_fill(mask == 0, -1e9) # b, h, L, L
         score = masked_fill(score, mask == 0, -6.55e4)  # for fp16
 
-    p_attn = F.softmax(score,dim=-1)
+    p_attn = F.softmax(score, dim=-1)
 
     if dropout is not None:
         p_attn = dropout(p_attn)

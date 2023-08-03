@@ -20,10 +20,10 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import torch
-from torch import nn
-import torch.nn.functional as F
 import numpy as np
+import torch
+import torch.nn.functional as F
+from torch import nn
 
 
 def ohem_single(score, gt_text, training_mask):
@@ -34,7 +34,9 @@ def ohem_single(score, gt_text, training_mask):
     if pos_num == 0:
         # selected_mask = gt_text.copy() * 0 # may be not good
         selected_mask = training_mask
-        selected_mask = selected_mask.reshape((1, selected_mask.shape[0], selected_mask.shape[1])).type(dtype=torch.float32)
+        selected_mask = selected_mask.reshape((1, selected_mask.shape[0], selected_mask.shape[1])).type(
+            dtype=torch.float32
+        )
         return selected_mask
 
     neg_num = int(torch.sum((gt_text <= 0.5) & (training_mask > 0.5)))
@@ -42,7 +44,9 @@ def ohem_single(score, gt_text, training_mask):
 
     if neg_num == 0:
         selected_mask = training_mask
-        selected_mask = selected_mask.reshape((1, selected_mask.shape[0], selected_mask.shape[1])).type(dtype=torch.float32)
+        selected_mask = selected_mask.reshape((1, selected_mask.shape[0], selected_mask.shape[1])).type(
+            dtype=torch.float32
+        )
         return selected_mask
 
     # hard example
@@ -140,7 +144,9 @@ class SmoothL1Loss(nn.Module):
                 np_coord[i, j, 1] = i
         np_coord = np_coord.reshape((-1, 2))
 
-        self.coord = self.create_parameter(shape=[640 * 640, 2], dtype="int32", default_initializer=nn.initializer.Assign(value=np_coord))  # NOTE: not support "int64" before paddle 2.3.1
+        self.coord = self.create_parameter(
+            shape=[640 * 640, 2], dtype="int32", default_initializer=nn.initializer.Assign(value=np_coord)
+        )  # NOTE: not support "int64" before paddle 2.3.1
         self.coord.stop_gradient = True
 
     def forward_single(self, input, target, mask, beta=1.0, eps=1e-6):
@@ -171,7 +177,10 @@ class SmoothL1Loss(nn.Module):
             off_points = off_points.type(dtype=torch.int64)
             off_points = torch.clip(off_points, 0, distance.shape[-1] - 1)
 
-            selected_mask = gt_instance[self.coord[:, 1], self.coord[:, 0]] != gt_kernel_instance[off_points[:, 1], off_points[:, 0]]
+            selected_mask = (
+                gt_instance[self.coord[:, 1], self.coord[:, 0]]
+                != gt_kernel_instance[off_points[:, 1], off_points[:, 0]]
+            )
             selected_mask = selected_mask.reshape((1, -1, distance.shape[-1])).type(dtype=torch.int64)
             selected_training_mask = selected_mask * training_mask
 
@@ -180,7 +189,11 @@ class SmoothL1Loss(nn.Module):
     def forward(self, distances, gt_instances, gt_kernel_instances, training_masks, gt_distances, reduce=True):
         selected_training_masks = []
         for i in range(distances.shape[0]):
-            selected_training_masks.append(self.select_single(distances[i, :, :, :], gt_instances[i, :, :], gt_kernel_instances[i, :, :], training_masks[i, :, :]))
+            selected_training_masks.append(
+                self.select_single(
+                    distances[i, :, :, :], gt_instances[i, :, :], gt_kernel_instances[i, :, :], training_masks[i, :, :]
+                )
+            )
         selected_training_masks = torch.concat(selected_training_masks, 0).type(dtype=torch.float32)
 
         loss = self.forward_single(distances, gt_distances, selected_training_masks, self.beta)
@@ -225,7 +238,9 @@ class CTLoss(nn.Module):
         )
 
         # loc loss
-        loss_loc, iou_text = self.loc_loss(distances, gt_instances, gt_kernel_instances, training_mask_distances, gt_distances, reduce=False)
+        loss_loc, iou_text = self.loc_loss(
+            distances, gt_instances, gt_kernel_instances, training_mask_distances, gt_distances, reduce=False
+        )
         losses.update(
             dict(
                 loss_loc=loss_loc,

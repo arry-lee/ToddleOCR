@@ -16,10 +16,9 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import numpy as np
 import torch
 from torch import nn
-import numpy as np
-import cv2
 
 __all__ = ["Kie_backbone"]
 
@@ -116,7 +115,14 @@ class Kie_backbone(nn.Module):
         return rois, rois_num
 
     def pre_process(self, img, relations, texts, gt_bboxes, tag, img_size):
-        img, relations, texts, gt_bboxes, tag, img_size = img.numpy(), relations.numpy(), texts.numpy(), gt_bboxes.numpy(), tag.numpy().tolist(), img_size.numpy()
+        img, relations, texts, gt_bboxes, tag, img_size = (
+            img.numpy(),
+            relations.numpy(),
+            texts.numpy(),
+            gt_bboxes.numpy(),
+            tag.numpy().tolist(),
+            img_size.numpy(),
+        )
         temp_relations, temp_texts, temp_gt_bboxes = [], [], []
         h, w = int(np.max(img_size[:, 0])), int(np.max(img_size[:, 1]))
         img = torch.Tensor(img[:, :, :h, :w])

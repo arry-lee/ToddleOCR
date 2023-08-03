@@ -16,11 +16,11 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import numpy as np
-
+import json
 import os
 import sys
-import json
+
+import numpy as np
 
 __dir__ = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(__dir__)
@@ -29,7 +29,6 @@ sys.path.insert(0, os.path.abspath(os.path.join(__dir__, "..")))
 os.environ["FLAGS_allocator_strategy"] = "auto_growth"
 
 import torch
-from torch.jit import to_static
 
 from ppocr.data import create_operators, transform
 from ppocr.modeling.architectures import build_model
@@ -92,7 +91,9 @@ def main(config, device, logger, vdl_writer):
             structure_str_list = post_result["structure_batch_list"][0]
             bbox_list = post_result["bbox_batch_list"][0]
             structure_str_list = structure_str_list[0]
-            structure_str_list = ["<html>", "<body>", "<table>"] + structure_str_list + ["</table>", "</body>", "</html>"]
+            structure_str_list = (
+                ["<html>", "<body>", "<table>"] + structure_str_list + ["</table>", "</body>", "</html>"]
+            )
             bbox_list_str = json.dumps(bbox_list.tolist())
 
             logger.info("result: {}, {}".format(structure_str_list, bbox_list_str))

@@ -16,17 +16,17 @@ This code is refered from:
 https://github.com/songdejia/EAST/blob/master/data_utils.py
 """
 import math
+
 import cv2
 import numpy as np
-import json
-import sys
-import os
 
 __all__ = ["EASTProcessTrain"]
 
 
 class EASTProcessTrain(object):
-    def __init__(self, image_shape=[512, 512], background_ratio=0.125, min_crop_side_ratio=0.1, min_text_size=10, **kwargs):
+    def __init__(
+        self, image_shape=[512, 512], background_ratio=0.125, min_crop_side_ratio=0.1, min_text_size=10, **kwargs
+    ):
         self.input_size = image_shape[1]
         self.random_scale = np.array([0.5, 1, 2.0, 3.0])
         self.background_ratio = background_ratio
@@ -307,7 +307,12 @@ class EASTProcessTrain(object):
                 # area too small
                 continue
             if polys.shape[0] != 0:
-                poly_axis_in_area = (polys[:, :, 0] >= xmin) & (polys[:, :, 0] <= xmax) & (polys[:, :, 1] >= ymin) & (polys[:, :, 1] <= ymax)
+                poly_axis_in_area = (
+                    (polys[:, :, 0] >= xmin)
+                    & (polys[:, :, 0] <= xmax)
+                    & (polys[:, :, 1] >= ymin)
+                    & (polys[:, :, 1] <= ymax)
+                )
                 selected_polys = np.where(np.sum(poly_axis_in_area, axis=1) == 4)[0]
             else:
                 selected_polys = []

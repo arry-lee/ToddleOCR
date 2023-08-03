@@ -67,7 +67,10 @@ class VQAReTokenChunk(object):
             entities_in_this_span = []
             global_to_local_map = {}  #
             for entity_id, entity in enumerate(entities):
-                if index <= entity["start"] < index + self.max_seq_len and index <= entity["end"] < index + self.max_seq_len:
+                if (
+                    index <= entity["start"] < index + self.max_seq_len
+                    and index <= entity["end"] < index + self.max_seq_len
+                ):
                     entity["start"] = entity["start"] - index
                     entity["end"] = entity["end"] - index
                     global_to_local_map[entity_id] = len(entities_in_this_span)
@@ -76,7 +79,10 @@ class VQAReTokenChunk(object):
             # select relations in current chunk
             relations_in_this_span = []
             for relation in relations:
-                if index <= relation["start_index"] < index + self.max_seq_len and index <= relation["end_index"] < index + self.max_seq_len:
+                if (
+                    index <= relation["start_index"] < index + self.max_seq_len
+                    and index <= relation["end_index"] < index + self.max_seq_len
+                ):
                     relations_in_this_span.append(
                         {
                             "head": global_to_local_map[relation["head"]],

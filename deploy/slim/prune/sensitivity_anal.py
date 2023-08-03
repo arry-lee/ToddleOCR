@@ -42,7 +42,13 @@ def get_pruned_params(parameters):
     params = []
 
     for param in parameters:
-        if len(param.shape) == 4 and "depthwise" not in param.name and "transpose" not in param.name and "conv2d_57" not in param.name and "conv2d_56" not in param.name:
+        if (
+            len(param.shape) == 4
+            and "depthwise" not in param.name
+            and "transpose" not in param.name
+            and "conv2d_57" not in param.name
+            and "conv2d_56" not in param.name
+        ):
             params.append(param.name)
     return params
 
@@ -88,18 +94,28 @@ def main(config, device, logger, vdl_writer):
     loss_class = build_loss(config["Loss"])
 
     # build optim
-    optimizer, lr_scheduler = build_optimizer(config["Optimizer"], epochs=config["Global"]["epoch_num"], step_each_epoch=len(train_dataloader), model=model)
+    optimizer, lr_scheduler = build_optimizer(
+        config["Optimizer"], epochs=config["Global"]["epoch_num"], step_each_epoch=len(train_dataloader), model=model
+    )
 
     # build metric
     eval_class = build_metric(config["Metric"])
     # load pretrain model
     pre_best_model_dict = load_model(config, model, optimizer)
 
-    logger.info("train dataloader has {} iters, valid dataloader has {} iters".format(len(train_dataloader), len(valid_dataloader)))
+    logger.info(
+        "train dataloader has {} iters, valid dataloader has {} iters".format(
+            len(train_dataloader), len(valid_dataloader)
+        )
+    )
     # build metric
     eval_class = build_metric(config["Metric"])
 
-    logger.info("train dataloader has {} iters, valid dataloader has {} iters".format(len(train_dataloader), len(valid_dataloader)))
+    logger.info(
+        "train dataloader has {} iters, valid dataloader has {} iters".format(
+            len(train_dataloader), len(valid_dataloader)
+        )
+    )
 
     def eval_fn():
         metric = program.eval(model, valid_dataloader, post_process_class, eval_class, False)
@@ -126,7 +142,11 @@ def main(config, device, logger, vdl_writer):
     """
 
     if run_sensitive_analysis:
-        params_sensitive = pruner.sensitive(eval_func=eval_fn, sen_file="./deploy/slim/prune/sen.pickle", skip_vars=["conv2d_57.w_0", "conv2d_transpose_2.w_0", "conv2d_transpose_3.w_0"])
+        params_sensitive = pruner.sensitive(
+            eval_func=eval_fn,
+            sen_file="./deploy/slim/prune/sen.pickle",
+            skip_vars=["conv2d_57.w_0", "conv2d_transpose_2.w_0", "conv2d_transpose_3.w_0"],
+        )
         logger.info("The sensitivity analysis results of model parameters saved in sen.pickle")
         # calculate pruned params's ratio
         params_sensitive = pruner._get_ratios_by_loss(params_sensitive, loss=0.02)
@@ -146,7 +166,21 @@ def main(config, device, logger, vdl_writer):
 
     # start train
 
-    program.train(config, train_dataloader, valid_dataloader, device, model, loss_class, optimizer, lr_scheduler, post_process_class, eval_class, pre_best_model_dict, logger, vdl_writer)
+    program.train(
+        config,
+        train_dataloader,
+        valid_dataloader,
+        device,
+        model,
+        loss_class,
+        optimizer,
+        lr_scheduler,
+        post_process_class,
+        eval_class,
+        pre_best_model_dict,
+        logger,
+        vdl_writer,
+    )
 
 
 if __name__ == "__main__":

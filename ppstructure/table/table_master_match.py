@@ -471,7 +471,9 @@ def merge_span_token(master_token_list):
     while master_token_list[pointer] != "</tbody>":
         try:
             if master_token_list[pointer] == "<td":
-                if master_token_list[pointer + 1].startswith(" colspan=") or master_token_list[pointer + 1].startswith(" rowspan="):
+                if master_token_list[pointer + 1].startswith(" colspan=") or master_token_list[pointer + 1].startswith(
+                    " rowspan="
+                ):
                     """
                     example:
                     pattern <td colspan="3">
@@ -481,7 +483,9 @@ def merge_span_token(master_token_list):
                     pointer += 4
                     new_master_token_list.append(tmp)
 
-                elif master_token_list[pointer + 2].startswith(" colspan=") or master_token_list[pointer + 2].startswith(" rowspan="):
+                elif master_token_list[pointer + 2].startswith(" colspan=") or master_token_list[
+                    pointer + 2
+                ].startswith(" rowspan="):
                     """
                     example:
                     pattern <td rowspan="2" colspan="3">
@@ -574,12 +578,19 @@ def deal_isolate_span(thead_part):
     :return:
     """
     # 1. find out isolate span tokens.
-    isolate_pattern = '<td></td> rowspan="(\d)+" colspan="(\d)+"></b></td>|' '<td></td> colspan="(\d)+" rowspan="(\d)+"></b></td>|' '<td></td> rowspan="(\d)+"></b></td>|' '<td></td> colspan="(\d)+"></b></td>'
+    isolate_pattern = (
+        '<td></td> rowspan="(\d)+" colspan="(\d)+"></b></td>|'
+        '<td></td> colspan="(\d)+" rowspan="(\d)+"></b></td>|'
+        '<td></td> rowspan="(\d)+"></b></td>|'
+        '<td></td> colspan="(\d)+"></b></td>'
+    )
     isolate_iter = re.finditer(isolate_pattern, thead_part)
     isolate_list = [i.group() for i in isolate_iter]
 
     # 2. find out span number, by step 1 results.
-    span_pattern = ' rowspan="(\d)+" colspan="(\d)+"|' ' colspan="(\d)+" rowspan="(\d)+"|' ' rowspan="(\d)+"|' ' colspan="(\d)+"'
+    span_pattern = (
+        ' rowspan="(\d)+" colspan="(\d)+"|' ' colspan="(\d)+" rowspan="(\d)+"|' ' rowspan="(\d)+"|' ' colspan="(\d)+"'
+    )
     corrected_list = []
     for isolate_item in isolate_list:
         span_part = re.search(span_pattern, isolate_item)
@@ -608,7 +619,13 @@ def deal_duplicate_bb(thead_part):
     :return:
     """
     # 1. find out <td></td> in <thead></thead>.
-    td_pattern = '<td rowspan="(\d)+" colspan="(\d)+">(.+?)</td>|' '<td colspan="(\d)+" rowspan="(\d)+">(.+?)</td>|' '<td rowspan="(\d)+">(.+?)</td>|' '<td colspan="(\d)+">(.+?)</td>|' "<td>(.*?)</td>"
+    td_pattern = (
+        '<td rowspan="(\d)+" colspan="(\d)+">(.+?)</td>|'
+        '<td colspan="(\d)+" rowspan="(\d)+">(.+?)</td>|'
+        '<td rowspan="(\d)+">(.+?)</td>|'
+        '<td colspan="(\d)+">(.+?)</td>|'
+        "<td>(.*?)</td>"
+    )
     td_iter = re.finditer(td_pattern, thead_part)
     td_list = [t.group() for t in td_iter]
 
@@ -656,7 +673,12 @@ def deal_bb(result_token):
         # 1. replace <td> to <td><b>, and </td> to </b></td>
         # 2. it is possible to predict text include <b> or </b> by Text-line recognition,
         #    so we replace <b><b> to <b>, and </b></b> to </b>
-        thead_part = thead_part.replace("<td>", "<td><b>").replace("</td>", "</b></td>").replace("<b><b>", "<b>").replace("</b></b>", "</b>")
+        thead_part = (
+            thead_part.replace("<td>", "<td><b>")
+            .replace("</td>", "</b></td>")
+            .replace("<b><b>", "<b>")
+            .replace("</b></b>", "</b>")
+        )
     else:
         # <thead></thead> include "rowspan" or "colspan" branch 2.
         # Firstly, we deal rowspan or colspan cases.
@@ -729,7 +751,12 @@ class Matcher:
             if file_name not in self.structure_master_results:
                 continue
             structure_master_result = self.structure_master_results[file_name]
-            end2end_xyxy_bboxes, end2end_xywh_bboxes, structure_master_xywh_bboxes, structure_master_xyxy_bboxes = get_bboxes_list(end2end_result, structure_master_result)
+            (
+                end2end_xyxy_bboxes,
+                end2end_xywh_bboxes,
+                structure_master_xywh_bboxes,
+                structure_master_xyxy_bboxes,
+            ) = get_bboxes_list(end2end_result, structure_master_result)
 
             # rule 1: center rule
             center_rule_match_list = center_rule_match(end2end_xywh_bboxes, structure_master_xyxy_bboxes)
@@ -741,7 +768,9 @@ class Matcher:
             if len(center_no_match_end2end_indexs) > 0:
                 center_no_match_end2end_xyxy = end2end_xyxy_bboxes[center_no_match_end2end_indexs]
                 # secondly, iou rule match
-                iou_rule_match_list = iou_rule_match(center_no_match_end2end_xyxy, center_no_match_end2end_indexs, structure_master_xyxy_bboxes)
+                iou_rule_match_list = iou_rule_match(
+                    center_no_match_end2end_xyxy, center_no_match_end2end_indexs, structure_master_xyxy_bboxes
+                )
                 match_list.extend(iou_rule_match_list)
 
             # rule 3: distance rule
@@ -749,11 +778,18 @@ class Matcher:
             # it will return master_bboxes_nums match-pairs.
             # firstly, find not match index in previous step.
             centerIou_no_match_end2end_indexs = find_no_match(match_list, len(end2end_xywh_bboxes), type="end2end")
-            centerIou_no_match_master_indexs = find_no_match(match_list, len(structure_master_xywh_bboxes), type="master")
+            centerIou_no_match_master_indexs = find_no_match(
+                match_list, len(structure_master_xywh_bboxes), type="master"
+            )
             if len(centerIou_no_match_master_indexs) > 0 and len(centerIou_no_match_end2end_indexs) > 0:
                 centerIou_no_match_end2end_xywh = end2end_xywh_bboxes[centerIou_no_match_end2end_indexs]
                 centerIou_no_match_master_xywh = structure_master_xywh_bboxes[centerIou_no_match_master_indexs]
-                distance_match_list = distance_rule_match(centerIou_no_match_end2end_indexs, centerIou_no_match_end2end_xywh, centerIou_no_match_master_indexs, centerIou_no_match_master_xywh)
+                distance_match_list = distance_rule_match(
+                    centerIou_no_match_end2end_indexs,
+                    centerIou_no_match_end2end_xywh,
+                    centerIou_no_match_master_indexs,
+                    centerIou_no_match_master_xywh,
+                )
                 match_list.extend(distance_match_list)
 
             # TODO:
@@ -767,7 +803,12 @@ class Matcher:
             if len(no_match_end2end_indexes) > 0:
                 no_match_end2end_xywh = end2end_xywh_bboxes[no_match_end2end_indexes]
                 # sort the render no-match end2end bbox in row
-                end2end_sorted_indexes_list, end2end_sorted_bboxes_list, sorted_groups, sorted_bboxes_groups = sort_bbox(no_match_end2end_xywh, no_match_end2end_indexes)
+                (
+                    end2end_sorted_indexes_list,
+                    end2end_sorted_bboxes_list,
+                    sorted_groups,
+                    sorted_bboxes_groups,
+                ) = sort_bbox(no_match_end2end_xywh, no_match_end2end_indexes)
                 # make virtual master bboxes, and get matching with the no-match end2end bboxes.
                 extra_match_list = extra_match(end2end_sorted_indexes_list, len(structure_master_xywh_bboxes))
                 match_list_add_extra_match = copy.deepcopy(match_list)
@@ -778,7 +819,12 @@ class Matcher:
                 sorted_groups = []
                 sorted_bboxes_groups = []
 
-            match_result_dict = {"match_list": match_list, "match_list_add_extra_match": match_list_add_extra_match, "sorted_groups": sorted_groups, "sorted_bboxes_groups": sorted_bboxes_groups}
+            match_result_dict = {
+                "match_list": match_list,
+                "match_list_add_extra_match": match_list_add_extra_match,
+                "sorted_groups": sorted_groups,
+                "sorted_bboxes_groups": sorted_bboxes_groups,
+            }
 
             # format output
             match_result_dict = self._format(match_result_dict, file_name)

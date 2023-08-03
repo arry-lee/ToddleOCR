@@ -20,19 +20,37 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import warnings
-import cv2
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+
 from .gcn import GCN
 from .local_graph import LocalGraphs
 from .proposal_local_graph import ProposalLocalGraphs
 
 
 class DRRGHead(nn.Module):
-    def __init__(self, in_channels, k_at_hops=(8, 4), num_adjacent_linkages=3, node_geo_feat_len=120, pooling_scale=1.0, pooling_output_size=(4, 3), nms_thr=0.3, min_width=8.0, max_width=24.0, comp_shrink_ratio=1.03, comp_ratio=0.4, comp_score_thr=0.3, text_region_thr=0.2, center_region_thr=0.2, center_region_area_thr=50, local_graph_thr=0.7, **kwargs):
+    def __init__(
+        self,
+        in_channels,
+        k_at_hops=(8, 4),
+        num_adjacent_linkages=3,
+        node_geo_feat_len=120,
+        pooling_scale=1.0,
+        pooling_output_size=(4, 3),
+        nms_thr=0.3,
+        min_width=8.0,
+        max_width=24.0,
+        comp_shrink_ratio=1.03,
+        comp_ratio=0.4,
+        comp_score_thr=0.3,
+        text_region_thr=0.2,
+        center_region_thr=0.2,
+        center_region_area_thr=50,
+        local_graph_thr=0.7,
+        **kwargs
+    ):
         super().__init__()
 
         assert isinstance(in_channels, int)
@@ -71,9 +89,18 @@ class DRRGHead(nn.Module):
         self.center_region_area_thr = center_region_area_thr
         self.local_graph_thr = local_graph_thr
 
-        self.out_conv = nn.Conv2d(in_channels=self.in_channels, out_channels=self.out_channels, kernel_size=1, stride=1, padding=0)
+        self.out_conv = nn.Conv2d(
+            in_channels=self.in_channels, out_channels=self.out_channels, kernel_size=1, stride=1, padding=0
+        )
 
-        self.graph_train = LocalGraphs(self.k_at_hops, self.num_adjacent_linkages, self.node_geo_feat_len, self.pooling_scale, self.pooling_output_size, self.local_graph_thr)
+        self.graph_train = LocalGraphs(
+            self.k_at_hops,
+            self.num_adjacent_linkages,
+            self.node_geo_feat_len,
+            self.pooling_scale,
+            self.pooling_output_size,
+            self.local_graph_thr,
+        )
 
         self.graph_test = ProposalLocalGraphs(
             self.k_at_hops,

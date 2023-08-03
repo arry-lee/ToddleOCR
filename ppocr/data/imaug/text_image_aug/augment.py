@@ -17,6 +17,7 @@ https://github.com/RubanSeven/Text-Image-Augmentation-python/blob/master/augment
 """
 
 import numpy as np
+
 from .warp_mls import WarpMLS
 
 
@@ -44,8 +45,12 @@ def tia_distort(src, segment=4):
     for cut_idx in np.arange(1, segment, 1):
         src_pts.append([cut * cut_idx, 0])
         src_pts.append([cut * cut_idx, img_h])
-        dst_pts.append([cut * cut_idx + np.random.randint(thresh) - half_thresh, np.random.randint(thresh) - half_thresh])
-        dst_pts.append([cut * cut_idx + np.random.randint(thresh) - half_thresh, img_h + np.random.randint(thresh) - half_thresh])
+        dst_pts.append(
+            [cut * cut_idx + np.random.randint(thresh) - half_thresh, np.random.randint(thresh) - half_thresh]
+        )
+        dst_pts.append(
+            [cut * cut_idx + np.random.randint(thresh) - half_thresh, img_h + np.random.randint(thresh) - half_thresh]
+        )
 
     trans = WarpMLS(src, src_pts, dst_pts, img_w, img_h)
     dst = trans.generate()

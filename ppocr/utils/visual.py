@@ -86,8 +86,14 @@ def draw_re_results(image, result, font_path="doc/fonts/simfang.ttf", font_size=
         draw_box_txt(ocr_info_head["bbox"], ocr_info_head["transcription"], draw, font, font_size, color_head)
         draw_box_txt(ocr_info_tail["bbox"], ocr_info_tail["transcription"], draw, font, font_size, color_tail)
 
-        center_head = ((ocr_info_head["bbox"][0] + ocr_info_head["bbox"][2]) // 2, (ocr_info_head["bbox"][1] + ocr_info_head["bbox"][3]) // 2)
-        center_tail = ((ocr_info_tail["bbox"][0] + ocr_info_tail["bbox"][2]) // 2, (ocr_info_tail["bbox"][1] + ocr_info_tail["bbox"][3]) // 2)
+        center_head = (
+            (ocr_info_head["bbox"][0] + ocr_info_head["bbox"][2]) // 2,
+            (ocr_info_head["bbox"][1] + ocr_info_head["bbox"][3]) // 2,
+        )
+        center_tail = (
+            (ocr_info_tail["bbox"][0] + ocr_info_tail["bbox"][2]) // 2,
+            (ocr_info_tail["bbox"][1] + ocr_info_tail["bbox"][3]) // 2,
+        )
 
         draw.line([center_head, center_tail], fill=color_line, width=5)
 

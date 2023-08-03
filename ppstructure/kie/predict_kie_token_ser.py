@@ -40,7 +40,13 @@ logger = get_logger()
 
 class SerPredictor(object):
     def __init__(self, args):
-        self.ocr_engine = PaddleOCR(use_angle_cls=args.use_angle_cls, det_model_dir=args.det_model_dir, rec_model_dir=args.rec_model_dir, show_log=False, use_gpu=args.use_gpu)
+        self.ocr_engine = PaddleOCR(
+            use_angle_cls=args.use_angle_cls,
+            det_model_dir=args.det_model_dir,
+            rec_model_dir=args.rec_model_dir,
+            show_log=False,
+            use_gpu=args.use_gpu,
+        )
 
         pre_process_list = [
             {
@@ -55,9 +61,30 @@ class SerPredictor(object):
             {"VQATokenPad": {"max_seq_len": 512, "return_attention_mask": True}},
             {"VQASerTokenChunk": {"max_seq_len": 512, "return_attention_mask": True}},
             {"Resize": {"size": [224, 224]}},
-            {"NormalizeImage": {"std": [58.395, 57.12, 57.375], "mean": [123.675, 116.28, 103.53], "scale": "1", "order": "hwc"}},
+            {
+                "NormalizeImage": {
+                    "std": [58.395, 57.12, 57.375],
+                    "mean": [123.675, 116.28, 103.53],
+                    "scale": "1",
+                    "order": "hwc",
+                }
+            },
             {"ToCHWImage": None},
-            {"KeepKeys": {"keep_keys": ["input_ids", "bbox", "attention_mask", "token_type_ids", "image", "labels", "segment_offset_id", "ocr_info", "entities"]}},
+            {
+                "KeepKeys": {
+                    "keep_keys": [
+                        "input_ids",
+                        "bbox",
+                        "attention_mask",
+                        "token_type_ids",
+                        "image",
+                        "labels",
+                        "segment_offset_id",
+                        "ocr_info",
+                        "entities",
+                    ]
+                }
+            },
         ]
         postprocess_params = {
             "name": "VQASerTokenLayoutLMPostProcess",
@@ -66,7 +93,9 @@ class SerPredictor(object):
 
         self.preprocess_op = create_operators(pre_process_list, {"infer_mode": True})
         self.postprocess_op = build_post_process(postprocess_params)
-        self.predictor, self.input_tensor, self.output_tensors, self.config = utility.create_predictor(args, "ser", logger)
+        self.predictor, self.input_tensor, self.output_tensors, self.config = utility.create_predictor(
+            args, "ser", logger
+        )
 
     def __call__(self, img):
         ori_im = img.copy()

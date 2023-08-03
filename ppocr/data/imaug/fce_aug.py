@@ -15,11 +15,12 @@
 This code is refer from:
 https://github.com/open-mmlab/mmocr/blob/main/mmocr/datasets/pipelines/transforms.py
 """
-import numpy as np
-from PIL import Image, ImageDraw
-import cv2
-from shapely.geometry import Polygon
 import math
+
+import cv2
+import numpy as np
+from shapely.geometry import Polygon
+
 from ppocr.utils.poly_nms import poly_intersection
 
 
@@ -320,7 +321,12 @@ class RandomCropPolyInstances:
             valid_masks_list = []
             valid_tags_list = []
             for ind, polygon in enumerate(polygons):
-                if (polygon[:, ::2] > -4).all() and (polygon[:, ::2] < w + 4).all() and (polygon[:, 1::2] > -4).all() and (polygon[:, 1::2] < h + 4).all():
+                if (
+                    (polygon[:, ::2] > -4).all()
+                    and (polygon[:, ::2] < w + 4).all()
+                    and (polygon[:, 1::2] > -4).all()
+                    and (polygon[:, 1::2] < h + 4).all()
+                ):
                     polygon[:, ::2] = np.clip(polygon[:, ::2], 0, w)
                     polygon[:, 1::2] = np.clip(polygon[:, 1::2], 0, h)
                     valid_masks_list.append(polygon)
@@ -397,7 +403,13 @@ class RandomRotatePolyInstances:
         rotation_matrix[1, 2] += int((canvas_size[0] - h) / 2)
 
         if self.pad_with_fixed_color:
-            target_img = cv2.warpAffine(img, rotation_matrix, (canvas_size[1], canvas_size[0]), flags=cv2.INTER_NEAREST, borderValue=self.pad_value)
+            target_img = cv2.warpAffine(
+                img,
+                rotation_matrix,
+                (canvas_size[1], canvas_size[0]),
+                flags=cv2.INTER_NEAREST,
+                borderValue=self.pad_value,
+            )
         else:
             mask = np.zeros_like(img)
             (h_ind, w_ind) = (np.random.randint(0, h * 7 // 8), np.random.randint(0, w * 7 // 8))

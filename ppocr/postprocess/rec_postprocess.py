@@ -129,7 +129,15 @@ class DistillationCTCLabelDecode(CTCLabelDecode):
     Convert between text-label and text-index
     """
 
-    def __init__(self, character_dict_path=None, use_space_char=False, model_name=["student"], key=None, multi_head=False, **kwargs):
+    def __init__(
+        self,
+        character_dict_path=None,
+        use_space_char=False,
+        model_name=["student"],
+        key=None,
+        multi_head=False,
+        **kwargs
+    ):
         super(DistillationCTCLabelDecode, self).__init__(character_dict_path, use_space_char)
         if not isinstance(model_name, list):
             model_name = [model_name]
@@ -536,7 +544,15 @@ class DistillationSARLabelDecode(SARLabelDecode):
     Convert between text-label and text-index
     """
 
-    def __init__(self, character_dict_path=None, use_space_char=False, model_name=["student"], key=None, multi_head=False, **kwargs):
+    def __init__(
+        self,
+        character_dict_path=None,
+        use_space_char=False,
+        model_name=["student"],
+        key=None,
+        multi_head=False,
+        **kwargs
+    ):
         super(DistillationSARLabelDecode, self).__init__(character_dict_path, use_space_char)
         if not isinstance(model_name, list):
             model_name = [model_name]
@@ -817,7 +833,9 @@ class VLLabelDecode(BaseRecLabelDecode):
         net_out = F.softmax(net_out, dim=1)
         for i in range(0, length.shape[0]):
             preds_idx = net_out[int(length[:i].sum()) : int(length[:i].sum() + length[i])].topk(1)[1][:, 0].tolist()
-            preds_text = "".join([self.character[idx - 1] if idx > 0 and idx <= len(self.character) else "" for idx in preds_idx])
+            preds_text = "".join(
+                [self.character[idx - 1] if idx > 0 and idx <= len(self.character) else "" for idx in preds_idx]
+            )
             preds_prob = net_out[int(length[:i].sum()) : int(length[:i].sum() + length[i])].topk(1)[0][:, 0]
             preds_prob = torch.exp(torch.log(preds_prob).sum() / (preds_prob.shape[0] + 1e-6))
             text.append((preds_text, preds_prob.numpy()[0]))

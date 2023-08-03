@@ -91,13 +91,15 @@ class PVAM(nn.Module):
         y = F.tanh(y)
         attention_weight = self.fc1(y)
         attention_weight = torch.reshape(attention_weight, shape=[-1, self.max_length, t])
-        attention_weight = F.softmax(attention_weight,dim=-1)
+        attention_weight = F.softmax(attention_weight, dim=-1)
         pvam_features = torch.matmul(attention_weight, word_features)  # [b, max_length, c]
         return pvam_features
 
 
 class GSRM(nn.Module):
-    def __init__(self, in_channels, char_num, max_text_length, num_heads, num_encoder_tus, num_decoder_tus, hidden_dims):
+    def __init__(
+        self, in_channels, char_num, max_text_length, num_heads, num_encoder_tus, num_decoder_tus, hidden_dims
+    ):
         super(GSRM, self).__init__()
         self.char_num = char_num
         self.max_length = max_text_length
@@ -208,7 +210,17 @@ class VSFD(nn.Module):
 
 
 class SRNHead(nn.Module):
-    def __init__(self, in_channels, out_channels, max_text_length, num_heads, num_encoder_TUs, num_decoder_TUs, hidden_dims, **kwargs):
+    def __init__(
+        self,
+        in_channels,
+        out_channels,
+        max_text_length,
+        num_heads,
+        num_encoder_TUs,
+        num_decoder_TUs,
+        hidden_dims,
+        **kwargs
+    ):
         super(SRNHead, self).__init__()
         self.char_num = out_channels
         self.max_length = max_text_length
@@ -217,7 +229,14 @@ class SRNHead(nn.Module):
         self.num_decoder_TUs = num_decoder_TUs
         self.hidden_dims = hidden_dims
 
-        self.pvam = PVAM(in_channels=in_channels, char_num=self.char_num, max_text_length=self.max_length, num_heads=self.num_heads, num_encoder_tus=self.num_encoder_TUs, hidden_dims=self.hidden_dims)
+        self.pvam = PVAM(
+            in_channels=in_channels,
+            char_num=self.char_num,
+            max_text_length=self.max_length,
+            num_heads=self.num_heads,
+            num_encoder_tus=self.num_encoder_TUs,
+            hidden_dims=self.hidden_dims,
+        )
 
         self.gsrm = GSRM(
             in_channels=in_channels,
@@ -241,7 +260,9 @@ class SRNHead(nn.Module):
 
         pvam_feature = self.pvam(inputs, encoder_word_pos, gsrm_word_pos)
 
-        gsrm_feature, word_out, gsrm_out = self.gsrm(pvam_feature, gsrm_word_pos, gsrm_slf_attn_bias1, gsrm_slf_attn_bias2)
+        gsrm_feature, word_out, gsrm_out = self.gsrm(
+            pvam_feature, gsrm_word_pos, gsrm_slf_attn_bias1, gsrm_slf_attn_bias2
+        )
 
         final_out = self.vsfd(pvam_feature, gsrm_feature)
         if not self.training:

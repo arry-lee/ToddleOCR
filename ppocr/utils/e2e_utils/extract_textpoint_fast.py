@@ -16,11 +16,10 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import cv2
-import math
-
-import numpy as np
 from itertools import groupby
+
+import cv2
+import numpy as np
 from skimage.morphology._skeletonize import thin
 
 
@@ -128,7 +127,9 @@ def ctc_decoder_for_image(gather_info_list, logits_map, Lexicon_Table, pts_num=6
     for gather_info in gather_info_list:
         if len(gather_info) < pts_num:
             continue
-        dst_str, xys_list = instance_ctc_greedy_decoder(gather_info, logits_map, pts_num=pts_num, point_gather_mode=point_gather_mode)
+        dst_str, xys_list = instance_ctc_greedy_decoder(
+            gather_info, logits_map, pts_num=pts_num, point_gather_mode=point_gather_mode
+        )
         dst_str_readable = "".join([Lexicon_Table[idx] for idx in dst_str])
         if len(dst_str_readable) < 2:
             continue
@@ -162,11 +163,15 @@ def sort_with_direction(pos_list, f_direction):
         middle_num = point_num // 2
         first_part_point = sorted_point[:middle_num]
         first_point_direction = sorted_direction[:middle_num]
-        sorted_fist_part_point, sorted_fist_part_direction = sort_part_with_direction(first_part_point, first_point_direction)
+        sorted_fist_part_point, sorted_fist_part_direction = sort_part_with_direction(
+            first_part_point, first_point_direction
+        )
 
         last_part_point = sorted_point[middle_num:]
         last_point_direction = sorted_direction[middle_num:]
-        sorted_last_part_point, sorted_last_part_direction = sort_part_with_direction(last_part_point, last_point_direction)
+        sorted_last_part_point, sorted_last_part_direction = sort_part_with_direction(
+            last_part_point, last_point_direction
+        )
         sorted_point = sorted_fist_part_point + sorted_last_part_point
         sorted_direction = sorted_fist_part_direction + sorted_last_part_direction
 
@@ -295,10 +300,19 @@ def expand_poly_along_width(poly, shrink_ratio_of_width=0.3):
     """
     point_num = poly.shape[0]
     left_quad = np.array([poly[0], poly[1], poly[-2], poly[-1]], dtype=np.float32)
-    left_ratio = -shrink_ratio_of_width * np.linalg.norm(left_quad[0] - left_quad[3]) / (np.linalg.norm(left_quad[0] - left_quad[1]) + 1e-6)
+    left_ratio = (
+        -shrink_ratio_of_width
+        * np.linalg.norm(left_quad[0] - left_quad[3])
+        / (np.linalg.norm(left_quad[0] - left_quad[1]) + 1e-6)
+    )
     left_quad_expand = shrink_quad_along_width(left_quad, left_ratio, 1.0)
-    right_quad = np.array([poly[point_num // 2 - 2], poly[point_num // 2 - 1], poly[point_num // 2], poly[point_num // 2 + 1]], dtype=np.float32)
-    right_ratio = 1.0 + shrink_ratio_of_width * np.linalg.norm(right_quad[0] - right_quad[3]) / (np.linalg.norm(right_quad[0] - right_quad[1]) + 1e-6)
+    right_quad = np.array(
+        [poly[point_num // 2 - 2], poly[point_num // 2 - 1], poly[point_num // 2], poly[point_num // 2 + 1]],
+        dtype=np.float32,
+    )
+    right_ratio = 1.0 + shrink_ratio_of_width * np.linalg.norm(right_quad[0] - right_quad[3]) / (
+        np.linalg.norm(right_quad[0] - right_quad[1]) + 1e-6
+    )
     right_quad_expand = shrink_quad_along_width(right_quad, 0.0, right_ratio)
     poly[0] = left_quad_expand[0]
     poly[-1] = left_quad_expand[-1]
@@ -344,7 +358,9 @@ def restore_poly(instance_yxs_list, seq_strs, p_border, ratio_w, ratio_h, src_w,
     return poly_list, keep_str_list
 
 
-def generate_pivot_list_fast(p_score, p_char_maps, f_direction, Lexicon_Table, score_thresh=0.5, point_gather_mode=None):
+def generate_pivot_list_fast(
+    p_score, p_char_maps, f_direction, Lexicon_Table, score_thresh=0.5, point_gather_mode=None
+):
     """
     return center point and end point of TCL instance; filter with the char maps;
     """
@@ -369,7 +385,9 @@ def generate_pivot_list_fast(p_score, p_char_maps, f_direction, Lexicon_Table, s
             all_pos_yxs.append(pos_list_sorted)
 
     p_char_maps = p_char_maps.transpose([1, 2, 0])
-    decoded_str, keep_yxs_list = ctc_decoder_for_image(all_pos_yxs, logits_map=p_char_maps, Lexicon_Table=Lexicon_Table, point_gather_mode=point_gather_mode)
+    decoded_str, keep_yxs_list = ctc_decoder_for_image(
+        all_pos_yxs, logits_map=p_char_maps, Lexicon_Table=Lexicon_Table, point_gather_mode=point_gather_mode
+    )
     return keep_yxs_list, decoded_str
 
 
@@ -427,11 +445,15 @@ def sort_by_direction_with_image_id(pos_list, f_direction):
         middle_num = point_num // 2
         first_part_point = sorted_point[:middle_num]
         first_point_direction = sorted_direction[:middle_num]
-        sorted_fist_part_point, sorted_fist_part_direction = sort_part_with_direction(first_part_point, first_point_direction)
+        sorted_fist_part_point, sorted_fist_part_direction = sort_part_with_direction(
+            first_part_point, first_point_direction
+        )
 
         last_part_point = sorted_point[middle_num:]
         last_point_direction = sorted_direction[middle_num:]
-        sorted_last_part_point, sorted_last_part_direction = sort_part_with_direction(last_part_point, last_point_direction)
+        sorted_last_part_point, sorted_last_part_direction = sort_part_with_direction(
+            last_part_point, last_point_direction
+        )
         sorted_point = sorted_fist_part_point + sorted_last_part_point
         sorted_direction = sorted_fist_part_direction + sorted_last_part_direction
 

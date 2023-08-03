@@ -41,13 +41,22 @@ class TextE2E(object):
         self.use_onnx = args.use_onnx
         pre_process_list = [
             {"E2EResizeForTest": {}},
-            {"NormalizeImage": {"std": [0.229, 0.224, 0.225], "mean": [0.485, 0.456, 0.406], "scale": "1./255.", "order": "hwc"}},
+            {
+                "NormalizeImage": {
+                    "std": [0.229, 0.224, 0.225],
+                    "mean": [0.485, 0.456, 0.406],
+                    "scale": "1./255.",
+                    "order": "hwc",
+                }
+            },
             {"ToCHWImage": None},
             {"KeepKeys": {"keep_keys": ["image", "shape"]}},
         ]
         postprocess_params = {}
         if self.e2e_algorithm == "PGNet":
-            pre_process_list[0] = {"E2EResizeForTest": {"max_side_len": args.e2e_limit_side_len, "valid_set": "totaltext"}}
+            pre_process_list[0] = {
+                "E2EResizeForTest": {"max_side_len": args.e2e_limit_side_len, "valid_set": "totaltext"}
+            }
             postprocess_params["name"] = "PGPostProcess"
             postprocess_params["score_thresh"] = args.e2e_pgnet_score_thresh
             postprocess_params["character_dict_path"] = args.e2e_char_dict_path
@@ -59,7 +68,9 @@ class TextE2E(object):
 
         self.preprocess_op = create_operators(pre_process_list)
         self.postprocess_op = build_post_process(postprocess_params)
-        self.predictor, self.input_tensor, self.output_tensors, _ = utility.create_predictor(args, "e2e", logger)  # paddle.jit.load(args.det_model_dir)
+        self.predictor, self.input_tensor, self.output_tensors, _ = utility.create_predictor(
+            args, "e2e", logger
+        )  # paddle.jit.load(args.det_model_dir)
         # self.predictor.eval()
 
     def clip_det_res(self, points, img_height, img_width):

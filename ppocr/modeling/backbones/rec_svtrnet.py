@@ -41,7 +41,9 @@ def drop_path(x, drop_prob=0.0, training=False):
 
 
 class ConvBNLayer(nn.Module):
-    def __init__(self, in_channels, out_channels, kernel_size=3, stride=1, padding=0, bias=False, groups=1, act=nn.GELU):
+    def __init__(
+        self, in_channels, out_channels, kernel_size=3, stride=1, padding=0, bias=False, groups=1, act=nn.GELU
+    ):
         super().__init__()
         self.conv = nn.Conv2d(
             in_channels=in_channels,
@@ -130,7 +132,18 @@ class ConvMixer(nn.Module):
 
 
 class Attention(nn.Module):
-    def __init__(self, dim, num_heads=8, mixer="Global", HW=None, local_k=[7, 11], qkv_bias=False, qk_scale=None, attn_drop=0.0, proj_drop=0.0):
+    def __init__(
+        self,
+        dim,
+        num_heads=8,
+        mixer="Global",
+        HW=None,
+        local_k=[7, 11],
+        qkv_bias=False,
+        qk_scale=None,
+        attn_drop=0.0,
+        proj_drop=0.0,
+    ):
         super().__init__()
         self.num_heads = num_heads
         head_dim = dim // num_heads
@@ -171,7 +184,7 @@ class Attention(nn.Module):
         attn = q.matmul(k.transpose((0, 1, 3, 2)))
         if self.mixer == "Local":
             attn += self.mask
-        attn = nn.functional.softmax(attn,dim=-1)
+        attn = nn.functional.softmax(attn, dim=-1)
         attn = self.attn_drop(attn)
 
         x = (attn.matmul(v)).transpose((0, 2, 1, 3)).reshape((0, N, C))
@@ -205,7 +218,17 @@ class Block(nn.Module):
         else:
             self.norm1 = norm_layer(dim)
         if mixer == "Global" or mixer == "Local":
-            self.mixer = Attention(dim, num_heads=num_heads, mixer=mixer, HW=HW, local_k=local_mixer, qkv_bias=qkv_bias, qk_scale=qk_scale, attn_drop=attn_drop, proj_drop=drop)
+            self.mixer = Attention(
+                dim,
+                num_heads=num_heads,
+                mixer=mixer,
+                HW=HW,
+                local_k=local_mixer,
+                qkv_bias=qkv_bias,
+                qk_scale=qk_scale,
+                attn_drop=attn_drop,
+                proj_drop=drop,
+            )
         elif mixer == "Conv":
             self.mixer = ConvMixer(dim, num_heads=num_heads, HW=HW, local_k=local_mixer)
         else:
@@ -244,14 +267,54 @@ class PatchEmbed(nn.Module):
         if mode == "pope":
             if sub_num == 2:
                 self.proj = nn.Sequential(
-                    ConvBNLayer(in_channels=in_channels, out_channels=embed_dim // 2, kernel_size=3, stride=2, padding=1, act=nn.GELU, bias=None),
-                    ConvBNLayer(in_channels=embed_dim // 2, out_channels=embed_dim, kernel_size=3, stride=2, padding=1, act=nn.GELU, bias=None),
+                    ConvBNLayer(
+                        in_channels=in_channels,
+                        out_channels=embed_dim // 2,
+                        kernel_size=3,
+                        stride=2,
+                        padding=1,
+                        act=nn.GELU,
+                        bias=None,
+                    ),
+                    ConvBNLayer(
+                        in_channels=embed_dim // 2,
+                        out_channels=embed_dim,
+                        kernel_size=3,
+                        stride=2,
+                        padding=1,
+                        act=nn.GELU,
+                        bias=None,
+                    ),
                 )
             if sub_num == 3:
                 self.proj = nn.Sequential(
-                    ConvBNLayer(in_channels=in_channels, out_channels=embed_dim // 4, kernel_size=3, stride=2, padding=1, act=nn.GELU, bias=None),
-                    ConvBNLayer(in_channels=embed_dim // 4, out_channels=embed_dim // 2, kernel_size=3, stride=2, padding=1, act=nn.GELU, bias=None),
-                    ConvBNLayer(in_channels=embed_dim // 2, out_channels=embed_dim, kernel_size=3, stride=2, padding=1, act=nn.GELU, bias=None),
+                    ConvBNLayer(
+                        in_channels=in_channels,
+                        out_channels=embed_dim // 4,
+                        kernel_size=3,
+                        stride=2,
+                        padding=1,
+                        act=nn.GELU,
+                        bias=None,
+                    ),
+                    ConvBNLayer(
+                        in_channels=embed_dim // 4,
+                        out_channels=embed_dim // 2,
+                        kernel_size=3,
+                        stride=2,
+                        padding=1,
+                        act=nn.GELU,
+                        bias=None,
+                    ),
+                    ConvBNLayer(
+                        in_channels=embed_dim // 2,
+                        out_channels=embed_dim,
+                        kernel_size=3,
+                        stride=2,
+                        padding=1,
+                        act=nn.GELU,
+                        bias=None,
+                    ),
                 )
         elif mode == "linear":
             self.proj = nn.Conv2d(1, embed_dim, kernel_size=patch_size, stride=patch_size)
@@ -259,7 +322,9 @@ class PatchEmbed(nn.Module):
 
     def forward(self, x):
         B, C, H, W = x.shape
-        assert H == self.img_size[0] and W == self.img_size[1], f"Input image size ({H}*{W}) doesn't match model ({self.img_size[0]}*{self.img_size[1]})."
+        assert (
+            H == self.img_size[0] and W == self.img_size[1]
+        ), f"Input image size ({H}*{W}) doesn't match model ({self.img_size[0]}*{self.img_size[1]})."
         x = self.proj(x).flatten(2).transpose((0, 2, 1))
         return x
 
@@ -339,7 +404,9 @@ class SVTRNet(nn.Module):
         self.out_channels = out_channels
         self.prenorm = prenorm
         patch_merging = None if patch_merging != "Conv" and patch_merging != "Pool" else patch_merging
-        self.patch_embed = PatchEmbed(img_size=img_size, in_channels=in_channels, embed_dim=embed_dim[0], sub_num=sub_num)
+        self.patch_embed = PatchEmbed(
+            img_size=img_size, in_channels=in_channels, embed_dim=embed_dim[0], sub_num=sub_num
+        )
         num_patches = self.patch_embed.num_patches
         self.HW = [img_size[0] // (2**sub_num), img_size[1] // (2**sub_num)]
         self.pos_embed = self.create_parameter(shape=[1, num_patches, embed_dim[0]], default_initializer=zeros_)
@@ -371,7 +438,9 @@ class SVTRNet(nn.Module):
             ]
         )
         if patch_merging is not None:
-            self.sub_sample1 = SubSample(embed_dim[0], embed_dim[1], sub_norm=sub_norm, stride=[2, 1], types=patch_merging)
+            self.sub_sample1 = SubSample(
+                embed_dim[0], embed_dim[1], sub_norm=sub_norm, stride=[2, 1], types=patch_merging
+            )
             HW = [self.HW[0] // 2, self.HW[1]]
         else:
             HW = self.HW
@@ -399,7 +468,9 @@ class SVTRNet(nn.Module):
             ]
         )
         if patch_merging is not None:
-            self.sub_sample2 = SubSample(embed_dim[1], embed_dim[2], sub_norm=sub_norm, stride=[2, 1], types=patch_merging)
+            self.sub_sample2 = SubSample(
+                embed_dim[1], embed_dim[2], sub_norm=sub_norm, stride=[2, 1], types=patch_merging
+            )
             HW = [self.HW[0] // 4, self.HW[1]]
         else:
             HW = self.HW
@@ -428,7 +499,9 @@ class SVTRNet(nn.Module):
         self.last_stage = last_stage
         if last_stage:
             self.avg_pool = nn.AdaptiveAvgPool2d([1, out_char_num])
-            self.last_conv = nn.Conv2d(in_channels=embed_dim[2], out_channels=self.out_channels, kernel_size=1, stride=1, padding=0, bias=False)
+            self.last_conv = nn.Conv2d(
+                in_channels=embed_dim[2], out_channels=self.out_channels, kernel_size=1, stride=1, padding=0, bias=False
+            )
             self.hardswish = nn.Hardswish()
             self.dropout = nn.Dropout(p=last_drop)
         if not prenorm:

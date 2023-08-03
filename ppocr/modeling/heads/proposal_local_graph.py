@@ -23,7 +23,6 @@ from __future__ import print_function
 import cv2
 import numpy as np
 import torch
-import torch.nn as nn
 import torch.nn.functional as F
 from lanms import merge_quadrangle_n9 as la_nms
 
@@ -93,7 +92,19 @@ class ProposalLocalGraphs:
         self.center_region_thr = center_region_thr
         self.center_region_area_thr = center_region_area_thr
 
-    def propose_comps(self, score_map, top_height_map, bot_height_map, sin_map, cos_map, comp_score_thr, min_width, max_width, comp_shrink_ratio, comp_w_h_ratio):
+    def propose_comps(
+        self,
+        score_map,
+        top_height_map,
+        bot_height_map,
+        sin_map,
+        cos_map,
+        comp_score_thr,
+        min_width,
+        max_width,
+        comp_shrink_ratio,
+        comp_w_h_ratio,
+    ):
         """Propose text components.
 
         Args:
@@ -143,7 +154,9 @@ class ProposalLocalGraphs:
 
         return text_comps
 
-    def propose_comps_and_attribs(self, text_region_map, center_region_map, top_height_map, bot_height_map, sin_map, cos_map):
+    def propose_comps_and_attribs(
+        self, text_region_map, center_region_map, top_height_map, bot_height_map, sin_map, cos_map
+    ):
         """Generate text components and attributes.
 
         Args:
@@ -163,7 +176,14 @@ class ProposalLocalGraphs:
             text_comps (ndarray): The text components.
         """
 
-        assert text_region_map.shape == center_region_map.shape == top_height_map.shape == bot_height_map.shape == sin_map.shape == cos_map.shape
+        assert (
+            text_region_map.shape
+            == center_region_map.shape
+            == top_height_map.shape
+            == bot_height_map.shape
+            == sin_map.shape
+            == cos_map.shape
+        )
         text_mask = text_region_map > self.text_region_thr
         center_region_mask = (center_region_map > self.center_region_thr) * text_mask
 
@@ -171,7 +191,9 @@ class ProposalLocalGraphs:
         sin_map, cos_map = sin_map * scale, cos_map * scale
 
         center_region_mask = fill_hole(center_region_mask)
-        center_region_contours, _ = cv2.findContours(center_region_mask.astype(np.uint8), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        center_region_contours, _ = cv2.findContours(
+            center_region_mask.astype(np.uint8), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
+        )
 
         mask_sz = center_region_map.shape
         comp_list = []
@@ -182,7 +204,18 @@ class ProposalLocalGraphs:
                 continue
             score_map = text_region_map * current_center_mask
 
-            text_comps = self.propose_comps(score_map, top_height_map, bot_height_map, sin_map, cos_map, self.comp_score_thr, self.min_width, self.max_width, self.comp_shrink_ratio, self.comp_w_h_ratio)
+            text_comps = self.propose_comps(
+                score_map,
+                top_height_map,
+                bot_height_map,
+                sin_map,
+                cos_map,
+                self.comp_score_thr,
+                self.min_width,
+                self.max_width,
+                self.comp_shrink_ratio,
+                self.comp_w_h_ratio,
+            )
 
             text_comps = la_nms(text_comps, self.nms_thr)
             text_comp_mask = np.zeros(mask_sz)
@@ -311,7 +344,9 @@ class ProposalLocalGraphs:
             )
 
             local_graph_nodes = torch.Tensor(pivot_local_graph)
-            local_graph_nodes = torch.concat([local_graph_nodes, torch.zeros([num_max_nodes - num_nodes], dtype="int64")], dim=-1)
+            local_graph_nodes = torch.concat(
+                [local_graph_nodes, torch.zeros([num_max_nodes - num_nodes], dtype="int64")], dim=-1
+            )
 
             local_graphs_node_feat.append(pad_normalized_feats)
             adjacent_matrices.append(pad_adjacent_matrix)
@@ -355,7 +390,9 @@ class ProposalLocalGraphs:
         pred_top_height_map = preds[4].numpy()
         pred_bot_height_map = preds[5].numpy()
 
-        comp_attribs, text_comps = self.propose_comps_and_attribs(pred_text_region, pred_center_region, pred_top_height_map, pred_bot_height_map, pred_sin_map, pred_cos_map)
+        comp_attribs, text_comps = self.propose_comps_and_attribs(
+            pred_text_region, pred_center_region, pred_top_height_map, pred_bot_height_map, pred_sin_map, pred_cos_map
+        )
 
         if comp_attribs is None or len(comp_attribs) < 2:
             none_flag = True
@@ -379,7 +416,9 @@ class ProposalLocalGraphs:
         node_feats = torch.concat([content_feats, geo_feats], dim=-1)
 
         sorted_dist_inds = np.argsort(distance_matrix, axis=1)
-        (local_graphs_node_feat, adjacent_matrices, pivots_knn_inds, pivots_local_graphs) = self.generate_local_graphs(sorted_dist_inds, node_feats)
+        (local_graphs_node_feat, adjacent_matrices, pivots_knn_inds, pivots_local_graphs) = self.generate_local_graphs(
+            sorted_dist_inds, node_feats
+        )
 
         none_flag = False
         return none_flag, (local_graphs_node_feat, adjacent_matrices, pivots_knn_inds, pivots_local_graphs, text_comps)

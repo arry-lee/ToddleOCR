@@ -44,7 +44,9 @@ def apply_to_static(model, config, logger):
         algo = list(config["Architecture"]["Models"].values())[0]["algorithm"]
     else:
         algo = config["Architecture"]["algorithm"]
-    assert algo in supported_list, f"algorithms that supports static training must in in {supported_list} but got {algo}"
+    assert (
+        algo in supported_list
+    ), f"algorithms that supports static training must in in {supported_list} but got {algo}"
 
     specs = [InputSpec([None] + config["Global"]["image_shape"], dtype="float32")]
 

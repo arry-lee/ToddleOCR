@@ -16,25 +16,17 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import math
-
-import torch
 from torch import nn
 from torch.nn import functional as F
-
-
 
 
 class CTCHead(nn.Module):
     def __init__(self, in_channels, out_channels, fc_decay=0.0004, mid_channels=None, return_feats=False, **kwargs):
         super(CTCHead, self).__init__()
         if mid_channels is None:
-
             self.fc = nn.Linear(in_channels, out_channels, bias=True)
         else:
-
             self.fc1 = nn.Linear(in_channels, mid_channels, bias=True)
-
 
             self.fc2 = nn.Linear(mid_channels, out_channels, bias=True)
         self.out_channels = out_channels

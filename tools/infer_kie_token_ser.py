@@ -16,10 +16,10 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import numpy as np
-
 import os
 import sys
+
+import numpy as np
 
 __dir__ = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(__dir__)
@@ -35,7 +35,7 @@ from ppocr.modeling.architectures import build_model
 from ppocr.postprocess import build_post_process
 from ppocr.utils.save_load import load_model
 from ppocr.utils.visual import draw_ser_results
-from ppocr.utils.utility import get_image_file_list, load_vqa_bio_label_maps
+from ppocr.utils.utility import get_image_file_list
 import tools.program as program
 
 
@@ -86,7 +86,17 @@ class SerPredictor(object):
             if "Label" in op_name:
                 op[op_name]["ocr_engine"] = self.ocr_engine
             elif op_name == "KeepKeys":
-                op[op_name]["keep_keys"] = ["input_ids", "bbox", "attention_mask", "token_type_ids", "image", "labels", "segment_offset_id", "ocr_info", "entities"]
+                op[op_name]["keep_keys"] = [
+                    "input_ids",
+                    "bbox",
+                    "attention_mask",
+                    "token_type_ids",
+                    "image",
+                    "labels",
+                    "segment_offset_id",
+                    "ocr_info",
+                    "entities",
+                ]
 
             transforms.append(op)
         if config["Global"].get("infer_mode", None) is None:
@@ -130,7 +140,9 @@ if __name__ == "__main__":
                 img_path = info
                 data = {"img_path": img_path}
 
-            save_img_path = os.path.join(config["Global"]["save_res_path"], os.path.splitext(os.path.basename(img_path))[0] + "_ser.jpg")
+            save_img_path = os.path.join(
+                config["Global"]["save_res_path"], os.path.splitext(os.path.basename(img_path))[0] + "_ser.jpg"
+            )
 
             result, _ = ser_engine(data)
             result = result[0]

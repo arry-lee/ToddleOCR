@@ -21,13 +21,12 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import numpy as np
 import cv2
+import numpy as np
 
 np.seterr(divide="ignore", invalid="ignore")
 import pyclipper
 from shapely.geometry import Polygon
-import sys
 import warnings
 
 warnings.simplefilter("ignore")
@@ -99,7 +98,13 @@ class MakeBorderMap(object):
         xmax_valid = min(max(0, xmax), canvas.shape[1] - 1)
         ymin_valid = min(max(0, ymin), canvas.shape[0] - 1)
         ymax_valid = min(max(0, ymax), canvas.shape[0] - 1)
-        canvas[ymin_valid : ymax_valid + 1, xmin_valid : xmax_valid + 1] = np.fmax(1 - distance_map[ymin_valid - ymin : ymax_valid - ymax + height, xmin_valid - xmin : xmax_valid - xmax + width], canvas[ymin_valid : ymax_valid + 1, xmin_valid : xmax_valid + 1])
+        canvas[ymin_valid : ymax_valid + 1, xmin_valid : xmax_valid + 1] = np.fmax(
+            1
+            - distance_map[
+                ymin_valid - ymin : ymax_valid - ymax + height, xmin_valid - xmin : xmax_valid - xmax + width
+            ],
+            canvas[ymin_valid : ymax_valid + 1, xmin_valid : xmax_valid + 1],
+        )
 
     def _distance(self, xs, ys, point_1, point_2):
         """
@@ -113,7 +118,9 @@ class MakeBorderMap(object):
         square_distance_2 = np.square(xs - point_2[0]) + np.square(ys - point_2[1])
         square_distance = np.square(point_1[0] - point_2[0]) + np.square(point_1[1] - point_2[1])
 
-        cosin = (square_distance - square_distance_1 - square_distance_2) / (2 * np.sqrt(square_distance_1 * square_distance_2))
+        cosin = (square_distance - square_distance_1 - square_distance_2) / (
+            2 * np.sqrt(square_distance_1 * square_distance_2)
+        )
         square_sin = 1 - np.square(cosin)
         square_sin = np.nan_to_num(square_sin)
         result = np.sqrt(square_distance_1 * square_distance_2 * square_sin / square_distance)
@@ -123,8 +130,14 @@ class MakeBorderMap(object):
         return result
 
     def extend_line(self, point_1, point_2, result, shrink_ratio):
-        ex_point_1 = (int(round(point_1[0] + (point_1[0] - point_2[0]) * (1 + shrink_ratio))), int(round(point_1[1] + (point_1[1] - point_2[1]) * (1 + shrink_ratio))))
+        ex_point_1 = (
+            int(round(point_1[0] + (point_1[0] - point_2[0]) * (1 + shrink_ratio))),
+            int(round(point_1[1] + (point_1[1] - point_2[1]) * (1 + shrink_ratio))),
+        )
         cv2.line(result, tuple(ex_point_1), tuple(point_1), 4096.0, 1, lineType=cv2.LINE_AA, shift=0)
-        ex_point_2 = (int(round(point_2[0] + (point_2[0] - point_1[0]) * (1 + shrink_ratio))), int(round(point_2[1] + (point_2[1] - point_1[1]) * (1 + shrink_ratio))))
+        ex_point_2 = (
+            int(round(point_2[0] + (point_2[0] - point_1[0]) * (1 + shrink_ratio))),
+            int(round(point_2[1] + (point_2[1] - point_1[1]) * (1 + shrink_ratio))),
+        )
         cv2.line(result, tuple(ex_point_2), tuple(point_2), 4096.0, 1, lineType=cv2.LINE_AA, shift=0)
         return ex_point_1, ex_point_2

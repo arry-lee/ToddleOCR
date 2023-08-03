@@ -27,7 +27,10 @@ class SpectralNorm(object):
         self.name = name
         self.dim = dim
         if n_power_iterations <= 0:
-            raise ValueError("Expected n_power_iterations to be positive, but " "got n_power_iterations={}".format(n_power_iterations))
+            raise ValueError(
+                "Expected n_power_iterations to be positive, but "
+                "got n_power_iterations={}".format(n_power_iterations)
+            )
         self.n_power_iterations = n_power_iterations
         self.eps = eps
 

@@ -18,7 +18,7 @@ from __future__ import print_function
 
 __all__ = ["E2EMetric"]
 
-from ppocr.utils.e2e_metric.Deteval import get_socre_A, get_socre_B, combine_results
+from ppocr.utils.e2e_metric.Deteval import combine_results, get_socre_A, get_socre_B
 from ppocr.utils.e2e_utils.extract_textpoint_slow import get_dict
 
 
@@ -45,17 +45,28 @@ class E2EMetric(object):
                         t += self.label_list[index]
                 gt_strs_batch.append(t)
 
-            for pred, gt_polyons, gt_strs, ignore_tags in zip([preds], gt_polyons_batch, [gt_strs_batch], ignore_tags_batch):
+            for pred, gt_polyons, gt_strs, ignore_tags in zip(
+                [preds], gt_polyons_batch, [gt_strs_batch], ignore_tags_batch
+            ):
                 # prepare gt
-                gt_info_list = [{"points": gt_polyon, "text": gt_str, "ignore": ignore_tag} for gt_polyon, gt_str, ignore_tag in zip(gt_polyons, gt_strs, ignore_tags)]
+                gt_info_list = [
+                    {"points": gt_polyon, "text": gt_str, "ignore": ignore_tag}
+                    for gt_polyon, gt_str, ignore_tag in zip(gt_polyons, gt_strs, ignore_tags)
+                ]
                 # prepare det
-                e2e_info_list = [{"points": det_polyon, "texts": pred_str} for det_polyon, pred_str in zip(pred["points"], pred["texts"])]
+                e2e_info_list = [
+                    {"points": det_polyon, "texts": pred_str}
+                    for det_polyon, pred_str in zip(pred["points"], pred["texts"])
+                ]
 
                 result = get_socre_A(gt_info_list, e2e_info_list)
                 self.results.append(result)
         else:
             img_id = batch[5][0]
-            e2e_info_list = [{"points": det_polyon, "texts": pred_str} for det_polyon, pred_str in zip(preds["points"], preds["texts"])]
+            e2e_info_list = [
+                {"points": det_polyon, "texts": pred_str}
+                for det_polyon, pred_str in zip(preds["points"], preds["texts"])
+            ]
             result = get_socre_B(self.gt_mat_dir, img_id, e2e_info_list)
             self.results.append(result)
 

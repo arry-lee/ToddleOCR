@@ -18,16 +18,27 @@ https://github.com/PaddlePaddle/PaddleDetection/blob/release/2.3/ppdet/modeling/
 
 import torch.nn as nn
 import torch.nn.functional as F
-
-from torch.nn.initializer import XavierUniform
 from torch.nn.initializer import Normal
-from torch.regularizer import L2Decay
+from torch.nn.initializer import XavierUniform
 
 __all__ = ["FCEFPN"]
 
 
 class ConvNormLayer(nn.Module):
-    def __init__(self, ch_in, ch_out, filter_size, stride, groups=1, norm_type="bn", norm_decay=0.0, norm_groups=32, lr_scale=1.0, freeze_norm=False, initializer=Normal(mean=0.0, std=0.01)):
+    def __init__(
+        self,
+        ch_in,
+        ch_out,
+        filter_size,
+        stride,
+        groups=1,
+        norm_type="bn",
+        norm_decay=0.0,
+        norm_groups=32,
+        lr_scale=1.0,
+        freeze_norm=False,
+        initializer=Normal(mean=0.0, std=0.01),
+    ):
         super(ConvNormLayer, self).__init__()
         assert norm_type in ["bn", "sync_bn", "gn"]
 
@@ -168,7 +179,9 @@ class FCEFPN(nn.Module):
                     ),
                 )
             else:
-                fpn_conv = self.add_sublayer(fpn_name, nn.Conv2d(in_channels=out_channels, out_channels=out_channels, kernel_size=3, padding=1))
+                fpn_conv = self.add_sublayer(
+                    fpn_name, nn.Conv2d(in_channels=out_channels, out_channels=out_channels, kernel_size=3, padding=1)
+                )
             self.fpn_convs.append(fpn_conv)
 
         # add extra conv levels for RetinaNet(use_c5)/FCOS(use_p5)

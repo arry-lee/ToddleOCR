@@ -13,16 +13,32 @@
 # limitations under the License.
 
 import math
+
 import cv2
 import numpy as np
 from skimage.morphology._skeletonize import thin
+
 from ppocr.utils.e2e_utils.extract_textpoint_fast import sort_and_expand_with_direction_v2
 
 __all__ = ["PGProcessTrain"]
 
 
 class PGProcessTrain(object):
-    def __init__(self, character_dict_path, max_text_length, max_text_nums, tcl_len, batch_size=14, use_resize=True, use_random_crop=False, min_crop_size=24, min_text_size=4, max_text_size=512, point_gather_mode=None, **kwargs):
+    def __init__(
+        self,
+        character_dict_path,
+        max_text_length,
+        max_text_nums,
+        tcl_len,
+        batch_size=14,
+        use_resize=True,
+        use_random_crop=False,
+        min_crop_size=24,
+        min_text_size=4,
+        max_text_size=512,
+        point_gather_mode=None,
+        **kwargs
+    ):
         self.tcl_len = tcl_len
         self.max_text_length = max_text_length
         self.max_text_nums = max_text_nums
@@ -74,7 +90,12 @@ class PGProcessTrain(object):
         first_point_idx = 0
         min_dist = 1e4
         for i in range(4):
-            dist = np.linalg.norm(box[(i + 0) % 4] - poly[0]) + np.linalg.norm(box[(i + 1) % 4] - poly[point_num // 2 - 1]) + np.linalg.norm(box[(i + 2) % 4] - poly[point_num // 2]) + np.linalg.norm(box[(i + 3) % 4] - poly[-1])
+            dist = (
+                np.linalg.norm(box[(i + 0) % 4] - poly[0])
+                + np.linalg.norm(box[(i + 1) % 4] - poly[point_num // 2 - 1])
+                + np.linalg.norm(box[(i + 2) % 4] - poly[point_num // 2])
+                + np.linalg.norm(box[(i + 3) % 4] - poly[-1])
+            )
             if dist < min_dist:
                 min_dist = dist
                 first_point_idx = i
@@ -167,7 +188,12 @@ class PGProcessTrain(object):
             if xmax - xmin < self.min_crop_size or ymax - ymin < self.min_crop_size:
                 continue
             if polys.shape[0] != 0:
-                poly_axis_in_area = (polys[:, :, 0] >= xmin) & (polys[:, :, 0] <= xmax) & (polys[:, :, 1] >= ymin) & (polys[:, :, 1] <= ymax)
+                poly_axis_in_area = (
+                    (polys[:, :, 0] >= xmin)
+                    & (polys[:, :, 0] <= xmax)
+                    & (polys[:, :, 1] >= ymin)
+                    & (polys[:, :, 1] <= ymax)
+                )
                 selected_polys = np.where(np.sum(poly_axis_in_area, axis=1) == 4)[0]
             else:
                 selected_polys = []
@@ -178,7 +204,13 @@ class PGProcessTrain(object):
                     for selected_poly in selected_polys:
                         txts_tmp.append(txts[selected_poly])
                     txts = txts_tmp
-                    return im[ymin : ymax + 1, xmin : xmax + 1, :], polys[selected_polys], tags[selected_polys], hv_tags[selected_polys], txts
+                    return (
+                        im[ymin : ymax + 1, xmin : xmax + 1, :],
+                        polys[selected_polys],
+                        tags[selected_polys],
+                        hv_tags[selected_polys],
+                        txts,
+                    )
                 else:
                     continue
             im = im[ymin : ymax + 1, xmin : xmax + 1, :]
@@ -195,7 +227,9 @@ class PGProcessTrain(object):
 
         return im, polys, tags, hv_tags, txts
 
-    def fit_and_gather_tcl_points_v2(self, min_area_quad, poly, max_h, max_w, fixed_point_num=64, img_id=0, reference_height=3):
+    def fit_and_gather_tcl_points_v2(
+        self, min_area_quad, poly, max_h, max_w, fixed_point_num=64, img_id=0, reference_height=3
+    ):
         """
         Find the center point of poly as key_points, then fit and gather.
         """
@@ -248,7 +282,9 @@ class PGProcessTrain(object):
         pos_m[:keep] = 1.0
         return pos_l, pos_m
 
-    def fit_and_gather_tcl_points_v3(self, min_area_quad, poly, max_h, max_w, fixed_point_num=64, img_id=0, reference_height=3):
+    def fit_and_gather_tcl_points_v3(
+        self, min_area_quad, poly, max_h, max_w, fixed_point_num=64, img_id=0, reference_height=3
+    ):
         """
         Find the center point of poly as key_points, then fit and gather.
         """
@@ -391,10 +427,19 @@ class PGProcessTrain(object):
 
             # generate min_area_quad
             min_area_quad, center_point = self.gen_min_area_quad_from_poly(poly)
-            min_area_quad_h = 0.5 * (np.linalg.norm(min_area_quad[0] - min_area_quad[3]) + np.linalg.norm(min_area_quad[1] - min_area_quad[2]))
-            min_area_quad_w = 0.5 * (np.linalg.norm(min_area_quad[0] - min_area_quad[1]) + np.linalg.norm(min_area_quad[2] - min_area_quad[3]))
+            min_area_quad_h = 0.5 * (
+                np.linalg.norm(min_area_quad[0] - min_area_quad[3])
+                + np.linalg.norm(min_area_quad[1] - min_area_quad[2])
+            )
+            min_area_quad_w = 0.5 * (
+                np.linalg.norm(min_area_quad[0] - min_area_quad[1])
+                + np.linalg.norm(min_area_quad[2] - min_area_quad[3])
+            )
 
-            if min(min_area_quad_h, min_area_quad_w) < self.min_text_size * ds_ratio or min(min_area_quad_h, min_area_quad_w) > self.max_text_size * ds_ratio:
+            if (
+                min(min_area_quad_h, min_area_quad_w) < self.min_text_size * ds_ratio
+                or min(min_area_quad_h, min_area_quad_w) > self.max_text_size * ds_ratio
+            ):
                 continue
 
             if tag:
@@ -402,7 +447,9 @@ class PGProcessTrain(object):
             else:
                 text_label = text_strs[poly_idx]
                 text_label = self.prepare_text_label(text_label, self.Lexicon_Table)
-                text_label_index_list = [[self.Lexicon_Table.index(c_)] for c_ in text_label if c_ in self.Lexicon_Table]
+                text_label_index_list = [
+                    [self.Lexicon_Table.index(c_)] for c_ in text_label if c_ in self.Lexicon_Table
+                ]
                 if len(text_label_index_list) < 1:
                     continue
 
@@ -410,7 +457,9 @@ class PGProcessTrain(object):
                 tcl_quads = self.poly2quads(tcl_poly)
                 poly_quads = self.poly2quads(poly)
 
-                stcl_quads, quad_index = self.shrink_poly_along_width(tcl_quads, shrink_ratio_of_width=shrink_ratio_of_width, expand_height_ratio=1.0 / tcl_ratio)
+                stcl_quads, quad_index = self.shrink_poly_along_width(
+                    tcl_quads, shrink_ratio_of_width=shrink_ratio_of_width, expand_height_ratio=1.0 / tcl_ratio
+                )
 
                 cv2.fillPoly(score_map, np.round(stcl_quads).astype(np.int32), 1.0)
                 cv2.fillPoly(score_map_big, np.round(stcl_quads / ds_ratio).astype(np.int32), 1.0)
@@ -440,13 +489,29 @@ class PGProcessTrain(object):
 
                 if self.point_gather_mode == "align":
                     self.f_direction = direction_map[:, :, :-1].copy()
-                    pos_res = self.fit_and_gather_tcl_points_v3(min_area_quad, stcl_quads, max_h=h, max_w=w, fixed_point_num=64, img_id=self.img_id, reference_height=average_shrink_height)
+                    pos_res = self.fit_and_gather_tcl_points_v3(
+                        min_area_quad,
+                        stcl_quads,
+                        max_h=h,
+                        max_w=w,
+                        fixed_point_num=64,
+                        img_id=self.img_id,
+                        reference_height=average_shrink_height,
+                    )
                     if pos_res is None:
                         continue
                     pos_l, pos_m = pos_res[0], pos_res[1]
 
                 else:
-                    pos_l, pos_m = self.fit_and_gather_tcl_points_v2(min_area_quad, poly, max_h=h, max_w=w, fixed_point_num=64, img_id=self.img_id, reference_height=average_shrink_height)
+                    pos_l, pos_m = self.fit_and_gather_tcl_points_v2(
+                        min_area_quad,
+                        poly,
+                        max_h=h,
+                        max_w=w,
+                        fixed_point_num=64,
+                        img_id=self.img_id,
+                        reference_height=average_shrink_height,
+                    )
 
                 label_l = text_label_index_list
                 if len(text_label_index_list) < 2:
@@ -460,7 +525,17 @@ class PGProcessTrain(object):
         score_map_big_resized = cv2.resize(score_map_big, dsize=None, fx=ds_ratio, fy=ds_ratio)
         score_map = np.array(score_map_big_resized > 1e-3, dtype="float32")
 
-        return score_map, score_label_map, tbo_map, direction_map, training_mask, pos_list, pos_mask, label_list, score_label_map_text_label_list
+        return (
+            score_map,
+            score_label_map,
+            tbo_map,
+            direction_map,
+            training_mask,
+            pos_list,
+            pos_mask,
+            label_list,
+            score_label_map_text_label_list,
+        )
 
     def adjust_point(self, poly):
         """
@@ -504,7 +579,12 @@ class PGProcessTrain(object):
             first_point_idx = 0
             min_dist = 1e4
             for i in range(4):
-                dist = np.linalg.norm(box[(i + 0) % 4] - poly[0]) + np.linalg.norm(box[(i + 1) % 4] - poly[point_num // 2 - 1]) + np.linalg.norm(box[(i + 2) % 4] - poly[point_num // 2]) + np.linalg.norm(box[(i + 3) % 4] - poly[-1])
+                dist = (
+                    np.linalg.norm(box[(i + 0) % 4] - poly[0])
+                    + np.linalg.norm(box[(i + 1) % 4] - poly[point_num // 2 - 1])
+                    + np.linalg.norm(box[(i + 2) % 4] - poly[point_num // 2])
+                    + np.linalg.norm(box[(i + 3) % 4] - poly[-1])
+                )
                 if dist < min_dist:
                     min_dist = dist
                     first_point_idx = i
@@ -772,7 +852,9 @@ class PGProcessTrain(object):
                 return None
 
             # no background
-            im, text_polys, text_tags, hv_tags, text_strs = self.crop_area(im, text_polys, text_tags, hv_tags, text_strs, crop_background=False)
+            im, text_polys, text_tags, hv_tags, text_strs = self.crop_area(
+                im, text_polys, text_tags, hv_tags, text_strs, crop_background=False
+            )
 
         if text_polys.shape[0] == 0:
             return None
@@ -827,7 +909,17 @@ class PGProcessTrain(object):
         text_polys[:, :, 0] += sw
         text_polys[:, :, 1] += sh
 
-        score_map, score_label_map, border_map, direction_map, training_mask, pos_list, pos_mask, label_list, score_label_map_text_label = self.generate_tcl_ctc_label(input_size, input_size, text_polys, text_tags, text_strs, 0.25)
+        (
+            score_map,
+            score_label_map,
+            border_map,
+            direction_map,
+            training_mask,
+            pos_list,
+            pos_mask,
+            label_list,
+            score_label_map_text_label,
+        ) = self.generate_tcl_ctc_label(input_size, input_size, text_polys, text_tags, text_strs, 0.25)
         if len(label_list) <= 0:  # eliminate negative samples
             return None
         pos_list_temp = np.zeros([64, 3])

@@ -51,7 +51,11 @@ def main(config, device, logger, vdl_writer):
     # build dataloader
     train_dataloader = build_dataloader(config, "Train", device, logger)
     if len(train_dataloader) == 0:
-        logger.error("No Images in train dataset, please ensure\n" + "\t1. The images num in the train label_file_list should be larger than or equal with batch size.\n" + "\t2. The annotation file and path in the configuration file are provided normally.")
+        logger.error(
+            "No Images in train dataset, please ensure\n"
+            + "\t1. The images num in the train label_file_list should be larger than or equal with batch size.\n"
+            + "\t2. The annotation file and path in the configuration file are provided normally."
+        )
         return
 
     if config["Eval"]:
@@ -114,7 +118,9 @@ def main(config, device, logger, vdl_writer):
     loss_class = build_loss(config["Loss"])
 
     # build optim
-    optimizer, lr_scheduler = build_optimizer(config["Optimizer"], epochs=config["Global"]["epoch_num"], step_each_epoch=len(train_dataloader), model=model)
+    optimizer, lr_scheduler = build_optimizer(
+        config["Optimizer"], epochs=config["Global"]["epoch_num"], step_each_epoch=len(train_dataloader), model=model
+    )
 
     # build metric
     eval_class = build_metric(config["Metric"])
@@ -137,7 +143,9 @@ def main(config, device, logger, vdl_writer):
         use_dynamic_loss_scaling = config["Global"].get("use_dynamic_loss_scaling", False)
         scaler = torch.amp.GradScaler(init_loss_scaling=scale_loss, use_dynamic_loss_scaling=use_dynamic_loss_scaling)
         if amp_level == "O2":
-            model, optimizer = torch.amp.decorate(models=model, optimizers=optimizer, level=amp_level, master_weight=True)
+            model, optimizer = torch.amp.decorate(
+                models=model, optimizers=optimizer, level=amp_level, master_weight=True
+            )
     else:
         scaler = None
 

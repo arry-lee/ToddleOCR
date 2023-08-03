@@ -28,7 +28,12 @@ warnings.filterwarnings("ignore")
 from .tps_spatial_transformer import TPSSpatialTransformer
 from .stn import STN as STNHead
 from .tsrn import GruBlock, mish, UpsampleBLock
-from ppocr.modeling.heads.sr_rensnet_transformer import Transformer, LayerNorm, PositionwiseFeedForward, MultiHeadedAttention
+from ppocr.modeling.heads.sr_rensnet_transformer import (
+    Transformer,
+    LayerNorm,
+    PositionwiseFeedForward,
+    MultiHeadedAttention,
+)
 
 
 def positionalencoding2d(d_model, height, width):
@@ -103,7 +108,18 @@ def str_filt(str_, voc_type):
 
 
 class TBSRN(nn.Module):
-    def __init__(self, in_channels=3, scale_factor=2, width=128, height=32, STN=True, srb_nums=5, mask=False, hidden_units=32, infer_mode=False):
+    def __init__(
+        self,
+        in_channels=3,
+        scale_factor=2,
+        width=128,
+        height=32,
+        STN=True,
+        srb_nums=5,
+        mask=False,
+        hidden_units=32,
+        infer_mode=False,
+    ):
         super(TBSRN, self).__init__()
         in_planes = 3
         if mask:
@@ -119,7 +135,14 @@ class TBSRN(nn.Module):
         for i in range(srb_nums):
             setattr(self, "block%d" % (i + 2), RecurrentResidualBlock(2 * hidden_units))
 
-        setattr(self, "block%d" % (srb_nums + 2), nn.Sequential(nn.Conv2d(2 * hidden_units, 2 * hidden_units, kernel_size=3, padding=1), nn.BatchNorm2d(2 * hidden_units)))
+        setattr(
+            self,
+            "block%d" % (srb_nums + 2),
+            nn.Sequential(
+                nn.Conv2d(2 * hidden_units, 2 * hidden_units, kernel_size=3, padding=1),
+                nn.BatchNorm2d(2 * hidden_units),
+            ),
+        )
 
         # self.non_local = NonLocalBlock2D(64, 64)
         block_ = [UpsampleBLock(2 * hidden_units, 2) for _ in range(upsample_block_num)]
@@ -132,7 +155,11 @@ class TBSRN(nn.Module):
         self.stn = STN
         self.out_channels = in_channels
         if self.stn:
-            self.tps = TPSSpatialTransformer(output_image_size=tuple(tps_outputsize), num_control_points=num_control_points, margins=tuple(tps_margins))
+            self.tps = TPSSpatialTransformer(
+                output_image_size=tuple(tps_outputsize),
+                num_control_points=num_control_points,
+                margins=tuple(tps_margins),
+            )
 
             self.stn_head = STNHead(in_channels=in_planes, num_ctrlpoints=num_control_points, activation="none")
         self.infer_mode = infer_mode
@@ -183,7 +210,9 @@ class TBSRN(nn.Module):
         for i in range(self.srb_nums + 1):
             block[str(i + 2)] = getattr(self, "block%d" % (i + 2))(block[str(i + 1)])
 
-        block[str(self.srb_nums + 3)] = getattr(self, "block%d" % (self.srb_nums + 3))((block["1"] + block[str(self.srb_nums + 2)]))
+        block[str(self.srb_nums + 3)] = getattr(self, "block%d" % (self.srb_nums + 3))(
+            (block["1"] + block[str(self.srb_nums + 2)])
+        )
 
         sr_img = torch.tanh(block[str(self.srb_nums + 3)])
         output["sr_img"] = sr_img

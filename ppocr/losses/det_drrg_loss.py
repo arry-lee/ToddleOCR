@@ -113,7 +113,15 @@ class DRRGLoss(nn.Module):
         """Compute Drrg loss."""
 
         assert isinstance(preds, tuple)
-        gt_text_mask, gt_center_region_mask, gt_mask, gt_top_height_map, gt_bot_height_map, gt_sin_map, gt_cos_map = labels[1:8]
+        (
+            gt_text_mask,
+            gt_center_region_mask,
+            gt_mask,
+            gt_top_height_map,
+            gt_bot_height_map,
+            gt_sin_map,
+            gt_cos_map,
+        ) = labels[1:8]
 
         downsample_ratio = self.downsample_ratio
 
@@ -156,7 +164,9 @@ class DRRGLoss(nn.Module):
 
         text_mask = gt["gt_text_mask"][0] * gt["gt_mask"][0]
         negative_text_mask = (1 - gt["gt_text_mask"][0]) * gt["gt_mask"][0]
-        loss_center_map = F.binary_cross_entropy(F.sigmoid(pred_center_region), gt["gt_center_region_mask"][0], reduction="none")
+        loss_center_map = F.binary_cross_entropy(
+            F.sigmoid(pred_center_region), gt["gt_center_region_mask"][0], reduction="none"
+        )
         if int(text_mask.sum()) > 0:
             loss_center_positive = torch.sum(loss_center_map * text_mask) / torch.sum(text_mask)
         else:
@@ -168,13 +178,23 @@ class DRRGLoss(nn.Module):
         if int(center_mask.sum()) > 0:
             map_sz = pred_top_height_map.shape
             ones = torch.ones(map_sz, dtype="float32")
-            loss_top = F.smooth_l1_loss(pred_top_height_map / (gt["gt_top_height_map"][0] + 1e-2), ones, reduction="none")
-            loss_bot = F.smooth_l1_loss(pred_bot_height_map / (gt["gt_bot_height_map"][0] + 1e-2), ones, reduction="none")
+            loss_top = F.smooth_l1_loss(
+                pred_top_height_map / (gt["gt_top_height_map"][0] + 1e-2), ones, reduction="none"
+            )
+            loss_bot = F.smooth_l1_loss(
+                pred_bot_height_map / (gt["gt_bot_height_map"][0] + 1e-2), ones, reduction="none"
+            )
             gt_height = gt["gt_top_height_map"][0] + gt["gt_bot_height_map"][0]
-            loss_height = torch.sum((torch.log(gt_height + 1) * (loss_top + loss_bot)) * center_mask) / torch.sum(center_mask)
+            loss_height = torch.sum((torch.log(gt_height + 1) * (loss_top + loss_bot)) * center_mask) / torch.sum(
+                center_mask
+            )
 
-            loss_sin = torch.sum(F.smooth_l1_loss(pred_sin_map, gt["gt_sin_map"][0], reduction="none") * center_mask) / torch.sum(center_mask)
-            loss_cos = torch.sum(F.smooth_l1_loss(pred_cos_map, gt["gt_cos_map"][0], reduction="none") * center_mask) / torch.sum(center_mask)
+            loss_sin = torch.sum(
+                F.smooth_l1_loss(pred_sin_map, gt["gt_sin_map"][0], reduction="none") * center_mask
+            ) / torch.sum(center_mask)
+            loss_cos = torch.sum(
+                F.smooth_l1_loss(pred_cos_map, gt["gt_cos_map"][0], reduction="none") * center_mask
+            ) / torch.sum(center_mask)
         else:
             loss_height = torch.Tensor(0.0)
             loss_sin = torch.Tensor(0.0)
@@ -183,6 +203,14 @@ class DRRGLoss(nn.Module):
         loss_gcn = self.gcn_loss(gcn_data)
 
         loss = loss_text + loss_center + loss_height + loss_sin + loss_cos + loss_gcn
-        results = dict(loss=loss, loss_text=loss_text, loss_center=loss_center, loss_height=loss_height, loss_sin=loss_sin, loss_cos=loss_cos, loss_gcn=loss_gcn)
+        results = dict(
+            loss=loss,
+            loss_text=loss_text,
+            loss_center=loss_center,
+            loss_height=loss_height,
+            loss_sin=loss_sin,
+            loss_cos=loss_cos,
+            loss_gcn=loss_gcn,
+        )
 
         return results

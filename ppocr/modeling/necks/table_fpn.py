@@ -27,14 +27,26 @@ class TableFPN(nn.Module):
         self.out_channels = 512
         weight_attr = torch.nn.initializer.KaimingUniform()
         self.in2_conv = nn.Conv2d(in_channels=in_channels[0], out_channels=self.out_channels, kernel_size=1, bias=False)
-        self.in3_conv = nn.Conv2d(in_channels=in_channels[1], out_channels=self.out_channels, kernel_size=1, stride=1, bias=False)
+        self.in3_conv = nn.Conv2d(
+            in_channels=in_channels[1], out_channels=self.out_channels, kernel_size=1, stride=1, bias=False
+        )
         self.in4_conv = nn.Conv2d(in_channels=in_channels[2], out_channels=self.out_channels, kernel_size=1, bias=False)
         self.in5_conv = nn.Conv2d(in_channels=in_channels[3], out_channels=self.out_channels, kernel_size=1, bias=False)
-        self.p5_conv = nn.Conv2d(in_channels=self.out_channels, out_channels=self.out_channels // 4, kernel_size=3, padding=1, bias=False)
-        self.p4_conv = nn.Conv2d(in_channels=self.out_channels, out_channels=self.out_channels // 4, kernel_size=3, padding=1, bias=False)
-        self.p3_conv = nn.Conv2d(in_channels=self.out_channels, out_channels=self.out_channels // 4, kernel_size=3, padding=1, bias=False)
-        self.p2_conv = nn.Conv2d(in_channels=self.out_channels, out_channels=self.out_channels // 4, kernel_size=3, padding=1, bias=False)
-        self.fuse_conv = nn.Conv2d(in_channels=self.out_channels * 4, out_channels=512, kernel_size=3, padding=1, bias=False)
+        self.p5_conv = nn.Conv2d(
+            in_channels=self.out_channels, out_channels=self.out_channels // 4, kernel_size=3, padding=1, bias=False
+        )
+        self.p4_conv = nn.Conv2d(
+            in_channels=self.out_channels, out_channels=self.out_channels // 4, kernel_size=3, padding=1, bias=False
+        )
+        self.p3_conv = nn.Conv2d(
+            in_channels=self.out_channels, out_channels=self.out_channels // 4, kernel_size=3, padding=1, bias=False
+        )
+        self.p2_conv = nn.Conv2d(
+            in_channels=self.out_channels, out_channels=self.out_channels // 4, kernel_size=3, padding=1, bias=False
+        )
+        self.fuse_conv = nn.Conv2d(
+            in_channels=self.out_channels * 4, out_channels=512, kernel_size=3, padding=1, bias=False
+        )
 
     def forward(self, x):
         c2, c3, c4, c5 = x

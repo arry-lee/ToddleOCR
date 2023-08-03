@@ -13,16 +13,38 @@
 # limitations under the License.
 import torch
 import torch.nn as nn
-
-from arch.base_module import SNConv, SNConvTranspose, ResBlock
+from arch.base_module import ResBlock, SNConv, SNConvTranspose
 
 
 class Decoder(nn.Module):
-    def __init__(self, name, encode_dim, out_channels, use_bias, norm_layer, act, act_attr, conv_block_dropout, conv_block_num, conv_block_dilation, out_conv_act, out_conv_act_attr):
+    def __init__(
+        self,
+        name,
+        encode_dim,
+        out_channels,
+        use_bias,
+        norm_layer,
+        act,
+        act_attr,
+        conv_block_dropout,
+        conv_block_num,
+        conv_block_dilation,
+        out_conv_act,
+        out_conv_act_attr,
+    ):
         super(Decoder, self).__init__()
         conv_blocks = []
         for i in range(conv_block_num):
-            conv_blocks.append(ResBlock(name="{}_conv_block_{}".format(name, i), channels=encode_dim * 8, norm_layer=norm_layer, use_dropout=conv_block_dropout, use_dilation=conv_block_dilation, use_bias=use_bias))
+            conv_blocks.append(
+                ResBlock(
+                    name="{}_conv_block_{}".format(name, i),
+                    channels=encode_dim * 8,
+                    norm_layer=norm_layer,
+                    use_dropout=conv_block_dropout,
+                    use_dilation=conv_block_dilation,
+                    use_bias=use_bias,
+                )
+            )
         self.conv_blocks = nn.Sequential(*conv_blocks)
         self._up1 = SNConvTranspose(
             name=name + "_up1",
@@ -64,7 +86,16 @@ class Decoder(nn.Module):
             act_attr=act_attr,
         )
         self._pad2d = torch.nn.Pad2D([1, 1, 1, 1], mode="replicate")
-        self._out_conv = SNConv(name=name + "_out_conv", in_channels=encode_dim, out_channels=out_channels, kernel_size=3, use_bias=use_bias, norm_layer=None, act=out_conv_act, act_attr=out_conv_act_attr)
+        self._out_conv = SNConv(
+            name=name + "_out_conv",
+            in_channels=encode_dim,
+            out_channels=out_channels,
+            kernel_size=3,
+            use_bias=use_bias,
+            norm_layer=None,
+            act=out_conv_act,
+            act_attr=out_conv_act_attr,
+        )
 
     def forward(self, x):
         if isinstance(x, (list, tuple)):
@@ -80,11 +111,34 @@ class Decoder(nn.Module):
 
 
 class DecoderUnet(nn.Module):
-    def __init__(self, name, encode_dim, out_channels, use_bias, norm_layer, act, act_attr, conv_block_dropout, conv_block_num, conv_block_dilation, out_conv_act, out_conv_act_attr):
+    def __init__(
+        self,
+        name,
+        encode_dim,
+        out_channels,
+        use_bias,
+        norm_layer,
+        act,
+        act_attr,
+        conv_block_dropout,
+        conv_block_num,
+        conv_block_dilation,
+        out_conv_act,
+        out_conv_act_attr,
+    ):
         super(DecoderUnet, self).__init__()
         conv_blocks = []
         for i in range(conv_block_num):
-            conv_blocks.append(ResBlock(name="{}_conv_block_{}".format(name, i), channels=encode_dim * 8, norm_layer=norm_layer, use_dropout=conv_block_dropout, use_dilation=conv_block_dilation, use_bias=use_bias))
+            conv_blocks.append(
+                ResBlock(
+                    name="{}_conv_block_{}".format(name, i),
+                    channels=encode_dim * 8,
+                    norm_layer=norm_layer,
+                    use_dropout=conv_block_dropout,
+                    use_dilation=conv_block_dilation,
+                    use_bias=use_bias,
+                )
+            )
         self._conv_blocks = nn.Sequential(*conv_blocks)
         self._up1 = SNConvTranspose(
             name=name + "_up1",
@@ -126,7 +180,16 @@ class DecoderUnet(nn.Module):
             act_attr=act_attr,
         )
         self._pad2d = torch.nn.Pad2D([1, 1, 1, 1], mode="replicate")
-        self._out_conv = SNConv(name=name + "_out_conv", in_channels=encode_dim, out_channels=out_channels, kernel_size=3, use_bias=use_bias, norm_layer=None, act=out_conv_act, act_attr=out_conv_act_attr)
+        self._out_conv = SNConv(
+            name=name + "_out_conv",
+            in_channels=encode_dim,
+            out_channels=out_channels,
+            kernel_size=3,
+            use_bias=use_bias,
+            norm_layer=None,
+            act=out_conv_act,
+            act_attr=out_conv_act_attr,
+        )
 
     def forward(self, x, y, feature2, feature1):
         output_dict = dict()
@@ -140,11 +203,34 @@ class DecoderUnet(nn.Module):
 
 
 class SingleDecoder(nn.Module):
-    def __init__(self, name, encode_dim, out_channels, use_bias, norm_layer, act, act_attr, conv_block_dropout, conv_block_num, conv_block_dilation, out_conv_act, out_conv_act_attr):
+    def __init__(
+        self,
+        name,
+        encode_dim,
+        out_channels,
+        use_bias,
+        norm_layer,
+        act,
+        act_attr,
+        conv_block_dropout,
+        conv_block_num,
+        conv_block_dilation,
+        out_conv_act,
+        out_conv_act_attr,
+    ):
         super(SingleDecoder, self).__init__()
         conv_blocks = []
         for i in range(conv_block_num):
-            conv_blocks.append(ResBlock(name="{}_conv_block_{}".format(name, i), channels=encode_dim * 4, norm_layer=norm_layer, use_dropout=conv_block_dropout, use_dilation=conv_block_dilation, use_bias=use_bias))
+            conv_blocks.append(
+                ResBlock(
+                    name="{}_conv_block_{}".format(name, i),
+                    channels=encode_dim * 4,
+                    norm_layer=norm_layer,
+                    use_dropout=conv_block_dropout,
+                    use_dilation=conv_block_dilation,
+                    use_bias=use_bias,
+                )
+            )
         self._conv_blocks = nn.Sequential(*conv_blocks)
         self._up1 = SNConvTranspose(
             name=name + "_up1",
@@ -186,7 +272,16 @@ class SingleDecoder(nn.Module):
             act_attr=act_attr,
         )
         self._pad2d = torch.nn.Pad2D([1, 1, 1, 1], mode="replicate")
-        self._out_conv = SNConv(name=name + "_out_conv", in_channels=encode_dim, out_channels=out_channels, kernel_size=3, use_bias=use_bias, norm_layer=None, act=out_conv_act, act_attr=out_conv_act_attr)
+        self._out_conv = SNConv(
+            name=name + "_out_conv",
+            in_channels=encode_dim,
+            out_channels=out_channels,
+            kernel_size=3,
+            use_bias=use_bias,
+            norm_layer=None,
+            act=out_conv_act,
+            act_attr=out_conv_act_attr,
+        )
 
     def forward(self, x, feature2, feature1):
         output_dict = dict()

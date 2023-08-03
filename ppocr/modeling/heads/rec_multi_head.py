@@ -38,7 +38,9 @@ class MultiHead(nn.Module):
             if name == "SARHead":
                 # sar head
                 sar_args = self.head_list[idx][name]
-                self.sar_head = eval(name)(in_channels=in_channels, out_channels=out_channels_list["SARLabelDecode"], **sar_args)
+                self.sar_head = eval(name)(
+                    in_channels=in_channels, out_channels=out_channels_list["SARLabelDecode"], **sar_args
+                )
             elif name == "CTCHead":
                 # ctc neck
                 self.encoder_reshape = Im2Seq(in_channels)
@@ -48,7 +50,11 @@ class MultiHead(nn.Module):
                 self.ctc_encoder = SequenceEncoder(in_channels=in_channels, encoder_type=encoder_type, **neck_args)
                 # ctc head
                 head_args = self.head_list[idx][name]["Head"]
-                self.ctc_head = eval(name)(in_channels=self.ctc_encoder.out_channels, out_channels=out_channels_list["CTCLabelDecode"], **head_args)
+                self.ctc_head = eval(name)(
+                    in_channels=self.ctc_encoder.out_channels,
+                    out_channels=out_channels_list["CTCLabelDecode"],
+                    **head_args
+                )
             else:
                 raise NotImplementedError("{} is not supported in MultiHead yet".format(name))
 

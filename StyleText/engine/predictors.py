@@ -11,14 +11,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import numpy as np
-import cv2
 import math
-import torch
 
+import cv2
+import numpy as np
+import torch
 from arch import style_text_rec
-from utils.sys_funcs import check_gpu
 from utils.logging import get_logger
+from utils.sys_funcs import check_gpu
 
 
 class StyleTextRecPredictor(object):
@@ -111,7 +111,9 @@ class StyleTextRecPredictor(object):
         return img
 
     def rep_style_input(self, style_input, text_input):
-        rep_num = int(1.2 * (text_input.shape[1] / text_input.shape[0]) / (style_input.shape[1] / style_input.shape[0])) + 1
+        rep_num = (
+            int(1.2 * (text_input.shape[1] / text_input.shape[0]) / (style_input.shape[1] / style_input.shape[0])) + 1
+        )
         style_input = np.tile(style_input, reps=[1, rep_num, 1])
         max_width = int(self.width / self.height * style_input.shape[0])
         style_input = style_input[:, :max_width, :]

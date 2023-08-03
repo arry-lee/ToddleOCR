@@ -41,7 +41,10 @@ class DetMetric(object):
         ignore_tags_batch = batch[3]
         for pred, gt_polyons, ignore_tags in zip(preds, gt_polyons_batch, ignore_tags_batch):
             # prepare gt
-            gt_info_list = [{"points": gt_polyon, "text": "", "ignore": ignore_tag} for gt_polyon, ignore_tag in zip(gt_polyons, ignore_tags)]
+            gt_info_list = [
+                {"points": gt_polyon, "text": "", "ignore": ignore_tag}
+                for gt_polyon, ignore_tag in zip(gt_polyons, ignore_tags)
+            ]
             # prepare det
             det_info_list = [{"points": det_polyon, "text": ""} for det_polyon in pred["points"]]
             result = self.evaluator.evaluate_image(gt_info_list, det_info_list)
@@ -85,9 +88,15 @@ class DetFCEMetric(object):
 
         for pred, gt_polyons, ignore_tags in zip(preds, gt_polyons_batch, ignore_tags_batch):
             # prepare gt
-            gt_info_list = [{"points": gt_polyon, "text": "", "ignore": ignore_tag} for gt_polyon, ignore_tag in zip(gt_polyons, ignore_tags)]
+            gt_info_list = [
+                {"points": gt_polyon, "text": "", "ignore": ignore_tag}
+                for gt_polyon, ignore_tag in zip(gt_polyons, ignore_tags)
+            ]
             # prepare det
-            det_info_list = [{"points": det_polyon, "text": "", "score": score} for det_polyon, score in zip(pred["points"], pred["scores"])]
+            det_info_list = [
+                {"points": det_polyon, "text": "", "score": score}
+                for det_polyon, score in zip(pred["points"], pred["scores"])
+            ]
 
             for score_thr in self.results.keys():
                 det_info_list_thr = [det_info for det_info in det_info_list if det_info["score"] >= score_thr]
@@ -112,7 +121,9 @@ class DetFCEMetric(object):
             metric = self.evaluator.combine_results(self.results[score_thr])
             # for key, value in metric.items():
             #     metrics['{}_{}'.format(key, score_thr)] = value
-            metric_str = "precision:{:.5f} recall:{:.5f} hmean:{:.5f}".format(metric["precision"], metric["recall"], metric["hmean"])
+            metric_str = "precision:{:.5f} recall:{:.5f} hmean:{:.5f}".format(
+                metric["precision"], metric["recall"], metric["hmean"]
+            )
             metrics["thr {}".format(score_thr)] = metric_str
             hmean = max(hmean, metric["hmean"])
         metrics["hmean"] = hmean

@@ -20,7 +20,13 @@ import torch
 import torch.nn as nn
 from torch.utils.cpp_extension import load
 
-custom_ops = load(name="custom_jit_ops", sources=["ppocr/ext_op/roi_align_rotated/roi_align_rotated.cc", "ppocr/ext_op/roi_align_rotated/roi_align_rotated.cu"])
+custom_ops = load(
+    name="custom_jit_ops",
+    sources=[
+        "ppocr/ext_op/roi_align_rotated/roi_align_rotated.cc",
+        "ppocr/ext_op/roi_align_rotated/roi_align_rotated.cu",
+    ],
+)
 
 roi_align_rotated = custom_ops.roi_align_rotated
 
@@ -48,5 +54,7 @@ class RoIAlignRotated(nn.Module):
         self.clockwise = clockwise
 
     def forward(self, feats, rois):
-        output = roi_align_rotated(feats, rois, self.out_h, self.out_w, self.spatial_scale, self.sample_num, self.aligned, self.clockwise)
+        output = roi_align_rotated(
+            feats, rois, self.out_h, self.out_w, self.spatial_scale, self.sample_num, self.aligned, self.clockwise
+        )
         return output

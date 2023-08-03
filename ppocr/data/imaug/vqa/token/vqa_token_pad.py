@@ -16,7 +16,18 @@ import numpy as np
 
 
 class VQATokenPad(object):
-    def __init__(self, max_seq_len=512, pad_to_max_seq_len=True, return_attention_mask=True, return_token_type_ids=True, truncation_strategy="longest_first", return_overflowing_tokens=False, return_special_tokens_mask=False, infer_mode=False, **kwargs):
+    def __init__(
+        self,
+        max_seq_len=512,
+        pad_to_max_seq_len=True,
+        return_attention_mask=True,
+        return_token_type_ids=True,
+        truncation_strategy="longest_first",
+        return_overflowing_tokens=False,
+        return_special_tokens_mask=False,
+        infer_mode=False,
+        **kwargs
+    ):
         self.max_seq_len = max_seq_len
         self.pad_to_max_seq_len = max_seq_len
         self.return_attention_mask = return_attention_mask
@@ -41,7 +52,9 @@ class VQATokenPad(object):
                 if self.return_attention_mask:
                     data["attention_mask"] = [1] * len(data["input_ids"]) + [0] * difference
                 if self.return_token_type_ids:
-                    data["token_type_ids"] = data["token_type_ids"] + [tokenizer_params["pad_token_type_id"]] * difference
+                    data["token_type_ids"] = (
+                        data["token_type_ids"] + [tokenizer_params["pad_token_type_id"]] * difference
+                    )
                 if self.return_special_tokens_mask:
                     data["special_tokens_mask"] = data["special_tokens_mask"] + [1] * difference
                 data["input_ids"] = data["input_ids"] + [tokenizer_params["pad_token_id"]] * difference
@@ -52,7 +65,9 @@ class VQATokenPad(object):
                 if self.return_attention_mask:
                     data["attention_mask"] = [0] * difference + [1] * len(data["input_ids"])
                 if self.return_token_type_ids:
-                    data["token_type_ids"] = [tokenizer_params["pad_token_type_id"]] * difference + data["token_type_ids"]
+                    data["token_type_ids"] = [tokenizer_params["pad_token_type_id"]] * difference + data[
+                        "token_type_ids"
+                    ]
                 if self.return_special_tokens_mask:
                     data["special_tokens_mask"] = [1] * difference + data["special_tokens_mask"]
                 data["input_ids"] = [tokenizer_params["pad_token_id"]] * difference + data["input_ids"]

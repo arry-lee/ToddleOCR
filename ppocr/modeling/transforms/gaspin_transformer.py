@@ -16,12 +16,13 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import math
+import functools
+
+import numpy as np
 import torch
 from torch import nn
 from torch.nn import functional as F
-import numpy as np
-import functools
+
 from .tps import GridGenerator
 
 """This code is refer from:
@@ -104,7 +105,9 @@ class GA_SPIN_Transformer(nn.Module):
     Ref: [1] SPIN: Structure-Preserving Inner Offset Network for Scene Text Recognition. AAAI-2021.
     """
 
-    def __init__(self, in_channels=1, I_r_size=(32, 100), offsets=False, norm_type="BN", default_type=6, loc_lr=1, stn=True):
+    def __init__(
+        self, in_channels=1, I_r_size=(32, 100), offsets=False, norm_type="BN", default_type=6, loc_lr=1, stn=True
+    ):
         """
         Args:
             in_channels (int): channel of input features,
@@ -255,7 +258,9 @@ class GA_SPIN_Transformer(nn.Module):
                 if self.stn:
                     batch_C_prime = sp_weight_fusion[:, (self.spt_length + 1) :, :].reshape([x.shape[0], self.F, 2])
                     build_P_prime = self.GridGenerator(batch_C_prime, self.I_r_size)
-                    build_P_prime_reshape = build_P_prime.reshape([build_P_prime.shape[0], self.I_r_size[0], self.I_r_size[1], 2])
+                    build_P_prime_reshape = build_P_prime.reshape(
+                        [build_P_prime.shape[0], self.I_r_size[0], self.I_r_size[1], 2]
+                    )
 
             else:  # SPIN w.o. AIN
                 sp_weight = sp_weight_fusion[:, : self.spt_length, :]
@@ -264,7 +269,9 @@ class GA_SPIN_Transformer(nn.Module):
                 if self.stn:
                     batch_C_prime = sp_weight_fusion[:, self.spt_length :, :].reshape([x.shape[0], self.F, 2])
                     build_P_prime = self.GridGenerator(batch_C_prime, self.I_r_size)
-                    build_P_prime_reshape = build_P_prime.reshape([build_P_prime.shape[0], self.I_r_size[0], self.I_r_size[1], 2])
+                    build_P_prime_reshape = build_P_prime.reshape(
+                        [build_P_prime.shape[0], self.I_r_size[0], self.I_r_size[1], 2]
+                    )
 
             x = self.sp_net(x, sp_weight, offsets, lambda_color)
             if self.stn:

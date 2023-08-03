@@ -18,6 +18,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from torch.optimizer import lr
+
 from .lr_scheduler import CyclicalCosineDecay, OneCycleDecay, TwoStepCosineDecay
 
 
@@ -32,7 +33,9 @@ class Linear(object):
         last_epoch (int, optional):  The index of last epoch. Can be set to restart training. Default: -1, means initial learning rate.
     """
 
-    def __init__(self, learning_rate, epochs, step_each_epoch, end_lr=0.0, power=1.0, warmup_epoch=0, last_epoch=-1, **kwargs):
+    def __init__(
+        self, learning_rate, epochs, step_each_epoch, end_lr=0.0, power=1.0, warmup_epoch=0, last_epoch=-1, **kwargs
+    ):
         super(Linear, self).__init__()
         self.learning_rate = learning_rate
         self.epochs = epochs * step_each_epoch
@@ -42,9 +45,21 @@ class Linear(object):
         self.warmup_epoch = round(warmup_epoch * step_each_epoch)
 
     def __call__(self):
-        learning_rate = lr.PolynomialDecay(learning_rate=self.learning_rate, decay_steps=self.epochs, end_lr=self.end_lr, power=self.power, last_epoch=self.last_epoch)
+        learning_rate = lr.PolynomialDecay(
+            learning_rate=self.learning_rate,
+            decay_steps=self.epochs,
+            end_lr=self.end_lr,
+            power=self.power,
+            last_epoch=self.last_epoch,
+        )
         if self.warmup_epoch > 0:
-            learning_rate = lr.LinearWarmup(learning_rate=learning_rate, warmup_steps=self.warmup_epoch, start_lr=0.0, end_lr=self.learning_rate, last_epoch=self.last_epoch)
+            learning_rate = lr.LinearWarmup(
+                learning_rate=learning_rate,
+                warmup_steps=self.warmup_epoch,
+                start_lr=0.0,
+                end_lr=self.learning_rate,
+                last_epoch=self.last_epoch,
+            )
         return learning_rate
 
 
@@ -67,9 +82,17 @@ class Cosine(object):
         self.warmup_epoch = round(warmup_epoch * step_each_epoch)
 
     def __call__(self):
-        learning_rate = lr.CosineAnnealingDecay(learning_rate=self.learning_rate, T_max=self.T_max, last_epoch=self.last_epoch)
+        learning_rate = lr.CosineAnnealingDecay(
+            learning_rate=self.learning_rate, T_max=self.T_max, last_epoch=self.last_epoch
+        )
         if self.warmup_epoch > 0:
-            learning_rate = lr.LinearWarmup(learning_rate=learning_rate, warmup_steps=self.warmup_epoch, start_lr=0.0, end_lr=self.learning_rate, last_epoch=self.last_epoch)
+            learning_rate = lr.LinearWarmup(
+                learning_rate=learning_rate,
+                warmup_steps=self.warmup_epoch,
+                start_lr=0.0,
+                end_lr=self.learning_rate,
+                last_epoch=self.last_epoch,
+            )
         return learning_rate
 
 
@@ -94,9 +117,17 @@ class Step(object):
         self.warmup_epoch = round(warmup_epoch * step_each_epoch)
 
     def __call__(self):
-        learning_rate = lr.StepDecay(learning_rate=self.learning_rate, step_size=self.step_size, gamma=self.gamma, last_epoch=self.last_epoch)
+        learning_rate = lr.StepDecay(
+            learning_rate=self.learning_rate, step_size=self.step_size, gamma=self.gamma, last_epoch=self.last_epoch
+        )
         if self.warmup_epoch > 0:
-            learning_rate = lr.LinearWarmup(learning_rate=learning_rate, warmup_steps=self.warmup_epoch, start_lr=0.0, end_lr=self.learning_rate, last_epoch=self.last_epoch)
+            learning_rate = lr.LinearWarmup(
+                learning_rate=learning_rate,
+                warmup_steps=self.warmup_epoch,
+                start_lr=0.0,
+                end_lr=self.learning_rate,
+                last_epoch=self.last_epoch,
+            )
         return learning_rate
 
 
@@ -120,7 +151,13 @@ class Piecewise(object):
     def __call__(self):
         learning_rate = lr.PiecewiseDecay(boundaries=self.boundaries, values=self.values, last_epoch=self.last_epoch)
         if self.warmup_epoch > 0:
-            learning_rate = lr.LinearWarmup(learning_rate=learning_rate, warmup_steps=self.warmup_epoch, start_lr=0.0, end_lr=self.values[0], last_epoch=self.last_epoch)
+            learning_rate = lr.LinearWarmup(
+                learning_rate=learning_rate,
+                warmup_steps=self.warmup_epoch,
+                start_lr=0.0,
+                end_lr=self.values[0],
+                last_epoch=self.last_epoch,
+            )
         return learning_rate
 
 
@@ -144,9 +181,17 @@ class CyclicalCosine(object):
         self.cycle = round(cycle * step_each_epoch)
 
     def __call__(self):
-        learning_rate = CyclicalCosineDecay(learning_rate=self.learning_rate, T_max=self.T_max, cycle=self.cycle, last_epoch=self.last_epoch)
+        learning_rate = CyclicalCosineDecay(
+            learning_rate=self.learning_rate, T_max=self.T_max, cycle=self.cycle, last_epoch=self.last_epoch
+        )
         if self.warmup_epoch > 0:
-            learning_rate = lr.LinearWarmup(learning_rate=learning_rate, warmup_steps=self.warmup_epoch, start_lr=0.0, end_lr=self.learning_rate, last_epoch=self.last_epoch)
+            learning_rate = lr.LinearWarmup(
+                learning_rate=learning_rate,
+                warmup_steps=self.warmup_epoch,
+                start_lr=0.0,
+                end_lr=self.learning_rate,
+                last_epoch=self.last_epoch,
+            )
         return learning_rate
 
 
@@ -164,7 +209,17 @@ class OneCycle(object):
         last_epoch (int, optional):  The index of last epoch. Can be set to restart training. Default: -1, means initial learning rate.
     """
 
-    def __init__(self, max_lr, epochs, step_each_epoch, anneal_strategy="cos", three_phase=False, warmup_epoch=0, last_epoch=-1, **kwargs):
+    def __init__(
+        self,
+        max_lr,
+        epochs,
+        step_each_epoch,
+        anneal_strategy="cos",
+        three_phase=False,
+        warmup_epoch=0,
+        last_epoch=-1,
+        **kwargs
+    ):
         super(OneCycle, self).__init__()
         self.max_lr = max_lr
         self.epochs = epochs
@@ -175,9 +230,22 @@ class OneCycle(object):
         self.warmup_epoch = round(warmup_epoch * step_each_epoch)
 
     def __call__(self):
-        learning_rate = OneCycleDecay(max_lr=self.max_lr, epochs=self.epochs, steps_per_epoch=self.steps_per_epoch, anneal_strategy=self.anneal_strategy, three_phase=self.three_phase, last_epoch=self.last_epoch)
+        learning_rate = OneCycleDecay(
+            max_lr=self.max_lr,
+            epochs=self.epochs,
+            steps_per_epoch=self.steps_per_epoch,
+            anneal_strategy=self.anneal_strategy,
+            three_phase=self.three_phase,
+            last_epoch=self.last_epoch,
+        )
         if self.warmup_epoch > 0:
-            learning_rate = lr.LinearWarmup(learning_rate=learning_rate, warmup_steps=self.warmup_epoch, start_lr=0.0, end_lr=self.max_lr, last_epoch=self.last_epoch)
+            learning_rate = lr.LinearWarmup(
+                learning_rate=learning_rate,
+                warmup_steps=self.warmup_epoch,
+                start_lr=0.0,
+                end_lr=self.max_lr,
+                last_epoch=self.last_epoch,
+            )
         return learning_rate
 
 
@@ -199,7 +267,13 @@ class Const(object):
     def __call__(self):
         learning_rate = self.learning_rate
         if self.warmup_epoch > 0:
-            learning_rate = lr.LinearWarmup(learning_rate=learning_rate, warmup_steps=self.warmup_epoch, start_lr=0.0, end_lr=self.learning_rate, last_epoch=self.last_epoch)
+            learning_rate = lr.LinearWarmup(
+                learning_rate=learning_rate,
+                warmup_steps=self.warmup_epoch,
+                start_lr=0.0,
+                end_lr=self.learning_rate,
+                last_epoch=self.last_epoch,
+            )
         return learning_rate
 
 
@@ -224,7 +298,9 @@ class DecayLearningRate(object):
         self.decay_steps = step_each_epoch * epochs
 
     def __call__(self):
-        learning_rate = lr.PolynomialDecay(learning_rate=self.learning_rate, decay_steps=self.decay_steps, power=self.factor, end_lr=self.end_lr)
+        learning_rate = lr.PolynomialDecay(
+            learning_rate=self.learning_rate, decay_steps=self.decay_steps, power=self.factor, end_lr=self.end_lr
+        )
         return learning_rate
 
 
@@ -249,9 +325,17 @@ class MultiStepDecay(object):
         self.warmup_epoch = round(warmup_epoch * step_each_epoch)
 
     def __call__(self):
-        learning_rate = lr.MultiStepDecay(learning_rate=self.learning_rate, milestones=self.milestones, gamma=self.gamma, last_epoch=self.last_epoch)
+        learning_rate = lr.MultiStepDecay(
+            learning_rate=self.learning_rate, milestones=self.milestones, gamma=self.gamma, last_epoch=self.last_epoch
+        )
         if self.warmup_epoch > 0:
-            learning_rate = lr.LinearWarmup(learning_rate=learning_rate, warmup_steps=self.warmup_epoch, start_lr=0.0, end_lr=self.learning_rate, last_epoch=self.last_epoch)
+            learning_rate = lr.LinearWarmup(
+                learning_rate=learning_rate,
+                warmup_steps=self.warmup_epoch,
+                start_lr=0.0,
+                end_lr=self.learning_rate,
+                last_epoch=self.last_epoch,
+            )
         return learning_rate
 
 
@@ -275,7 +359,15 @@ class TwoStepCosine(object):
         self.warmup_epoch = round(warmup_epoch * step_each_epoch)
 
     def __call__(self):
-        learning_rate = TwoStepCosineDecay(learning_rate=self.learning_rate, T_max1=self.T_max1, T_max2=self.T_max2, last_epoch=self.last_epoch)
+        learning_rate = TwoStepCosineDecay(
+            learning_rate=self.learning_rate, T_max1=self.T_max1, T_max2=self.T_max2, last_epoch=self.last_epoch
+        )
         if self.warmup_epoch > 0:
-            learning_rate = lr.LinearWarmup(learning_rate=learning_rate, warmup_steps=self.warmup_epoch, start_lr=0.0, end_lr=self.learning_rate, last_epoch=self.last_epoch)
+            learning_rate = lr.LinearWarmup(
+                learning_rate=learning_rate,
+                warmup_steps=self.warmup_epoch,
+                start_lr=0.0,
+                end_lr=self.learning_rate,
+                last_epoch=self.last_epoch,
+            )
         return learning_rate

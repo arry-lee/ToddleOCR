@@ -48,7 +48,11 @@ class FPN_UNet(nn.Module):
         self.out_channels = out_channels
 
         blocks_out_channels = [out_channels] + [min(out_channels * 2**i, 256) for i in range(4)]
-        blocks_in_channels = [blocks_out_channels[1]] + [in_channels[i] + blocks_out_channels[i + 2] for i in range(3)] + [in_channels[3]]
+        blocks_in_channels = (
+            [blocks_out_channels[1]]
+            + [in_channels[i] + blocks_out_channels[i + 2] for i in range(3)]
+            + [in_channels[3]]
+        )
 
         self.up4 = nn.ConvTranspose2d(blocks_in_channels[4], blocks_out_channels[4], kernel_size=4, stride=2, padding=1)
         self.up_block3 = UpBlock(blocks_in_channels[3], blocks_out_channels[3])

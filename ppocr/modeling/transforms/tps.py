@@ -40,7 +40,13 @@ class ConvBNLayer(nn.Module):
             bias=False,
         )
         bn_name = "bn_" + name
-        self.bn = nn.BatchNorm2d(out_channels, act=act, bias=True, moving_mean_name=bn_name + "_mean", moving_variance_name=bn_name + "_variance")
+        self.bn = nn.BatchNorm2d(
+            out_channels,
+            act=act,
+            bias=True,
+            moving_mean_name=bn_name + "_mean",
+            moving_variance_name=bn_name + "_variance",
+        )
 
     def forward(self, x):
         x = self.conv(x)
@@ -64,7 +70,10 @@ class LocalizationNetwork(nn.Module):
         for fno in range(0, len(num_filters_list)):
             num_filters = num_filters_list[fno]
             name = "loc_conv%d" % fno
-            conv = self.add_sublayer(name, ConvBNLayer(in_channels=in_channels, out_channels=num_filters, kernel_size=3, act="relu", name=name))
+            conv = self.add_sublayer(
+                name,
+                ConvBNLayer(in_channels=in_channels, out_channels=num_filters, kernel_size=3, act="relu", name=name),
+            )
             self.block_list.append(conv)
             if fno == len(num_filters_list) - 1:
                 pool = nn.AdaptiveAvgPool2d(1)
@@ -167,9 +176,13 @@ class GridGenerator(nn.Module):
 
     def build_P_paddle(self, I_r_size):
         I_r_height, I_r_width = I_r_size
-        I_r_grid_x = (torch.arange(-I_r_width, I_r_width, 2, dtype="float64") + 1.0) / torch.Tensor(np.array([I_r_width]))
+        I_r_grid_x = (torch.arange(-I_r_width, I_r_width, 2, dtype="float64") + 1.0) / torch.Tensor(
+            np.array([I_r_width])
+        )
 
-        I_r_grid_y = (torch.arange(-I_r_height, I_r_height, 2, dtype="float64") + 1.0) / torch.Tensor(np.array([I_r_height]))
+        I_r_grid_y = (torch.arange(-I_r_height, I_r_height, 2, dtype="float64") + 1.0) / torch.Tensor(
+            np.array([I_r_height])
+        )
 
         # P: self.I_r_width x self.I_r_height x 2
         P = torch.stack(torch.meshgrid(I_r_grid_x, I_r_grid_y), dim=2)
@@ -187,7 +200,9 @@ class GridGenerator(nn.Module):
             [
                 torch.concat([torch.ones((F, 1), dtype="float64"), C, hat_C], dim=1),  # F x F+3
                 torch.concat([torch.zeros((2, 3), dtype="float64"), C.permute(1, 0)], dim=1),  # 2 x F+3
-                torch.concat([torch.zeros((1, 3), dtype="float64"), torch.ones((1, F), dtype="float64")], dim=1),  # 1 x F+3
+                torch.concat(
+                    [torch.zeros((1, 3), dtype="float64"), torch.ones((1, F), dtype="float64")], dim=1
+                ),  # 1 x F+3
             ],
             axis=0,
         )

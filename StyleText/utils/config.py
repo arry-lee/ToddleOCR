@@ -11,9 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import yaml
 import os
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
+
+import yaml
 
 
 def override(dl, ks, v):
@@ -130,7 +131,15 @@ def gen_config():
         "Architecture": {
             "model_type": "data_aug",
             "algorithm": "SRNet",
-            "net_g": {"name": "srnet_net_g", "encode_dim": 64, "norm": "batch", "use_dropout": False, "init_type": "xavier", "init_gain": 0.02, "use_dilation": 1},
+            "net_g": {
+                "name": "srnet_net_g",
+                "encode_dim": 64,
+                "norm": "batch",
+                "use_dropout": False,
+                "init_type": "xavier",
+                "init_gain": 0.02,
+                "use_dilation": 1,
+            },
             # input_nc, ndf, netD,
             # n_layers_D=3, norm='instance', use_sigmoid=False, init_type='normal', init_gain=0.02, gpu_id='cuda:0'
             "bg_discriminator": {
@@ -166,7 +175,14 @@ def gen_config():
                 "label_file": "tmp/label.txt",
                 "transforms": [
                     {"DecodeImage": {"to_rgb": True, "to_np": False, "channel_first": False}},
-                    {"NormalizeImage": {"scale": 1.0 / 255.0, "mean": [0.485, 0.456, 0.406], "std": [0.229, 0.224, 0.225], "order": None}},
+                    {
+                        "NormalizeImage": {
+                            "scale": 1.0 / 255.0,
+                            "mean": [0.485, 0.456, 0.406],
+                            "std": [0.229, 0.224, 0.225],
+                            "order": None,
+                        }
+                    },
                     {"ToCHWImage": None},
                 ],
             },

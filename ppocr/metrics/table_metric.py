@@ -32,8 +32,18 @@ class TableStructureMetric(object):
             pred_str = "".join(pred)
             target_str = "".join(target)
             if self.del_thead_tbody:
-                pred_str = pred_str.replace("<thead>", "").replace("</thead>", "").replace("<tbody>", "").replace("</tbody>", "")
-                target_str = target_str.replace("<thead>", "").replace("</thead>", "").replace("<tbody>", "").replace("</tbody>", "")
+                pred_str = (
+                    pred_str.replace("<thead>", "")
+                    .replace("</thead>", "")
+                    .replace("<tbody>", "")
+                    .replace("</tbody>", "")
+                )
+                target_str = (
+                    target_str.replace("<thead>", "")
+                    .replace("</thead>", "")
+                    .replace("<tbody>", "")
+                    .replace("</tbody>", "")
+                )
             if pred_str == target_str:
                 correct_num += 1
             all_num += 1
@@ -59,7 +69,9 @@ class TableStructureMetric(object):
 
 
 class TableMetric(object):
-    def __init__(self, main_indicator="acc", compute_bbox_metric=False, box_format="xyxy", del_thead_tbody=False, **kwargs):
+    def __init__(
+        self, main_indicator="acc", compute_bbox_metric=False, box_format="xyxy", del_thead_tbody=False, **kwargs
+    ):
         """
 
         @param sub_metrics: configs of sub_metric

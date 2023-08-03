@@ -14,13 +14,22 @@
 
 from torch import nn
 
-from ppocr.modeling.backbones.det_mobilenet_v3 import ResidualUnit, ConvBNLayer, make_divisible
+from ppocr.modeling.backbones.det_mobilenet_v3 import ConvBNLayer, ResidualUnit, make_divisible
 
 __all__ = ["MobileNetV3"]
 
 
 class MobileNetV3(nn.Module):
-    def __init__(self, in_channels=3, model_name="small", scale=0.5, large_stride=None, small_stride=None, disable_se=False, **kwargs):
+    def __init__(
+        self,
+        in_channels=3,
+        model_name="small",
+        scale=0.5,
+        large_stride=None,
+        small_stride=None,
+        disable_se=False,
+        **kwargs
+    ):
         super(MobileNetV3, self).__init__()
         self.disable_se = disable_se
         if small_stride is None:
@@ -77,18 +86,46 @@ class MobileNetV3(nn.Module):
 
         inplanes = 16
         # conv1
-        self.conv1 = ConvBNLayer(in_channels=in_channels, out_channels=make_divisible(inplanes * scale), kernel_size=3, stride=2, padding=1, groups=1, if_act=True, act="hardswish")
+        self.conv1 = ConvBNLayer(
+            in_channels=in_channels,
+            out_channels=make_divisible(inplanes * scale),
+            kernel_size=3,
+            stride=2,
+            padding=1,
+            groups=1,
+            if_act=True,
+            act="hardswish",
+        )
         i = 0
         block_list = []
         inplanes = make_divisible(inplanes * scale)
         for k, exp, c, se, nl, s in cfg:
             se = se and not self.disable_se
-            block_list.append(ResidualUnit(in_channels=inplanes, mid_channels=make_divisible(scale * exp), out_channels=make_divisible(scale * c), kernel_size=k, stride=s, use_se=se, act=nl))
+            block_list.append(
+                ResidualUnit(
+                    in_channels=inplanes,
+                    mid_channels=make_divisible(scale * exp),
+                    out_channels=make_divisible(scale * c),
+                    kernel_size=k,
+                    stride=s,
+                    use_se=se,
+                    act=nl,
+                )
+            )
             inplanes = make_divisible(scale * c)
             i += 1
         self.blocks = nn.Sequential(*block_list)
 
-        self.conv2 = ConvBNLayer(in_channels=inplanes, out_channels=make_divisible(scale * cls_ch_squeeze), kernel_size=1, stride=1, padding=0, groups=1, if_act=True, act="hardswish")
+        self.conv2 = ConvBNLayer(
+            in_channels=inplanes,
+            out_channels=make_divisible(scale * cls_ch_squeeze),
+            kernel_size=1,
+            stride=1,
+            padding=0,
+            groups=1,
+            if_act=True,
+            act="hardswish",
+        )
 
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
         self.out_channels = make_divisible(scale * cls_ch_squeeze)

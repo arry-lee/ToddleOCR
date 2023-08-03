@@ -75,7 +75,11 @@ def main(config, device, logger, vdl_writer):
         logger.info("metric[{}]: {}".format(main_indicator, metric[main_indicator]))
         return metric[main_indicator]
 
-    params_sensitive = pruner.sensitive(eval_func=eval_fn, sen_file="./sen.pickle", skip_vars=["conv2d_57.w_0", "conv2d_transpose_2.w_0", "conv2d_transpose_3.w_0"])
+    params_sensitive = pruner.sensitive(
+        eval_func=eval_fn,
+        sen_file="./sen.pickle",
+        skip_vars=["conv2d_57.w_0", "conv2d_transpose_2.w_0", "conv2d_transpose_3.w_0"],
+    )
 
     logger.info("The sensitivity analysis results of model parameters saved in sen.pickle")
     # calculate pruned params's ratio
@@ -104,8 +108,14 @@ def main(config, device, logger, vdl_writer):
     if config["Architecture"]["model_type"] == "rec":
         infer_shape = [3, 32, -1]  # for rec model, H must be 32
 
-        if "Transform" in config["Architecture"] and config["Architecture"]["Transform"] is not None and config["Architecture"]["Transform"]["name"] == "TPS":
-            logger.info("When there is tps in the network, variable length input is not supported, and the input size needs to be the same as during training")
+        if (
+            "Transform" in config["Architecture"]
+            and config["Architecture"]["Transform"] is not None
+            and config["Architecture"]["Transform"]["name"] == "TPS"
+        ):
+            logger.info(
+                "When there is tps in the network, variable length input is not supported, and the input size needs to be the same as during training"
+            )
             infer_shape[-1] = 100
     model = to_static(model, input_spec=[paddle.static.InputSpec(shape=[None] + infer_shape, dtype="float32")])
 

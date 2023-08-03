@@ -48,15 +48,28 @@ class CNTHead(nn.Module):
 
 
 class RFLHead(nn.Module):
-    def __init__(self, in_channels=512, hidden_size=256, batch_max_legnth=25, out_channels=38, use_cnt=True, use_seq=True, **kwargs):
+    def __init__(
+        self,
+        in_channels=512,
+        hidden_size=256,
+        batch_max_legnth=25,
+        out_channels=38,
+        use_cnt=True,
+        use_seq=True,
+        **kwargs
+    ):
         super(RFLHead, self).__init__()
         assert use_cnt or use_seq
         self.use_cnt = use_cnt
         self.use_seq = use_seq
         if self.use_cnt:
-            self.cnt_head = CNTHead(embed_size=in_channels, encode_length=batch_max_legnth + 1, out_channels=out_channels, **kwargs)
+            self.cnt_head = CNTHead(
+                embed_size=in_channels, encode_length=batch_max_legnth + 1, out_channels=out_channels, **kwargs
+            )
         if self.use_seq:
-            self.seq_head = AttentionLSTM(in_channels=in_channels, out_channels=out_channels, hidden_size=hidden_size, **kwargs)
+            self.seq_head = AttentionLSTM(
+                in_channels=in_channels, out_channels=out_channels, hidden_size=hidden_size, **kwargs
+            )
         self.batch_max_legnth = batch_max_legnth
         self.num_class = out_channels
         self.apply(self.init_weights)

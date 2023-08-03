@@ -59,13 +59,17 @@ class CosineWarmup(LinearWarmup):
     """
 
     def __init__(self, lr, step_each_epoch, epochs, warmup_epoch=5, **kwargs):
-        assert epochs > warmup_epoch, "total epoch({}) should be larger than warmup_epoch({}) in CosineWarmup.".format(epochs, warmup_epoch)
+        assert epochs > warmup_epoch, "total epoch({}) should be larger than warmup_epoch({}) in CosineWarmup.".format(
+            epochs, warmup_epoch
+        )
         warmup_step = warmup_epoch * step_each_epoch
         start_lr = 0.0
         end_lr = lr
         lr_sch = Cosine(lr, step_each_epoch, epochs - warmup_epoch)
 
-        super(CosineWarmup, self).__init__(learning_rate=lr_sch, warmup_steps=warmup_step, start_lr=start_lr, end_lr=end_lr)
+        super(CosineWarmup, self).__init__(
+            learning_rate=lr_sch, warmup_steps=warmup_step, start_lr=start_lr, end_lr=end_lr
+        )
 
         self.update_specified = False
 
@@ -89,7 +93,9 @@ class ExponentialWarmup(LinearWarmup):
         end_lr = lr
         lr_sch = ExponentialDecay(lr, decay_rate)
 
-        super(ExponentialWarmup, self).__init__(learning_rate=lr_sch, warmup_steps=warmup_step, start_lr=start_lr, end_lr=end_lr)
+        super(ExponentialWarmup, self).__init__(
+            learning_rate=lr_sch, warmup_steps=warmup_step, start_lr=start_lr, end_lr=end_lr
+        )
 
         # NOTE: hac method to update exponential lr scheduler
         self.update_specified = True
@@ -167,7 +173,12 @@ class Momentum(object):
         self.regularization = regularization
 
     def __call__(self):
-        opt = paddle.optimizer.Momentum(learning_rate=self.learning_rate, momentum=self.momentum, parameters=self.parameter_list, weight_decay=self.regularization)
+        opt = paddle.optimizer.Momentum(
+            learning_rate=self.learning_rate,
+            momentum=self.momentum,
+            parameters=self.parameter_list,
+            weight_decay=self.regularization,
+        )
         return opt
 
 
@@ -183,7 +194,9 @@ class RMSProp(object):
         regularization (WeightDecayRegularizer, optional) - The strategy of regularization.
     """
 
-    def __init__(self, learning_rate, momentum, rho=0.95, epsilon=1e-6, parameter_list=None, regularization=None, **args):
+    def __init__(
+        self, learning_rate, momentum, rho=0.95, epsilon=1e-6, parameter_list=None, regularization=None, **args
+    ):
         super(RMSProp, self).__init__()
         self.learning_rate = learning_rate
         self.momentum = momentum
@@ -193,7 +206,14 @@ class RMSProp(object):
         self.regularization = regularization
 
     def __call__(self):
-        opt = paddle.optimizer.RMSProp(learning_rate=self.learning_rate, momentum=self.momentum, rho=self.rho, epsilon=self.epsilon, parameters=self.parameter_list, weight_decay=self.regularization)
+        opt = paddle.optimizer.RMSProp(
+            learning_rate=self.learning_rate,
+            momentum=self.momentum,
+            rho=self.rho,
+            epsilon=self.epsilon,
+            parameters=self.parameter_list,
+            weight_decay=self.regularization,
+        )
         return opt
 
 

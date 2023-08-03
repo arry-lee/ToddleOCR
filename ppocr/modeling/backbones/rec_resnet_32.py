@@ -130,15 +130,21 @@ class ResNet(nn.Module):
         self.output_channel_block = [int(output_channel / 4), int(output_channel / 2), output_channel, output_channel]
 
         self.inplanes = int(output_channel / 8)
-        self.conv0_1 = nn.Conv2d(input_channel, int(output_channel / 16), kernel_size=3, stride=1, padding=1, bias=False)
+        self.conv0_1 = nn.Conv2d(
+            input_channel, int(output_channel / 16), kernel_size=3, stride=1, padding=1, bias=False
+        )
         self.bn0_1 = nn.BatchNorm2d(int(output_channel / 16))
-        self.conv0_2 = nn.Conv2d(int(output_channel / 16), self.inplanes, kernel_size=3, stride=1, padding=1, bias=False)
+        self.conv0_2 = nn.Conv2d(
+            int(output_channel / 16), self.inplanes, kernel_size=3, stride=1, padding=1, bias=False
+        )
         self.bn0_2 = nn.BatchNorm2d(self.inplanes)
         self.relu = nn.ReLU()
 
         self.maxpool1 = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
         self.layer1 = self._make_layer(block, self.output_channel_block[0], layers[0])
-        self.conv1 = nn.Conv2d(self.output_channel_block[0], self.output_channel_block[0], kernel_size=3, stride=1, padding=1, bias=False)
+        self.conv1 = nn.Conv2d(
+            self.output_channel_block[0], self.output_channel_block[0], kernel_size=3, stride=1, padding=1, bias=False
+        )
         self.bn1 = nn.BatchNorm2d(self.output_channel_block[0])
 
         self.maxpool2 = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
@@ -156,13 +162,24 @@ class ResNet(nn.Module):
 
         self.maxpool3 = nn.MaxPool2d(kernel_size=2, stride=(2, 1), padding=(0, 1))
         self.layer3 = self._make_layer(block, self.output_channel_block[2], layers[2], stride=1)
-        self.conv3 = nn.Conv2d(self.output_channel_block[2], self.output_channel_block[2], kernel_size=3, stride=1, padding=1, bias=False)
+        self.conv3 = nn.Conv2d(
+            self.output_channel_block[2], self.output_channel_block[2], kernel_size=3, stride=1, padding=1, bias=False
+        )
         self.bn3 = nn.BatchNorm2d(self.output_channel_block[2])
 
         self.layer4 = self._make_layer(block, self.output_channel_block[3], layers[3], stride=1)
-        self.conv4_1 = nn.Conv2d(self.output_channel_block[3], self.output_channel_block[3], kernel_size=2, stride=(2, 1), padding=(0, 1), bias=False)
+        self.conv4_1 = nn.Conv2d(
+            self.output_channel_block[3],
+            self.output_channel_block[3],
+            kernel_size=2,
+            stride=(2, 1),
+            padding=(0, 1),
+            bias=False,
+        )
         self.bn4_1 = nn.BatchNorm2d(self.output_channel_block[3])
-        self.conv4_2 = nn.Conv2d(self.output_channel_block[3], self.output_channel_block[3], kernel_size=2, stride=1, padding=0, bias=False)
+        self.conv4_2 = nn.Conv2d(
+            self.output_channel_block[3], self.output_channel_block[3], kernel_size=2, stride=1, padding=0, bias=False
+        )
         self.bn4_2 = nn.BatchNorm2d(self.output_channel_block[3])
 
     def _make_layer(self, block, planes, blocks, stride=1):

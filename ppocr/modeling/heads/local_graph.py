@@ -22,7 +22,7 @@ from __future__ import print_function
 
 import numpy as np
 import torch
-import torch.nn as nn
+
 from ppocr.ext_op import RoIAlignRotated
 
 
@@ -89,7 +89,9 @@ def feature_embedding(input_feats, out_feat_len):
     residue_dim = out_feat_len % feat_dim
 
     if residue_dim > 0:
-        embed_wave = np.array([np.power(1000, 2.0 * (j // 2) / feat_repeat_times + 1) for j in range(feat_repeat_times + 1)]).reshape((feat_repeat_times + 1, 1, 1))
+        embed_wave = np.array(
+            [np.power(1000, 2.0 * (j // 2) / feat_repeat_times + 1) for j in range(feat_repeat_times + 1)]
+        ).reshape((feat_repeat_times + 1, 1, 1))
         repeat_feats = np.repeat(np.expand_dims(input_feats, axis=0), feat_repeat_times, axis=0)
         residue_feats = np.hstack([input_feats[:, 0:residue_dim], np.zeros((num_nodes, feat_dim - residue_dim))])
         residue_feats = np.expand_dims(residue_feats, axis=0)
@@ -99,7 +101,9 @@ def feature_embedding(input_feats, out_feat_len):
         embedded_feats[:, 1::2] = np.cos(embedded_feats[:, 1::2])
         embedded_feats = np.transpose(embedded_feats, (1, 0, 2)).reshape((num_nodes, -1))[:, 0:out_feat_len]
     else:
-        embed_wave = np.array([np.power(1000, 2.0 * (j // 2) / feat_repeat_times) for j in range(feat_repeat_times)]).reshape((feat_repeat_times, 1, 1))
+        embed_wave = np.array(
+            [np.power(1000, 2.0 * (j // 2) / feat_repeat_times) for j in range(feat_repeat_times)]
+        ).reshape((feat_repeat_times, 1, 1))
         repeat_feats = np.repeat(np.expand_dims(input_feats, axis=0), feat_repeat_times, axis=0)
         embedded_feats = repeat_feats / embed_wave
         embedded_feats[:, 0::2] = np.sin(embedded_feats[:, 0::2])
@@ -110,7 +114,9 @@ def feature_embedding(input_feats, out_feat_len):
 
 
 class LocalGraphs:
-    def __init__(self, k_at_hops, num_adjacent_linkages, node_geo_feat_len, pooling_scale, pooling_output_size, local_graph_thr):
+    def __init__(
+        self, k_at_hops, num_adjacent_linkages, node_geo_feat_len, pooling_scale, pooling_output_size, local_graph_thr
+    ):
         assert len(k_at_hops) == 2
         assert all(isinstance(n, int) for n in k_at_hops)
         assert isinstance(num_adjacent_linkages, int)
@@ -172,7 +178,12 @@ class LocalGraphs:
                     intersect = len(set(pivot_local_graph[1:]).intersection(set(added_local_graph[1:])))
                     local_graph_iou = intersect / (union + 1e-8)
 
-                    if local_graph_iou > self.local_graph_thr and pivot_ind in added_knn and gt_comp_labels[added_pivot_ind] == gt_comp_labels[pivot_ind] and gt_comp_labels[pivot_ind] != 0:
+                    if (
+                        local_graph_iou > self.local_graph_thr
+                        and pivot_ind in added_knn
+                        and gt_comp_labels[added_pivot_ind] == gt_comp_labels[pivot_ind]
+                        and gt_comp_labels[pivot_ind] != 0
+                    ):
                         add_flag = False
                         break
                 if add_flag:
@@ -181,7 +192,9 @@ class LocalGraphs:
 
         return pivot_local_graphs, pivot_knns
 
-    def generate_gcn_input(self, node_feat_batch, node_label_batch, local_graph_batch, knn_batch, sorted_dist_ind_batch):
+    def generate_gcn_input(
+        self, node_feat_batch, node_label_batch, local_graph_batch, knn_batch, sorted_dist_ind_batch
+    ):
         """Generate graph convolution network input data.
 
         Args:
@@ -209,7 +222,13 @@ class LocalGraphs:
         assert isinstance(knn_batch, list)
         assert isinstance(sorted_dist_ind_batch, list)
 
-        num_max_nodes = max([len(pivot_local_graph) for pivot_local_graphs in local_graph_batch for pivot_local_graph in pivot_local_graphs])
+        num_max_nodes = max(
+            [
+                len(pivot_local_graph)
+                for pivot_local_graphs in local_graph_batch
+                for pivot_local_graph in pivot_local_graphs
+            ]
+        )
 
         local_graphs_node_feat = []
         adjacent_matrices = []
@@ -244,7 +263,9 @@ class LocalGraphs:
                 pad_adjacent_matrix = torch.zeros((num_max_nodes, num_max_nodes))
                 pad_adjacent_matrix[:num_nodes, :num_nodes] = torch.Tensor(adjacent_matrix).type(dtype=torch.float32)
 
-                pad_normalized_feats = torch.concat([normalized_feats, torch.zeros((num_max_nodes - num_nodes, normalized_feats.shape[1]))], dim=0)
+                pad_normalized_feats = torch.concat(
+                    [normalized_feats, torch.zeros((num_max_nodes - num_nodes, normalized_feats.shape[1]))], dim=0
+                )
                 local_graph_labels = node_labels[pivot_local_graph]
                 knn_labels = local_graph_labels[knn_inds.numpy()]
                 link_labels = ((node_labels[pivot_ind] == knn_labels) & (node_labels[pivot_ind] > 0)).astype(np.int64)
@@ -319,6 +340,8 @@ class LocalGraphs:
             knn_batch.append(pivot_knns)
             sorted_dist_inds_batch.append(sorted_dist_inds)
 
-        (node_feats, adjacent_matrices, knn_inds, gt_linkage) = self.generate_gcn_input(node_feat_batch, node_label_batch, local_graph_batch, knn_batch, sorted_dist_inds_batch)
+        (node_feats, adjacent_matrices, knn_inds, gt_linkage) = self.generate_gcn_input(
+            node_feat_batch, node_label_batch, local_graph_batch, knn_batch, sorted_dist_inds_batch
+        )
 
         return node_feats, adjacent_matrices, knn_inds, gt_linkage

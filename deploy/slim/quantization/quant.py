@@ -46,7 +46,12 @@ dist.get_world_size()
 class PACT(paddle.nn.Layer):
     def __init__(self):
         super(PACT, self).__init__()
-        alpha_attr = paddle.ParamAttr(name=self.full_name() + ".pact", initializer=paddle.nn.initializer.Constant(value=20), learning_rate=1.0, regularizer=paddle.regularizer.L2Decay(2e-5))
+        alpha_attr = paddle.ParamAttr(
+            name=self.full_name() + ".pact",
+            initializer=paddle.nn.initializer.Constant(value=20),
+            learning_rate=1.0,
+            regularizer=paddle.regularizer.L2Decay(2e-5),
+        )
 
         self.alpha = self.create_parameter(shape=[1], attr=alpha_attr, dtype="float32")
 
@@ -157,7 +162,9 @@ def main(config, device, logger, vdl_writer):
     loss_class = build_loss(config["Loss"])
 
     # build optim
-    optimizer, lr_scheduler = build_optimizer(config["Optimizer"], epochs=config["Global"]["epoch_num"], step_each_epoch=len(train_dataloader), model=model)
+    optimizer, lr_scheduler = build_optimizer(
+        config["Optimizer"], epochs=config["Global"]["epoch_num"], step_each_epoch=len(train_dataloader), model=model
+    )
 
     # resume PACT training process
     pre_best_model_dict = load_model(config, model, optimizer, config["Architecture"]["model_type"])
@@ -165,10 +172,28 @@ def main(config, device, logger, vdl_writer):
     # build metric
     eval_class = build_metric(config["Metric"])
 
-    logger.info("train dataloader has {} iters, valid dataloader has {} iters".format(len(train_dataloader), len(valid_dataloader)))
+    logger.info(
+        "train dataloader has {} iters, valid dataloader has {} iters".format(
+            len(train_dataloader), len(valid_dataloader)
+        )
+    )
 
     # start train
-    program.train(config, train_dataloader, valid_dataloader, device, model, loss_class, optimizer, lr_scheduler, post_process_class, eval_class, pre_best_model_dict, logger, vdl_writer)
+    program.train(
+        config,
+        train_dataloader,
+        valid_dataloader,
+        device,
+        model,
+        loss_class,
+        optimizer,
+        lr_scheduler,
+        post_process_class,
+        eval_class,
+        pre_best_model_dict,
+        logger,
+        vdl_writer,
+    )
 
 
 if __name__ == "__main__":

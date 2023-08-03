@@ -15,12 +15,10 @@
 from __future__ import absolute_import, division, print_function
 
 import os
+
 import torch
 import torch.nn as nn
-
-from torch.nn import AdaptiveAvgPool2d, BatchNorm2d, Conv2d, Dropout, Linear
-from torch.regularizer import L2Decay
-from torch.nn.initializer import KaimingNormal
+from torch.nn import AdaptiveAvgPool2d, BatchNorm2d, Conv2d
 from torch.utils.download import get_path_from_url
 
 MODEL_URLS = {
@@ -51,7 +49,14 @@ NET_CONFIG = {
     [[3, 16, 32, 1, False]],
     "blocks3": [[3, 32, 64, 2, False], [3, 64, 64, 1, False]],
     "blocks4": [[3, 64, 128, 2, False], [3, 128, 128, 1, False]],
-    "blocks5": [[3, 128, 256, 2, False], [5, 256, 256, 1, False], [5, 256, 256, 1, False], [5, 256, 256, 1, False], [5, 256, 256, 1, False], [5, 256, 256, 1, False]],
+    "blocks5": [
+        [3, 128, 256, 2, False],
+        [5, 256, 256, 1, False],
+        [5, 256, 256, 1, False],
+        [5, 256, 256, 1, False],
+        [5, 256, 256, 1, False],
+        [5, 256, 256, 1, False],
+    ],
     "blocks6": [[5, 256, 512, 2, True], [5, 512, 512, 1, True]],
 }
 
@@ -93,7 +98,13 @@ class DepthwiseSeparable(nn.Module):
     def __init__(self, num_channels, num_filters, stride, dw_size=3, use_se=False):
         super().__init__()
         self.use_se = use_se
-        self.dw_conv = ConvBNLayer(num_channels=num_channels, num_filters=num_channels, filter_size=dw_size, stride=stride, num_groups=num_channels)
+        self.dw_conv = ConvBNLayer(
+            num_channels=num_channels,
+            num_filters=num_channels,
+            filter_size=dw_size,
+            stride=stride,
+            num_groups=num_channels,
+        )
         if use_se:
             self.se = SEModule(num_channels)
         self.pw_conv = ConvBNLayer(num_channels=num_channels, filter_size=1, num_filters=num_filters, stride=1)
@@ -129,20 +140,82 @@ class SEModule(nn.Module):
 class PPLCNet(nn.Module):
     def __init__(self, in_channels=3, scale=1.0, pretrained=False, use_ssld=False):
         super().__init__()
-        self.out_channels = [int(NET_CONFIG["blocks3"][-1][2] * scale), int(NET_CONFIG["blocks4"][-1][2] * scale), int(NET_CONFIG["blocks5"][-1][2] * scale), int(NET_CONFIG["blocks6"][-1][2] * scale)]
+        self.out_channels = [
+            int(NET_CONFIG["blocks3"][-1][2] * scale),
+            int(NET_CONFIG["blocks4"][-1][2] * scale),
+            int(NET_CONFIG["blocks5"][-1][2] * scale),
+            int(NET_CONFIG["blocks6"][-1][2] * scale),
+        ]
         self.scale = scale
 
-        self.conv1 = ConvBNLayer(num_channels=in_channels, filter_size=3, num_filters=make_divisible(16 * scale), stride=2)
+        self.conv1 = ConvBNLayer(
+            num_channels=in_channels, filter_size=3, num_filters=make_divisible(16 * scale), stride=2
+        )
 
-        self.blocks2 = nn.Sequential(*[DepthwiseSeparable(num_channels=make_divisible(in_c * scale), num_filters=make_divisible(out_c * scale), dw_size=k, stride=s, use_se=se) for i, (k, in_c, out_c, s, se) in enumerate(NET_CONFIG["blocks2"])])
+        self.blocks2 = nn.Sequential(
+            *[
+                DepthwiseSeparable(
+                    num_channels=make_divisible(in_c * scale),
+                    num_filters=make_divisible(out_c * scale),
+                    dw_size=k,
+                    stride=s,
+                    use_se=se,
+                )
+                for i, (k, in_c, out_c, s, se) in enumerate(NET_CONFIG["blocks2"])
+            ]
+        )
 
-        self.blocks3 = nn.Sequential(*[DepthwiseSeparable(num_channels=make_divisible(in_c * scale), num_filters=make_divisible(out_c * scale), dw_size=k, stride=s, use_se=se) for i, (k, in_c, out_c, s, se) in enumerate(NET_CONFIG["blocks3"])])
+        self.blocks3 = nn.Sequential(
+            *[
+                DepthwiseSeparable(
+                    num_channels=make_divisible(in_c * scale),
+                    num_filters=make_divisible(out_c * scale),
+                    dw_size=k,
+                    stride=s,
+                    use_se=se,
+                )
+                for i, (k, in_c, out_c, s, se) in enumerate(NET_CONFIG["blocks3"])
+            ]
+        )
 
-        self.blocks4 = nn.Sequential(*[DepthwiseSeparable(num_channels=make_divisible(in_c * scale), num_filters=make_divisible(out_c * scale), dw_size=k, stride=s, use_se=se) for i, (k, in_c, out_c, s, se) in enumerate(NET_CONFIG["blocks4"])])
+        self.blocks4 = nn.Sequential(
+            *[
+                DepthwiseSeparable(
+                    num_channels=make_divisible(in_c * scale),
+                    num_filters=make_divisible(out_c * scale),
+                    dw_size=k,
+                    stride=s,
+                    use_se=se,
+                )
+                for i, (k, in_c, out_c, s, se) in enumerate(NET_CONFIG["blocks4"])
+            ]
+        )
 
-        self.blocks5 = nn.Sequential(*[DepthwiseSeparable(num_channels=make_divisible(in_c * scale), num_filters=make_divisible(out_c * scale), dw_size=k, stride=s, use_se=se) for i, (k, in_c, out_c, s, se) in enumerate(NET_CONFIG["blocks5"])])
+        self.blocks5 = nn.Sequential(
+            *[
+                DepthwiseSeparable(
+                    num_channels=make_divisible(in_c * scale),
+                    num_filters=make_divisible(out_c * scale),
+                    dw_size=k,
+                    stride=s,
+                    use_se=se,
+                )
+                for i, (k, in_c, out_c, s, se) in enumerate(NET_CONFIG["blocks5"])
+            ]
+        )
 
-        self.blocks6 = nn.Sequential(*[DepthwiseSeparable(num_channels=make_divisible(in_c * scale), num_filters=make_divisible(out_c * scale), dw_size=k, stride=s, use_se=se) for i, (k, in_c, out_c, s, se) in enumerate(NET_CONFIG["blocks6"])])
+        self.blocks6 = nn.Sequential(
+            *[
+                DepthwiseSeparable(
+                    num_channels=make_divisible(in_c * scale),
+                    num_filters=make_divisible(out_c * scale),
+                    dw_size=k,
+                    stride=s,
+                    use_se=se,
+                )
+                for i, (k, in_c, out_c, s, se) in enumerate(NET_CONFIG["blocks6"])
+            ]
+        )
 
         if pretrained:
             self._load_pretrained(MODEL_URLS["PPLCNet_x{}".format(scale)], use_ssld=use_ssld)

@@ -19,11 +19,11 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import numpy as np
 import cv2
+import numpy as np
+import pyclipper
 import torch
 from shapely.geometry import Polygon
-import pyclipper
 
 
 class DBPostProcess(object):
@@ -31,7 +31,17 @@ class DBPostProcess(object):
     The post process for Differentiable Binarization (DB).
     """
 
-    def __init__(self, thresh=0.3, box_thresh=0.7, max_candidates=1000, unclip_ratio=2.0, use_dilation=False, score_mode="fast", box_type="quad", **kwargs):
+    def __init__(
+        self,
+        thresh=0.3,
+        box_thresh=0.7,
+        max_candidates=1000,
+        unclip_ratio=2.0,
+        use_dilation=False,
+        score_mode="fast",
+        box_type="quad",
+        **kwargs
+    ):
         self.thresh = thresh
         self.box_thresh = box_thresh
         self.max_candidates = max_candidates
@@ -224,10 +234,30 @@ class DBPostProcess(object):
 
 
 class DistillationDBPostProcess(object):
-    def __init__(self, model_name=["student"], key=None, thresh=0.3, box_thresh=0.6, max_candidates=1000, unclip_ratio=1.5, use_dilation=False, score_mode="fast", box_type="quad", **kwargs):
+    def __init__(
+        self,
+        model_name=["student"],
+        key=None,
+        thresh=0.3,
+        box_thresh=0.6,
+        max_candidates=1000,
+        unclip_ratio=1.5,
+        use_dilation=False,
+        score_mode="fast",
+        box_type="quad",
+        **kwargs
+    ):
         self.model_name = model_name
         self.key = key
-        self.post_process = DBPostProcess(thresh=thresh, box_thresh=box_thresh, max_candidates=max_candidates, unclip_ratio=unclip_ratio, use_dilation=use_dilation, score_mode=score_mode, box_type=box_type)
+        self.post_process = DBPostProcess(
+            thresh=thresh,
+            box_thresh=box_thresh,
+            max_candidates=max_candidates,
+            unclip_ratio=unclip_ratio,
+            use_dilation=use_dilation,
+            score_mode=score_mode,
+            box_type=box_type,
+        )
 
     def __call__(self, predicts, shape_list):
         results = {}

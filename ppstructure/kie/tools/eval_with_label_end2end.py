@@ -12,18 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
-import re
-import sys
-import shapely
-from shapely.geometry import Polygon
-import numpy as np
-from collections import defaultdict
-import operator
-from rapidfuzz.distance import Levenshtein
 import argparse
-import json
 import copy
+import json
+import operator
+import os
+from collections import defaultdict
+
+import numpy as np
+import shapely
+from rapidfuzz.distance import Levenshtein
+from shapely.geometry import Polygon
 
 
 def parse_ser_results_fp(fp, fp_type="gt", ignore_background=True):
@@ -229,7 +228,9 @@ def parse_args():
 
     parser.add_argument("--ignore_background", default=True, type=str2bool, help="whether to ignore other label")
 
-    parser.add_argument("--ignore_ser_prediction", default=False, type=str2bool, help="whether to ignore ocr pred results")
+    parser.add_argument(
+        "--ignore_ser_prediction", default=False, type=str2bool, help="whether to ignore ocr pred results"
+    )
 
     args = parser.parse_args()
     return args

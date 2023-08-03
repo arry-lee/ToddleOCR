@@ -19,7 +19,7 @@ https://github.com/whai362/PSENet/blob/python3/models/head/psenet_head.py
 import torch
 from torch import nn
 from torch.nn import functional as F
-import numpy as np
+
 from ppocr.utils.iou import iou
 
 
@@ -62,7 +62,9 @@ class PSELoss(nn.Module):
             loss_kernel_i = self.dice_loss(kernel_i, gt_kernel_i, selected_masks)
             loss_kernels.append(loss_kernel_i)
         loss_kernels = torch.mean(torch.stack(loss_kernels, dim=1), dim=1)
-        iou_kernel = iou((kernels[:, -1, :, :] > 0).astype("int64"), gt_kernels[:, -1, :, :], training_masks * gt_texts, reduce=False)
+        iou_kernel = iou(
+            (kernels[:, -1, :, :] > 0).astype("int64"), gt_kernels[:, -1, :, :], training_masks * gt_texts, reduce=False
+        )
         losses.update(dict(loss_kernels=loss_kernels, iou_kernel=iou_kernel))
         loss = self.alpha * loss_text + (1 - self.alpha) * loss_kernels
         losses["loss"] = loss
@@ -89,7 +91,9 @@ class PSELoss(nn.Module):
         return 1 - d
 
     def ohem_single(self, score, gt_text, training_mask, ohem_ratio=3):
-        pos_num = int(torch.sum((gt_text > 0.5).astype("float32"))) - int(torch.sum(torch.logical_and((gt_text > 0.5), (training_mask <= 0.5)).astype("float32")))
+        pos_num = int(torch.sum((gt_text > 0.5).astype("float32"))) - int(
+            torch.sum(torch.logical_and((gt_text > 0.5), (training_mask <= 0.5)).astype("float32"))
+        )
 
         if pos_num == 0:
             selected_mask = training_mask
@@ -108,14 +112,18 @@ class PSELoss(nn.Module):
         neg_score_sorted = torch.sort(-neg_score)
         threshold = -neg_score_sorted[neg_num - 1]
 
-        selected_mask = torch.logical_and(torch.logical_or((score >= threshold), (gt_text > 0.5)), (training_mask > 0.5))
+        selected_mask = torch.logical_and(
+            torch.logical_or((score >= threshold), (gt_text > 0.5)), (training_mask > 0.5)
+        )
         selected_mask = selected_mask.reshape([1, selected_mask.shape[0], selected_mask.shape[1]]).astype("float32")
         return selected_mask
 
     def ohem_batch(self, scores, gt_texts, training_masks, ohem_ratio=3):
         selected_masks = []
         for i in range(scores.shape[0]):
-            selected_masks.append(self.ohem_single(scores[i, :, :], gt_texts[i, :, :], training_masks[i, :, :], ohem_ratio))
+            selected_masks.append(
+                self.ohem_single(scores[i, :, :], gt_texts[i, :, :], training_masks[i, :, :], ohem_ratio)
+            )
 
         selected_masks = torch.concat(selected_masks, 0).astype("float32")
         return selected_masks

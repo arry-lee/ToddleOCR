@@ -13,8 +13,8 @@
 # limitations under the License.
 
 import os
-import sys
 import subprocess
+import sys
 
 __dir__ = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(__dir__)
@@ -67,7 +67,9 @@ class StructureSystem(object):
                     self.text_system = TextSystem(args)
             if args.table:
                 if self.text_system is not None:
-                    self.table_system = TableSystem(args, self.text_system.text_detector, self.text_system.text_recognizer)
+                    self.table_system = TableSystem(
+                        args, self.text_system.text_detector, self.text_system.text_recognizer
+                    )
                 else:
                     self.table_system = TableSystem(args)
 
@@ -77,14 +79,27 @@ class StructureSystem(object):
             self.kie_predictor = SerRePredictor(args)
 
     def __call__(self, img, return_ocr_result_in_table=False, img_idx=0):
-        time_dict = {"image_orientation": 0, "layout": 0, "table": 0, "table_match": 0, "det": 0, "rec": 0, "kie": 0, "all": 0}
+        time_dict = {
+            "image_orientation": 0,
+            "layout": 0,
+            "table": 0,
+            "table_match": 0,
+            "det": 0,
+            "rec": 0,
+            "kie": 0,
+            "all": 0,
+        }
         start = time.time()
         if self.image_orientation_predictor is not None:
             tic = time.time()
             cls_result = self.image_orientation_predictor.predict(input_data=img)
             cls_res = next(cls_result)
             angle = cls_res[0]["label_names"][0]
-            cv_rotate_code = {"90": cv2.ROTATE_90_COUNTERCLOCKWISE, "180": cv2.ROTATE_180, "270": cv2.ROTATE_90_CLOCKWISE}
+            cv_rotate_code = {
+                "90": cv2.ROTATE_90_COUNTERCLOCKWISE,
+                "180": cv2.ROTATE_180,
+                "270": cv2.ROTATE_90_CLOCKWISE,
+            }
             if angle in cv_rotate_code:
                 img = cv2.rotate(img, cv_rotate_code[angle])
             toc = time.time()
@@ -128,7 +143,22 @@ class StructureSystem(object):
                         # remove style char,
                         # when using the recognition model trained on the PubtabNet dataset,
                         # it will recognize the text format in the table, such as <b>
-                        style_token = ["<strike>", "<strike>", "<sup>", "</sub>", "<b>", "</b>", "<sub>", "</sup>", "<overline>", "</overline>", "<underline>", "</underline>", "<i>", "</i>"]
+                        style_token = [
+                            "<strike>",
+                            "<strike>",
+                            "<sup>",
+                            "</sub>",
+                            "<b>",
+                            "</b>",
+                            "<sub>",
+                            "</sup>",
+                            "<overline>",
+                            "</overline>",
+                            "<underline>",
+                            "</underline>",
+                            "<i>",
+                            "</i>",
+                        ]
                         res = []
                         for box, rec_res in zip(filter_boxes, filter_rec_res):
                             rec_str, rec_conf = rec_res
@@ -138,7 +168,15 @@ class StructureSystem(object):
                             if not self.recovery:
                                 box += [x1, y1]
                             res.append({"text": rec_str, "confidence": float(rec_conf), "text_region": box.tolist()})
-                res_list.append({"type": region["label"].lower(), "bbox": [x1, y1, x2, y2], "img": roi_img, "res": res, "img_idx": img_idx})
+                res_list.append(
+                    {
+                        "type": region["label"].lower(),
+                        "bbox": [x1, y1, x2, y2],
+                        "img": roi_img,
+                        "res": res,
+                        "img_idx": img_idx,
+                    }
+                )
             end = time.time()
             time_dict["all"] = end - start
             return res_list, time_dict
@@ -220,7 +258,9 @@ def main(args):
                 else:
                     draw_img = draw_ser_results(img, res, font_path=args.vis_font_path)
 
-                with open(os.path.join(save_folder, img_name, "res_{}_kie.txt".format(index)), "w", encoding="utf8") as f:
+                with open(
+                    os.path.join(save_folder, img_name, "res_{}_kie.txt".format(index)), "w", encoding="utf8"
+                ) as f:
                     res_str = "{}\t{}\n".format(image_file, json.dumps({"ocr_info": res}, ensure_ascii=False))
                     f.write(res_str)
             if res != []:
@@ -248,7 +288,9 @@ if __name__ == "__main__":
         p_list = []
         total_process_num = args.total_process_num
         for process_id in range(total_process_num):
-            cmd = [sys.executable, "-u"] + sys.argv + ["--process_id={}".format(process_id), "--use_mp={}".format(False)]
+            cmd = (
+                [sys.executable, "-u"] + sys.argv + ["--process_id={}".format(process_id), "--use_mp={}".format(False)]
+            )
             p = subprocess.Popen(cmd, stdout=sys.stdout, stderr=sys.stdout)
             p_list.append(p)
         for p in p_list:

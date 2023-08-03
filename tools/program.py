@@ -16,26 +16,25 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import os
-import sys
-import platform
-import yaml
-import time
 import datetime
-import torch
-import torch.distributed as dist
-from tqdm import tqdm
-import cv2
-import numpy as np
+import os
+import platform
+import sys
+import time
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 
-from ppocr.utils.stats import TrainingStats
-from ppocr.utils.save_load import save_model
-from ppocr.utils.utility import print_dict, AverageMeter
-from ppocr.utils.logging import get_logger
-from ppocr.utils.loggers import VDLLogger, WandbLogger, Loggers
-from ppocr.utils import profiler
+import torch
+import torch.distributed as dist
+import yaml
+from tqdm import tqdm
+
 from ppocr.data import build_dataloader
+from ppocr.utils import profiler
+from ppocr.utils.loggers import Loggers, VDLLogger, WandbLogger
+from ppocr.utils.logging import get_logger
+from ppocr.utils.save_load import save_model
+from ppocr.utils.stats import TrainingStats
+from ppocr.utils.utility import AverageMeter, print_dict
 
 
 class ArgsParser(ArgumentParser):
@@ -43,7 +42,13 @@ class ArgsParser(ArgumentParser):
         super(ArgsParser, self).__init__(formatter_class=RawDescriptionHelpFormatter)
         self.add_argument("-c", "--config", help="configuration file to use")
         self.add_argument("-o", "--opt", nargs="+", help="set configuration options")
-        self.add_argument("-p", "--profiler_options", type=str, default=None, help="The option of profiler, which should be in format " '"key1=value1;key2=value2;key3=value3".')
+        self.add_argument(
+            "-p",
+            "--profiler_options",
+            type=str,
+            default=None,
+            help="The option of profiler, which should be in format " '"key1=value1;key2=value2;key3=value3".',
+        )
 
     def parse_args(self, argv=None):
         args = super(ArgsParser, self).parse_args(argv)
@@ -90,7 +95,10 @@ def merge_config(config, opts):
                 config[key] = value
         else:
             sub_keys = key.split(".")
-            assert sub_keys[0] in config, "the sub_keys can only be one of global_config: {}, but get: " "{}, please check your running command".format(config.keys(), sub_keys[0])
+            assert sub_keys[0] in config, (
+                "the sub_keys can only be one of global_config: {}, but get: "
+                "{}, please check your running command".format(config.keys(), sub_keys[0])
+            )
             cur = config[sub_keys[0]]
             for idx, sub_key in enumerate(sub_keys[1:]):
                 if idx == len(sub_keys) - 2:
@@ -105,7 +113,13 @@ def check_device(use_gpu, use_xpu=False, use_npu=False, use_mlu=False):
     Log error and exit when set use_gpu=true in paddlepaddle
     cpu version.
     """
-    err = "Config {} cannot be set as true while your paddle " "is not compiled with {} ! \nPlease try: \n" "\t1. Install paddlepaddle to run model on {} \n" "\t2. Set {} as false in config file to run " "model on CPU"
+    err = (
+        "Config {} cannot be set as true while your paddle "
+        "is not compiled with {} ! \nPlease try: \n"
+        "\t1. Install paddlepaddle to run model on {} \n"
+        "\t2. Set {} as false in config file to run "
+        "model on CPU"
+    )
 
     try:
         if use_gpu and use_xpu:
@@ -189,7 +203,10 @@ def train(
         if len(valid_dataloader) == 0:
             logger.info("No Images in eval dataset, evaluation during training " "will be disabled")
             start_eval_step = 1e111
-        logger.info("During the training process, after the {}th iteration, " "an evaluation is run every {} iterations".format(start_eval_step, eval_batch_step))
+        logger.info(
+            "During the training process, after the {}th iteration, "
+            "an evaluation is run every {} iterations".format(start_eval_step, eval_batch_step)
+        )
     save_epoch_step = config["Global"]["save_epoch_step"]
     save_model_dir = config["Global"]["save_model_dir"]
     if not os.path.exists(save_model_dir):
@@ -311,7 +328,9 @@ def train(
             if log_writer is not None and dist.get_rank() == 0:
                 log_writer.log_metrics(metrics=train_stats.get(), prefix="TRAIN", step=global_step)
 
-            if dist.get_rank() == 0 and ((global_step > 0 and global_step % print_batch_step == 0) or (idx >= len(train_dataloader) - 1)):
+            if dist.get_rank() == 0 and (
+                (global_step > 0 and global_step % print_batch_step == 0) or (idx >= len(train_dataloader) - 1)
+            ):
                 logs = train_stats.log()
 
                 eta_sec = ((epoch_num + 1 - epoch) * len(train_dataloader) - idx - 1) * eta_meter.avg
@@ -337,12 +356,30 @@ def train(
                 train_reader_cost = 0.0
                 train_batch_cost = 0.0
             # eval
-            if global_step > start_eval_step and (global_step - start_eval_step) % eval_batch_step == 0 and dist.get_rank() == 0:
+            if (
+                global_step > start_eval_step
+                and (global_step - start_eval_step) % eval_batch_step == 0
+                and dist.get_rank() == 0
+            ):
                 if model_average:
-                    Model_Average = torch.incubate.optimizer.ModelAverage(0.15, parameters=model.parameters(), min_average_window=10000, max_average_window=15625)
+                    Model_Average = torch.incubate.optimizer.ModelAverage(
+                        0.15, parameters=model.parameters(), min_average_window=10000, max_average_window=15625
+                    )
                     Model_Average.apply()
-                cur_metric = eval(model, valid_dataloader, post_process_class, eval_class, model_type, extra_input=extra_input, scaler=scaler, amp_level=amp_level, amp_custom_black_list=amp_custom_black_list)
-                cur_metric_str = "cur metric, {}".format(", ".join(["{}: {}".format(k, v) for k, v in cur_metric.items()]))
+                cur_metric = eval(
+                    model,
+                    valid_dataloader,
+                    post_process_class,
+                    eval_class,
+                    model_type,
+                    extra_input=extra_input,
+                    scaler=scaler,
+                    amp_level=amp_level,
+                    amp_custom_black_list=amp_custom_black_list,
+                )
+                cur_metric_str = "cur metric, {}".format(
+                    ", ".join(["{}: {}".format(k, v) for k, v in cur_metric.items()])
+                )
                 logger.info(cur_metric_str)
 
                 # logger metric
@@ -352,24 +389,63 @@ def train(
                 if cur_metric[main_indicator] >= best_model_dict[main_indicator]:
                     best_model_dict.update(cur_metric)
                     best_model_dict["best_epoch"] = epoch
-                    save_model(model, optimizer, save_model_dir, logger, config, is_best=True, prefix="best_accuracy", best_model_dict=best_model_dict, epoch=epoch, global_step=global_step)
-                best_str = "best metric, {}".format(", ".join(["{}: {}".format(k, v) for k, v in best_model_dict.items()]))
+                    save_model(
+                        model,
+                        optimizer,
+                        save_model_dir,
+                        logger,
+                        config,
+                        is_best=True,
+                        prefix="best_accuracy",
+                        best_model_dict=best_model_dict,
+                        epoch=epoch,
+                        global_step=global_step,
+                    )
+                best_str = "best metric, {}".format(
+                    ", ".join(["{}: {}".format(k, v) for k, v in best_model_dict.items()])
+                )
                 logger.info(best_str)
                 # logger best metric
                 if log_writer is not None:
-                    log_writer.log_metrics(metrics={"best_{}".format(main_indicator): best_model_dict[main_indicator]}, prefix="EVAL", step=global_step)
+                    log_writer.log_metrics(
+                        metrics={"best_{}".format(main_indicator): best_model_dict[main_indicator]},
+                        prefix="EVAL",
+                        step=global_step,
+                    )
 
                     log_writer.log_model(is_best=True, prefix="best_accuracy", metadata=best_model_dict)
 
             reader_start = time.time()
         if dist.get_rank() == 0:
-            save_model(model, optimizer, save_model_dir, logger, config, is_best=False, prefix="latest", best_model_dict=best_model_dict, epoch=epoch, global_step=global_step)
+            save_model(
+                model,
+                optimizer,
+                save_model_dir,
+                logger,
+                config,
+                is_best=False,
+                prefix="latest",
+                best_model_dict=best_model_dict,
+                epoch=epoch,
+                global_step=global_step,
+            )
 
             if log_writer is not None:
                 log_writer.log_model(is_best=False, prefix="latest")
 
         if dist.get_rank() == 0 and epoch > 0 and epoch % save_epoch_step == 0:
-            save_model(model, optimizer, save_model_dir, logger, config, is_best=False, prefix="iter_epoch_{}".format(epoch), best_model_dict=best_model_dict, epoch=epoch, global_step=global_step)
+            save_model(
+                model,
+                optimizer,
+                save_model_dir,
+                logger,
+                config,
+                is_best=False,
+                prefix="iter_epoch_{}".format(epoch),
+                best_model_dict=best_model_dict,
+                epoch=epoch,
+                global_step=global_step,
+            )
             if log_writer is not None:
                 log_writer.log_model(is_best=False, prefix="iter_epoch_{}".format(epoch))
 
@@ -380,7 +456,17 @@ def train(
     return
 
 
-def eval(model, valid_dataloader, post_process_class, eval_class, model_type=None, extra_input=False, scaler=None, amp_level="O2", amp_custom_black_list=[]):
+def eval(
+    model,
+    valid_dataloader,
+    post_process_class,
+    eval_class,
+    model_type=None,
+    extra_input=False,
+    scaler=None,
+    amp_level="O2",
+    amp_custom_black_list=[],
+):
     model.eval()
     with torch.no_grad():
         total_frame = 0.0
@@ -473,7 +559,9 @@ def update_center(char_center, post_result, preds):
             for idx_time in range(len(logit)):
                 index = logit[idx_time]
                 if index in char_center.keys():
-                    char_center[index][0] = (char_center[index][0] * char_center[index][1] + feat[idx_time]) / (char_center[index][1] + 1)
+                    char_center[index][0] = (char_center[index][0] * char_center[index][1] + feat[idx_time]) / (
+                        char_center[index][1] + 1
+                    )
                     char_center[index][1] += 1
                 else:
                     char_center[index] = [feat[idx_time], 1]

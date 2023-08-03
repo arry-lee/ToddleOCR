@@ -39,12 +39,30 @@ class Momentum(object):
 
     def __call__(self, model):
         train_params = [param for param in model.parameters() if param.trainable is True]
-        opt = optim.Momentum(learning_rate=self.learning_rate, momentum=self.momentum, weight_decay=self.weight_decay, grad_clip=self.grad_clip, parameters=train_params)
+        opt = optim.Momentum(
+            learning_rate=self.learning_rate,
+            momentum=self.momentum,
+            weight_decay=self.weight_decay,
+            grad_clip=self.grad_clip,
+            parameters=train_params,
+        )
         return opt
 
 
 class Adam(object):
-    def __init__(self, learning_rate=0.001, beta1=0.9, beta2=0.999, epsilon=1e-08, parameter_list=None, weight_decay=None, grad_clip=None, name=None, lazy_mode=False, **kwargs):
+    def __init__(
+        self,
+        learning_rate=0.001,
+        beta1=0.9,
+        beta2=0.999,
+        epsilon=1e-08,
+        parameter_list=None,
+        weight_decay=None,
+        grad_clip=None,
+        name=None,
+        lazy_mode=False,
+        **kwargs
+    ):
         self.learning_rate = learning_rate
         self.beta1 = beta1
         self.beta2 = beta2
@@ -82,7 +100,10 @@ class Adam(object):
 
                 group_base_params = [param for param in model.parameters() if id(param) in total]
                 group_small_params = [param for param in model.parameters() if id(param) not in total]
-                train_params = [{"params": group_base_params}, {"params": group_small_params, "learning_rate": self.learning_rate.values[0] * 0.1}]
+                train_params = [
+                    {"params": group_base_params},
+                    {"params": group_small_params, "learning_rate": self.learning_rate.values[0] * 0.1},
+                ]
 
             else:
                 print("group lr currently only support VisionLAN in LF_2 training step")
@@ -127,12 +148,30 @@ class RMSProp(object):
 
     def __call__(self, model):
         train_params = [param for param in model.parameters() if param.trainable is True]
-        opt = optim.RMSProp(learning_rate=self.learning_rate, momentum=self.momentum, rho=self.rho, epsilon=self.epsilon, weight_decay=self.weight_decay, grad_clip=self.grad_clip, parameters=train_params)
+        opt = optim.RMSProp(
+            learning_rate=self.learning_rate,
+            momentum=self.momentum,
+            rho=self.rho,
+            epsilon=self.epsilon,
+            weight_decay=self.weight_decay,
+            grad_clip=self.grad_clip,
+            parameters=train_params,
+        )
         return opt
 
 
 class Adadelta(object):
-    def __init__(self, learning_rate=0.001, epsilon=1e-08, rho=0.95, parameter_list=None, weight_decay=None, grad_clip=None, name=None, **kwargs):
+    def __init__(
+        self,
+        learning_rate=0.001,
+        epsilon=1e-08,
+        rho=0.95,
+        parameter_list=None,
+        weight_decay=None,
+        grad_clip=None,
+        name=None,
+        **kwargs
+    ):
         self.learning_rate = learning_rate
         self.epsilon = epsilon
         self.rho = rho
@@ -144,12 +183,34 @@ class Adadelta(object):
 
     def __call__(self, model):
         train_params = [param for param in model.parameters() if param.trainable is True]
-        opt = optim.Adadelta(learning_rate=self.learning_rate, epsilon=self.epsilon, rho=self.rho, weight_decay=self.weight_decay, grad_clip=self.grad_clip, name=self.name, parameters=train_params)
+        opt = optim.Adadelta(
+            learning_rate=self.learning_rate,
+            epsilon=self.epsilon,
+            rho=self.rho,
+            weight_decay=self.weight_decay,
+            grad_clip=self.grad_clip,
+            name=self.name,
+            parameters=train_params,
+        )
         return opt
 
 
 class AdamW(object):
-    def __init__(self, learning_rate=0.001, beta1=0.9, beta2=0.999, epsilon=1e-8, weight_decay=0.01, multi_precision=False, grad_clip=None, no_weight_decay_name=None, one_dim_param_no_weight_decay=False, name=None, lazy_mode=False, **args):
+    def __init__(
+        self,
+        learning_rate=0.001,
+        beta1=0.9,
+        beta2=0.999,
+        epsilon=1e-8,
+        weight_decay=0.01,
+        multi_precision=False,
+        grad_clip=None,
+        no_weight_decay_name=None,
+        one_dim_param_no_weight_decay=False,
+        name=None,
+        lazy_mode=False,
+        **args
+    ):
         super().__init__()
         self.learning_rate = learning_rate
         self.beta1 = beta1
@@ -167,7 +228,9 @@ class AdamW(object):
     def __call__(self, model):
         parameters = [param for param in model.parameters() if param.trainable is True]
 
-        self.no_weight_decay_param_name_list = [p.name for n, p in model.named_parameters() if any(nd in n for nd in self.no_weight_decay_name_list)]
+        self.no_weight_decay_param_name_list = [
+            p.name for n, p in model.named_parameters() if any(nd in n for nd in self.no_weight_decay_name_list)
+        ]
 
         if self.one_dim_param_no_weight_decay:
             self.no_weight_decay_param_name_list += [p.name for n, p in model.named_parameters() if len(p.shape) == 1]

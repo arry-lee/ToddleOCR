@@ -80,7 +80,11 @@ class ResNet_ASTER(nn.Module):
         self.with_lstm = with_lstm
         self.n_group = n_group
 
-        self.layer0 = nn.Sequential(nn.Conv2d(in_channels, 32, kernel_size=(3, 3), stride=1, padding=1, bias=False), nn.BatchNorm2d(32), nn.ReLU())
+        self.layer0 = nn.Sequential(
+            nn.Conv2d(in_channels, 32, kernel_size=(3, 3), stride=1, padding=1, bias=False),
+            nn.BatchNorm2d(32),
+            nn.ReLU(),
+        )
 
         self.inplanes = 32
         self.layer1 = self._make_layer(32, 3, [2, 2])  # [16, 50]

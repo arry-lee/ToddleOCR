@@ -99,7 +99,9 @@ def train(config, scaler=None):
     # load model
     pre_best_model_dict = load_model(config, model, optimizer)
     if len(pre_best_model_dict) > 0:
-        pre_str = "The metric of loaded metric as follows {}".format(", ".join(["{}: {}".format(k, v) for k, v in pre_best_model_dict.items()]))
+        pre_str = "The metric of loaded metric as follows {}".format(
+            ", ".join(["{}: {}".format(k, v) for k, v in pre_best_model_dict.items()])
+        )
         logger.info(pre_str)
 
     # about slim prune and quant
@@ -169,7 +171,9 @@ def train(config, scaler=None):
                 is_best = True
             else:
                 is_best = False
-            logger.info(f"The best acc: acc_topk1: {best_acc['top1'].numpy()[0]}, acc_top5: {best_acc['top5'].numpy()[0]}, best_epoch: {best_acc['epoch']}")
+            logger.info(
+                f"The best acc: acc_topk1: {best_acc['top1'].numpy()[0]}, acc_top5: {best_acc['top5'].numpy()[0]}, best_epoch: {best_acc['epoch']}"
+            )
             save_model(model, optimizer, config["save_model_dir"], logger, is_best, prefix="cls")
 
 
@@ -202,7 +206,9 @@ def train_distill(config, scaler=None):
     # load model
     pre_best_model_dict = load_model(config, model, optimizer)
     if len(pre_best_model_dict) > 0:
-        pre_str = "The metric of loaded metric as follows {}".format(", ".join(["{}: {}".format(k, v) for k, v in pre_best_model_dict.items()]))
+        pre_str = "The metric of loaded metric as follows {}".format(
+            ", ".join(["{}: {}".format(k, v) for k, v in pre_best_model_dict.items()])
+        )
         logger.info(pre_str)
 
     model.train()
@@ -232,7 +238,11 @@ def train_distill(config, scaler=None):
             acc = metric_func(outs["student"], label)
 
             # cal loss
-            avg_loss = loss_func_distill(outs, label)["student"] + loss_func_distill(outs, label)["student1"] + loss_func_dml(outs, label)["student_student1"]
+            avg_loss = (
+                loss_func_distill(outs, label)["student"]
+                + loss_func_distill(outs, label)["student1"]
+                + loss_func_dml(outs, label)["student_student1"]
+            )
 
             # backward
             if scaler is None:
@@ -264,7 +274,9 @@ def train_distill(config, scaler=None):
                 is_best = True
             else:
                 is_best = False
-            logger.info(f"The best acc: acc_topk1: {best_acc['top1'].numpy()[0]}, acc_top5: {best_acc['top5'].numpy()[0]}, best_epoch: {best_acc['epoch']}")
+            logger.info(
+                f"The best acc: acc_topk1: {best_acc['top1'].numpy()[0]}, acc_top5: {best_acc['top5'].numpy()[0]}, best_epoch: {best_acc['epoch']}"
+            )
 
             save_model(model, optimizer, config["save_model_dir"], logger, is_best, prefix="cls_distill")
 
@@ -290,7 +302,9 @@ def train_distill_multiopt(config, scaler=None):
     # load model
     pre_best_model_dict = load_model(config, model, optimizer)
     if len(pre_best_model_dict) > 0:
-        pre_str = "The metric of loaded metric as follows {}".format(", ".join(["{}: {}".format(k, v) for k, v in pre_best_model_dict.items()]))
+        pre_str = "The metric of loaded metric as follows {}".format(
+            ", ".join(["{}: {}".format(k, v) for k, v in pre_best_model_dict.items()])
+        )
         logger.info(pre_str)
 
     # quant train
@@ -373,8 +387,12 @@ def train_distill_multiopt(config, scaler=None):
                 is_best = True
             else:
                 is_best = False
-            logger.info(f"The best acc: acc_topk1: {best_acc['top1'].numpy()[0]}, acc_top5: {best_acc['top5'].numpy()[0]}, best_epoch: {best_acc['epoch']}")
-            save_model(model, [optimizer, optimizer1], config["save_model_dir"], logger, is_best, prefix="cls_distill_multiopt")
+            logger.info(
+                f"The best acc: acc_topk1: {best_acc['top1'].numpy()[0]}, acc_top5: {best_acc['top5'].numpy()[0]}, best_epoch: {best_acc['epoch']}"
+            )
+            save_model(
+                model, [optimizer, optimizer1], config["save_model_dir"], logger, is_best, prefix="cls_distill_multiopt"
+            )
 
 
 def eval(config, model):

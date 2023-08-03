@@ -16,10 +16,10 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import numpy as np
-
 import os
 import sys
+
+import numpy as np
 
 __dir__ = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(__dir__)
@@ -38,7 +38,6 @@ from ppocr.utils.save_load import load_model
 from ppocr.utils.utility import get_image_file_list
 import tools.program as program
 from PIL import Image, ImageDraw, ImageFont
-import math
 
 
 def draw_e2e_res_for_chinese(image, boxes, txts, config, img_name, font_path="./doc/simfang.ttf"):
@@ -78,7 +77,15 @@ def draw_e2e_res(dt_boxes, strs, config, img, img_name):
         for box, str in zip(dt_boxes, strs):
             box = box.astype(np.int32).reshape((-1, 1, 2))
             cv2.polylines(src_im, [box], True, color=(255, 255, 0), thickness=2)
-            cv2.putText(src_im, str, org=(int(box[0, 0, 0]), int(box[0, 0, 1])), fontFace=cv2.FONT_HERSHEY_COMPLEX, fontScale=0.7, color=(0, 255, 0), thickness=1)
+            cv2.putText(
+                src_im,
+                str,
+                org=(int(box[0, 0, 0]), int(box[0, 0, 1])),
+                fontFace=cv2.FONT_HERSHEY_COMPLEX,
+                fontScale=0.7,
+                color=(0, 255, 0),
+                thickness=1,
+            )
         save_det_path = os.path.dirname(config["Global"]["save_res_path"]) + "/e2e_results/"
         if not os.path.exists(save_det_path):
             os.makedirs(save_det_path)

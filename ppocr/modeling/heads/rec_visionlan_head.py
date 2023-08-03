@@ -91,7 +91,10 @@ class MultiHeadAttention(nn.Module):
 
         self.attention = ScaledDotProductAttention(temperature=np.power(d_k, 0.5))
         self.layer_norm = nn.LayerNorm(d_model)
-        self.fc = nn.Linear(n_head * d_v, d_model, )
+        self.fc = nn.Linear(
+            n_head * d_v,
+            d_model,
+        )
         self.dropout = nn.Dropout(dropout)
 
     def forward(self, q, k, v, mask=None):
@@ -158,11 +161,24 @@ class EncoderLayer(nn.Module):
 
 
 class Transformer_Encoder(nn.Module):
-    def __init__(self, n_layers=2, n_head=8, d_word_vec=512, d_k=64, d_v=64, d_model=512, d_inner=2048, dropout=0.1, n_position=256):
+    def __init__(
+        self,
+        n_layers=2,
+        n_head=8,
+        d_word_vec=512,
+        d_k=64,
+        d_v=64,
+        d_model=512,
+        d_inner=2048,
+        dropout=0.1,
+        n_position=256,
+    ):
         super(Transformer_Encoder, self).__init__()
         self.position_enc = PositionalEncoding(d_word_vec, n_position=n_position)
         self.dropout = nn.Dropout(p=dropout)
-        self.layer_stack = nn.ModuleList([EncoderLayer(d_model, d_inner, n_head, d_k, d_v, dropout=dropout) for _ in range(n_layers)])
+        self.layer_stack = nn.ModuleList(
+            [EncoderLayer(d_model, d_inner, n_head, d_k, d_v, dropout=dropout) for _ in range(n_layers)]
+        )
         self.layer_norm = nn.LayerNorm(d_model, epsilon=1e-6)
 
     def forward(self, enc_output, src_mask, return_attns=False):
@@ -295,7 +311,9 @@ class MLM_VRM(nn.Module):
         super(MLM_VRM, self).__init__()
         self.MLM = MLM(n_dim=n_dim, n_position=n_position, max_text_length=max_text_length)
         self.SequenceModeling = Transformer_Encoder(n_layers=n_layers, n_position=n_position)
-        self.Prediction = Prediction(n_dim=n_dim, n_position=n_position, N_max_character=max_text_length + 1, n_class=nclass)  # N_max_character = 1 eos + 25 characters
+        self.Prediction = Prediction(
+            n_dim=n_dim, n_position=n_position, N_max_character=max_text_length + 1, n_class=nclass
+        )  # N_max_character = 1 eos + 25 characters
         self.nclass = nclass
         self.max_text_length = max_text_length
 
@@ -356,9 +374,24 @@ class VLHead(nn.Module):
     Architecture of VisionLAN
     """
 
-    def __init__(self, in_channels, out_channels=36, n_layers=3, n_position=256, n_dim=512, max_text_length=25, training_step="LA"):
+    def __init__(
+        self,
+        in_channels,
+        out_channels=36,
+        n_layers=3,
+        n_position=256,
+        n_dim=512,
+        max_text_length=25,
+        training_step="LA",
+    ):
         super(VLHead, self).__init__()
-        self.MLM_VRM = MLM_VRM(n_layers=n_layers, n_position=n_position, n_dim=n_dim, max_text_length=max_text_length, nclass=out_channels + 1)
+        self.MLM_VRM = MLM_VRM(
+            n_layers=n_layers,
+            n_position=n_position,
+            n_dim=n_dim,
+            max_text_length=max_text_length,
+            nclass=out_channels + 1,
+        )
         self.training_step = training_step
 
     def forward(self, feat, targets=None):

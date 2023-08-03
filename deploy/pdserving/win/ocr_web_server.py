@@ -35,7 +35,14 @@ import base64
 
 class OCRService(WebService):
     def init_det_debugger(self, det_model_config):
-        self.det_preprocess = Sequential([ResizeByFactor(32, 960), Div(255), Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]), Transpose((2, 0, 1))])
+        self.det_preprocess = Sequential(
+            [
+                ResizeByFactor(32, 960),
+                Div(255),
+                Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+                Transpose((2, 0, 1)),
+            ]
+        )
         self.det_client = LocalPredictor()
         if sys.argv[1] == "gpu":
             self.det_client.load_model_config(det_model_config, use_gpu=True, gpu_id=0)
@@ -54,7 +61,9 @@ class OCRService(WebService):
         det_img = det_img.copy()
         det_out = self.det_client.predict(feed={"x": det_img}, fetch=["save_infer_model/scale_0.tmp_1"], batch=True)
         filter_func = FilterBoxes(10, 10)
-        post_func = DBPostProcess({"thresh": 0.3, "box_thresh": 0.5, "max_candidates": 1000, "unclip_ratio": 1.5, "min_size": 3})
+        post_func = DBPostProcess(
+            {"thresh": 0.3, "box_thresh": 0.5, "max_candidates": 1000, "unclip_ratio": 1.5, "min_size": 3}
+        )
         sorted_boxes = SortedBoxes()
         ratio_list = [float(new_h) / ori_h, float(new_w) / ori_w]
         dt_boxes_list = post_func(det_out["save_infer_model/scale_0.tmp_1"], [ratio_list])

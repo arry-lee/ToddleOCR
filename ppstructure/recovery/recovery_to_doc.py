@@ -103,7 +103,11 @@ def sorted_layout_boxes(res, w):
         if i >= num_boxes:
             break
         if i == num_boxes - 1:
-            if _boxes[i]["bbox"][1] > _boxes[i - 1]["bbox"][3] and _boxes[i]["bbox"][0] < w / 2 and _boxes[i]["bbox"][2] > w / 2:
+            if (
+                _boxes[i]["bbox"][1] > _boxes[i - 1]["bbox"][3]
+                and _boxes[i]["bbox"][0] < w / 2
+                and _boxes[i]["bbox"][2] > w / 2
+            ):
                 new_res += res_left
                 new_res += res_right
                 _boxes[i]["layout"] = "single"

@@ -19,10 +19,10 @@ https://github.com/open-mmlab/mmocr/blob/main/mmocr/models/textdet/postprocess/d
 import functools
 import operator
 
+import cv2
 import numpy as np
 import torch
 from numpy.linalg import norm
-import cv2
 
 
 class Node:
@@ -91,7 +91,9 @@ def connected_components(nodes, score_dict, link_thr):
         node_queue = [node]
         while node_queue:
             node = node_queue.pop(0)
-            neighbors = set([neighbor for neighbor in node.links if score_dict[tuple(sorted([node.ind, neighbor.ind]))] >= link_thr])
+            neighbors = set(
+                [neighbor for neighbor in node.links if score_dict[tuple(sorted([node.ind, neighbor.ind]))] >= link_thr]
+            )
             neighbors.difference_update(cluster)
             nodes.difference_update(neighbors)
             cluster.update(neighbors)
@@ -308,6 +310,10 @@ class DRRGPostprocess(object):
         for b in boundaries:
             sz = len(b)
             scores.append(b[-1])
-            b = (np.array(b[: sz - 1]) * (np.tile(scale_factor[:2], int((sz - 1) / 2)).reshape(1, sz - 1))).flatten().tolist()
+            b = (
+                (np.array(b[: sz - 1]) * (np.tile(scale_factor[:2], int((sz - 1) / 2)).reshape(1, sz - 1)))
+                .flatten()
+                .tolist()
+            )
             boxes.append(np.array(b).reshape([-1, 2]))
         return boxes, scores

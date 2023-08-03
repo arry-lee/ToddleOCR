@@ -16,10 +16,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from torch.nn import L1Loss
-from torch.nn import MSELoss as L2Loss
-from torch.nn import SmoothL1Loss
-
 
 class CELoss(nn.Module):
     def __init__(self, epsilon=None):
@@ -46,11 +42,11 @@ class CELoss(nn.Module):
             loss = torch.sum(x * label, dim=-1)
         else:
             if label.shape[-1] == x.shape[-1]:
-                label = F.softmax(label,dim=-1)
+                label = F.softmax(label, dim=-1)
                 soft_label = True
             else:
                 soft_label = False
-            loss = F.cross_entropy(x, label=label, soft_label=soft_label)
+            loss = F.cross_entropy(x, label)
         return loss
 
 

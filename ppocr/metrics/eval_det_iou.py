@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from collections import namedtuple
+
 import numpy as np
 from shapely.geometry import Polygon
 
@@ -96,7 +97,11 @@ class DetectionIoUEvaluator(object):
             if dontCare:
                 gtDontCarePolsNum.append(len(gtPols) - 1)
 
-        evaluationLog += "GT polygons: " + str(len(gtPols)) + (" (" + str(len(gtDontCarePolsNum)) + " don't care)\n" if len(gtDontCarePolsNum) > 0 else "\n")
+        evaluationLog += (
+            "GT polygons: "
+            + str(len(gtPols))
+            + (" (" + str(len(gtDontCarePolsNum)) + " don't care)\n" if len(gtDontCarePolsNum) > 0 else "\n")
+        )
 
         for n in range(len(pred)):
             points = pred[n]["points"]
@@ -116,7 +121,11 @@ class DetectionIoUEvaluator(object):
                         detDontCarePolsNum.append(len(detPols) - 1)
                         break
 
-        evaluationLog += "DET polygons: " + str(len(detPols)) + (" (" + str(len(detDontCarePolsNum)) + " don't care)\n" if len(detDontCarePolsNum) > 0 else "\n")
+        evaluationLog += (
+            "DET polygons: "
+            + str(len(detPols))
+            + (" (" + str(len(detDontCarePolsNum)) + " don't care)\n" if len(detDontCarePolsNum) > 0 else "\n")
+        )
 
         if len(gtPols) > 0 and len(detPols) > 0:
             # Calculate IoU and precision matrixs
@@ -132,7 +141,12 @@ class DetectionIoUEvaluator(object):
 
             for gtNum in range(len(gtPols)):
                 for detNum in range(len(detPols)):
-                    if gtRectMat[gtNum] == 0 and detRectMat[detNum] == 0 and gtNum not in gtDontCarePolsNum and detNum not in detDontCarePolsNum:
+                    if (
+                        gtRectMat[gtNum] == 0
+                        and detRectMat[detNum] == 0
+                        and gtNum not in gtDontCarePolsNum
+                        and detNum not in detDontCarePolsNum
+                    ):
                         if iouMat[gtNum, detNum] > self.iou_constraint:
                             gtRectMat[gtNum] = 1
                             detRectMat[detNum] = 1
@@ -174,7 +188,11 @@ class DetectionIoUEvaluator(object):
 
         methodRecall = 0 if numGlobalCareGt == 0 else float(matchedSum) / numGlobalCareGt
         methodPrecision = 0 if numGlobalCareDet == 0 else float(matchedSum) / numGlobalCareDet
-        methodHmean = 0 if methodRecall + methodPrecision == 0 else 2 * methodRecall * methodPrecision / (methodRecall + methodPrecision)
+        methodHmean = (
+            0
+            if methodRecall + methodPrecision == 0
+            else 2 * methodRecall * methodPrecision / (methodRecall + methodPrecision)
+        )
         methodMetrics = {"precision": methodPrecision, "recall": methodRecall, "hmean": methodHmean}
 
         return methodMetrics

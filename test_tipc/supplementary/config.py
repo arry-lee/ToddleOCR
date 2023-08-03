@@ -17,7 +17,13 @@ class ArgsParser(ArgumentParser):
         super(ArgsParser, self).__init__(formatter_class=RawDescriptionHelpFormatter)
         self.add_argument("-c", "--config", help="configuration file to use")
         self.add_argument("-o", "--opt", nargs="+", help="set configuration options")
-        self.add_argument("-p", "--profiler_options", type=str, default=None, help='The option of profiler, which should be in format "key1=value1;key2=value2;key3=value3".')
+        self.add_argument(
+            "-p",
+            "--profiler_options",
+            type=str,
+            default=None,
+            help='The option of profiler, which should be in format "key1=value1;key2=value2;key3=value3".',
+        )
 
     def parse_args(self, argv=None):
         args = super(ArgsParser, self).parse_args(argv)
@@ -87,7 +93,11 @@ def merge_config(config):
                 global_config[key] = value
         else:
             sub_keys = key.split(".")
-            assert sub_keys[0] in global_config, "the sub_keys can only be one of global_config: {}, but get: {}, please check your running command".format(global_config.keys(), sub_keys[0])
+            assert (
+                sub_keys[0] in global_config
+            ), "the sub_keys can only be one of global_config: {}, but get: {}, please check your running command".format(
+                global_config.keys(), sub_keys[0]
+            )
             cur = global_config[sub_keys[0]]
             for idx, sub_key in enumerate(sub_keys[1:]):
                 if idx == len(sub_keys) - 2:

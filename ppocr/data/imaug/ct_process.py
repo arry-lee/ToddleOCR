@@ -103,7 +103,10 @@ class MakeShrink:
         training_mask_distance = np.ones(img.shape[0:2], dtype="uint8")
 
         for i in range(len(bboxes)):
-            bboxes[i] = np.reshape(bboxes[i] * ([scale_factor[0], scale_factor[1]] * (bboxes[i].shape[0] // 2)), (bboxes[i].shape[0] // 2, 2)).astype("int32")
+            bboxes[i] = np.reshape(
+                bboxes[i] * ([scale_factor[0], scale_factor[1]] * (bboxes[i].shape[0] // 2)),
+                (bboxes[i].shape[0] // 2, 2),
+            ).astype("int32")
 
         for i in range(len(bboxes)):
             # different value for different bbox
@@ -147,7 +150,15 @@ class MakeShrink:
         # gt_kernel_inner: text kernel reference
         # training_mask_distance: word without anno = 0, else 1
 
-        data["image"] = [img, gt_instance, training_mask, gt_kernel_instance, gt_kernel, gt_kernel_inner, training_mask_distance]
+        data["image"] = [
+            img,
+            gt_instance,
+            training_mask,
+            gt_kernel_instance,
+            gt_kernel,
+            gt_kernel_inner,
+            training_mask_distance,
+        ]
         return data
 
 
@@ -221,7 +232,15 @@ class GroupRandomCropPadding:
             if len(imgs[idx].shape) == 3:
                 s3_length = int(imgs[idx].shape[-1])
                 img = imgs[idx][i : i + t_h, j : j + t_w, :]
-                img_p = cv2.copyMakeBorder(img, 0, p_h - t_h, 0, p_w - t_w, borderType=cv2.BORDER_CONSTANT, value=tuple(0 for i in range(s3_length)))
+                img_p = cv2.copyMakeBorder(
+                    img,
+                    0,
+                    p_h - t_h,
+                    0,
+                    p_w - t_w,
+                    borderType=cv2.BORDER_CONSTANT,
+                    value=tuple(0 for i in range(s3_length)),
+                )
             else:
                 img = imgs[idx][i : i + t_h, j : j + t_w]
                 img_p = cv2.copyMakeBorder(img, 0, p_h - t_h, 0, p_w - t_w, borderType=cv2.BORDER_CONSTANT, value=(0,))
@@ -239,7 +258,9 @@ class MakeCentripetalShift:
         A = As.shape[0]  # small
         B = Bs.shape[0]  # large
 
-        dis = np.sqrt(np.sum((As[:, np.newaxis, :].repeat(B, axis=1) - Bs[np.newaxis, :, :].repeat(A, axis=0)) ** 2, axis=-1))
+        dis = np.sqrt(
+            np.sum((As[:, np.newaxis, :].repeat(B, axis=1) - Bs[np.newaxis, :, :].repeat(A, axis=0)) ** 2, axis=-1)
+        )
 
         ind = np.argmin(dis, axis=-1)
 
@@ -248,7 +269,15 @@ class MakeCentripetalShift:
     def __call__(self, data):
         imgs = data["image"]
 
-        img, gt_instance, training_mask, gt_kernel_instance, gt_kernel, gt_kernel_inner, training_mask_distance = imgs[0], imgs[1], imgs[2], imgs[3], imgs[4], imgs[5], imgs[6]
+        img, gt_instance, training_mask, gt_kernel_instance, gt_kernel, gt_kernel_inner, training_mask_distance = (
+            imgs[0],
+            imgs[1],
+            imgs[2],
+            imgs[3],
+            imgs[4],
+            imgs[5],
+            imgs[6],
+        )
 
         max_instance = np.max(gt_instance)  # num bbox
 

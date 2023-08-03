@@ -12,10 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import torch
 import numbers
-import numpy as np
 from collections import defaultdict
+
+import numpy as np
+import torch
 
 
 class DictCollator(object):
@@ -95,8 +96,12 @@ class DyMaskCollator(object):
             max_length = len(item[1]) if len(item[1]) > max_length else max_length
             proper_items.append(item)
 
-        images, image_masks = np.zeros((len(proper_items), channel, max_height, max_width), dtype="float32"), np.zeros((len(proper_items), 1, max_height, max_width), dtype="float32")
-        labels, label_masks = np.zeros((len(proper_items), max_length), dtype="int64"), np.zeros((len(proper_items), max_length), dtype="int64")
+        images, image_masks = np.zeros((len(proper_items), channel, max_height, max_width), dtype="float32"), np.zeros(
+            (len(proper_items), 1, max_height, max_width), dtype="float32"
+        )
+        labels, label_masks = np.zeros((len(proper_items), max_length), dtype="int64"), np.zeros(
+            (len(proper_items), max_length), dtype="int64"
+        )
 
         for i in range(len(proper_items)):
             _, h, w = proper_items[i][0].shape

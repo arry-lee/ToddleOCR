@@ -19,11 +19,12 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import math
 import sys
-import six
+
 import cv2
 import numpy as np
-import math
+import six
 from PIL import Image
 
 
@@ -140,7 +141,9 @@ class Pad(object):
         img_h, img_w = img.shape[0], img.shape[1]
         if self.size:
             resize_h2, resize_w2 = self.size
-            assert img_h < resize_h2 and img_w < resize_w2, "(h, w) of target size should be greater than (img_h, img_w)"
+            assert (
+                img_h < resize_h2 and img_w < resize_w2
+            ), "(h, w) of target size should be greater than (img_h, img_w)"
         else:
             resize_h2 = max(int(math.ceil(img.shape[0] / self.size_div) * self.size_div), self.size_div)
             resize_w2 = max(int(math.ceil(img.shape[1] / self.size_div) * self.size_div), self.size_div)
@@ -421,7 +424,17 @@ class KieResize(object):
 
 
 class SRResize(object):
-    def __init__(self, imgH=32, imgW=128, down_sample_scale=4, keep_ratio=False, min_ratio=1, mask=False, infer_mode=False, **kwargs):
+    def __init__(
+        self,
+        imgH=32,
+        imgW=128,
+        down_sample_scale=4,
+        keep_ratio=False,
+        min_ratio=1,
+        mask=False,
+        infer_mode=False,
+        **kwargs
+    ):
         self.imgH = imgH
         self.imgW = imgW
         self.keep_ratio = keep_ratio

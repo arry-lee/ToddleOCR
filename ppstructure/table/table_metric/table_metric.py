@@ -29,7 +29,12 @@ class TableTree(Tree):
     def bracket(self):
         """Show tree using brackets notation"""
         if self.tag == "td":
-            result = '"tag": %s, "colspan": %d, "rowspan": %d, "text": %s' % (self.tag, self.colspan, self.rowspan, self.content)
+            result = '"tag": %s, "colspan": %d, "rowspan": %d, "text": %s' % (
+                self.tag,
+                self.colspan,
+                self.rowspan,
+                self.content,
+            )
         else:
             result = '"tag": %s' % self.tag
         for child in self.children:
@@ -121,7 +126,9 @@ class TEDS(object):
                 self.__tokens__ = []
                 self.tokenize(node)
                 cell = self.__tokens__[1:-1].copy()
-            new_node = TableTree(node.tag, int(node.attrib.get("colspan", "1")), int(node.attrib.get("rowspan", "1")), cell, *deque())
+            new_node = TableTree(
+                node.tag, int(node.attrib.get("colspan", "1")), int(node.attrib.get("rowspan", "1")), cell, *deque()
+            )
         else:
             new_node = TableTree(node.tag, None, None, None, *deque())
         if parent is not None:
@@ -166,9 +173,13 @@ class TEDS(object):
         """
         samples = true_json.keys()
         if self.n_jobs == 1:
-            scores = [self.evaluate(pred_json.get(filename, ""), true_json[filename]["html"]) for filename in tqdm(samples)]
+            scores = [
+                self.evaluate(pred_json.get(filename, ""), true_json[filename]["html"]) for filename in tqdm(samples)
+            ]
         else:
-            inputs = [{"pred": pred_json.get(filename, ""), "true": true_json[filename]["html"]} for filename in samples]
+            inputs = [
+                {"pred": pred_json.get(filename, ""), "true": true_json[filename]["html"]} for filename in samples
+            ]
             scores = parallel_process(inputs, self.evaluate, use_kwargs=True, n_jobs=self.n_jobs, front_num=1)
         scores = dict(zip(samples, scores))
         return scores

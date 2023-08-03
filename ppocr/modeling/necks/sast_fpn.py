@@ -92,11 +92,23 @@ class FPN_Up_Fusion(nn.Module):
 
         self.g0_conv = DeConvBNLayer(out_channels[0], out_channels[1], 4, 2, act=None, name="fpn_up_g0")
 
-        self.g1_conv = nn.Sequential(ConvBNLayer(out_channels[1], out_channels[1], 3, 1, act="relu", name="fpn_up_g1_1"), DeConvBNLayer(out_channels[1], out_channels[2], 4, 2, act=None, name="fpn_up_g1_2"))
-        self.g2_conv = nn.Sequential(ConvBNLayer(out_channels[2], out_channels[2], 3, 1, act="relu", name="fpn_up_g2_1"), DeConvBNLayer(out_channels[2], out_channels[3], 4, 2, act=None, name="fpn_up_g2_2"))
-        self.g3_conv = nn.Sequential(ConvBNLayer(out_channels[3], out_channels[3], 3, 1, act="relu", name="fpn_up_g3_1"), DeConvBNLayer(out_channels[3], out_channels[4], 4, 2, act=None, name="fpn_up_g3_2"))
+        self.g1_conv = nn.Sequential(
+            ConvBNLayer(out_channels[1], out_channels[1], 3, 1, act="relu", name="fpn_up_g1_1"),
+            DeConvBNLayer(out_channels[1], out_channels[2], 4, 2, act=None, name="fpn_up_g1_2"),
+        )
+        self.g2_conv = nn.Sequential(
+            ConvBNLayer(out_channels[2], out_channels[2], 3, 1, act="relu", name="fpn_up_g2_1"),
+            DeConvBNLayer(out_channels[2], out_channels[3], 4, 2, act=None, name="fpn_up_g2_2"),
+        )
+        self.g3_conv = nn.Sequential(
+            ConvBNLayer(out_channels[3], out_channels[3], 3, 1, act="relu", name="fpn_up_g3_1"),
+            DeConvBNLayer(out_channels[3], out_channels[4], 4, 2, act=None, name="fpn_up_g3_2"),
+        )
 
-        self.g4_conv = nn.Sequential(ConvBNLayer(out_channels[4], out_channels[4], 3, 1, act="relu", name="fpn_up_fusion_1"), ConvBNLayer(out_channels[4], out_channels[4], 1, 1, act=None, name="fpn_up_fusion_2"))
+        self.g4_conv = nn.Sequential(
+            ConvBNLayer(out_channels[4], out_channels[4], 3, 1, act="relu", name="fpn_up_fusion_1"),
+            ConvBNLayer(out_channels[4], out_channels[4], 1, 1, act=None, name="fpn_up_fusion_2"),
+        )
 
     def _add_relu(self, x1, x2):
         x = torch.add(x=x1, y=x2)
@@ -132,9 +144,15 @@ class FPN_Down_Fusion(nn.Module):
 
         self.g0_conv = ConvBNLayer(out_channels[0], out_channels[1], 3, 2, act=None, name="fpn_down_g0")
 
-        self.g1_conv = nn.Sequential(ConvBNLayer(out_channels[1], out_channels[1], 3, 1, act="relu", name="fpn_down_g1_1"), ConvBNLayer(out_channels[1], out_channels[2], 3, 2, act=None, name="fpn_down_g1_2"))
+        self.g1_conv = nn.Sequential(
+            ConvBNLayer(out_channels[1], out_channels[1], 3, 1, act="relu", name="fpn_down_g1_1"),
+            ConvBNLayer(out_channels[1], out_channels[2], 3, 2, act=None, name="fpn_down_g1_2"),
+        )
 
-        self.g2_conv = nn.Sequential(ConvBNLayer(out_channels[2], out_channels[2], 3, 1, act="relu", name="fpn_down_fusion_1"), ConvBNLayer(out_channels[2], out_channels[2], 1, 1, act=None, name="fpn_down_fusion_2"))
+        self.g2_conv = nn.Sequential(
+            ConvBNLayer(out_channels[2], out_channels[2], 3, 1, act="relu", name="fpn_down_fusion_1"),
+            ConvBNLayer(out_channels[2], out_channels[2], 1, 1, act=None, name="fpn_down_fusion_2"),
+        )
 
     def forward(self, x):
         f = x[:3]

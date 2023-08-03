@@ -102,8 +102,16 @@ class VQAReTokenMetric(object):
             for rel_type in relation_types:
                 # strict mode takes argument types into account
                 if mode == "strict":
-                    pred_rels = {(rel["head"], rel["head_type"], rel["tail"], rel["tail_type"]) for rel in pred_sent if rel["type"] == rel_type}
-                    gt_rels = {(rel["head"], rel["head_type"], rel["tail"], rel["tail_type"]) for rel in gt_sent if rel["type"] == rel_type}
+                    pred_rels = {
+                        (rel["head"], rel["head_type"], rel["tail"], rel["tail_type"])
+                        for rel in pred_sent
+                        if rel["type"] == rel_type
+                    }
+                    gt_rels = {
+                        (rel["head"], rel["head_type"], rel["tail"], rel["tail_type"])
+                        for rel in gt_sent
+                        if rel["type"] == rel_type
+                    }
 
                 # boundaries mode only takes argument spans into account
                 elif mode == "boundaries":
@@ -123,7 +131,9 @@ class VQAReTokenMetric(object):
                 scores[rel_type]["p"], scores[rel_type]["r"] = 0, 0
 
             if not scores[rel_type]["p"] + scores[rel_type]["r"] == 0:
-                scores[rel_type]["f1"] = 2 * scores[rel_type]["p"] * scores[rel_type]["r"] / (scores[rel_type]["p"] + scores[rel_type]["r"])
+                scores[rel_type]["f1"] = (
+                    2 * scores[rel_type]["p"] * scores[rel_type]["r"] / (scores[rel_type]["p"] + scores[rel_type]["r"])
+                )
             else:
                 scores[rel_type]["f1"] = 0
 

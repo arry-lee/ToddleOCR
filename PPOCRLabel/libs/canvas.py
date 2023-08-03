@@ -137,7 +137,9 @@ class Canvas(QWidget):
                 # Display annotation width and height while drawing
                 currentWidth = abs(self.current[0].x() - pos.x())
                 currentHeight = abs(self.current[0].y() - pos.y())
-                self.parent().window().labelCoordinates.setText("Width: %d, Height: %d / X: %d; Y: %d" % (currentWidth, currentHeight, pos.x(), pos.y()))
+                self.parent().window().labelCoordinates.setText(
+                    "Width: %d, Height: %d / X: %d; Y: %d" % (currentWidth, currentHeight, pos.x(), pos.y())
+                )
 
                 color = self.drawingLineColor
                 if self.outOfPixmap(pos):
@@ -451,11 +453,19 @@ class Canvas(QWidget):
             min_size = min(abs(pos.x() - opposite_point.x()), abs(pos.y() - opposite_point.y()))
             directionX = -1 if pos.x() - opposite_point.x() < 0 else 1
             directionY = -1 if pos.y() - opposite_point.y() < 0 else 1
-            shiftPos = QPointF(opposite_point.x() + directionX * min_size - point.x(), opposite_point.y() + directionY * min_size - point.y())
+            shiftPos = QPointF(
+                opposite_point.x() + directionX * min_size - point.x(),
+                opposite_point.y() + directionY * min_size - point.y(),
+            )
         else:
             shiftPos = pos - point
 
-        if [shape[0].x(), shape[0].y(), shape[2].x(), shape[2].y()] == [shape[3].x(), shape[1].y(), shape[1].x(), shape[3].y()]:
+        if [shape[0].x(), shape[0].y(), shape[2].x(), shape[2].y()] == [
+            shape[3].x(),
+            shape[1].y(),
+            shape[1].x(),
+            shape[3].y(),
+        ]:
             shape.moveVertexBy(index, shiftPos)
             lindex = (index + 1) % 4
             rindex = (index + 3) % 4

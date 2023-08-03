@@ -13,6 +13,7 @@
 # limitations under the License.
 import os
 import sys
+
 from PIL import Image
 
 __dir__ = os.path.dirname(os.path.abspath(__file__))
@@ -23,13 +24,10 @@ os.environ["FLAGS_allocator_strategy"] = "auto_growth"
 
 import cv2
 import numpy as np
-import math
 import time
 import traceback
-import torch
 
 import tools.infer.utility as utility
-from ppocr.postprocess import build_post_process
 from ppocr.utils.logging import get_logger
 from ppocr.utils.utility import get_image_file_list, check_and_read
 
@@ -41,7 +39,9 @@ class TextSR(object):
         self.sr_image_shape = [int(v) for v in args.sr_image_shape.split(",")]
         self.sr_batch_num = args.sr_batch_num
 
-        self.predictor, self.input_tensor, self.output_tensors, self.config = utility.create_predictor(args, "sr", logger)
+        self.predictor, self.input_tensor, self.output_tensors, self.config = utility.create_predictor(
+            args, "sr", logger
+        )
         self.benchmark = args.benchmark
         if args.benchmark:
             import auto_log

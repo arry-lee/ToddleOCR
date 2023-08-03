@@ -60,7 +60,11 @@ def create_header_file(name, tensor_name, tensor_data, output_path):
     # Create header file with npy_data as a C array
     raw_path = file_path.with_suffix(".h").resolve()
     with open(raw_path, "w") as header_file:
-        header_file.write("\n" + f"const size_t {tensor_name}_len = {tensor_data.size};\n" + f'__attribute__((section(".data.tvm"), aligned(16))) float {tensor_name}[] = ')
+        header_file.write(
+            "\n"
+            + f"const size_t {tensor_name}_len = {tensor_data.size};\n"
+            + f'__attribute__((section(".data.tvm"), aligned(16))) float {tensor_name}[] = '
+        )
 
         header_file.write("{")
         for i in np.ndindex(tensor_data.shape):

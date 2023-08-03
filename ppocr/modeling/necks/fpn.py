@@ -16,26 +16,37 @@ This code is refer from:
 https://github.com/whai362/PSENet/blob/python3/models/neck/fpn.py
 """
 
-import torch.nn as nn
-import torch
 import math
+
+import torch
+import torch.nn as nn
 import torch.nn.functional as F
 
 
 class Conv_BN_ReLU(nn.Module):
     def __init__(self, in_planes, out_planes, kernel_size=1, stride=1, padding=0):
         super(Conv_BN_ReLU, self).__init__()
-        self.conv = nn.Conv2d(in_planes, out_planes, kernel_size=kernel_size, stride=stride, padding=padding, bias=False)
+        self.conv = nn.Conv2d(
+            in_planes, out_planes, kernel_size=kernel_size, stride=stride, padding=padding, bias=False
+        )
         self.bn = nn.BatchNorm2d(out_planes, momentum=0.1)
         self.relu = nn.ReLU()
 
         for m in self.sublayers():
             if isinstance(m, nn.Conv2d):
                 n = m._kernel_size[0] * m._kernel_size[1] * m._out_channels
-                m.weight = torch.create_parameter(shape=m.weight.shape, dtype="float32", default_initializer=torch.nn.initializer.Normal(0, math.sqrt(2.0 / n)))
+                m.weight = torch.create_parameter(
+                    shape=m.weight.shape,
+                    dtype="float32",
+                    default_initializer=torch.nn.initializer.Normal(0, math.sqrt(2.0 / n)),
+                )
             elif isinstance(m, nn.BatchNorm2d):
-                m.weight = torch.create_parameter(shape=m.weight.shape, dtype="float32", default_initializer=torch.nn.initializer.Constant(1.0))
-                m.bias = torch.create_parameter(shape=m.bias.shape, dtype="float32", default_initializer=torch.nn.initializer.Constant(0.0))
+                m.weight = torch.create_parameter(
+                    shape=m.weight.shape, dtype="float32", default_initializer=torch.nn.initializer.Constant(1.0)
+                )
+                m.bias = torch.create_parameter(
+                    shape=m.bias.shape, dtype="float32", default_initializer=torch.nn.initializer.Constant(0.0)
+                )
 
     def forward(self, x):
         return self.relu(self.bn(self.conv(x)))
@@ -65,10 +76,18 @@ class FPN(nn.Module):
         for m in self.sublayers():
             if isinstance(m, nn.Conv2d):
                 n = m._kernel_size[0] * m._kernel_size[1] * m._out_channels
-                m.weight = torch.create_parameter(shape=m.weight.shape, dtype="float32", default_initializer=torch.nn.initializer.Normal(0, math.sqrt(2.0 / n)))
+                m.weight = torch.create_parameter(
+                    shape=m.weight.shape,
+                    dtype="float32",
+                    default_initializer=torch.nn.initializer.Normal(0, math.sqrt(2.0 / n)),
+                )
             elif isinstance(m, nn.BatchNorm2d):
-                m.weight = torch.create_parameter(shape=m.weight.shape, dtype="float32", default_initializer=torch.nn.initializer.Constant(1.0))
-                m.bias = torch.create_parameter(shape=m.bias.shape, dtype="float32", default_initializer=torch.nn.initializer.Constant(0.0))
+                m.weight = torch.create_parameter(
+                    shape=m.weight.shape, dtype="float32", default_initializer=torch.nn.initializer.Constant(1.0)
+                )
+                m.bias = torch.create_parameter(
+                    shape=m.bias.shape, dtype="float32", default_initializer=torch.nn.initializer.Constant(0.0)
+                )
 
     def _upsample(self, x, scale=1):
         return F.upsample(x, scale_factor=scale, mode="bilinear")

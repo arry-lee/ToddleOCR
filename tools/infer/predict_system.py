@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import os
-import sys
 import subprocess
+import sys
 
 __dir__ = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(__dir__)
@@ -147,7 +147,10 @@ def main(args):
     os.makedirs(draw_img_save_dir, exist_ok=True)
     save_results = []
 
-    logger.info("In PP-OCRv3, rec_image_shape parameter defaults to '3, 48, 320', " "if you are using recognition model with PP-OCRv2 or an older version, please set --rec_image_shape='3,32,320")
+    logger.info(
+        "In PP-OCRv3, rec_image_shape parameter defaults to '3, 48, 320', "
+        "if you are using recognition model with PP-OCRv2 or an older version, please set --rec_image_shape='3,32,320"
+    )
 
     # warm up 10 times
     if args.warmup:
@@ -193,7 +196,9 @@ def main(args):
                 for i in range(len(dt_boxes))
             ]
             if len(imgs) > 1:
-                save_pred = os.path.basename(image_file) + "_" + str(index) + "\t" + json.dumps(res, ensure_ascii=False) + "\n"
+                save_pred = (
+                    os.path.basename(image_file) + "_" + str(index) + "\t" + json.dumps(res, ensure_ascii=False) + "\n"
+                )
             else:
                 save_pred = os.path.basename(image_file) + "\t" + json.dumps(res, ensure_ascii=False) + "\n"
             save_results.append(save_pred)
@@ -212,7 +217,11 @@ def main(args):
                 else:
                     save_file = image_file
                 cv2.imwrite(os.path.join(draw_img_save_dir, os.path.basename(save_file)), draw_img[:, :, ::-1])
-                logger.debug("The visualized image saved in {}".format(os.path.join(draw_img_save_dir, os.path.basename(save_file))))
+                logger.debug(
+                    "The visualized image saved in {}".format(
+                        os.path.join(draw_img_save_dir, os.path.basename(save_file))
+                    )
+                )
 
     logger.info("The predict total time is {}".format(time.time() - _st))
     if args.benchmark:
@@ -229,7 +238,9 @@ if __name__ == "__main__":
         p_list = []
         total_process_num = args.total_process_num
         for process_id in range(total_process_num):
-            cmd = [sys.executable, "-u"] + sys.argv + ["--process_id={}".format(process_id), "--use_mp={}".format(False)]
+            cmd = (
+                [sys.executable, "-u"] + sys.argv + ["--process_id={}".format(process_id), "--use_mp={}".format(False)]
+            )
             p = subprocess.Popen(cmd, stdout=sys.stdout, stderr=sys.stdout)
             p_list.append(p)
         for p in p_list:

@@ -23,7 +23,23 @@ from numpy.linalg import norm
 
 
 class DRRGTargets(object):
-    def __init__(self, orientation_thr=2.0, resample_step=8.0, num_min_comps=9, num_max_comps=600, min_width=8.0, max_width=24.0, center_region_shrink_ratio=0.3, comp_shrink_ratio=1.0, comp_w_h_ratio=0.3, text_comp_nms_thr=0.25, min_rand_half_height=8.0, max_rand_half_height=24.0, jitter_level=0.2, **kwargs):
+    def __init__(
+        self,
+        orientation_thr=2.0,
+        resample_step=8.0,
+        num_min_comps=9,
+        num_max_comps=600,
+        min_width=8.0,
+        max_width=24.0,
+        center_region_shrink_ratio=0.3,
+        comp_shrink_ratio=1.0,
+        comp_w_h_ratio=0.3,
+        text_comp_nms_thr=0.25,
+        min_rand_half_height=8.0,
+        max_rand_half_height=24.0,
+        jitter_level=0.2,
+        **kwargs
+    ):
         super().__init__()
         self.orientation_thr = orientation_thr
         self.resample_step = resample_step
@@ -85,7 +101,9 @@ class DRRGTargets(object):
             theta_sum_score = np.array(theta_sum) / np.pi
             adjacent_theta_score = np.array(adjacent_vec_theta) / np.pi
             poly_center = np.mean(points, axis=0)
-            edge_dist = np.maximum(norm(pad_points[1:] - poly_center, axis=-1), norm(pad_points[:-1] - poly_center, axis=-1))
+            edge_dist = np.maximum(
+                norm(pad_points[1:] - poly_center, axis=-1), norm(pad_points[:-1] - poly_center, axis=-1)
+            )
             dist_score = edge_dist / (np.max(edge_dist) + self.eps)
             position_score = np.zeros(len(edge_vec))
             score = 0.5 * theta_sum_score + 0.15 * adjacent_theta_score
@@ -113,15 +131,21 @@ class DRRGTargets(object):
             head_inds = [head_start, head_end]
             tail_inds = [tail_start, tail_end]
         else:
-            if self.vector_slope(points[1] - points[0]) + self.vector_slope(points[3] - points[2]) < self.vector_slope(points[2] - points[1]) + self.vector_slope(points[0] - points[3]):
+            if self.vector_slope(points[1] - points[0]) + self.vector_slope(points[3] - points[2]) < self.vector_slope(
+                points[2] - points[1]
+            ) + self.vector_slope(points[0] - points[3]):
                 horizontal_edge_inds = [[0, 1], [2, 3]]
                 vertical_edge_inds = [[3, 0], [1, 2]]
             else:
                 horizontal_edge_inds = [[3, 0], [1, 2]]
                 vertical_edge_inds = [[0, 1], [2, 3]]
 
-            vertical_len_sum = norm(points[vertical_edge_inds[0][0]] - points[vertical_edge_inds[0][1]]) + norm(points[vertical_edge_inds[1][0]] - points[vertical_edge_inds[1][1]])
-            horizontal_len_sum = norm(points[horizontal_edge_inds[0][0]] - points[horizontal_edge_inds[0][1]]) + norm(points[horizontal_edge_inds[1][0]] - points[horizontal_edge_inds[1][1]])
+            vertical_len_sum = norm(points[vertical_edge_inds[0][0]] - points[vertical_edge_inds[0][1]]) + norm(
+                points[vertical_edge_inds[1][0]] - points[vertical_edge_inds[1][1]]
+            )
+            horizontal_len_sum = norm(points[horizontal_edge_inds[0][0]] - points[horizontal_edge_inds[0][1]]) + norm(
+                points[horizontal_edge_inds[1][0]] - points[horizontal_edge_inds[1][1]]
+            )
 
             if vertical_len_sum > horizontal_len_sum * orientation_thr:
                 head_inds = horizontal_edge_inds[0]
@@ -211,9 +235,22 @@ class DRRGTargets(object):
         d = abs(np.cross(point2 - point1, point - point1)) / (norm(point2 - point1) + 1e-8)
         return d
 
-    def draw_center_region_maps(self, top_line, bot_line, center_line, center_region_mask, top_height_map, bot_height_map, sin_map, cos_map, region_shrink_ratio):
+    def draw_center_region_maps(
+        self,
+        top_line,
+        bot_line,
+        center_line,
+        center_region_mask,
+        top_height_map,
+        bot_height_map,
+        sin_map,
+        cos_map,
+        region_shrink_ratio,
+    ):
         assert top_line.shape == bot_line.shape == center_line.shape
-        assert center_region_mask.shape == top_height_map.shape == bot_height_map.shape == sin_map.shape == cos_map.shape
+        assert (
+            center_region_mask.shape == top_height_map.shape == bot_height_map.shape == sin_map.shape == cos_map.shape
+        )
         assert isinstance(region_shrink_ratio, float)
 
         h, w = center_region_mask.shape
@@ -280,8 +317,12 @@ class DRRGTargets(object):
                     resampled_top_line = resampled_top_line[::-1]
                     resampled_bot_line = resampled_bot_line[::-1]
 
-            line_head_shrink_len = np.clip((norm(top_line[0] - bot_line[0]) * self.comp_w_h_ratio), self.min_width, self.max_width) / 2
-            line_tail_shrink_len = np.clip((norm(top_line[-1] - bot_line[-1]) * self.comp_w_h_ratio), self.min_width, self.max_width) / 2
+            line_head_shrink_len = (
+                np.clip((norm(top_line[0] - bot_line[0]) * self.comp_w_h_ratio), self.min_width, self.max_width) / 2
+            )
+            line_tail_shrink_len = (
+                np.clip((norm(top_line[-1] - bot_line[-1]) * self.comp_w_h_ratio), self.min_width, self.max_width) / 2
+            )
             num_head_shrink = int(line_head_shrink_len // self.resample_step)
             num_tail_shrink = int(line_tail_shrink_len // self.resample_step)
             if len(center_line) > num_head_shrink + num_tail_shrink + 2:
@@ -290,7 +331,17 @@ class DRRGTargets(object):
                 resampled_bot_line = resampled_bot_line[num_head_shrink : len(resampled_bot_line) - num_tail_shrink]
             center_lines.append(center_line.astype(np.int32))
 
-            self.draw_center_region_maps(resampled_top_line, resampled_bot_line, center_line, center_region_mask, top_height_map, bot_height_map, sin_map, cos_map, self.center_region_shrink_ratio)
+            self.draw_center_region_maps(
+                resampled_top_line,
+                resampled_bot_line,
+                center_line,
+                center_region_mask,
+                top_height_map,
+                bot_height_map,
+                sin_map,
+                cos_map,
+                self.center_region_shrink_ratio,
+            )
 
         return (center_lines, center_region_mask, top_height_map, bot_height_map, sin_map, cos_map)
 
@@ -317,7 +368,9 @@ class DRRGTargets(object):
             margin = int(np.sqrt((max_rand_height / 2) ** 2 + (max_rand_width / 2) ** 2)) + 1
 
         inner_center_sample_mask = np.zeros_like(center_sample_mask)
-        inner_center_sample_mask[margin : h - margin, margin : w - margin] = center_sample_mask[margin : h - margin, margin : w - margin]
+        inner_center_sample_mask[margin : h - margin, margin : w - margin] = center_sample_mask[
+            margin : h - margin, margin : w - margin
+        ]
         kernel_size = int(np.clip(max_rand_half_height, 7, 21))
         inner_center_sample_mask = cv2.erode(inner_center_sample_mask, np.ones((kernel_size, kernel_size), np.uint8))
 
@@ -338,7 +391,9 @@ class DRRGTargets(object):
         height = rand_top_height + rand_bot_height
         width = np.clip(height * self.comp_w_h_ratio, self.min_width, self.max_width)
 
-        rand_comp_attribs = np.hstack([rand_centers[:, ::-1], height, width, rand_cos, rand_sin, np.zeros_like(rand_sin)]).astype(np.float32)
+        rand_comp_attribs = np.hstack(
+            [rand_centers[:, ::-1], height, width, rand_cos, rand_sin, np.zeros_like(rand_sin)]
+        ).astype(np.float32)
 
         return rand_comp_attribs
 
@@ -384,7 +439,9 @@ class DRRGTargets(object):
 
         return jittered_comp_attribs
 
-    def generate_comp_attribs(self, center_lines, text_mask, center_region_mask, top_height_map, bot_height_map, sin_map, cos_map):
+    def generate_comp_attribs(
+        self, center_lines, text_mask, center_region_mask, top_height_map, bot_height_map, sin_map, cos_map
+    ):
         """Generate text component attributes.
 
         Args:
@@ -408,7 +465,14 @@ class DRRGTargets(object):
         """
 
         assert isinstance(center_lines, list)
-        assert text_mask.shape == center_region_mask.shape == top_height_map.shape == bot_height_map.shape == sin_map.shape == cos_map.shape
+        assert (
+            text_mask.shape
+            == center_region_mask.shape
+            == top_height_map.shape
+            == bot_height_map.shape
+            == sin_map.shape
+            == cos_map.shape
+        )
 
         center_lines_mask = np.zeros_like(center_region_mask)
         cv2.polylines(center_lines_mask, center_lines, 0, 1, 1)
@@ -551,9 +615,24 @@ class DRRGTargets(object):
 
         gt_text_mask = self.generate_text_region_mask((h, w), polygon_masks)
         gt_mask = self.generate_effective_mask((h, w), polygon_masks_ignore)
-        (center_lines, gt_center_region_mask, gt_top_height_map, gt_bot_height_map, gt_sin_map, gt_cos_map) = self.generate_center_mask_attrib_maps((h, w), polygon_masks)
+        (
+            center_lines,
+            gt_center_region_mask,
+            gt_top_height_map,
+            gt_bot_height_map,
+            gt_sin_map,
+            gt_cos_map,
+        ) = self.generate_center_mask_attrib_maps((h, w), polygon_masks)
 
-        gt_comp_attribs = self.generate_comp_attribs(center_lines, gt_text_mask, gt_center_region_mask, gt_top_height_map, gt_bot_height_map, gt_sin_map, gt_cos_map)
+        gt_comp_attribs = self.generate_comp_attribs(
+            center_lines,
+            gt_text_mask,
+            gt_center_region_mask,
+            gt_top_height_map,
+            gt_bot_height_map,
+            gt_sin_map,
+            gt_cos_map,
+        )
 
         mapping = {
             "gt_text_mask": gt_text_mask,

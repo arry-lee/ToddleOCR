@@ -16,11 +16,11 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import numpy as np
-
+import json
 import os
 import sys
-import json
+
+import numpy as np
 
 __dir__ = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(__dir__)
@@ -84,7 +84,13 @@ def main():
             op[op_name]["infer_mode"] = True
         elif op_name == "KeepKeys":
             if config["Architecture"]["algorithm"] == "SRN":
-                op[op_name]["keep_keys"] = ["image", "encoder_word_pos", "gsrm_word_pos", "gsrm_slf_attn_bias1", "gsrm_slf_attn_bias2"]
+                op[op_name]["keep_keys"] = [
+                    "image",
+                    "encoder_word_pos",
+                    "gsrm_word_pos",
+                    "gsrm_slf_attn_bias1",
+                    "gsrm_slf_attn_bias2",
+                ]
             elif config["Architecture"]["algorithm"] == "SAR":
                 op[op_name]["keep_keys"] = ["image", "valid_ratio"]
             elif config["Architecture"]["algorithm"] == "RobustScanner":
@@ -114,7 +120,12 @@ def main():
                 gsrm_slf_attn_bias1_list = np.expand_dims(batch[3], axis=0)
                 gsrm_slf_attn_bias2_list = np.expand_dims(batch[4], axis=0)
 
-                others = [torch.Tensor(encoder_word_pos_list), torch.Tensor(gsrm_word_pos_list), torch.Tensor(gsrm_slf_attn_bias1_list), torch.Tensor(gsrm_slf_attn_bias2_list)]
+                others = [
+                    torch.Tensor(encoder_word_pos_list),
+                    torch.Tensor(gsrm_word_pos_list),
+                    torch.Tensor(gsrm_slf_attn_bias1_list),
+                    torch.Tensor(gsrm_slf_attn_bias2_list),
+                ]
             if config["Architecture"]["algorithm"] == "SAR":
                 valid_ratio = np.expand_dims(batch[-1], axis=0)
                 img_metas = [torch.Tensor(valid_ratio)]

@@ -48,10 +48,22 @@ class EncoderWithRNN(nn.Module):
 
 
 class BidirectionalLSTM(nn.Module):
-    def __init__(self, input_size, hidden_size, output_size=None, num_layers=1, dropout=0, direction=False, time_major=False, with_linear=False):
+    def __init__(
+        self,
+        input_size,
+        hidden_size,
+        output_size=None,
+        num_layers=1,
+        dropout=0,
+        direction=False,
+        time_major=False,
+        with_linear=False,
+    ):
         super(BidirectionalLSTM, self).__init__()
         self.with_linear = with_linear
-        self.rnn = nn.LSTM(input_size, hidden_size, num_layers=num_layers, dropout=dropout, direction=direction, time_major=time_major)
+        self.rnn = nn.LSTM(
+            input_size, hidden_size, num_layers=num_layers, dropout=dropout, direction=direction, time_major=time_major
+        )
 
         # text recognition the specified structure LSTM with linear
         if self.with_linear:
@@ -69,7 +81,19 @@ class EncoderWithCascadeRNN(nn.Module):
     def __init__(self, in_channels, hidden_size, out_channels, num_layers=2, with_linear=False):
         super(EncoderWithCascadeRNN, self).__init__()
         self.out_channels = out_channels[-1]
-        self.encoder = nn.ModuleList([BidirectionalLSTM(in_channels if i == 0 else out_channels[i - 1], hidden_size, output_size=out_channels[i], num_layers=1, direction="bidirectional", with_linear=with_linear) for i in range(num_layers)])
+        self.encoder = nn.ModuleList(
+            [
+                BidirectionalLSTM(
+                    in_channels if i == 0 else out_channels[i - 1],
+                    hidden_size,
+                    output_size=out_channels[i],
+                    num_layers=1,
+                    direction="bidirectional",
+                    with_linear=with_linear,
+                )
+                for i in range(num_layers)
+            ]
+        )
 
     def forward(self, x):
         for i, l in enumerate(self.encoder):
@@ -90,7 +114,21 @@ class EncoderWithFC(nn.Module):
 
 
 class EncoderWithSVTR(nn.Module):
-    def __init__(self, in_channels, dims=64, depth=2, hidden_dims=120, use_guide=False, num_heads=8, qkv_bias=True, mlp_ratio=2.0, drop_rate=0.1, attn_drop_rate=0.1, drop_path=0.0, qk_scale=None):  # XS
+    def __init__(
+        self,
+        in_channels,
+        dims=64,
+        depth=2,
+        hidden_dims=120,
+        use_guide=False,
+        num_heads=8,
+        qkv_bias=True,
+        mlp_ratio=2.0,
+        drop_rate=0.1,
+        attn_drop_rate=0.1,
+        drop_path=0.0,
+        qk_scale=None,
+    ):  # XS
         super(EncoderWithSVTR, self).__init__()
         self.depth = depth
         self.use_guide = use_guide
@@ -171,12 +209,22 @@ class SequenceEncoder(nn.Module):
         if encoder_type == "reshape":
             self.only_reshape = True
         else:
-            support_encoder_dict = {"reshape": Im2Seq, "fc": EncoderWithFC, "rnn": EncoderWithRNN, "svtr": EncoderWithSVTR, "cascadernn": EncoderWithCascadeRNN}
-            assert encoder_type in support_encoder_dict, "{} must in {}".format(encoder_type, support_encoder_dict.keys())
+            support_encoder_dict = {
+                "reshape": Im2Seq,
+                "fc": EncoderWithFC,
+                "rnn": EncoderWithRNN,
+                "svtr": EncoderWithSVTR,
+                "cascadernn": EncoderWithCascadeRNN,
+            }
+            assert encoder_type in support_encoder_dict, "{} must in {}".format(
+                encoder_type, support_encoder_dict.keys()
+            )
             if encoder_type == "svtr":
                 self.encoder = support_encoder_dict[encoder_type](self.encoder_reshape.out_channels, **kwargs)
             elif encoder_type == "cascadernn":
-                self.encoder = support_encoder_dict[encoder_type](self.encoder_reshape.out_channels, hidden_size, **kwargs)
+                self.encoder = support_encoder_dict[encoder_type](
+                    self.encoder_reshape.out_channels, hidden_size, **kwargs
+                )
             else:
                 self.encoder = support_encoder_dict[encoder_type](self.encoder_reshape.out_channels, hidden_size)
             self.out_channels = self.encoder.out_channels

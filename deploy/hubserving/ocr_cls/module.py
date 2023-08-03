@@ -33,7 +33,14 @@ from tools.infer.utility import parse_args
 from deploy.hubserving.ocr_cls.params import read_params
 
 
-@moduleinfo(name="ocr_cls", version="1.0.0", summary="ocr angle cls service", author="paddle-dev", author_email="paddle-dev@baidu.com", type="cv/text_angle_cls")
+@moduleinfo(
+    name="ocr_cls",
+    version="1.0.0",
+    summary="ocr angle cls service",
+    author="paddle-dev",
+    author_email="paddle-dev@baidu.com",
+    type="cv/text_angle_cls",
+)
 class OCRCls(hub.Module):
     def _initialize(self, use_gpu=False, enable_mkldnn=False):
         """
@@ -50,7 +57,9 @@ class OCRCls(hub.Module):
                 print("CUDA_VISIBLE_DEVICES: ", _places)
                 cfg.gpu_mem = 8000
             except:
-                raise RuntimeError("Environment Variable CUDA_VISIBLE_DEVICES is not set correctly. If you wanna use gpu, please set CUDA_VISIBLE_DEVICES via export CUDA_VISIBLE_DEVICES=cuda_device_id.")
+                raise RuntimeError(
+                    "Environment Variable CUDA_VISIBLE_DEVICES is not set correctly. If you wanna use gpu, please set CUDA_VISIBLE_DEVICES via export CUDA_VISIBLE_DEVICES=cuda_device_id."
+                )
         cfg.ir_optim = True
         cfg.enable_mkldnn = enable_mkldnn
 

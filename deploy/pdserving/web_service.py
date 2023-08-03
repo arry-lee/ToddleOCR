@@ -30,9 +30,18 @@ _LOGGER = logging.getLogger()
 
 class DetOp(Op):
     def init_op(self):
-        self.det_preprocess = Sequential([DetResizeForTest(), Div(255), Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]), Transpose((2, 0, 1))])
+        self.det_preprocess = Sequential(
+            [
+                DetResizeForTest(),
+                Div(255),
+                Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+                Transpose((2, 0, 1)),
+            ]
+        )
         self.filter_func = FilterBoxes(10, 10)
-        self.post_func = DBPostProcess({"thresh": 0.3, "box_thresh": 0.6, "max_candidates": 1000, "unclip_ratio": 1.5, "min_size": 3})
+        self.post_func = DBPostProcess(
+            {"thresh": 0.3, "box_thresh": 0.6, "max_candidates": 1000, "unclip_ratio": 1.5, "min_size": 3}
+        )
 
     def preprocess(self, input_dicts, data_id, log_id):
         ((_, input_dict),) = input_dicts.items()

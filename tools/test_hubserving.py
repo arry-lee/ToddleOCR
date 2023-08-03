@@ -127,7 +127,9 @@ def main(args):
                 if not os.path.exists(args.output):
                     os.makedirs(args.output)
                 cv2.imwrite(os.path.join(args.output, os.path.basename(image_file)), draw_img[:, :, ::-1])
-                logger.info("The visualized image saved in {}".format(os.path.join(args.output, os.path.basename(image_file))))
+                logger.info(
+                    "The visualized image saved in {}".format(os.path.join(args.output, os.path.basename(image_file)))
+                )
         cnt += 1
         if cnt % 100 == 0:
             logger.info("{} processed".format(cnt))

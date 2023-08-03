@@ -89,7 +89,18 @@ class MobileNetV3(nn.Layer):
         else:
             raise NotImplementedError("mode[{}_model] is not implemented!".format(model_name))
 
-        self.conv1 = ConvBNLayer(in_c=3, out_c=make_divisible(inplanes * scale), filter_size=3, stride=2, padding=1, num_groups=1, if_act=True, act="hardswish", name="conv1", use_custom_relu=self.use_custom_relu)
+        self.conv1 = ConvBNLayer(
+            in_c=3,
+            out_c=make_divisible(inplanes * scale),
+            filter_size=3,
+            stride=2,
+            padding=1,
+            num_groups=1,
+            if_act=True,
+            act="hardswish",
+            name="conv1",
+            use_custom_relu=self.use_custom_relu,
+        )
 
         self.block_list = []
         i = 0
@@ -128,7 +139,15 @@ class MobileNetV3(nn.Layer):
 
         self.pool = AdaptiveAvgPool2D(1)
 
-        self.last_conv = Conv2D(in_channels=make_divisible(scale * self.cls_ch_squeeze), out_channels=self.cls_ch_expand, kernel_size=1, stride=1, padding=0, weight_attr=ParamAttr(), bias_attr=False)
+        self.last_conv = Conv2D(
+            in_channels=make_divisible(scale * self.cls_ch_squeeze),
+            out_channels=self.cls_ch_expand,
+            kernel_size=1,
+            stride=1,
+            padding=0,
+            weight_attr=ParamAttr(),
+            bias_attr=False,
+        )
 
         self.dropout = Dropout(p=dropout_prob, mode="downscale_in_infer")
 
@@ -152,12 +171,39 @@ class MobileNetV3(nn.Layer):
 
 
 class ConvBNLayer(nn.Layer):
-    def __init__(self, in_c, out_c, filter_size, stride, padding, num_groups=1, if_act=True, act=None, use_cudnn=True, name="", use_custom_relu=False):
+    def __init__(
+        self,
+        in_c,
+        out_c,
+        filter_size,
+        stride,
+        padding,
+        num_groups=1,
+        if_act=True,
+        act=None,
+        use_cudnn=True,
+        name="",
+        use_custom_relu=False,
+    ):
         super(ConvBNLayer, self).__init__()
         self.if_act = if_act
         self.act = act
-        self.conv = Conv2D(in_channels=in_c, out_channels=out_c, kernel_size=filter_size, stride=stride, padding=padding, groups=num_groups, weight_attr=ParamAttr(), bias_attr=False)
-        self.bn = BatchNorm(num_channels=out_c, act=None, param_attr=ParamAttr(regularizer=L2Decay(0.0)), bias_attr=ParamAttr(regularizer=L2Decay(0.0)))
+        self.conv = Conv2D(
+            in_channels=in_c,
+            out_channels=out_c,
+            kernel_size=filter_size,
+            stride=stride,
+            padding=padding,
+            groups=num_groups,
+            weight_attr=ParamAttr(),
+            bias_attr=False,
+        )
+        self.bn = BatchNorm(
+            num_channels=out_c,
+            act=None,
+            param_attr=ParamAttr(regularizer=L2Decay(0.0)),
+            bias_attr=ParamAttr(regularizer=L2Decay(0.0)),
+        )
         # moving_mean_name=name + "_bn_mean",
         # moving_variance_name=name + "_bn_variance")
 
@@ -188,7 +234,17 @@ class ResidualUnit(nn.Layer):
 
         self.use_custom_relu = use_custom_relu
 
-        self.expand_conv = ConvBNLayer(in_c=in_c, out_c=mid_c, filter_size=1, stride=1, padding=0, if_act=True, act=act, name=name + "_expand", use_custom_relu=self.use_custom_relu)
+        self.expand_conv = ConvBNLayer(
+            in_c=in_c,
+            out_c=mid_c,
+            filter_size=1,
+            stride=1,
+            padding=0,
+            if_act=True,
+            act=act,
+            name=name + "_expand",
+            use_custom_relu=self.use_custom_relu,
+        )
         self.bottleneck_conv = ConvBNLayer(
             in_c=mid_c,
             out_c=mid_c,
@@ -203,7 +259,17 @@ class ResidualUnit(nn.Layer):
         )
         if self.if_se:
             self.mid_se = SEModule(mid_c, name=name + "_se")
-        self.linear_conv = ConvBNLayer(in_c=mid_c, out_c=out_c, filter_size=1, stride=1, padding=0, if_act=False, act=None, name=name + "_linear", use_custom_relu=self.use_custom_relu)
+        self.linear_conv = ConvBNLayer(
+            in_c=mid_c,
+            out_c=out_c,
+            filter_size=1,
+            stride=1,
+            padding=0,
+            if_act=False,
+            act=None,
+            name=name + "_linear",
+            use_custom_relu=self.use_custom_relu,
+        )
 
     def forward(self, inputs):
         x = self.expand_conv(inputs)
@@ -220,8 +286,24 @@ class SEModule(nn.Layer):
     def __init__(self, channel, reduction=4, name=""):
         super(SEModule, self).__init__()
         self.avg_pool = AdaptiveAvgPool2D(1)
-        self.conv1 = Conv2D(in_channels=channel, out_channels=channel // reduction, kernel_size=1, stride=1, padding=0, weight_attr=ParamAttr(), bias_attr=ParamAttr())
-        self.conv2 = Conv2D(in_channels=channel // reduction, out_channels=channel, kernel_size=1, stride=1, padding=0, weight_attr=ParamAttr(), bias_attr=ParamAttr())
+        self.conv1 = Conv2D(
+            in_channels=channel,
+            out_channels=channel // reduction,
+            kernel_size=1,
+            stride=1,
+            padding=0,
+            weight_attr=ParamAttr(),
+            bias_attr=ParamAttr(),
+        )
+        self.conv2 = Conv2D(
+            in_channels=channel // reduction,
+            out_channels=channel,
+            kernel_size=1,
+            stride=1,
+            padding=0,
+            weight_attr=ParamAttr(),
+            bias_attr=ParamAttr(),
+        )
 
     def forward(self, inputs):
         outputs = self.avg_pool(inputs)
@@ -283,12 +365,18 @@ def MobileNetV3_large_x1_25(**args):
 
 
 class DistillMV3(nn.Layer):
-    def __init__(self, scale=1.0, model_name="small", dropout_prob=0.2, class_dim=1000, args=None, use_custom_relu=False):
+    def __init__(
+        self, scale=1.0, model_name="small", dropout_prob=0.2, class_dim=1000, args=None, use_custom_relu=False
+    ):
         super(DistillMV3, self).__init__()
 
-        self.student = MobileNetV3(model_name=model_name, scale=scale, class_dim=class_dim, use_custom_relu=use_custom_relu)
+        self.student = MobileNetV3(
+            model_name=model_name, scale=scale, class_dim=class_dim, use_custom_relu=use_custom_relu
+        )
 
-        self.student1 = MobileNetV3(model_name=model_name, scale=scale, class_dim=class_dim, use_custom_relu=use_custom_relu)
+        self.student1 = MobileNetV3(
+            model_name=model_name, scale=scale, class_dim=class_dim, use_custom_relu=use_custom_relu
+        )
 
     def forward(self, inputs, label=None):
         predicts = dict()
@@ -303,11 +391,15 @@ def distillmv3_large_x0_5(**args):
 
 
 class SiameseMV3(nn.Layer):
-    def __init__(self, scale=1.0, model_name="small", dropout_prob=0.2, class_dim=1000, args=None, use_custom_relu=False):
+    def __init__(
+        self, scale=1.0, model_name="small", dropout_prob=0.2, class_dim=1000, args=None, use_custom_relu=False
+    ):
         super(SiameseMV3, self).__init__()
 
         self.net = MobileNetV3(model_name=model_name, scale=scale, class_dim=class_dim, use_custom_relu=use_custom_relu)
-        self.net1 = MobileNetV3(model_name=model_name, scale=scale, class_dim=class_dim, use_custom_relu=use_custom_relu)
+        self.net1 = MobileNetV3(
+            model_name=model_name, scale=scale, class_dim=class_dim, use_custom_relu=use_custom_relu
+        )
 
     def forward(self, inputs, label=None):
         # net

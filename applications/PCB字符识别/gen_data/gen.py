@@ -145,11 +145,30 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--num_img", type=int, default=30, help="Number of images to generate")
     parser.add_argument("--font_min_size", type=int, default=11)
-    parser.add_argument("--font_max_size", type=int, default=12, help="Help adjust the size of the generated text and the size of the picture")
-    parser.add_argument("--bg_path", type=str, default="./background", help="The generated text pictures will be pasted onto the pictures of this folder")
-    parser.add_argument("--det_bg_path", type=str, default="./det_background", help="The generated text pictures will use the pictures of this folder as the background")
-    parser.add_argument("--fonts_path", type=str, default="../../StyleText/fonts", help="The font used to generate the picture")
-    parser.add_argument("--corpus_path", type=str, default="./corpus", help="The corpus used to generate the text picture")
+    parser.add_argument(
+        "--font_max_size",
+        type=int,
+        default=12,
+        help="Help adjust the size of the generated text and the size of the picture",
+    )
+    parser.add_argument(
+        "--bg_path",
+        type=str,
+        default="./background",
+        help="The generated text pictures will be pasted onto the pictures of this folder",
+    )
+    parser.add_argument(
+        "--det_bg_path",
+        type=str,
+        default="./det_background",
+        help="The generated text pictures will use the pictures of this folder as the background",
+    )
+    parser.add_argument(
+        "--fonts_path", type=str, default="../../StyleText/fonts", help="The font used to generate the picture"
+    )
+    parser.add_argument(
+        "--corpus_path", type=str, default="./corpus", help="The corpus used to generate the text picture"
+    )
     parser.add_argument("--output_dir", type=str, default="./output/", help="Images save dir")
 
     cf = parser.parse_args()

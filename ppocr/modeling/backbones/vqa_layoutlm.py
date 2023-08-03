@@ -42,7 +42,9 @@ pretrained_model_dict = {
 
 
 class NLPBaseModel(nn.Module):
-    def __init__(self, base_model_class, model_class, mode="base", type="ser", pretrained=True, checkpoints=None, **kwargs):
+    def __init__(
+        self, base_model_class, model_class, mode="base", type="ser", pretrained=True, checkpoints=None, **kwargs
+    ):
         super(NLPBaseModel, self).__init__()
         if checkpoints is not None:  # load the trained model
             self.model = model_class.from_pretrained(checkpoints)
@@ -74,13 +76,28 @@ class LayoutLMForSer(NLPBaseModel):
         self.use_visual_backbone = False
 
     def forward(self, x):
-        x = self.model(input_ids=x[0], bbox=x[1], attention_mask=x[2], token_type_ids=x[3], position_ids=None, output_hidden_states=False)
+        x = self.model(
+            input_ids=x[0],
+            bbox=x[1],
+            attention_mask=x[2],
+            token_type_ids=x[3],
+            position_ids=None,
+            output_hidden_states=False,
+        )
         return x
 
 
 class LayoutLMv2ForSer(NLPBaseModel):
     def __init__(self, num_classes, pretrained=True, checkpoints=None, mode="base", **kwargs):
-        super(LayoutLMv2ForSer, self).__init__(LayoutLMv2Model, LayoutLMv2ForTokenClassification, mode, "ser", pretrained, checkpoints, num_classes=num_classes)
+        super(LayoutLMv2ForSer, self).__init__(
+            LayoutLMv2Model,
+            LayoutLMv2ForTokenClassification,
+            mode,
+            "ser",
+            pretrained,
+            checkpoints,
+            num_classes=num_classes,
+        )
         if hasattr(self.model.layoutlmv2, "use_visual_backbone") and self.model.layoutlmv2.use_visual_backbone is False:
             self.use_visual_backbone = False
 
@@ -89,7 +106,16 @@ class LayoutLMv2ForSer(NLPBaseModel):
             image = x[4]
         else:
             image = None
-        x = self.model(input_ids=x[0], bbox=x[1], attention_mask=x[2], token_type_ids=x[3], image=image, position_ids=None, head_mask=None, labels=None)
+        x = self.model(
+            input_ids=x[0],
+            bbox=x[1],
+            attention_mask=x[2],
+            token_type_ids=x[3],
+            image=image,
+            position_ids=None,
+            head_mask=None,
+            labels=None,
+        )
         if self.training:
             res = {"backbone_out": x[0]}
             res.update(x[1])
@@ -100,7 +126,15 @@ class LayoutLMv2ForSer(NLPBaseModel):
 
 class LayoutXLMForSer(NLPBaseModel):
     def __init__(self, num_classes, pretrained=True, checkpoints=None, mode="base", **kwargs):
-        super(LayoutXLMForSer, self).__init__(LayoutXLMModel, LayoutXLMForTokenClassification, mode, "ser", pretrained, checkpoints, num_classes=num_classes)
+        super(LayoutXLMForSer, self).__init__(
+            LayoutXLMModel,
+            LayoutXLMForTokenClassification,
+            mode,
+            "ser",
+            pretrained,
+            checkpoints,
+            num_classes=num_classes,
+        )
         if hasattr(self.model.layoutxlm, "use_visual_backbone") and self.model.layoutxlm.use_visual_backbone is False:
             self.use_visual_backbone = False
 
@@ -109,7 +143,16 @@ class LayoutXLMForSer(NLPBaseModel):
             image = x[4]
         else:
             image = None
-        x = self.model(input_ids=x[0], bbox=x[1], attention_mask=x[2], token_type_ids=x[3], image=image, position_ids=None, head_mask=None, labels=None)
+        x = self.model(
+            input_ids=x[0],
+            bbox=x[1],
+            attention_mask=x[2],
+            token_type_ids=x[3],
+            image=image,
+            position_ids=None,
+            head_mask=None,
+            labels=None,
+        )
         if self.training:
             res = {"backbone_out": x[0]}
             res.update(x[1])
@@ -120,18 +163,33 @@ class LayoutXLMForSer(NLPBaseModel):
 
 class LayoutLMv2ForRe(NLPBaseModel):
     def __init__(self, pretrained=True, checkpoints=None, mode="base", **kwargs):
-        super(LayoutLMv2ForRe, self).__init__(LayoutLMv2Model, LayoutLMv2ForRelationExtraction, mode, "re", pretrained, checkpoints)
+        super(LayoutLMv2ForRe, self).__init__(
+            LayoutLMv2Model, LayoutLMv2ForRelationExtraction, mode, "re", pretrained, checkpoints
+        )
         if hasattr(self.model.layoutlmv2, "use_visual_backbone") and self.model.layoutlmv2.use_visual_backbone is False:
             self.use_visual_backbone = False
 
     def forward(self, x):
-        x = self.model(input_ids=x[0], bbox=x[1], attention_mask=x[2], token_type_ids=x[3], image=x[4], position_ids=None, head_mask=None, labels=None, entities=x[5], relations=x[6])
+        x = self.model(
+            input_ids=x[0],
+            bbox=x[1],
+            attention_mask=x[2],
+            token_type_ids=x[3],
+            image=x[4],
+            position_ids=None,
+            head_mask=None,
+            labels=None,
+            entities=x[5],
+            relations=x[6],
+        )
         return x
 
 
 class LayoutXLMForRe(NLPBaseModel):
     def __init__(self, pretrained=True, checkpoints=None, mode="base", **kwargs):
-        super(LayoutXLMForRe, self).__init__(LayoutXLMModel, LayoutXLMForRelationExtraction, mode, "re", pretrained, checkpoints)
+        super(LayoutXLMForRe, self).__init__(
+            LayoutXLMModel, LayoutXLMForRelationExtraction, mode, "re", pretrained, checkpoints
+        )
         if hasattr(self.model.layoutxlm, "use_visual_backbone") and self.model.layoutxlm.use_visual_backbone is False:
             self.use_visual_backbone = False
 
@@ -144,5 +202,16 @@ class LayoutXLMForRe(NLPBaseModel):
             image = None
             entities = x[4]
             relations = x[5]
-        x = self.model(input_ids=x[0], bbox=x[1], attention_mask=x[2], token_type_ids=x[3], image=image, position_ids=None, head_mask=None, labels=None, entities=entities, relations=relations)
+        x = self.model(
+            input_ids=x[0],
+            bbox=x[1],
+            attention_mask=x[2],
+            token_type_ids=x[3],
+            image=image,
+            position_ids=None,
+            head_mask=None,
+            labels=None,
+            entities=entities,
+            relations=relations,
+        )
         return x

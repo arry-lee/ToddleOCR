@@ -24,7 +24,16 @@ class MTB(nn.Module):
         self.cnn_num = cnn_num
         if self.cnn_num == 2:
             for i in range(self.cnn_num):
-                self.block.add_sublayer("conv_{}".format(i), nn.Conv2d(in_channels=in_channels if i == 0 else 32 * (2 ** (i - 1)), out_channels=32 * (2**i), kernel_size=3, stride=2, padding=1))
+                self.block.add_sublayer(
+                    "conv_{}".format(i),
+                    nn.Conv2d(
+                        in_channels=in_channels if i == 0 else 32 * (2 ** (i - 1)),
+                        out_channels=32 * (2**i),
+                        kernel_size=3,
+                        stride=2,
+                        padding=1,
+                    ),
+                )
                 self.block.add_sublayer("relu_{}".format(i), nn.ReLU())
                 self.block.add_sublayer("bn_{}".format(i), nn.BatchNorm2d(32 * (2**i)))
 

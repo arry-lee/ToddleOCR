@@ -16,7 +16,9 @@ class SARLoss(nn.Module):
         predict = predicts[:, :-1, :]  # ignore last index of outputs to be in same seq_len with targets
         label = batch[1].astype("int64")[:, 1:]  # ignore first index of target in loss calculation
         batch_size, num_steps, num_classes = predict.shape[0], predict.shape[1], predict.shape[2]
-        assert len(label.shape) == len(list(predict.shape)) - 1, "The target's shape and inputs's shape is [N, d] and [N, num_steps]"
+        assert (
+            len(label.shape) == len(list(predict.shape)) - 1
+        ), "The target's shape and inputs's shape is [N, d] and [N, num_steps]"
 
         inputs = torch.reshape(predict, [-1, num_classes])
         targets = torch.reshape(label, [-1])

@@ -87,7 +87,15 @@ class PicoDetPostProcess(object):
         enable_mkldnn (bool): whether to open MKLDNN
     """
 
-    def __init__(self, layout_dict_path, strides=[8, 16, 32, 64], score_threshold=0.4, nms_threshold=0.5, nms_top_k=1000, keep_top_k=100):
+    def __init__(
+        self,
+        layout_dict_path,
+        strides=[8, 16, 32, 64],
+        score_threshold=0.4,
+        nms_threshold=0.5,
+        nms_top_k=1000,
+        keep_top_k=100,
+    ):
         self.labels = self.load_layout_dict(layout_dict_path)
         self.strides = strides
         self.score_threshold = score_threshold
@@ -214,7 +222,16 @@ class PicoDetPostProcess(object):
                 im_scale = np.concatenate([scale_factor[batch_id][::-1], scale_factor[batch_id][::-1]])
                 picked_box_probs[:, :4] /= im_scale
                 # clas score box
-                out_boxes_list.append(np.concatenate([np.expand_dims(np.array(picked_labels), axis=-1), np.expand_dims(picked_box_probs[:, 4], axis=-1), picked_box_probs[:, :4]], axis=1))
+                out_boxes_list.append(
+                    np.concatenate(
+                        [
+                            np.expand_dims(np.array(picked_labels), axis=-1),
+                            np.expand_dims(picked_box_probs[:, 4], axis=-1),
+                            picked_box_probs[:, :4],
+                        ],
+                        axis=1,
+                    )
+                )
                 out_boxes_num.append(len(picked_labels))
 
         out_boxes_list = np.concatenate(out_boxes_list, axis=0)

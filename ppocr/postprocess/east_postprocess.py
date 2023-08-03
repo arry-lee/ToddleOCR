@@ -16,13 +16,11 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import numpy as np
-from .locality_aware_nms import nms_locality
 import cv2
+import numpy as np
 import torch
 
-import os
-import sys
+from .locality_aware_nms import nms_locality
 
 
 class EASTPostProcess(object):
@@ -105,7 +103,13 @@ class EASTPostProcess(object):
         for ino in range(img_num):
             score = score_list[ino]
             geo = geo_list[ino]
-            boxes = self.detect(score_map=score, geo_map=geo, score_thresh=self.score_thresh, cover_thresh=self.cover_thresh, nms_thresh=self.nms_thresh)
+            boxes = self.detect(
+                score_map=score,
+                geo_map=geo,
+                score_thresh=self.score_thresh,
+                cover_thresh=self.cover_thresh,
+                nms_thresh=self.nms_thresh,
+            )
             boxes_norm = []
             if len(boxes) > 0:
                 h, w = score.shape[1:]

@@ -36,8 +36,14 @@ def create_metric(out, label, architecture=None, topk=5, classes_num=1000, use_d
 
     # multi cards' eval
     if mode != "train" and paddle.distributed.get_world_size() > 1:
-        top1 = paddle.distributed.all_reduce(top1, op=paddle.distributed.ReduceOp.SUM) / paddle.distributed.get_world_size()
-        topk = paddle.distributed.all_reduce(topk, op=paddle.distributed.ReduceOp.SUM) / paddle.distributed.get_world_size()
+        top1 = (
+            paddle.distributed.all_reduce(top1, op=paddle.distributed.ReduceOp.SUM)
+            / paddle.distributed.get_world_size()
+        )
+        topk = (
+            paddle.distributed.all_reduce(topk, op=paddle.distributed.ReduceOp.SUM)
+            / paddle.distributed.get_world_size()
+        )
 
     fetchs["top1"] = top1
     topk_name = "top{}".format(k)

@@ -211,10 +211,18 @@ def create_predictor(args, mode, logger):
         if args.use_gpu:
             gpu_id = get_infer_gpuid()
             if gpu_id is None:
-                logger.warning("GPU is not found in current device by nvidia-smi. Please check your device or ignore it if run on jetson.")
+                logger.warning(
+                    "GPU is not found in current device by nvidia-smi. Please check your device or ignore it if run on jetson."
+                )
             config.enable_use_gpu(args.gpu_mem, args.gpu_id)
             if args.use_tensorrt:
-                config.enable_tensorrt_engine(workspace_size=1 << 30, precision_mode=precision, max_batch_size=args.max_batch_size, min_subgraph_size=args.min_subgraph_size, use_calib_mode=False)  # skip the minmum trt subgraph
+                config.enable_tensorrt_engine(
+                    workspace_size=1 << 30,
+                    precision_mode=precision,
+                    max_batch_size=args.max_batch_size,
+                    min_subgraph_size=args.min_subgraph_size,
+                    use_calib_mode=False,
+                )  # skip the minmum trt subgraph
 
                 # collect shape
                 trt_shape_f = os.path.join(model_dir, f"{mode}_trt_dynamic_shape.txt")
@@ -313,7 +321,15 @@ def draw_e2e_res(dt_boxes, strs, img_path):
     for box, str in zip(dt_boxes, strs):
         box = box.astype(np.int32).reshape((-1, 1, 2))
         cv2.polylines(src_im, [box], True, color=(255, 255, 0), thickness=2)
-        cv2.putText(src_im, str, org=(int(box[0, 0, 0]), int(box[0, 0, 1])), fontFace=cv2.FONT_HERSHEY_COMPLEX, fontScale=0.7, color=(0, 255, 0), thickness=1)
+        cv2.putText(
+            src_im,
+            str,
+            org=(int(box[0, 0, 0]), int(box[0, 0, 1])),
+            fontFace=cv2.FONT_HERSHEY_COMPLEX,
+            fontScale=0.7,
+            color=(0, 255, 0),
+            thickness=1,
+        )
     return src_im
 
 
@@ -413,7 +429,9 @@ def draw_box_txt_fine(img_size, box, txt, font_path="./doc/fonts/simfang.ttf"):
     M = cv2.getPerspectiveTransform(pts1, pts2)
 
     img_text = np.array(img_text, dtype=np.uint8)
-    img_right_text = cv2.warpPerspective(img_text, M, img_size, flags=cv2.INTER_NEAREST, borderMode=cv2.BORDER_CONSTANT, borderValue=(255, 255, 255))
+    img_right_text = cv2.warpPerspective(
+        img_text, M, img_size, flags=cv2.INTER_NEAREST, borderMode=cv2.BORDER_CONSTANT, borderValue=(255, 255, 255)
+    )
     return img_right_text
 
 
@@ -558,7 +576,9 @@ def get_rotate_crop_image(img, points):
     img_crop_height = int(max(np.linalg.norm(points[0] - points[3]), np.linalg.norm(points[1] - points[2])))
     pts_std = np.float32([[0, 0], [img_crop_width, 0], [img_crop_width, img_crop_height], [0, img_crop_height]])
     M = cv2.getPerspectiveTransform(points, pts_std)
-    dst_img = cv2.warpPerspective(img, M, (img_crop_width, img_crop_height), borderMode=cv2.BORDER_REPLICATE, flags=cv2.INTER_CUBIC)
+    dst_img = cv2.warpPerspective(
+        img, M, (img_crop_width, img_crop_height), borderMode=cv2.BORDER_REPLICATE, flags=cv2.INTER_CUBIC
+    )
     dst_img_height, dst_img_width = dst_img.shape[0:2]
     if dst_img_height * 1.0 / dst_img_width >= 1.5:
         dst_img = np.rot90(dst_img)

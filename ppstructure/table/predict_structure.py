@@ -66,13 +66,24 @@ class TableStructurer(object):
         self.use_onnx = args.use_onnx
         pre_process_list = build_pre_process_list(args)
         if args.table_algorithm not in ["TableMaster"]:
-            postprocess_params = {"name": "TableLabelDecode", "character_dict_path": args.table_char_dict_path, "merge_no_span_structure": args.merge_no_span_structure}
+            postprocess_params = {
+                "name": "TableLabelDecode",
+                "character_dict_path": args.table_char_dict_path,
+                "merge_no_span_structure": args.merge_no_span_structure,
+            }
         else:
-            postprocess_params = {"name": "TableMasterLabelDecode", "character_dict_path": args.table_char_dict_path, "box_shape": "pad", "merge_no_span_structure": args.merge_no_span_structure}
+            postprocess_params = {
+                "name": "TableMasterLabelDecode",
+                "character_dict_path": args.table_char_dict_path,
+                "box_shape": "pad",
+                "merge_no_span_structure": args.merge_no_span_structure,
+            }
 
         self.preprocess_op = create_operators(pre_process_list)
         self.postprocess_op = build_post_process(postprocess_params)
-        self.predictor, self.input_tensor, self.output_tensors, self.config = utility.create_predictor(args, "table", logger)
+        self.predictor, self.input_tensor, self.output_tensors, self.config = utility.create_predictor(
+            args, "table", logger
+        )
 
         if args.benchmark:
             import auto_log

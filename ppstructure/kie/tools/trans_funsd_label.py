@@ -100,7 +100,9 @@ def load_funsd_label(image_dir, anno_dir):
             res = sorted(res, key=lambda r: (r["points"][0][1], r["points"][0][0]))
             for i in range(len(res) - 1):
                 for j in range(i, 0, -1):
-                    if abs(res[j + 1]["points"][0][1] - res[j]["points"][0][1]) < 20 and (res[j + 1]["points"][0][0] < res[j]["points"][0][0]):
+                    if abs(res[j + 1]["points"][0][1] - res[j]["points"][0][1]) < 20 and (
+                        res[j + 1]["points"][0][0] < res[j]["points"][0][0]
+                    ):
                         tmp = deepcopy(res[j])
                         res[j] = deepcopy(res[j + 1])
                         res[j + 1] = deepcopy(tmp)

@@ -31,7 +31,10 @@ def style_string_to_dict(style):
 
 
 def get_side(style, name):
-    return {"border_style": style.get("border-{}-style".format(name)), "color": colormap(style.get("border-{}-color".format(name)))}
+    return {
+        "border_style": style.get("border-{}-style".format(name)),
+        "color": colormap(style.get("border-{}-color".format(name))),
+    }
 
 
 known_styles = {}
@@ -52,10 +55,18 @@ def style_dict_to_named_style(style_dict, number_format=None):
 
     if style_and_format_string not in known_styles:
         # Font
-        font = Font(bold=style_dict.get("font-weight") == "bold", color=style_dict.get_color("color", None), size=style_dict.get("font-size"))
+        font = Font(
+            bold=style_dict.get("font-weight") == "bold",
+            color=style_dict.get_color("color", None),
+            size=style_dict.get("font-size"),
+        )
 
         # Alignment
-        alignment = Alignment(horizontal=style_dict.get("text-align", "general"), vertical=style_dict.get("vertical-align"), wrap_text=style_dict.get("white-space", "nowrap") == "normal")
+        alignment = Alignment(
+            horizontal=style_dict.get("text-align", "general"),
+            vertical=style_dict.get("vertical-align"),
+            wrap_text=style_dict.get("white-space", "nowrap") == "normal",
+        )
 
         # Fill
         bg_color = style_dict.get_color("background-color")
@@ -81,7 +92,9 @@ def style_dict_to_named_style(style_dict, number_format=None):
 
         name = "Style {}".format(len(known_styles) + 1)
 
-        pyxl_style = NamedStyle(name=name, font=font, fill=fill, alignment=alignment, border=border, number_format=number_format)
+        pyxl_style = NamedStyle(
+            name=name, font=font, fill=fill, alignment=alignment, border=border, number_format=number_format
+        )
 
         known_styles[style_and_format_string] = pyxl_style
 
@@ -243,7 +256,19 @@ class TableCell(Element):
     This class maps to the `<td>` element of the html table.
     """
 
-    CELL_TYPES = {"TYPE_STRING", "TYPE_FORMULA", "TYPE_NUMERIC", "TYPE_BOOL", "TYPE_CURRENCY", "TYPE_PERCENTAGE", "TYPE_NULL", "TYPE_INLINE", "TYPE_ERROR", "TYPE_FORMULA_CACHE_STRING", "TYPE_INTEGER"}
+    CELL_TYPES = {
+        "TYPE_STRING",
+        "TYPE_FORMULA",
+        "TYPE_NUMERIC",
+        "TYPE_BOOL",
+        "TYPE_CURRENCY",
+        "TYPE_PERCENTAGE",
+        "TYPE_NULL",
+        "TYPE_INLINE",
+        "TYPE_ERROR",
+        "TYPE_FORMULA_CACHE_STRING",
+        "TYPE_INTEGER",
+    }
 
     def __init__(self, cell, parent=None):
         super(TableCell, self).__init__(cell, parent=parent)

@@ -47,7 +47,14 @@ class TextDetector(object):
                     "limit_type": args.det_limit_type,
                 }
             },
-            {"NormalizeImage": {"std": [0.229, 0.224, 0.225], "mean": [0.485, 0.456, 0.406], "scale": "1./255.", "order": "hwc"}},
+            {
+                "NormalizeImage": {
+                    "std": [0.229, 0.224, 0.225],
+                    "mean": [0.485, 0.456, 0.406],
+                    "scale": "1./255.",
+                    "order": "hwc",
+                }
+            },
             {"ToCHWImage": None},
             {"KeepKeys": {"keep_keys": ["image", "shape"]}},
         ]
@@ -70,7 +77,14 @@ class TextDetector(object):
             postprocess_params["use_dilation"] = args.use_dilation
             postprocess_params["score_mode"] = args.det_db_score_mode
             postprocess_params["box_type"] = args.det_box_type
-            pre_process_list[1] = {"NormalizeImage": {"std": [1.0, 1.0, 1.0], "mean": [0.48109378172549, 0.45752457890196, 0.40787054090196], "scale": "1./255.", "order": "hwc"}}
+            pre_process_list[1] = {
+                "NormalizeImage": {
+                    "std": [1.0, 1.0, 1.0],
+                    "mean": [0.48109378172549, 0.45752457890196, 0.40787054090196],
+                    "scale": "1./255.",
+                    "order": "hwc",
+                }
+            }
         elif self.det_algorithm == "EAST":
             postprocess_params["name"] = "EASTPostProcess"
             postprocess_params["score_thresh"] = args.det_east_score_thresh
@@ -115,7 +129,9 @@ class TextDetector(object):
 
         self.preprocess_op = create_operators(pre_process_list)
         self.postprocess_op = build_post_process(postprocess_params)
-        self.predictor, self.input_tensor, self.output_tensors, self.config = utility.create_predictor(args, "det", logger)
+        self.predictor, self.input_tensor, self.output_tensors, self.config = utility.create_predictor(
+            args, "det", logger
+        )
 
         if self.use_onnx:
             img_h, img_w = self.input_tensor.shape[2:]
@@ -288,7 +304,14 @@ if __name__ == "__main__":
             elapse = time.time() - st
             total_time += elapse
             if len(imgs) > 1:
-                save_pred = os.path.basename(image_file) + "_" + str(index) + "\t" + str(json.dumps([x.tolist() for x in dt_boxes])) + "\n"
+                save_pred = (
+                    os.path.basename(image_file)
+                    + "_"
+                    + str(index)
+                    + "\t"
+                    + str(json.dumps([x.tolist() for x in dt_boxes]))
+                    + "\n"
+                )
             else:
                 save_pred = os.path.basename(image_file) + "\t" + str(json.dumps([x.tolist() for x in dt_boxes])) + "\n"
             save_results.append(save_pred)

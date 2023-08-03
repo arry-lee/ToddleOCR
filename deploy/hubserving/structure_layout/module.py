@@ -35,7 +35,14 @@ from ppstructure.utility import parse_args
 from deploy.hubserving.structure_layout.params import read_params
 
 
-@moduleinfo(name="structure_layout", version="1.0.0", summary="PP-Structure layout service", author="paddle-dev", author_email="paddle-dev@baidu.com", type="cv/structure_layout")
+@moduleinfo(
+    name="structure_layout",
+    version="1.0.0",
+    summary="PP-Structure layout service",
+    author="paddle-dev",
+    author_email="paddle-dev@baidu.com",
+    type="cv/structure_layout",
+)
 class LayoutPredictor(hub.Module):
     def _initialize(self, use_gpu=False, enable_mkldnn=False):
         """
@@ -51,7 +58,9 @@ class LayoutPredictor(hub.Module):
                 print("CUDA_VISIBLE_DEVICES: ", _places)
                 cfg.gpu_mem = 8000
             except:
-                raise RuntimeError("Environment Variable CUDA_VISIBLE_DEVICES is not set correctly. If you wanna use gpu, please set CUDA_VISIBLE_DEVICES via export CUDA_VISIBLE_DEVICES=cuda_device_id.")
+                raise RuntimeError(
+                    "Environment Variable CUDA_VISIBLE_DEVICES is not set correctly. If you wanna use gpu, please set CUDA_VISIBLE_DEVICES via export CUDA_VISIBLE_DEVICES=cuda_device_id."
+                )
         cfg.ir_optim = True
         cfg.enable_mkldnn = enable_mkldnn
 

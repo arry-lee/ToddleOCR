@@ -29,7 +29,14 @@ def build_dataloader(mode, batch_size=4, seed=None, num_workers=0, device="gpu:0
     # define batch sampler
     batch_sampler = DistributedBatchSampler(dataset=dataset, batch_size=batch_size, shuffle=False, drop_last=True)
 
-    data_loader = DataLoader(dataset=dataset, batch_sampler=batch_sampler, places=device, num_workers=num_workers, return_list=True, use_shared_memory=False)
+    data_loader = DataLoader(
+        dataset=dataset,
+        batch_sampler=batch_sampler,
+        places=device,
+        num_workers=num_workers,
+        return_list=True,
+        use_shared_memory=False,
+    )
 
     # support exit using ctrl+c
     signal.signal(signal.SIGINT, term_mp)

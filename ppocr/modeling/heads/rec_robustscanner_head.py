@@ -58,7 +58,9 @@ class ChannelReductionEncoder(nn.Module):
     def __init__(self, in_channels, out_channels, **kwargs):
         super(ChannelReductionEncoder, self).__init__()
 
-        self.layer = nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=1, padding=0, weight_attr=nn.initializer.XavierNormal())
+        self.layer = nn.Conv2d(
+            in_channels, out_channels, kernel_size=1, stride=1, padding=0, weight_attr=nn.initializer.XavierNormal()
+        )
 
     def forward(self, feat):
         """
@@ -135,7 +137,20 @@ class SequenceAttentionDecoder(BaseDecoder):
         :obj:`mmocr.models.textrecog.recognizer.EncodeDecodeRecognizer`.
     """
 
-    def __init__(self, num_classes=None, rnn_layers=2, dim_input=512, dim_model=128, max_seq_len=40, start_idx=0, mask=True, padding_idx=None, dropout=0, return_feature=False, encode_value=False):
+    def __init__(
+        self,
+        num_classes=None,
+        rnn_layers=2,
+        dim_input=512,
+        dim_model=128,
+        max_seq_len=40,
+        start_idx=0,
+        mask=True,
+        padding_idx=None,
+        dropout=0,
+        return_feature=False,
+        encode_value=False,
+    ):
         super().__init__()
 
         self.num_classes = num_classes
@@ -149,7 +164,9 @@ class SequenceAttentionDecoder(BaseDecoder):
 
         self.embedding = nn.Embedding(self.num_classes, self.dim_model, padding_idx=padding_idx)
 
-        self.sequence_layer = nn.LSTM(input_size=dim_model, hidden_size=dim_model, num_layers=rnn_layers, time_major=False, dropout=dropout)
+        self.sequence_layer = nn.LSTM(
+            input_size=dim_model, hidden_size=dim_model, num_layers=rnn_layers, time_major=False, dropout=dropout
+        )
 
         self.attention_layer = DotProductAttentionLayer()
 
@@ -285,7 +302,11 @@ class PositionAwareLayer(nn.Module):
 
         self.rnn = nn.LSTM(input_size=dim_model, hidden_size=dim_model, num_layers=rnn_layers, time_major=False)
 
-        self.mixer = nn.Sequential(nn.Conv2d(dim_model, dim_model, kernel_size=3, stride=1, padding=1), nn.ReLU(), nn.Conv2d(dim_model, dim_model, kernel_size=3, stride=1, padding=1))
+        self.mixer = nn.Sequential(
+            nn.Conv2d(dim_model, dim_model, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(dim_model, dim_model, kernel_size=3, stride=1, padding=1),
+        )
 
     def forward(self, img_feature):
         n, c, h, w = img_feature.shape
@@ -325,7 +346,17 @@ class PositionAttentionDecoder(BaseDecoder):
 
     """
 
-    def __init__(self, num_classes=None, rnn_layers=2, dim_input=512, dim_model=128, max_seq_len=40, mask=True, return_feature=False, encode_value=False):
+    def __init__(
+        self,
+        num_classes=None,
+        rnn_layers=2,
+        dim_input=512,
+        dim_model=128,
+        max_seq_len=40,
+        mask=True,
+        return_feature=False,
+        encode_value=False,
+    ):
         super().__init__()
 
         self.num_classes = num_classes
@@ -598,7 +629,21 @@ class RobustScannerDecoder(BaseDecoder):
 
 
 class RobustScannerHead(nn.Module):
-    def __init__(self, out_channels, in_channels, enc_outchannles=128, hybrid_dec_rnn_layers=2, hybrid_dec_dropout=0, position_dec_rnn_layers=2, start_idx=0, max_text_length=40, mask=True, padding_idx=None, encode_value=False, **kwargs):  # 90 + unknown + start + padding
+    def __init__(
+        self,
+        out_channels,
+        in_channels,
+        enc_outchannles=128,
+        hybrid_dec_rnn_layers=2,
+        hybrid_dec_dropout=0,
+        position_dec_rnn_layers=2,
+        start_idx=0,
+        max_text_length=40,
+        mask=True,
+        padding_idx=None,
+        encode_value=False,
+        **kwargs
+    ):  # 90 + unknown + start + padding
         super(RobustScannerHead, self).__init__()
 
         # encoder module
@@ -635,5 +680,7 @@ class RobustScannerHead(nn.Module):
             label = torch.Tensor(label, dtype="int64")
             final_out = self.decoder(inputs, out_enc, label, valid_ratios, word_positions)
         if not self.training:
-            final_out = self.decoder(inputs, out_enc, label=None, valid_ratios=valid_ratios, word_positions=word_positions, train_mode=False)
+            final_out = self.decoder(
+                inputs, out_enc, label=None, valid_ratios=valid_ratios, word_positions=word_positions, train_mode=False
+            )
         return final_out

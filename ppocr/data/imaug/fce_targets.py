@@ -20,7 +20,6 @@ import cv2
 import numpy as np
 from numpy.fft import fft
 from numpy.linalg import norm
-import sys
 
 
 def vector_slope(vec):
@@ -45,7 +44,16 @@ class FCENetTargets:
             assigned to each level.
     """
 
-    def __init__(self, fourier_degree=5, resample_step=4.0, center_region_shrink_ratio=0.3, level_size_divisors=(8, 16, 32), level_proportion_range=((0, 0.25), (0.2, 0.65), (0.55, 1.0)), orientation_thr=2.0, **kwargs):
+    def __init__(
+        self,
+        fourier_degree=5,
+        resample_step=4.0,
+        center_region_shrink_ratio=0.3,
+        level_size_divisors=(8, 16, 32),
+        level_proportion_range=((0, 0.25), (0.2, 0.65), (0.55, 1.0)),
+        orientation_thr=2.0,
+        **kwargs
+    ):
         super().__init__()
         assert isinstance(level_size_divisors, tuple)
         assert isinstance(level_proportion_range, tuple)
@@ -105,7 +113,9 @@ class FCENetTargets:
             if current_edge_ind >= len(length_list):
                 break
             end_shift_ratio = current_edge_end_shift / length_list[current_edge_ind]
-            current_point = line[current_edge_ind] + (line[current_edge_ind + 1] - line[current_edge_ind]) * end_shift_ratio
+            current_point = (
+                line[current_edge_ind] + (line[current_edge_ind + 1] - line[current_edge_ind]) * end_shift_ratio
+            )
             resampled_line.append(current_point)
         resampled_line.append(line[-1])
         resampled_line = np.array(resampled_line)
@@ -186,7 +196,9 @@ class FCENetTargets:
             theta_sum_score = np.array(theta_sum) / np.pi
             adjacent_theta_score = np.array(adjacent_vec_theta) / np.pi
             poly_center = np.mean(points, axis=0)
-            edge_dist = np.maximum(norm(pad_points[1:] - poly_center, axis=-1), norm(pad_points[:-1] - poly_center, axis=-1))
+            edge_dist = np.maximum(
+                norm(pad_points[1:] - poly_center, axis=-1), norm(pad_points[:-1] - poly_center, axis=-1)
+            )
             dist_score = edge_dist / np.max(edge_dist)
             position_score = np.zeros(len(edge_vec))
             score = 0.5 * theta_sum_score + 0.15 * adjacent_theta_score
@@ -214,15 +226,21 @@ class FCENetTargets:
             head_inds = [head_start, head_end]
             tail_inds = [tail_start, tail_end]
         else:
-            if vector_slope(points[1] - points[0]) + vector_slope(points[3] - points[2]) < vector_slope(points[2] - points[1]) + vector_slope(points[0] - points[3]):
+            if vector_slope(points[1] - points[0]) + vector_slope(points[3] - points[2]) < vector_slope(
+                points[2] - points[1]
+            ) + vector_slope(points[0] - points[3]):
                 horizontal_edge_inds = [[0, 1], [2, 3]]
                 vertical_edge_inds = [[3, 0], [1, 2]]
             else:
                 horizontal_edge_inds = [[3, 0], [1, 2]]
                 vertical_edge_inds = [[0, 1], [2, 3]]
 
-            vertical_len_sum = norm(points[vertical_edge_inds[0][0]] - points[vertical_edge_inds[0][1]]) + norm(points[vertical_edge_inds[1][0]] - points[vertical_edge_inds[1][1]])
-            horizontal_len_sum = norm(points[horizontal_edge_inds[0][0]] - points[horizontal_edge_inds[0][1]]) + norm(points[horizontal_edge_inds[1][0]] - points[horizontal_edge_inds[1][1]])
+            vertical_len_sum = norm(points[vertical_edge_inds[0][0]] - points[vertical_edge_inds[0][1]]) + norm(
+                points[vertical_edge_inds[1][0]] - points[vertical_edge_inds[1][1]]
+            )
+            horizontal_len_sum = norm(points[horizontal_edge_inds[0][0]] - points[horizontal_edge_inds[0][1]]) + norm(
+                points[horizontal_edge_inds[1][0]] - points[horizontal_edge_inds[1][1]]
+            )
 
             if vertical_len_sum > horizontal_len_sum * orientation_thr:
                 head_inds = horizontal_edge_inds[0]
@@ -306,8 +324,14 @@ class FCENetTargets:
 
             for i in range(0, len(center_line) - 1):
                 tl = center_line[i] + (resampled_top_line[i] - center_line[i]) * self.center_region_shrink_ratio
-                tr = center_line[i + 1] + (resampled_top_line[i + 1] - center_line[i + 1]) * self.center_region_shrink_ratio
-                br = center_line[i + 1] + (resampled_bot_line[i + 1] - center_line[i + 1]) * self.center_region_shrink_ratio
+                tr = (
+                    center_line[i + 1]
+                    + (resampled_top_line[i + 1] - center_line[i + 1]) * self.center_region_shrink_ratio
+                )
+                br = (
+                    center_line[i + 1]
+                    + (resampled_bot_line[i + 1] - center_line[i + 1]) * self.center_region_shrink_ratio
+                )
                 bl = center_line[i] + (resampled_bot_line[i] - center_line[i]) * self.center_region_shrink_ratio
                 current_center_box = np.vstack([tl, tr, br, bl]).astype(np.int32)
                 center_region_boxes.append(current_center_box)

@@ -65,7 +65,9 @@ class TableSystem(object):
             benchmark_tmp = args.benchmark
             args.benchmark = False
         self.text_detector = predict_det.TextDetector(copy.deepcopy(args)) if text_detector is None else text_detector
-        self.text_recognizer = predict_rec.TextRecognizer(copy.deepcopy(args)) if text_recognizer is None else text_recognizer
+        self.text_recognizer = (
+            predict_rec.TextRecognizer(copy.deepcopy(args)) if text_recognizer is None else text_recognizer
+        )
         if benchmark_tmp:
             args.benchmark = True
         self.table_structurer = predict_strture.TableStructurer(args)
@@ -74,7 +76,9 @@ class TableSystem(object):
         else:
             self.match = TableMatch(filter_ocr_result=True)
 
-        self.predictor, self.input_tensor, self.output_tensors, self.config = utility.create_predictor(args, "table", logger)
+        self.predictor, self.input_tensor, self.output_tensors, self.config = utility.create_predictor(
+            args, "table", logger
+        )
 
     def __call__(self, img, return_ocr_result_in_table=False):
         result = dict()
@@ -187,7 +191,11 @@ def main(args):
         f_html.write("<tr>\n")
         f_html.write(f"<td> {os.path.basename(image_file)} <br/>\n")
         f_html.write(f'<td><img src="{image_file}" width=640></td>\n')
-        f_html.write('<td><table  border="1">' + pred_html.replace("<html><body><table>", "").replace("</table></body></html>", "") + "</table></td>\n")
+        f_html.write(
+            '<td><table  border="1">'
+            + pred_html.replace("<html><body><table>", "").replace("</table></body></html>", "")
+            + "</table></td>\n"
+        )
         f_html.write(f'<td><img src="{os.path.basename(image_file)}" width=640></td>\n')
         f_html.write("</tr>\n")
     f_html.write("</table>\n")
@@ -205,7 +213,9 @@ if __name__ == "__main__":
         p_list = []
         total_process_num = args.total_process_num
         for process_id in range(total_process_num):
-            cmd = [sys.executable, "-u"] + sys.argv + ["--process_id={}".format(process_id), "--use_mp={}".format(False)]
+            cmd = (
+                [sys.executable, "-u"] + sys.argv + ["--process_id={}".format(process_id), "--use_mp={}".format(False)]
+            )
             p = subprocess.Popen(cmd, stdout=sys.stdout, stderr=sys.stdout)
             p_list.append(p)
         for p in p_list:

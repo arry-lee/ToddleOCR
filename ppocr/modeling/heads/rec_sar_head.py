@@ -58,7 +58,14 @@ class SAREncoder(nn.Module):
             direction = "bidirectional"
         else:
             direction = "forward"
-        kwargs = dict(input_size=d_model, hidden_size=d_enc, num_layers=2, time_major=False, dropout=enc_drop_rnn, direction=direction)
+        kwargs = dict(
+            input_size=d_model,
+            hidden_size=d_enc,
+            num_layers=2,
+            time_major=False,
+            dropout=enc_drop_rnn,
+            direction=direction,
+        )
         if enc_gru:
             self.rnn_encoder = nn.GRU(**kwargs)
         else:
@@ -134,7 +141,22 @@ class ParallelSARDecoder(BaseDecoder):
             attention with holistic feature and hidden state.
     """
 
-    def __init__(self, out_channels, enc_bi_rnn=False, dec_bi_rnn=False, dec_drop_rnn=0.0, dec_gru=False, d_model=512, d_enc=512, d_k=64, pred_dropout=0.1, max_text_length=30, mask=True, pred_concat=True, **kwargs):  # 90 + unknown + start + padding
+    def __init__(
+        self,
+        out_channels,
+        enc_bi_rnn=False,
+        dec_bi_rnn=False,
+        dec_drop_rnn=0.0,
+        dec_gru=False,
+        d_model=512,
+        d_enc=512,
+        d_k=64,
+        pred_dropout=0.1,
+        max_text_length=30,
+        mask=True,
+        pred_concat=True,
+        **kwargs
+    ):  # 90 + unknown + start + padding
         super().__init__()
 
         self.num_classes = out_channels
@@ -160,7 +182,14 @@ class ParallelSARDecoder(BaseDecoder):
         else:
             direction = "forward"
 
-        kwargs = dict(input_size=encoder_rnn_out_size, hidden_size=encoder_rnn_out_size, num_layers=2, time_major=False, dropout=dec_drop_rnn, direction=direction)
+        kwargs = dict(
+            input_size=encoder_rnn_out_size,
+            hidden_size=encoder_rnn_out_size,
+            num_layers=2,
+            time_major=False,
+            dropout=dec_drop_rnn,
+            direction=direction,
+        )
         if dec_gru:
             self.rnn_decoder = nn.GRU(**kwargs)
         else:
@@ -210,7 +239,7 @@ class ParallelSARDecoder(BaseDecoder):
                     attn_weight[i, :, :, valid_width:, :] = float("-inf")
 
         attn_weight = torch.reshape(attn_weight, [bsz, T, -1])
-        attn_weight = F.softmax(attn_weight,dim=-1)
+        attn_weight = F.softmax(attn_weight, dim=-1)
 
         attn_weight = torch.reshape(attn_weight, [bsz, T, h, w, c])
         attn_weight = attn_weight.permute(0, 1, 4, 2, 3)
@@ -293,11 +322,29 @@ class ParallelSARDecoder(BaseDecoder):
 
 
 class SARHead(nn.Module):
-    def __init__(self, in_channels, out_channels, enc_dim=512, max_text_length=30, enc_bi_rnn=False, enc_drop_rnn=0.1, enc_gru=False, dec_bi_rnn=False, dec_drop_rnn=0.0, dec_gru=False, d_k=512, pred_dropout=0.1, pred_concat=True, **kwargs):
+    def __init__(
+        self,
+        in_channels,
+        out_channels,
+        enc_dim=512,
+        max_text_length=30,
+        enc_bi_rnn=False,
+        enc_drop_rnn=0.1,
+        enc_gru=False,
+        dec_bi_rnn=False,
+        dec_drop_rnn=0.0,
+        dec_gru=False,
+        d_k=512,
+        pred_dropout=0.1,
+        pred_concat=True,
+        **kwargs
+    ):
         super(SARHead, self).__init__()
 
         # encoder module
-        self.encoder = SAREncoder(enc_bi_rnn=enc_bi_rnn, enc_drop_rnn=enc_drop_rnn, enc_gru=enc_gru, d_model=in_channels, d_enc=enc_dim)
+        self.encoder = SAREncoder(
+            enc_bi_rnn=enc_bi_rnn, enc_drop_rnn=enc_drop_rnn, enc_gru=enc_gru, d_model=in_channels, d_enc=enc_dim
+        )
 
         # decoder module
         self.decoder = ParallelSARDecoder(

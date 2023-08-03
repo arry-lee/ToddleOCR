@@ -170,7 +170,9 @@ class BaseRecLabelDecode(object):
         character_type = config["character_type"]
         character_dict_path = config["character_dict_path"]
         use_space_char = True
-        assert character_type in support_character_type, "Only {} are supported now but get {}".format(support_character_type, character_type)
+        assert character_type in support_character_type, "Only {} are supported now but get {}".format(
+            support_character_type, character_type
+        )
 
         self.beg_str = "sos"
         self.end_str = "eos"
@@ -184,7 +186,9 @@ class BaseRecLabelDecode(object):
             dict_character = list(self.character_str)
         elif character_type in support_character_type:
             self.character_str = ""
-            assert character_dict_path is not None, "character_dict_path should not be None when character_type is {}".format(character_type)
+            assert (
+                character_dict_path is not None
+            ), "character_dict_path should not be None when character_type is {}".format(character_type)
             with open(character_dict_path, "rb") as fin:
                 lines = fin.readlines()
                 for line in lines:
@@ -356,7 +360,14 @@ class CharacterOps(object):
 
 
 class OCRReader(object):
-    def __init__(self, algorithm="CRNN", image_shape=[3, 48, 320], char_type="ch", batch_num=1, char_dict_path="./ppocr_keys_v1.txt"):
+    def __init__(
+        self,
+        algorithm="CRNN",
+        image_shape=[3, 48, 320],
+        char_type="ch",
+        batch_num=1,
+        char_dict_path="./ppocr_keys_v1.txt",
+    ):
         self.rec_image_shape = image_shape
         self.character_type = char_type
         self.rec_batch_num = batch_num

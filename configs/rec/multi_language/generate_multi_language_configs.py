@@ -12,10 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import yaml
-from argparse import ArgumentParser, RawDescriptionHelpFormatter
-import os.path
 import logging
+import os.path
+from argparse import ArgumentParser, RawDescriptionHelpFormatter
+
+import yaml
 
 logging.basicConfig(level=logging.INFO)
 
@@ -87,7 +88,25 @@ latin_lang = [
     "latin",
 ]
 arabic_lang = ["ar", "fa", "ug", "ur"]
-cyrillic_lang = ["ru", "rs_cyrillic", "be", "bg", "uk", "mn", "abq", "ady", "kbd", "ava", "dar", "inh", "che", "lbe", "lez", "tab", "cyrillic"]
+cyrillic_lang = [
+    "ru",
+    "rs_cyrillic",
+    "be",
+    "bg",
+    "uk",
+    "mn",
+    "abq",
+    "ady",
+    "kbd",
+    "ava",
+    "dar",
+    "inh",
+    "che",
+    "lbe",
+    "lez",
+    "tab",
+    "cyrillic",
+]
 devanagari_lang = ["hi", "mr", "ne", "bh", "mai", "ang", "bho", "mah", "sck", "new", "gom", "sa", "bgc", "devanagari"]
 multi_lang = latin_lang + arabic_lang + cyrillic_lang + devanagari_lang
 
@@ -109,7 +128,9 @@ class ArgsParser(ArgumentParser):
         self.add_argument("--train", type=str, help="you can use this command to change the train dataset default path")
         self.add_argument("--val", type=str, help="you can use this command to change the eval dataset default path")
         self.add_argument("--dict", type=str, help="you can use this command to change the dictionary default path")
-        self.add_argument("--data_dir", type=str, help="you can use this command to change the dataset default root path")
+        self.add_argument(
+            "--data_dir", type=str, help="you can use this command to change the dataset default root path"
+        )
 
     def parse_args(self, argv=None):
         args = super(ArgsParser, self).parse_args(argv)
@@ -130,7 +151,10 @@ class ArgsParser(ArgumentParser):
     def _set_language(self, type):
         lang = type[0]
         assert type, "please use -l or --language to choose language type"
-        assert lang in support_list.keys() or lang in multi_lang, "the sub_keys(-l or --language) can only be one of support list: \n{},\nbut get: {}, " "please check your running command".format(multi_lang, type)
+        assert lang in support_list.keys() or lang in multi_lang, (
+            "the sub_keys(-l or --language) can only be one of support list: \n{},\nbut get: {}, "
+            "please check your running command".format(multi_lang, type)
+        )
         if lang in latin_lang:
             lang = "latin"
         elif lang in arabic_lang:
@@ -168,7 +192,11 @@ def merge_config(config):
                 global_config[key] = value
         else:
             sub_keys = key.split(".")
-            assert sub_keys[0] in global_config, "the sub_keys can only be one of global_config: {}, but get: {}, please check your running command".format(global_config.keys(), sub_keys[0])
+            assert (
+                sub_keys[0] in global_config
+            ), "the sub_keys can only be one of global_config: {}, but get: {}, please check your running command".format(
+                global_config.keys(), sub_keys[0]
+            )
             cur = global_config[sub_keys[0]]
             for idx, sub_key in enumerate(sub_keys[1:]):
                 if idx == len(sub_keys) - 2:
@@ -178,7 +206,9 @@ def merge_config(config):
 
 
 def loss_file(path):
-    assert os.path.exists(path), "There is no such file:{},Please do not forget to put in the specified file".format(path)
+    assert os.path.exists(path), "There is no such file:{},Please do not forget to put in the specified file".format(
+        path
+    )
 
 
 if __name__ == "__main__":

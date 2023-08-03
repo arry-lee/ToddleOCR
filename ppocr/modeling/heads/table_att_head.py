@@ -26,10 +26,10 @@ import numpy as np
 from .rec_att_head import AttentionGRUCell
 
 
-
-
 class TableAttentionHead(nn.Module):
-    def __init__(self, in_channels, hidden_size, in_max_len=488, max_text_length=800, out_channels=30, loc_reg_num=4, **kwargs):
+    def __init__(
+        self, in_channels, hidden_size, in_max_len=488, max_text_length=800, out_channels=30, loc_reg_num=4, **kwargs
+    ):
         super(TableAttentionHead, self).__init__()
         self.input_size = in_channels[-1]
         self.hidden_size = hidden_size
@@ -103,7 +103,9 @@ class TableAttentionHead(nn.Module):
 
 
 class SLAHead(nn.Module):
-    def __init__(self, in_channels, hidden_size, out_channels=30, max_text_length=500, loc_reg_num=4, fc_decay=0.0, **kwargs):
+    def __init__(
+        self, in_channels, hidden_size, out_channels=30, max_text_length=500, loc_reg_num=4, fc_decay=0.0, **kwargs
+    ):
         """
         @param in_channels: input shape
         @param hidden_size: hidden_size for RNN and Embedding
@@ -121,17 +123,14 @@ class SLAHead(nn.Module):
         # structure
         self.structure_attention_cell = AttentionGRUCell(in_channels, hidden_size, self.num_embeddings)
 
-
-
         self.structure_generator = nn.Sequential(
-            nn.Linear(self.hidden_size, self.hidden_size, nn.Linear(hidden_size, out_channels, bias=True)
-        ))
+            nn.Linear(self.hidden_size, self.hidden_size, nn.Linear(hidden_size, out_channels, bias=True))
+        )
         # loc
 
-
         self.loc_generator = nn.Sequential(
-            nn.Linear(self.hidden_size, self.hidden_size, nn.Linear(self.hidden_size, loc_reg_num, nn.Sigmoid()
-        )))
+            nn.Linear(self.hidden_size, self.hidden_size, nn.Linear(self.hidden_size, loc_reg_num, nn.Sigmoid()))
+        )
 
     def forward(self, inputs, targets=None):
         fea = inputs[-1]

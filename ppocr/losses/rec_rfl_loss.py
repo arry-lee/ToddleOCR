@@ -49,7 +49,9 @@ class RFLLoss(nn.Module):
             targets = batch[1].astype("int64")
             label_lengths = batch[2].astype("int64")
             batch_size, num_steps, num_classes = seq_outputs.shape[0], seq_outputs.shape[1], seq_outputs.shape[2]
-            assert len(targets.shape) == len(list(seq_outputs.shape)) - 1, "The target's shape and inputs's shape is [N, d] and [N, num_steps]"
+            assert (
+                len(targets.shape) == len(list(seq_outputs.shape)) - 1
+            ), "The target's shape and inputs's shape is [N, d] and [N, num_steps]"
 
             inputs = seq_outputs[:, :-1, :]
             targets = targets[:, 1:]

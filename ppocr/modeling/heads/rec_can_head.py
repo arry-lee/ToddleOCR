@@ -24,9 +24,10 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import torch.nn as nn
-import torch
 import math
+
+import torch
+import torch.nn as nn
 
 """
 Counting Module
@@ -38,7 +39,9 @@ class ChannelAtt(nn.Module):
         super(ChannelAtt, self).__init__()
         self.avg_pool = nn.AdaptiveAvgPool2d(1)
 
-        self.fc = nn.Sequential(nn.Linear(channel, channel // reduction), nn.ReLU(), nn.Linear(channel // reduction, channel), nn.Sigmoid())
+        self.fc = nn.Sequential(
+            nn.Linear(channel, channel // reduction), nn.ReLU(), nn.Linear(channel // reduction, channel), nn.Sigmoid()
+        )
 
     def forward(self, x):
         b, c, _, _ = x.shape
@@ -53,7 +56,10 @@ class CountingDecoder(nn.Module):
         self.in_channel = in_channel
         self.out_channel = out_channel
 
-        self.trans_layer = nn.Sequential(nn.Conv2d(self.in_channel, 512, kernel_size=kernel_size, padding=kernel_size // 2, bias=False), nn.BatchNorm2d(512))
+        self.trans_layer = nn.Sequential(
+            nn.Conv2d(self.in_channel, 512, kernel_size=kernel_size, padding=kernel_size // 2, bias=False),
+            nn.BatchNorm2d(512),
+        )
 
         self.channel_att = ChannelAtt(512, 16)
 
@@ -114,7 +120,19 @@ class PositionEmbeddingSine(nn.Module):
 
 
 class AttDecoder(nn.Module):
-    def __init__(self, ratio, is_train, input_size, hidden_size, encoder_out_channel, dropout, dropout_ratio, word_num, counting_decoder_out_channel, attention):
+    def __init__(
+        self,
+        ratio,
+        is_train,
+        input_size,
+        hidden_size,
+        encoder_out_channel,
+        dropout,
+        dropout_ratio,
+        word_num,
+        counting_decoder_out_channel,
+        attention,
+    ):
         super(AttDecoder, self).__init__()
         self.input_size = input_size
         self.hidden_size = hidden_size
@@ -132,7 +150,12 @@ class AttDecoder(nn.Module):
         self.word_input_gru = nn.GRUCell(self.input_size, self.hidden_size)
         self.word_attention = Attention(hidden_size, attention["attention_dim"])
 
-        self.encoder_feature_conv = nn.Conv2d(self.out_channel, self.attention_dim, kernel_size=attention["word_conv_kernel"], padding=attention["word_conv_kernel"] // 2)
+        self.encoder_feature_conv = nn.Conv2d(
+            self.out_channel,
+            self.attention_dim,
+            kernel_size=attention["word_conv_kernel"],
+            padding=attention["word_conv_kernel"] // 2,
+        )
 
         self.word_state_weight = nn.Linear(self.hidden_size, self.hidden_size)
         self.word_embedding_weight = nn.Linear(self.input_size, self.hidden_size)
@@ -169,16 +192,22 @@ class AttDecoder(nn.Module):
         for i in range(num_steps):
             word_embedding = self.embedding(word)
             _, hidden = self.word_input_gru(word_embedding, hidden)
-            word_context_vec, _, word_alpha_sum = self.word_attention(cnn_features, cnn_features_trans, hidden, word_alpha_sum, images_mask)
+            word_context_vec, _, word_alpha_sum = self.word_attention(
+                cnn_features, cnn_features_trans, hidden, word_alpha_sum, images_mask
+            )
 
             current_state = self.word_state_weight(hidden)
             word_weighted_embedding = self.word_embedding_weight(word_embedding)
             word_context_weighted = self.word_context_weight(word_context_vec)
 
             if self.dropout_prob:
-                word_out_state = self.dropout(current_state + word_weighted_embedding + word_context_weighted + counting_context_weighted)
+                word_out_state = self.dropout(
+                    current_state + word_weighted_embedding + word_context_weighted + counting_context_weighted
+                )
             else:
-                word_out_state = current_state + word_weighted_embedding + word_context_weighted + counting_context_weighted
+                word_out_state = (
+                    current_state + word_weighted_embedding + word_context_weighted + counting_context_weighted
+                )
 
             word_prob = self.word_convert(word_out_state)
             word_probs[:, i] = word_prob
@@ -192,7 +221,9 @@ class AttDecoder(nn.Module):
         return word_probs
 
     def init_hidden(self, features, feature_mask):
-        average = torch.sum(torch.sum(features * feature_mask, dim=-1), dim=-1) / torch.sum((torch.sum(feature_mask, dim=-1)), dim=-1)
+        average = torch.sum(torch.sum(features * feature_mask, dim=-1), dim=-1) / torch.sum(
+            (torch.sum(feature_mask, dim=-1)), dim=-1
+        )
         average = self.init_weight(average)
         return torch.tanh(average)
 
@@ -216,7 +247,9 @@ class Attention(nn.Module):
         query = self.hidden_weight(hidden)
         alpha_sum_trans = self.attention_conv(alpha_sum)
         coverage_alpha = self.attention_weight(torch.transpose(alpha_sum_trans, [0, 2, 3, 1]))
-        alpha_score = torch.tanh(torch.unsqueeze(query, [1, 2]) + coverage_alpha + torch.transpose(cnn_features_trans, [0, 2, 3, 1]))
+        alpha_score = torch.tanh(
+            torch.unsqueeze(query, [1, 2]) + coverage_alpha + torch.transpose(cnn_features_trans, [0, 2, 3, 1])
+        )
         energy = self.alpha_convert(alpha_score)
         energy = energy - energy.max()
         energy_exp = torch.exp(torch.squeeze(energy, -1))

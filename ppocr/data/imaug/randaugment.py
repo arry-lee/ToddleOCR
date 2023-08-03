@@ -17,10 +17,11 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from PIL import Image, ImageEnhance, ImageOps
-import numpy as np
 import random
+
+import numpy as np
 import six
+from PIL import Image, ImageEnhance, ImageOps
 
 
 class RawRandAugment(object):
@@ -56,17 +57,41 @@ class RawRandAugment(object):
         rnd_ch_op = random.choice
 
         self.func = {
-            "shearX": lambda img, magnitude: img.transform(img.size, Image.AFFINE, (1, magnitude * rnd_ch_op([-1, 1]), 0, 0, 1, 0), Image.BICUBIC, fillcolor=fillcolor),
-            "shearY": lambda img, magnitude: img.transform(img.size, Image.AFFINE, (1, 0, 0, magnitude * rnd_ch_op([-1, 1]), 1, 0), Image.BICUBIC, fillcolor=fillcolor),
-            "translateX": lambda img, magnitude: img.transform(img.size, Image.AFFINE, (1, 0, magnitude * img.size[0] * rnd_ch_op([-1, 1]), 0, 1, 0), fillcolor=fillcolor),
-            "translateY": lambda img, magnitude: img.transform(img.size, Image.AFFINE, (1, 0, 0, 0, 1, magnitude * img.size[1] * rnd_ch_op([-1, 1])), fillcolor=fillcolor),
+            "shearX": lambda img, magnitude: img.transform(
+                img.size,
+                Image.AFFINE,
+                (1, magnitude * rnd_ch_op([-1, 1]), 0, 0, 1, 0),
+                Image.BICUBIC,
+                fillcolor=fillcolor,
+            ),
+            "shearY": lambda img, magnitude: img.transform(
+                img.size,
+                Image.AFFINE,
+                (1, 0, 0, magnitude * rnd_ch_op([-1, 1]), 1, 0),
+                Image.BICUBIC,
+                fillcolor=fillcolor,
+            ),
+            "translateX": lambda img, magnitude: img.transform(
+                img.size,
+                Image.AFFINE,
+                (1, 0, magnitude * img.size[0] * rnd_ch_op([-1, 1]), 0, 1, 0),
+                fillcolor=fillcolor,
+            ),
+            "translateY": lambda img, magnitude: img.transform(
+                img.size,
+                Image.AFFINE,
+                (1, 0, 0, 0, 1, magnitude * img.size[1] * rnd_ch_op([-1, 1])),
+                fillcolor=fillcolor,
+            ),
             "rotate": lambda img, magnitude: rotate_with_fill(img, magnitude),
             "color": lambda img, magnitude: ImageEnhance.Color(img).enhance(1 + magnitude * rnd_ch_op([-1, 1])),
             "posterize": lambda img, magnitude: ImageOps.posterize(img, magnitude),
             "solarize": lambda img, magnitude: ImageOps.solarize(img, magnitude),
             "contrast": lambda img, magnitude: ImageEnhance.Contrast(img).enhance(1 + magnitude * rnd_ch_op([-1, 1])),
             "sharpness": lambda img, magnitude: ImageEnhance.Sharpness(img).enhance(1 + magnitude * rnd_ch_op([-1, 1])),
-            "brightness": lambda img, magnitude: ImageEnhance.Brightness(img).enhance(1 + magnitude * rnd_ch_op([-1, 1])),
+            "brightness": lambda img, magnitude: ImageEnhance.Brightness(img).enhance(
+                1 + magnitude * rnd_ch_op([-1, 1])
+            ),
             "autocontrast": lambda img, magnitude: ImageOps.autocontrast(img),
             "equalize": lambda img, magnitude: ImageOps.equalize(img),
             "invert": lambda img, magnitude: ImageOps.invert(img),

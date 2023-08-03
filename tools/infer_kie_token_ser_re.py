@@ -16,10 +16,10 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import numpy as np
-
 import os
 import sys
+
+import numpy as np
 
 __dir__ = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(__dir__)
@@ -31,13 +31,12 @@ import json
 import torch
 import torch.distributed as dist
 
-from ppocr.data import create_operators, transform
 from ppocr.modeling.architectures import build_model
 from ppocr.postprocess import build_post_process
 from ppocr.utils.save_load import load_model
 from ppocr.utils.visual import draw_re_results
 from ppocr.utils.logging import get_logger
-from ppocr.utils.utility import get_image_file_list, load_vqa_bio_label_maps, print_dict
+from ppocr.utils.utility import get_image_file_list, print_dict
 from tools.program import ArgsParser, load_config, merge_config
 from tools.infer_kie_token_ser import SerPredictor
 
@@ -141,7 +140,9 @@ class SerRePredictor(object):
         if self.model.backbone.use_visual_backbone is False:
             re_input.pop(4)
         preds = self.model(re_input)
-        post_result = self.post_process_class(preds, ser_results=ser_results, entity_idx_dict_batch=entity_idx_dict_batch)
+        post_result = self.post_process_class(
+            preds, ser_results=ser_results, entity_idx_dict_batch=entity_idx_dict_batch
+        )
         return post_result
 
 
@@ -194,7 +195,9 @@ if __name__ == "__main__":
                 img_path = info
                 data = {"img_path": img_path}
 
-            save_img_path = os.path.join(config["Global"]["save_res_path"], os.path.splitext(os.path.basename(img_path))[0] + "_ser_re.jpg")
+            save_img_path = os.path.join(
+                config["Global"]["save_res_path"], os.path.splitext(os.path.basename(img_path))[0] + "_ser_re.jpg"
+            )
 
             result = ser_re_engine(data)
             result = result[0]

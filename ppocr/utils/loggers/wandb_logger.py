@@ -19,7 +19,9 @@ class WandbLogger(BaseLogger):
         self.kwargs = kwargs
         self.entity = entity
         self._run = None
-        self._wandb_init = dict(project=self.project, name=self.name, id=self.id, entity=self.entity, dir=self.save_dir, resume="allow")
+        self._wandb_init = dict(
+            project=self.project, name=self.name, id=self.id, entity=self.entity, dir=self.save_dir, resume="allow"
+        )
         self._wandb_init.update(**kwargs)
 
         _ = self.run
@@ -31,7 +33,12 @@ class WandbLogger(BaseLogger):
     def run(self):
         if self._run is None:
             if self.wandb.run is not None:
-                logger.info("There is a wandb run already in progress " "and newly created instances of `WandbLogger` will reuse" " this run. If this is not desired, call `wandb.finish()`" "before instantiating `WandbLogger`.")
+                logger.info(
+                    "There is a wandb run already in progress "
+                    "and newly created instances of `WandbLogger` will reuse"
+                    " this run. If this is not desired, call `wandb.finish()`"
+                    "before instantiating `WandbLogger`."
+                )
                 self._run = self.wandb.run
             else:
                 self._run = self.wandb.init(**self._wandb_init)

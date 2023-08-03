@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from rapidfuzz.distance import Levenshtein
+import string
 from difflib import SequenceMatcher
 
 import numpy as np
-import string
+from rapidfuzz.distance import Levenshtein
 
 
 class RecMetric(object):
@@ -128,7 +128,13 @@ class CANMetric(object):
         if word_probs is not None:
             word_pred = word_probs.argmax(2)
         word_pred = word_pred.cpu().detach().numpy()
-        word_scores = [SequenceMatcher(None, s1[: int(np.sum(s3))], s2[: int(np.sum(s3))], autojunk=False).ratio() * (len(s1[: int(np.sum(s3))]) + len(s2[: int(np.sum(s3))])) / len(s1[: int(np.sum(s3))]) / 2 for s1, s2, s3 in zip(word_label, word_pred, word_label_mask)]
+        word_scores = [
+            SequenceMatcher(None, s1[: int(np.sum(s3))], s2[: int(np.sum(s3))], autojunk=False).ratio()
+            * (len(s1[: int(np.sum(s3))]) + len(s2[: int(np.sum(s3))]))
+            / len(s1[: int(np.sum(s3))])
+            / 2
+            for s1, s2, s3 in zip(word_label, word_pred, word_label_mask)
+        ]
         batch_size = len(word_scores)
         for i in range(batch_size):
             if word_scores[i] == 1:

@@ -33,7 +33,9 @@ class StyleTextRec(nn.Module):
         fusion_generator_pretrain = config["Predictor"]["fusion_generator"]["pretrain"]
         load_dygraph_pretrain(self.bg_generator, self.logger, path=bg_generator_pretrain, load_static_weights=False)
         load_dygraph_pretrain(self.text_generator, self.logger, path=text_generator_pretrain, load_static_weights=False)
-        load_dygraph_pretrain(self.fusion_generator, self.logger, path=fusion_generator_pretrain, load_static_weights=False)
+        load_dygraph_pretrain(
+            self.fusion_generator, self.logger, path=fusion_generator_pretrain, load_static_weights=False
+        )
 
     def forward(self, style_input, text_input):
         text_gen_output = self.text_generator.forward(style_input, text_input)
@@ -121,7 +123,13 @@ class TextGenerator(nn.Module):
             out_conv_act_attr=None,
         )
 
-        self.middle = MiddleNet(name=name + "_middle_net", in_channels=int(encode_dim / 2) + 1, mid_channels=encode_dim, out_channels=3, use_bias=use_bias)
+        self.middle = MiddleNet(
+            name=name + "_middle_net",
+            in_channels=int(encode_dim / 2) + 1,
+            mid_channels=encode_dim,
+            out_channels=3,
+            use_bias=use_bias,
+        )
 
     def forward(self, style_input, text_input):
         style_feature = self.encoder_style.forward(style_input)["res_blocks"]
@@ -191,11 +199,15 @@ class BgGeneratorWithMask(nn.Module):
             out_conv_act_attr=None,
         )
 
-        self.middle = MiddleNet(name=name + "_middle_net", in_channels=3 + 1, mid_channels=encode_dim, out_channels=3, use_bias=use_bias)
+        self.middle = MiddleNet(
+            name=name + "_middle_net", in_channels=3 + 1, mid_channels=encode_dim, out_channels=3, use_bias=use_bias
+        )
 
     def forward(self, style_input):
         encode_bg_output = self.encoder_bg(style_input)
-        decode_bg_output = self.decoder_bg(encode_bg_output["res_blocks"], encode_bg_output["down2"], encode_bg_output["down1"])
+        decode_bg_output = self.decoder_bg(
+            encode_bg_output["res_blocks"], encode_bg_output["down2"], encode_bg_output["down1"]
+        )
 
         fake_c_temp = decode_bg_output["out_conv"]
         fake_bg_mask = self.decoder_mask.forward(encode_bg_output["res_blocks"])["out_conv"]
@@ -222,11 +234,22 @@ class FusionGeneratorSimple(nn.Module):
         else:
             use_bias = False
 
-        self._conv = nn.Conv2d(in_channels=6, out_channels=encode_dim, kernel_size=3, stride=1, padding=1, groups=1, bias=False)
+        self._conv = nn.Conv2d(
+            in_channels=6, out_channels=encode_dim, kernel_size=3, stride=1, padding=1, groups=1, bias=False
+        )
 
-        self._res_block = ResBlock(name="{}_conv_block".format(name), channels=encode_dim, norm_layer=norm_layer, use_dropout=conv_block_dropout, use_dilation=conv_block_dilation, use_bias=use_bias)
+        self._res_block = ResBlock(
+            name="{}_conv_block".format(name),
+            channels=encode_dim,
+            norm_layer=norm_layer,
+            use_dropout=conv_block_dropout,
+            use_dilation=conv_block_dilation,
+            use_bias=use_bias,
+        )
 
-        self._reduce_conv = nn.Conv2d(in_channels=encode_dim, out_channels=3, kernel_size=3, stride=1, padding=1, groups=1, bias=False)
+        self._reduce_conv = nn.Conv2d(
+            in_channels=encode_dim, out_channels=3, kernel_size=3, stride=1, padding=1, groups=1, bias=False
+        )
 
     def forward(self, fake_text, fake_bg):
         fake_concat = torch.concat((fake_text, fake_bg), dim=1)

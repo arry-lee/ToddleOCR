@@ -22,7 +22,7 @@ from __future__ import print_function
 
 from torch import nn
 
-from .det_basic_loss import BalanceLoss, MaskL1Loss, DiceLoss
+from .det_basic_loss import BalanceLoss, DiceLoss, MaskL1Loss
 
 
 class DBLoss(nn.Module):
@@ -32,7 +32,9 @@ class DBLoss(nn.Module):
         param (dict): the super paramter for DB Loss
     """
 
-    def __init__(self, balance_loss=True, main_loss_type="DiceLoss", alpha=5, beta=10, ohem_ratio=3, eps=1e-6, **kwargs):
+    def __init__(
+        self, balance_loss=True, main_loss_type="DiceLoss", alpha=5, beta=10, ohem_ratio=3, eps=1e-6, **kwargs
+    ):
         super(DBLoss, self).__init__()
         self.alpha = alpha
         self.beta = beta
@@ -54,5 +56,10 @@ class DBLoss(nn.Module):
         loss_threshold_maps = self.beta * loss_threshold_maps
 
         loss_all = loss_shrink_maps + loss_threshold_maps + loss_binary_maps
-        losses = {"loss": loss_all, "loss_shrink_maps": loss_shrink_maps, "loss_threshold_maps": loss_threshold_maps, "loss_binary_maps": loss_binary_maps}
+        losses = {
+            "loss": loss_all,
+            "loss_shrink_maps": loss_shrink_maps,
+            "loss_threshold_maps": loss_threshold_maps,
+            "loss_binary_maps": loss_binary_maps,
+        }
         return losses

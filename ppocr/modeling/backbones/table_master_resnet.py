@@ -40,7 +40,9 @@ class BasicBlock(nn.Module):
             gcb_headers = gcb_config["headers"]
             att_scale = gcb_config["att_scale"]
             fusion_type = gcb_config["fusion_type"]
-            self.context_block = MultiAspectGCAttention(inplanes=planes, ratio=gcb_ratio, headers=gcb_headers, att_scale=att_scale, fusion_type=fusion_type)
+            self.context_block = MultiAspectGCAttention(
+                inplanes=planes, ratio=gcb_ratio, headers=gcb_headers, att_scale=att_scale, fusion_type=fusion_type
+            )
 
     def forward(self, x):
         residual = x
@@ -200,13 +202,28 @@ class MultiAspectGCAttention(nn.Module):
             self.avg_pool = nn.AdaptiveAvgPool2d(1)
 
         if fusion_type == "channel_add":
-            self.channel_add_conv = nn.Sequential(nn.Conv2d(self.inplanes, self.planes, kernel_size=1), nn.LayerNorm([self.planes, 1, 1]), nn.ReLU(), nn.Conv2d(self.planes, self.inplanes, kernel_size=1))
+            self.channel_add_conv = nn.Sequential(
+                nn.Conv2d(self.inplanes, self.planes, kernel_size=1),
+                nn.LayerNorm([self.planes, 1, 1]),
+                nn.ReLU(),
+                nn.Conv2d(self.planes, self.inplanes, kernel_size=1),
+            )
         elif fusion_type == "channel_concat":
-            self.channel_concat_conv = nn.Sequential(nn.Conv2d(self.inplanes, self.planes, kernel_size=1), nn.LayerNorm([self.planes, 1, 1]), nn.ReLU(), nn.Conv2d(self.planes, self.inplanes, kernel_size=1))
+            self.channel_concat_conv = nn.Sequential(
+                nn.Conv2d(self.inplanes, self.planes, kernel_size=1),
+                nn.LayerNorm([self.planes, 1, 1]),
+                nn.ReLU(),
+                nn.Conv2d(self.planes, self.inplanes, kernel_size=1),
+            )
             # for concat
             self.cat_conv = nn.Conv2d(2 * self.inplanes, self.inplanes, kernel_size=1)
         elif fusion_type == "channel_mul":
-            self.channel_mul_conv = nn.Sequential(nn.Conv2d(self.inplanes, self.planes, kernel_size=1), nn.LayerNorm([self.planes, 1, 1]), nn.ReLU(), nn.Conv2d(self.planes, self.inplanes, kernel_size=1))
+            self.channel_mul_conv = nn.Sequential(
+                nn.Conv2d(self.inplanes, self.planes, kernel_size=1),
+                nn.LayerNorm([self.planes, 1, 1]),
+                nn.ReLU(),
+                nn.Conv2d(self.planes, self.inplanes, kernel_size=1),
+            )
 
     def spatial_pool(self, x):
         batch, channel, height, width = x.shape

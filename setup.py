@@ -49,7 +49,9 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/PaddlePaddle/PaddleOCR",
     download_url="https://github.com/PaddlePaddle/PaddleOCR.git",
-    keywords=["ocr textdetection textrecognition paddleocr crnn east star-net rosetta ocrlite db chineseocr chinesetextdetection chinesetextrecognition"],
+    keywords=[
+        "ocr textdetection textrecognition paddleocr crnn east star-net rosetta ocrlite db chineseocr chinesetextdetection chinesetextrecognition"
+    ],
     classifiers=[
         "Intended Audience :: Developers",
         "Operating System :: OS Independent",

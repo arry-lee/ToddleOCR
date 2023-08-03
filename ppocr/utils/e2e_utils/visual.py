@@ -127,10 +127,19 @@ def expand_poly_along_width(poly, shrink_ratio_of_width=0.3):
     """
     point_num = poly.shape[0]
     left_quad = np.array([poly[0], poly[1], poly[-2], poly[-1]], dtype=np.float32)
-    left_ratio = -shrink_ratio_of_width * np.linalg.norm(left_quad[0] - left_quad[3]) / (np.linalg.norm(left_quad[0] - left_quad[1]) + 1e-6)
+    left_ratio = (
+        -shrink_ratio_of_width
+        * np.linalg.norm(left_quad[0] - left_quad[3])
+        / (np.linalg.norm(left_quad[0] - left_quad[1]) + 1e-6)
+    )
     left_quad_expand = shrink_quad_along_width(left_quad, left_ratio, 1.0)
-    right_quad = np.array([poly[point_num // 2 - 2], poly[point_num // 2 - 1], poly[point_num // 2], poly[point_num // 2 + 1]], dtype=np.float32)
-    right_ratio = 1.0 + shrink_ratio_of_width * np.linalg.norm(right_quad[0] - right_quad[3]) / (np.linalg.norm(right_quad[0] - right_quad[1]) + 1e-6)
+    right_quad = np.array(
+        [poly[point_num // 2 - 2], poly[point_num // 2 - 1], poly[point_num // 2], poly[point_num // 2 + 1]],
+        dtype=np.float32,
+    )
+    right_ratio = 1.0 + shrink_ratio_of_width * np.linalg.norm(right_quad[0] - right_quad[3]) / (
+        np.linalg.norm(right_quad[0] - right_quad[1]) + 1e-6
+    )
     right_quad_expand = shrink_quad_along_width(right_quad, 0.0, right_ratio)
     poly[0] = left_quad_expand[0]
     poly[-1] = left_quad_expand[-1]

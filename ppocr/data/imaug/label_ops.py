@@ -18,15 +18,14 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import copy
-import numpy as np
-import string
-from shapely.geometry import LineString, Point, Polygon
 import json
-import copy
 from random import sample
 
-from ppocr.utils.logging import get_logger
+import numpy as np
+from shapely.geometry import LineString, Point, Polygon
+
 from ppocr.data.imaug.vqa.augment import order_by_tbyx
+from ppocr.utils.logging import get_logger
 
 
 class ClsLabelEncode(object):
@@ -321,7 +320,14 @@ class KieLabelEncode(object):
         temp_labels[:h, : h + 1] = labels
 
         tag = np.array([h, recoder_len])
-        return dict(image=ann_infos["image"], points=temp_bboxes, relations=temp_relations, texts=temp_padded_text_inds, labels=temp_labels, tag=tag)
+        return dict(
+            image=ann_infos["image"],
+            points=temp_bboxes,
+            relations=temp_relations,
+            texts=temp_padded_text_inds,
+            labels=temp_labels,
+            tag=tag,
+        )
 
     def convert_canonical(self, points_x, points_y):
         assert len(points_x) == 4
@@ -399,7 +405,9 @@ class KieLabelEncode(object):
             else:
                 raise ValueError("Cannot found 'key_cls' in ann.keys(), please check your training annotation.")
             edges.append(ann.get("edge", 0))
-        ann_infos = dict(image=data["image"], points=boxes, texts=texts, text_inds=text_inds, edges=edges, labels=labels)
+        ann_infos = dict(
+            image=data["image"], points=boxes, texts=texts, text_inds=text_inds, edges=edges, labels=labels
+        )
 
         return self.list_to_numpy(ann_infos)
 
@@ -559,7 +567,16 @@ class SRNLabelEncode(BaseRecLabelEncode):
 class TableLabelEncode(AttnLabelEncode):
     """Convert between text-label and text-index"""
 
-    def __init__(self, max_text_length, character_dict_path, replace_empty_cell_token=False, merge_no_span_structure=False, learn_empty_box=False, loc_reg_num=4, **kwargs):
+    def __init__(
+        self,
+        max_text_length,
+        character_dict_path,
+        replace_empty_cell_token=False,
+        merge_no_span_structure=False,
+        learn_empty_box=False,
+        loc_reg_num=4,
+        **kwargs
+    ):
         self.max_text_len = max_text_length
         self.lower = False
         self.learn_empty_box = learn_empty_box
@@ -696,8 +713,25 @@ class TableLabelEncode(AttnLabelEncode):
 class TableMasterLabelEncode(TableLabelEncode):
     """Convert between text-label and text-index"""
 
-    def __init__(self, max_text_length, character_dict_path, replace_empty_cell_token=False, merge_no_span_structure=False, learn_empty_box=False, loc_reg_num=4, **kwargs):
-        super(TableMasterLabelEncode, self).__init__(max_text_length, character_dict_path, replace_empty_cell_token, merge_no_span_structure, learn_empty_box, loc_reg_num, **kwargs)
+    def __init__(
+        self,
+        max_text_length,
+        character_dict_path,
+        replace_empty_cell_token=False,
+        merge_no_span_structure=False,
+        learn_empty_box=False,
+        loc_reg_num=4,
+        **kwargs
+    ):
+        super(TableMasterLabelEncode, self).__init__(
+            max_text_length,
+            character_dict_path,
+            replace_empty_cell_token,
+            merge_no_span_structure,
+            learn_empty_box,
+            loc_reg_num,
+            **kwargs
+        )
         self.pad_idx = self.dict[self.pad_str]
         self.unknown_idx = self.dict[self.unknown_str]
 
@@ -838,7 +872,18 @@ class VQATokenLabelEncode(object):
     Label encode for NLP VQA methods
     """
 
-    def __init__(self, class_path, contains_re=False, add_special_ids=False, algorithm="LayoutXLM", use_textline_bbox_info=True, order_method=None, infer_mode=False, ocr_engine=None, **kwargs):
+    def __init__(
+        self,
+        class_path,
+        contains_re=False,
+        add_special_ids=False,
+        algorithm="LayoutXLM",
+        use_textline_bbox_info=True,
+        order_method=None,
+        infer_mode=False,
+        ocr_engine=None,
+        **kwargs
+    ):
         super(VQATokenLabelEncode, self).__init__()
         from paddlenlp.transformers import LayoutXLMTokenizer, LayoutLMTokenizer, LayoutLMv2Tokenizer
         from ppocr.utils.utility import load_vqa_bio_label_maps
@@ -942,7 +987,9 @@ class VQATokenLabelEncode(object):
             # smooth_box
             info["bbox"] = self.trans_poly_to_bbox(info["points"])
 
-            encode_res = self.tokenizer.encode(text, pad_to_max_seq_len=False, return_attention_mask=True, return_token_type_ids=True)
+            encode_res = self.tokenizer.encode(
+                text, pad_to_max_seq_len=False, return_attention_mask=True, return_token_type_ids=True
+            )
 
             if not self.add_special_ids:
                 # TODO: use tok.all_special_ids to remove
@@ -1000,7 +1047,11 @@ class VQATokenLabelEncode(object):
         data["attention_mask"] = [1] * len(input_ids_list)
         data["labels"] = gt_label_list
         data["segment_offset_id"] = segment_offset_id
-        data["tokenizer_params"] = dict(padding_side=self.tokenizer.padding_side, pad_token_type_id=self.tokenizer.pad_token_type_id, pad_token_id=self.tokenizer.pad_token_id)
+        data["tokenizer_params"] = dict(
+            padding_side=self.tokenizer.padding_side,
+            pad_token_type_id=self.tokenizer.pad_token_type_id,
+            pad_token_id=self.tokenizer.pad_token_id,
+        )
         data["entities"] = entities
 
         if train_re:

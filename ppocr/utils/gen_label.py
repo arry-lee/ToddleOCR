@@ -11,9 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import os
 import argparse
 import json
+import os
 
 
 def gen_rec_label(input_path, out_label):
@@ -48,8 +48,12 @@ def gen_det_label(root_path, input_dir, out_label):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--mode", type=str, default="rec", help="Generate rec_label or det_label, can be set rec or det")
-    parser.add_argument("--root_path", type=str, default=".", help="The root directory of images.Only takes effect when mode=det ")
+    parser.add_argument(
+        "--mode", type=str, default="rec", help="Generate rec_label or det_label, can be set rec or det"
+    )
+    parser.add_argument(
+        "--root_path", type=str, default=".", help="The root directory of images.Only takes effect when mode=det "
+    )
     parser.add_argument("--input_path", type=str, default=".", help="Input_label or input path to be converted")
     parser.add_argument("--output_label", type=str, default="out_label.txt", help="Output file name")
 

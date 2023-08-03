@@ -131,7 +131,9 @@ class SimpleDataSet(Dataset):
             data["ext_data"] = self.get_ext_data()
             outs = transform(data, self.ops)
         except:
-            self.logger.error("When parsing line {}, error happened with msg: {}".format(data_line, traceback.format_exc()))
+            self.logger.error(
+                "When parsing line {}, error happened with msg: {}".format(data_line, traceback.format_exc())
+            )
             outs = None
         if outs is None:
             # during evaluation, we should fix the idx to get same results for many times of evaluation.

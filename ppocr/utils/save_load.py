@@ -101,7 +101,11 @@ def load_model(config, model, optimizer=None, model_type="det"):
             if list(value.shape) == list(pre_value.shape):
                 new_state_dict[key] = pre_value
             else:
-                logger.warning("The shape of model params {} {} not matched with loaded params shape {} !".format(key, value.shape, pre_value.shape))
+                logger.warning(
+                    "The shape of model params {} {} not matched with loaded params shape {} !".format(
+                        key, value.shape, pre_value.shape
+                    )
+                )
         model.set_state_dict(new_state_dict)
         if is_float16:
             logger.info("The parameter type is float16, which is converted to float32 when loading")
@@ -151,7 +155,11 @@ def load_pretrained_params(model, path):
             if list(state_dict[k1].shape) == list(params[k1].shape):
                 new_state_dict[k1] = params[k1]
             else:
-                logger.warning("The shape of model params {} {} not matched with loaded params {} {} !".format(k1, state_dict[k1].shape, k1, params[k1].shape))
+                logger.warning(
+                    "The shape of model params {} {} not matched with loaded params {} {} !".format(
+                        k1, state_dict[k1].shape, k1, params[k1].shape
+                    )
+                )
 
     model.set_state_dict(new_state_dict)
     if is_float16:
@@ -168,7 +176,9 @@ def save_model(model, optimizer, model_path, logger, config, is_best=False, pref
     model_prefix = os.path.join(model_path, prefix)
     torch.save(optimizer.state_dict(), model_prefix + ".pdopt")
 
-    is_nlp_model = config["Architecture"]["model_type"] == "kie" and config["Architecture"]["algorithm"] not in ["SDMGR"]
+    is_nlp_model = config["Architecture"]["model_type"] == "kie" and config["Architecture"]["algorithm"] not in [
+        "SDMGR"
+    ]
     if is_nlp_model is not True:
         torch.save(model.state_dict(), model_prefix + ".pdparams")
         metric_prefix = model_prefix

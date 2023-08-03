@@ -20,9 +20,9 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import numpy as np
 import imgaug
 import imgaug.augmenters as iaa
+import numpy as np
 
 
 class AugmenterBuilder(object):
@@ -53,7 +53,11 @@ class AugmenterBuilder(object):
 class IaaAugment:
     def __init__(self, augmenter_args=None, **kwargs):
         if augmenter_args is None:
-            augmenter_args = [{"type": "Fliplr", "args": {"p": 0.5}}, {"type": "Affine", "args": {"rotate": [-10, 10]}}, {"type": "Resize", "args": {"size": [0.5, 3]}}]
+            augmenter_args = [
+                {"type": "Fliplr", "args": {"p": 0.5}},
+                {"type": "Affine", "args": {"rotate": [-10, 10]}},
+                {"type": "Resize", "args": {"size": [0.5, 3]}},
+            ]
         self.augmenter = AugmenterBuilder().build(augmenter_args)
 
     def __call__(self, data):

@@ -73,7 +73,10 @@ class SLALoss(nn.Module):
         loc_targets = loc_targets[:, 1:, :]
         loc_targets_mask = loc_targets_mask[:, 1:, :]
 
-        loc_loss = F.smooth_l1_loss(loc_preds * loc_targets_mask, loc_targets * loc_targets_mask, reduction="sum") * self.loc_weight
+        loc_loss = (
+            F.smooth_l1_loss(loc_preds * loc_targets_mask, loc_targets * loc_targets_mask, reduction="sum")
+            * self.loc_weight
+        )
 
         loc_loss = loc_loss / (loc_targets_mask.sum() + self.eps)
         total_loss = structure_loss + loc_loss

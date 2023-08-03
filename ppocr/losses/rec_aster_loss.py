@@ -29,13 +29,27 @@ class CosineEmbeddingLoss(nn.Module):
     def forward(self, x1, x2, target):
         similarity = torch.sum(x1 * x2, dim=-1) / (torch.norm(x1, dim=-1) * torch.norm(x2, dim=-1) + self.epsilon)
         one_list = torch.full_like(target, fill_value=1)
-        out = torch.mean(torch.where(torch.equal(target, one_list), 1.0 - similarity, torch.maximum(torch.zeros_like(similarity), similarity - self.margin)))
+        out = torch.mean(
+            torch.where(
+                torch.equal(target, one_list),
+                1.0 - similarity,
+                torch.maximum(torch.zeros_like(similarity), similarity - self.margin),
+            )
+        )
 
         return out
 
 
 class AsterLoss(nn.Module):
-    def __init__(self, weight=None, size_average=True, ignore_index=-100, sequence_normalize=False, sample_normalize=True, **kwargs):
+    def __init__(
+        self,
+        weight=None,
+        size_average=True,
+        ignore_index=-100,
+        sequence_normalize=False,
+        sample_normalize=True,
+        **kwargs
+    ):
         super(AsterLoss, self).__init__()
         self.weight = weight
         self.size_average = size_average

@@ -16,16 +16,25 @@ This code is refer from:
 https://github.com/FangShancheng/ABINet/tree/main/modules
 """
 
-import math
 import torch
-from torch import nn
 import torch.nn.functional as F
-from torch.nn import ModuleList
-from ppocr.modeling.heads.rec_nrtr_head import TransformerBlock, PositionalEncoding
+from torch import nn
+
+from ppocr.modeling.heads.rec_nrtr_head import PositionalEncoding, TransformerBlock
 
 
 class BCNLanguage(nn.Module):
-    def __init__(self, d_model=512, nhead=8, num_layers=4, dim_feedforward=2048, dropout=0.0, max_length=25, detach=True, num_classes=37):
+    def __init__(
+        self,
+        d_model=512,
+        nhead=8,
+        num_layers=4,
+        dim_feedforward=2048,
+        dropout=0.0,
+        max_length=25,
+        detach=True,
+        num_classes=37,
+    ):
         super().__init__()
 
         self.d_model = d_model
@@ -35,7 +44,20 @@ class BCNLanguage(nn.Module):
         self.token_encoder = PositionalEncoding(dropout=0.1, dim=d_model, max_len=self.max_length)
         self.pos_encoder = PositionalEncoding(dropout=0, dim=d_model, max_len=self.max_length)
 
-        self.decoder = nn.ModuleList([TransformerBlock(d_model=d_model, nhead=nhead, dim_feedforward=dim_feedforward, attention_dropout_rate=dropout, residual_dropout_rate=dropout, with_self_attn=False, with_cross_attn=True) for i in range(num_layers)])
+        self.decoder = nn.ModuleList(
+            [
+                TransformerBlock(
+                    d_model=d_model,
+                    nhead=nhead,
+                    dim_feedforward=dim_feedforward,
+                    attention_dropout_rate=dropout,
+                    residual_dropout_rate=dropout,
+                    with_self_attn=False,
+                    with_cross_attn=True,
+                )
+                for i in range(num_layers)
+            ]
+        )
 
         self.cls = nn.Linear(d_model, num_classes)
 
@@ -67,7 +89,12 @@ def encoder_layer(in_c, out_c, k=3, s=2, p=1):
 
 def decoder_layer(in_c, out_c, k=3, s=1, p=1, mode="nearest", scale_factor=None, size=None):
     align_corners = False if mode == "nearest" else True
-    return nn.Sequential(nn.Upsample(size=size, scale_factor=scale_factor, mode=mode, align_corners=align_corners), nn.Conv2d(in_c, out_c, k, s, p), nn.BatchNorm2d(out_c), nn.ReLU())
+    return nn.Sequential(
+        nn.Upsample(size=size, scale_factor=scale_factor, mode=mode, align_corners=align_corners),
+        nn.Conv2d(in_c, out_c, k, s, p),
+        nn.BatchNorm2d(out_c),
+        nn.ReLU(),
+    )
 
 
 class PositionAttention(nn.Module):
@@ -114,7 +141,7 @@ class PositionAttention(nn.Module):
         # calculate attention
         attn_scores = q @ k.flatten(2)  # (B, N, (H*W))
         attn_scores = attn_scores / (C**0.5)
-        attn_scores = F.softmax(attn_scores,dim=-1)
+        attn_scores = F.softmax(attn_scores, dim=-1)
 
         v = v.flatten(2).transpose([0, 2, 1])  # (B, (H*W), C)
         attn_vecs = attn_scores @ v  # (B, N, C)
@@ -123,11 +150,36 @@ class PositionAttention(nn.Module):
 
 
 class ABINetHead(nn.Module):
-    def __init__(self, in_channels, out_channels, d_model=512, nhead=8, num_layers=3, dim_feedforward=2048, dropout=0.1, max_length=25, use_lang=False, iter_size=1):
+    def __init__(
+        self,
+        in_channels,
+        out_channels,
+        d_model=512,
+        nhead=8,
+        num_layers=3,
+        dim_feedforward=2048,
+        dropout=0.1,
+        max_length=25,
+        use_lang=False,
+        iter_size=1,
+    ):
         super().__init__()
         self.max_length = max_length + 1
         self.pos_encoder = PositionalEncoding(dropout=0.1, dim=d_model, max_len=8 * 32)
-        self.encoder = nn.ModuleList([TransformerBlock(d_model=d_model, nhead=nhead, dim_feedforward=dim_feedforward, attention_dropout_rate=dropout, residual_dropout_rate=dropout, with_self_attn=True, with_cross_attn=False) for i in range(num_layers)])
+        self.encoder = nn.ModuleList(
+            [
+                TransformerBlock(
+                    d_model=d_model,
+                    nhead=nhead,
+                    dim_feedforward=dim_feedforward,
+                    attention_dropout_rate=dropout,
+                    residual_dropout_rate=dropout,
+                    with_self_attn=True,
+                    with_cross_attn=False,
+                )
+                for i in range(num_layers)
+            ]
+        )
         self.decoder = PositionAttention(
             max_length=max_length + 1,  # additional stop token
             mode="nearest",
@@ -137,7 +189,15 @@ class ABINetHead(nn.Module):
         self.use_lang = use_lang
         if use_lang:
             self.iter_size = iter_size
-            self.language = BCNLanguage(d_model=d_model, nhead=nhead, num_layers=4, dim_feedforward=dim_feedforward, dropout=dropout, max_length=max_length, num_classes=self.out_channels)
+            self.language = BCNLanguage(
+                d_model=d_model,
+                nhead=nhead,
+                num_layers=4,
+                dim_feedforward=dim_feedforward,
+                dropout=dropout,
+                max_length=max_length,
+                num_classes=self.out_channels,
+            )
             # alignment
             self.w_att_align = nn.Linear(2 * d_model, d_model)
             self.cls_align = nn.Linear(d_model, self.out_channels)
@@ -159,7 +219,7 @@ class ABINetHead(nn.Module):
             align_lengths = vis_lengths
             all_l_res, all_a_res = [], []
             for i in range(self.iter_size):
-                tokens = F.softmax(align_logits,dim=-1)
+                tokens = F.softmax(align_logits, dim=-1)
                 lengths = align_lengths
                 lengths = torch.clip(lengths, 2, self.max_length)  # TODO:move to langauge model
                 l_feature, l_logits = self.language(tokens, lengths)

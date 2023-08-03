@@ -37,7 +37,9 @@ class ImageSynthesiser(object):
         self.predictor = getattr(predictors, predictor_method)(self.config)
 
     def synth_image(self, corpus, style_input, language="en"):
-        corpus_list, text_input_list = self.text_drawer.draw_text(corpus, language, style_input_width=style_input.shape[1])
+        corpus_list, text_input_list = self.text_drawer.draw_text(
+            corpus, language, style_input_width=style_input.shape[1]
+        )
         synth_result = self.predictor.predict(style_input, text_input_list)
         return synth_result
 
@@ -60,7 +62,9 @@ class DatasetSynthesiser(ImageSynthesiser):
             style_data = self.style_sampler.sample()
             style_input = style_data["image"]
             corpus_language, text_input_label = self.corpus_generator.generate()
-            text_input_label_list, text_input_list = self.text_drawer.draw_text(text_input_label, corpus_language, style_input_width=style_input.shape[1])
+            text_input_label_list, text_input_list = self.text_drawer.draw_text(
+                text_input_label, corpus_language, style_input_width=style_input.shape[1]
+            )
 
             text_input_label = "".join(text_input_label_list)
 

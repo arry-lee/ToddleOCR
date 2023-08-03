@@ -31,7 +31,15 @@ def transfer_xfun_data(json_path=None, output_file=None):
             for doc in document:
                 x1, y1, x2, y2 = doc["box"]
                 points = [[x1, y1], [x2, y1], [x2, y2], [x1, y2]]
-                label_info.append({"transcription": doc["text"], "label": doc["label"], "points": points, "id": doc["id"], "linking": doc["linking"]})
+                label_info.append(
+                    {
+                        "transcription": doc["text"],
+                        "label": doc["label"],
+                        "points": points,
+                        "id": doc["id"],
+                        "linking": doc["linking"],
+                    }
+                )
 
             fout.write(image_path + "\t" + json.dumps(label_info, ensure_ascii=False) + "\n")
 

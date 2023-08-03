@@ -106,7 +106,11 @@ def load_model(config, model, optimizer=None):
             if list(value.shape) == list(pre_value.shape):
                 new_state_dict[key] = pre_value
             else:
-                logger.warning("The shape of model params {} {} not matched with loaded params shape {} !".format(key, value.shape, pre_value.shape))
+                logger.warning(
+                    "The shape of model params {} {} not matched with loaded params shape {} !".format(
+                        key, value.shape, pre_value.shape
+                    )
+                )
         model.set_state_dict(new_state_dict)
 
         if optimizer is not None:
@@ -146,7 +150,11 @@ def load_pretrained_params(model, path):
             if list(state_dict[k1].shape) == list(params[k1].shape):
                 new_state_dict[k1] = params[k1]
             else:
-                logger.warning("The shape of model params {} {} not matched with loaded params {} {} !".format(k1, state_dict[k1].shape, k1, params[k1].shape))
+                logger.warning(
+                    "The shape of model params {} {} not matched with loaded params {} {} !".format(
+                        k1, state_dict[k1].shape, k1, params[k1].shape
+                    )
+                )
     model.set_state_dict(new_state_dict)
     logger.info("load pretrain successful from {}".format(path))
     return model

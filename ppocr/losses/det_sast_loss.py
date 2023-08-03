@@ -16,10 +16,11 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import numpy as np
 import torch
 from torch import nn
+
 from .det_basic_loss import DiceLoss
-import numpy as np
 
 
 class SASTLoss(nn.Module):
@@ -61,9 +62,13 @@ class SASTLoss(nn.Module):
         border_sign = abs_border_diff < 1.0
         border_sign = border_sign.type(dtype=torch.float32)
         border_sign.stop_gradient = True
-        border_in_loss = 0.5 * abs_border_diff * abs_border_diff * border_sign + (abs_border_diff - 0.5) * (1.0 - border_sign)
+        border_in_loss = 0.5 * abs_border_diff * abs_border_diff * border_sign + (abs_border_diff - 0.5) * (
+            1.0 - border_sign
+        )
         border_out_loss = l_border_norm_split * border_in_loss
-        border_loss = torch.sum(border_out_loss * l_border_score * l_border_mask) / (torch.sum(l_border_score * l_border_mask) + 1e-5)
+        border_loss = torch.sum(border_out_loss * l_border_score * l_border_mask) / (
+            torch.sum(l_border_score * l_border_mask) + 1e-5
+        )
 
         # tvo_loss
         l_tvo_split, l_tvo_norm = torch.split(l_tvo, [8, 1], dim=1)
@@ -104,5 +109,11 @@ class SASTLoss(nn.Module):
         score_lw, border_lw = 1.0, 1.0
         total_loss = score_loss * score_lw + border_loss * border_lw + tvo_loss * tvo_lw + tco_loss * tco_lw
 
-        losses = {"loss": total_loss, "score_loss": score_loss, "border_loss": border_loss, "tvo_loss": tvo_loss, "tco_loss": tco_loss}
+        losses = {
+            "loss": total_loss,
+            "score_loss": score_loss,
+            "border_loss": border_loss,
+            "tvo_loss": tvo_loss,
+            "tco_loss": tco_loss,
+        }
         return losses

@@ -13,6 +13,7 @@
 # limitations under the License.
 import os
 import sys
+
 from PIL import Image
 
 __dir__ = os.path.dirname(os.path.abspath(__file__))
@@ -26,7 +27,6 @@ import numpy as np
 import math
 import time
 import traceback
-import torch
 
 import tools.infer.utility as utility
 from ppocr.postprocess import build_post_process
@@ -41,34 +41,85 @@ class TextRecognizer(object):
         self.rec_image_shape = [int(v) for v in args.rec_image_shape.split(",")]
         self.rec_batch_num = args.rec_batch_num
         self.rec_algorithm = args.rec_algorithm
-        postprocess_params = {"name": "CTCLabelDecode", "character_dict_path": args.rec_char_dict_path, "use_space_char": args.use_space_char}
+        postprocess_params = {
+            "name": "CTCLabelDecode",
+            "character_dict_path": args.rec_char_dict_path,
+            "use_space_char": args.use_space_char,
+        }
         if self.rec_algorithm == "SRN":
-            postprocess_params = {"name": "SRNLabelDecode", "character_dict_path": args.rec_char_dict_path, "use_space_char": args.use_space_char}
+            postprocess_params = {
+                "name": "SRNLabelDecode",
+                "character_dict_path": args.rec_char_dict_path,
+                "use_space_char": args.use_space_char,
+            }
         elif self.rec_algorithm == "RARE":
-            postprocess_params = {"name": "AttnLabelDecode", "character_dict_path": args.rec_char_dict_path, "use_space_char": args.use_space_char}
+            postprocess_params = {
+                "name": "AttnLabelDecode",
+                "character_dict_path": args.rec_char_dict_path,
+                "use_space_char": args.use_space_char,
+            }
         elif self.rec_algorithm == "NRTR":
-            postprocess_params = {"name": "NRTRLabelDecode", "character_dict_path": args.rec_char_dict_path, "use_space_char": args.use_space_char}
+            postprocess_params = {
+                "name": "NRTRLabelDecode",
+                "character_dict_path": args.rec_char_dict_path,
+                "use_space_char": args.use_space_char,
+            }
         elif self.rec_algorithm == "SAR":
-            postprocess_params = {"name": "SARLabelDecode", "character_dict_path": args.rec_char_dict_path, "use_space_char": args.use_space_char}
+            postprocess_params = {
+                "name": "SARLabelDecode",
+                "character_dict_path": args.rec_char_dict_path,
+                "use_space_char": args.use_space_char,
+            }
         elif self.rec_algorithm == "VisionLAN":
-            postprocess_params = {"name": "VLLabelDecode", "character_dict_path": args.rec_char_dict_path, "use_space_char": args.use_space_char}
+            postprocess_params = {
+                "name": "VLLabelDecode",
+                "character_dict_path": args.rec_char_dict_path,
+                "use_space_char": args.use_space_char,
+            }
         elif self.rec_algorithm == "ViTSTR":
-            postprocess_params = {"name": "ViTSTRLabelDecode", "character_dict_path": args.rec_char_dict_path, "use_space_char": args.use_space_char}
+            postprocess_params = {
+                "name": "ViTSTRLabelDecode",
+                "character_dict_path": args.rec_char_dict_path,
+                "use_space_char": args.use_space_char,
+            }
         elif self.rec_algorithm == "ABINet":
-            postprocess_params = {"name": "ABINetLabelDecode", "character_dict_path": args.rec_char_dict_path, "use_space_char": args.use_space_char}
+            postprocess_params = {
+                "name": "ABINetLabelDecode",
+                "character_dict_path": args.rec_char_dict_path,
+                "use_space_char": args.use_space_char,
+            }
         elif self.rec_algorithm == "SPIN":
-            postprocess_params = {"name": "SPINLabelDecode", "character_dict_path": args.rec_char_dict_path, "use_space_char": args.use_space_char}
+            postprocess_params = {
+                "name": "SPINLabelDecode",
+                "character_dict_path": args.rec_char_dict_path,
+                "use_space_char": args.use_space_char,
+            }
         elif self.rec_algorithm == "RobustScanner":
-            postprocess_params = {"name": "SARLabelDecode", "character_dict_path": args.rec_char_dict_path, "use_space_char": args.use_space_char, "rm_symbol": True}
+            postprocess_params = {
+                "name": "SARLabelDecode",
+                "character_dict_path": args.rec_char_dict_path,
+                "use_space_char": args.use_space_char,
+                "rm_symbol": True,
+            }
         elif self.rec_algorithm == "RFL":
-            postprocess_params = {"name": "RFLLabelDecode", "character_dict_path": None, "use_space_char": args.use_space_char}
+            postprocess_params = {
+                "name": "RFLLabelDecode",
+                "character_dict_path": None,
+                "use_space_char": args.use_space_char,
+            }
         elif self.rec_algorithm == "PREN":
             postprocess_params = {"name": "PRENLabelDecode"}
         elif self.rec_algorithm == "CAN":
             self.inverse = args.rec_image_inverse
-            postprocess_params = {"name": "CANLabelDecode", "character_dict_path": args.rec_char_dict_path, "use_space_char": args.use_space_char}
+            postprocess_params = {
+                "name": "CANLabelDecode",
+                "character_dict_path": args.rec_char_dict_path,
+                "use_space_char": args.use_space_char,
+            }
         self.postprocess_op = build_post_process(postprocess_params)
-        self.predictor, self.input_tensor, self.output_tensors, self.config = utility.create_predictor(args, "rec", logger)
+        self.predictor, self.input_tensor, self.output_tensors, self.config = utility.create_predictor(
+            args, "rec", logger
+        )
         self.benchmark = args.benchmark
         self.use_onnx = args.use_onnx
         if args.benchmark:
@@ -202,7 +253,9 @@ class TextRecognizer(object):
         norm_img = self.resize_norm_img_srn(img, image_shape)
         norm_img = norm_img[np.newaxis, :]
 
-        [encoder_word_pos, gsrm_word_pos, gsrm_slf_attn_bias1, gsrm_slf_attn_bias2] = self.srn_other_inputs(image_shape, num_heads, max_text_length)
+        [encoder_word_pos, gsrm_word_pos, gsrm_slf_attn_bias1, gsrm_slf_attn_bias2] = self.srn_other_inputs(
+            image_shape, num_heads, max_text_length
+        )
 
         gsrm_slf_attn_bias1 = gsrm_slf_attn_bias1.astype(np.float32)
         gsrm_slf_attn_bias2 = gsrm_slf_attn_bias2.astype(np.float32)
@@ -367,7 +420,9 @@ class TextRecognizer(object):
                     norm_img = norm_img[np.newaxis, :]
                     norm_img_batch.append(norm_img)
                 elif self.rec_algorithm == "RobustScanner":
-                    norm_img, _, _, valid_ratio = self.resize_norm_img_sar(img_list[indices[ino]], self.rec_image_shape, width_downsample_ratio=0.25)
+                    norm_img, _, _, valid_ratio = self.resize_norm_img_sar(
+                        img_list[indices[ino]], self.rec_image_shape, width_downsample_ratio=0.25
+                    )
                     norm_img = norm_img[np.newaxis, :]
                     valid_ratio = np.expand_dims(valid_ratio, axis=0)
                     valid_ratios = []
@@ -532,7 +587,10 @@ def main(args):
     valid_image_file_list = []
     img_list = []
 
-    logger.info("In PP-OCRv3, rec_image_shape parameter defaults to '3, 48, 320', " "if you are using recognition model with PP-OCRv2 or an older version, please set --rec_image_shape='3,32,320")
+    logger.info(
+        "In PP-OCRv3, rec_image_shape parameter defaults to '3, 48, 320', "
+        "if you are using recognition model with PP-OCRv2 or an older version, please set --rec_image_shape='3,32,320"
+    )
     # warmup 2 times
     if args.warmup:
         img = np.random.uniform(0, 255, [48, 320, 3]).astype(np.uint8)

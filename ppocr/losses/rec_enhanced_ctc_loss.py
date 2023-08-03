@@ -16,15 +16,27 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import torch
 from torch import nn
+
 from .ace_loss import ACELoss
 from .center_loss import CenterLoss
 from .rec_ctc_loss import CTCLoss
 
 
 class EnhancedCTCLoss(nn.Module):
-    def __init__(self, use_focal_loss=False, use_ace_loss=False, ace_loss_weight=0.1, use_center_loss=False, center_loss_weight=0.05, num_classes=6625, feat_dim=96, init_center=False, center_file_path=None, **kwargs):
+    def __init__(
+        self,
+        use_focal_loss=False,
+        use_ace_loss=False,
+        ace_loss_weight=0.1,
+        use_center_loss=False,
+        center_loss_weight=0.05,
+        num_classes=6625,
+        feat_dim=96,
+        init_center=False,
+        center_file_path=None,
+        **kwargs
+    ):
         super(EnhancedCTCLoss, self).__init__()
         self.ctc_loss_func = CTCLoss(use_focal_loss=use_focal_loss)
 
@@ -37,7 +49,9 @@ class EnhancedCTCLoss(nn.Module):
         self.use_center_loss = False
         if use_center_loss:
             self.use_center_loss = use_center_loss
-            self.center_loss_func = CenterLoss(num_classes=num_classes, feat_dim=feat_dim, init_center=init_center, center_file_path=center_file_path)
+            self.center_loss_func = CenterLoss(
+                num_classes=num_classes, feat_dim=feat_dim, init_center=init_center, center_file_path=center_file_path
+            )
             self.center_loss_weight = center_loss_weight
 
     def __call__(self, predicts, batch):

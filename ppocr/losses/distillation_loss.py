@@ -12,18 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import torch
-import torch.nn as nn
-import numpy as np
 import cv2
+import numpy as np
+import torch
 
-from .rec_ctc_loss import CTCLoss
-from .rec_sar_loss import SARLoss
 from .basic_loss import DMLLoss
 from .basic_loss import DistanceLoss
 from .basic_loss import LossFromOutput
 from .det_db_loss import DBLoss
-from .det_basic_loss import BalanceLoss, MaskL1Loss, DiceLoss
+from .rec_ctc_loss import CTCLoss
+from .rec_sar_loss import SARLoss
 from .vqa_token_layoutlm_loss import VQASerTokenLayoutLMLoss
 
 
@@ -43,7 +41,17 @@ def _sum_loss(loss_dict):
 class DistillationDMLLoss(DMLLoss):
     """ """
 
-    def __init__(self, model_name_pairs=[], act=None, use_log=False, key=None, multi_head=False, dis_head="ctc", maps_name=None, name="dml"):
+    def __init__(
+        self,
+        model_name_pairs=[],
+        act=None,
+        use_log=False,
+        key=None,
+        multi_head=False,
+        dis_head="ctc",
+        maps_name=None,
+        name="dml",
+    ):
         super().__init__(act=act, use_log=use_log)
         assert isinstance(model_name_pairs, list)
         self.key = key
@@ -175,7 +183,18 @@ class DistillationSARLoss(SARLoss):
 
 
 class DistillationDBLoss(DBLoss):
-    def __init__(self, model_name_list=[], balance_loss=True, main_loss_type="DiceLoss", alpha=5, beta=10, ohem_ratio=3, eps=1e-6, name="db", **kwargs):
+    def __init__(
+        self,
+        model_name_list=[],
+        balance_loss=True,
+        main_loss_type="DiceLoss",
+        alpha=5,
+        beta=10,
+        ohem_ratio=3,
+        eps=1e-6,
+        name="db",
+        **kwargs
+    ):
         super().__init__()
         self.model_name_list = model_name_list
         self.name = name
@@ -203,7 +222,18 @@ class DistillationDBLoss(DBLoss):
 
 
 class DistillationDilaDBLoss(DBLoss):
-    def __init__(self, model_name_pairs=[], key=None, balance_loss=True, main_loss_type="DiceLoss", alpha=5, beta=10, ohem_ratio=3, eps=1e-6, name="dila_dbloss"):
+    def __init__(
+        self,
+        model_name_pairs=[],
+        key=None,
+        balance_loss=True,
+        main_loss_type="DiceLoss",
+        alpha=5,
+        beta=10,
+        ohem_ratio=3,
+        eps=1e-6,
+        name="dila_dbloss",
+    ):
         super().__init__()
         self.model_name_pairs = model_name_pairs
         self.name = name

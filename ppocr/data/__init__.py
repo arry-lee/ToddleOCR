@@ -18,19 +18,14 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import os
-import sys
-import numpy as np
-import skimage
-import torch
 import signal
-import random
+import sys
 
 __dir__ = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.abspath(os.path.join(__dir__, "../..")))
 
 import copy
-from torch.utils.data import Dataset, DataLoader, BatchSampler, DistributedBatchSampler
-import torch.distributed as dist
+from torch.utils.data import DataLoader, BatchSampler, DistributedBatchSampler
 
 from ppocr.data.imaug import transform, create_operators
 from ppocr.data.simple_dataset import SimpleDataSet
@@ -70,7 +65,9 @@ def build_dataloader(config, mode, device, logger, seed=None):
 
     if mode == "Train":
         # Distribute data to multiple cards
-        batch_sampler = DistributedBatchSampler(dataset=dataset, batch_size=batch_size, shuffle=shuffle, drop_last=drop_last)
+        batch_sampler = DistributedBatchSampler(
+            dataset=dataset, batch_size=batch_size, shuffle=shuffle, drop_last=drop_last
+        )
     else:
         # Distribute data to single card
         batch_sampler = BatchSampler(dataset=dataset, batch_size=batch_size, shuffle=shuffle, drop_last=drop_last)
@@ -81,7 +78,15 @@ def build_dataloader(config, mode, device, logger, seed=None):
         collate_fn = getattr(collate_fn, loader_config["collate_fn"])()
     else:
         collate_fn = None
-    data_loader = DataLoader(dataset=dataset, batch_sampler=batch_sampler, places=device, num_workers=num_workers, return_list=True, use_shared_memory=use_shared_memory, collate_fn=collate_fn)
+    data_loader = DataLoader(
+        dataset=dataset,
+        batch_sampler=batch_sampler,
+        places=device,
+        num_workers=num_workers,
+        return_list=True,
+        use_shared_memory=use_shared_memory,
+        collate_fn=collate_fn,
+    )
 
     # support exit using ctrl+c
     signal.signal(signal.SIGINT, term_mp)

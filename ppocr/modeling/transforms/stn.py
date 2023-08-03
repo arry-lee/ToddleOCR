@@ -31,7 +31,9 @@ from .tps_spatial_transformer import TPSSpatialTransformer
 def conv3x3_block(in_channels, out_channels, stride=1):
     n = 3 * 3 * out_channels
     w = math.sqrt(2.0 / n)
-    conv_layer = nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=stride, padding=1, bias=nn.initializer.Constant(0))
+    conv_layer = nn.Conv2d(
+        in_channels, out_channels, kernel_size=3, stride=stride, padding=1, bias=nn.initializer.Constant(0)
+    )
     block = nn.Sequential(conv_layer, nn.BatchNorm2d(out_channels), nn.ReLU())
     return block
 
@@ -55,7 +57,9 @@ class STN(nn.Module):
             nn.MaxPool2d(kernel_size=2, stride=2),
             conv3x3_block(256, 256),
         )  # 1*2
-        self.stn_fc1 = nn.Sequential(nn.Linear(2 * 256, 512, bias=nn.initializer.Constant(0)), nn.BatchNorm1d(512), nn.ReLU())
+        self.stn_fc1 = nn.Sequential(
+            nn.Linear(2 * 256, 512, bias=nn.initializer.Constant(0)), nn.BatchNorm1d(512), nn.ReLU()
+        )
         fc2_bias = self.init_stn()
         self.stn_fc2 = nn.Linear(512, num_ctrlpoints * 2, bias=nn.initializer.Assign(fc2_bias))
 
@@ -91,7 +95,9 @@ class STN(nn.Module):
 class STN_ON(nn.Module):
     def __init__(self, in_channels, tps_inputsize, tps_outputsize, num_control_points, tps_margins, stn_activation):
         super(STN_ON, self).__init__()
-        self.tps = TPSSpatialTransformer(output_image_size=tuple(tps_outputsize), num_control_points=num_control_points, margins=tuple(tps_margins))
+        self.tps = TPSSpatialTransformer(
+            output_image_size=tuple(tps_outputsize), num_control_points=num_control_points, margins=tuple(tps_margins)
+        )
         self.stn_head = STN(in_channels=in_channels, num_ctrlpoints=num_control_points, activation=stn_activation)
         self.tps_inputsize = tps_inputsize
         self.out_channels = in_channels

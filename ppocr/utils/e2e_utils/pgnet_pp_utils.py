@@ -15,9 +15,11 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-import torch
+
 import os
 import sys
+
+import torch
 
 __dir__ = os.path.dirname(__file__)
 sys.path.append(__dir__)
@@ -53,8 +55,17 @@ class PGNet_PostProcess(object):
             p_char = p_char[0]
 
         src_h, src_w, ratio_h, ratio_w = self.shape_list[0]
-        instance_yxs_list, seq_strs = generate_pivot_list_fast(p_score, p_char, p_direction, self.Lexicon_Table, score_thresh=self.score_thresh, point_gather_mode=self.point_gather_mode)
-        poly_list, keep_str_list = restore_poly(instance_yxs_list, seq_strs, p_border, ratio_w, ratio_h, src_w, src_h, self.valid_set)
+        instance_yxs_list, seq_strs = generate_pivot_list_fast(
+            p_score,
+            p_char,
+            p_direction,
+            self.Lexicon_Table,
+            score_thresh=self.score_thresh,
+            point_gather_mode=self.point_gather_mode,
+        )
+        poly_list, keep_str_list = restore_poly(
+            instance_yxs_list, seq_strs, p_border, ratio_w, ratio_h, src_w, src_h, self.valid_set
+        )
         data = {
             "points": poly_list,
             "texts": keep_str_list,
@@ -78,7 +89,9 @@ class PGNet_PostProcess(object):
             p_char = p_char[0]
         src_h, src_w, ratio_h, ratio_w = self.shape_list[0]
         is_curved = self.valid_set == "totaltext"
-        char_seq_idx_set, instance_yxs_list = generate_pivot_list_slow(p_score, p_char, p_direction, score_thresh=self.score_thresh, is_backbone=True, is_curved=is_curved)
+        char_seq_idx_set, instance_yxs_list = generate_pivot_list_slow(
+            p_score, p_char, p_direction, score_thresh=self.score_thresh, is_backbone=True, is_curved=is_curved
+        )
         seq_strs = []
         for char_idx_set in char_seq_idx_set:
             pr_str = "".join([self.Lexicon_Table[pos] for pos in char_idx_set])

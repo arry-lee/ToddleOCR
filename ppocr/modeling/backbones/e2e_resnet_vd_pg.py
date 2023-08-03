@@ -17,7 +17,6 @@ from __future__ import division
 from __future__ import print_function
 
 import torch
-
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -53,7 +52,13 @@ class ConvBNLayer(nn.Module):
             bn_name = "bn_" + name
         else:
             bn_name = "bn" + name[3:]
-        self._batch_norm = nn.BatchNorm2d(out_channels, act=act, bias=True, moving_mean_name=bn_name + "_mean", moving_variance_name=bn_name + "_variance")
+        self._batch_norm = nn.BatchNorm2d(
+            out_channels,
+            act=act,
+            bias=True,
+            moving_mean_name=bn_name + "_mean",
+            moving_variance_name=bn_name + "_variance",
+        )
 
     def forward(self, inputs):
         y = self._conv(inputs)
@@ -65,12 +70,30 @@ class BottleneckBlock(nn.Module):
     def __init__(self, in_channels, out_channels, stride, shortcut=True, if_first=False, name=None):
         super(BottleneckBlock, self).__init__()
 
-        self.conv0 = ConvBNLayer(in_channels=in_channels, out_channels=out_channels, kernel_size=1, act="relu", name=name + "_branch2a")
-        self.conv1 = ConvBNLayer(in_channels=out_channels, out_channels=out_channels, kernel_size=3, stride=stride, act="relu", name=name + "_branch2b")
-        self.conv2 = ConvBNLayer(in_channels=out_channels, out_channels=out_channels * 4, kernel_size=1, act=None, name=name + "_branch2c")
+        self.conv0 = ConvBNLayer(
+            in_channels=in_channels, out_channels=out_channels, kernel_size=1, act="relu", name=name + "_branch2a"
+        )
+        self.conv1 = ConvBNLayer(
+            in_channels=out_channels,
+            out_channels=out_channels,
+            kernel_size=3,
+            stride=stride,
+            act="relu",
+            name=name + "_branch2b",
+        )
+        self.conv2 = ConvBNLayer(
+            in_channels=out_channels, out_channels=out_channels * 4, kernel_size=1, act=None, name=name + "_branch2c"
+        )
 
         if not shortcut:
-            self.short = ConvBNLayer(in_channels=in_channels, out_channels=out_channels * 4, kernel_size=1, stride=stride, is_vd_mode=False if if_first else True, name=name + "_branch1")
+            self.short = ConvBNLayer(
+                in_channels=in_channels,
+                out_channels=out_channels * 4,
+                kernel_size=1,
+                stride=stride,
+                is_vd_mode=False if if_first else True,
+                name=name + "_branch1",
+            )
 
         self.shortcut = shortcut
 
@@ -92,11 +115,27 @@ class BasicBlock(nn.Module):
     def __init__(self, in_channels, out_channels, stride, shortcut=True, if_first=False, name=None):
         super(BasicBlock, self).__init__()
         self.stride = stride
-        self.conv0 = ConvBNLayer(in_channels=in_channels, out_channels=out_channels, kernel_size=3, stride=stride, act="relu", name=name + "_branch2a")
-        self.conv1 = ConvBNLayer(in_channels=out_channels, out_channels=out_channels, kernel_size=3, act=None, name=name + "_branch2b")
+        self.conv0 = ConvBNLayer(
+            in_channels=in_channels,
+            out_channels=out_channels,
+            kernel_size=3,
+            stride=stride,
+            act="relu",
+            name=name + "_branch2a",
+        )
+        self.conv1 = ConvBNLayer(
+            in_channels=out_channels, out_channels=out_channels, kernel_size=3, act=None, name=name + "_branch2b"
+        )
 
         if not shortcut:
-            self.short = ConvBNLayer(in_channels=in_channels, out_channels=out_channels, kernel_size=1, stride=1, is_vd_mode=False if if_first else True, name=name + "_branch1")
+            self.short = ConvBNLayer(
+                in_channels=in_channels,
+                out_channels=out_channels,
+                kernel_size=1,
+                stride=1,
+                is_vd_mode=False if if_first else True,
+                name=name + "_branch1",
+            )
 
         self.shortcut = shortcut
 
@@ -119,7 +158,9 @@ class ResNet(nn.Module):
 
         self.layers = layers
         supported_layers = [18, 34, 50, 101, 152, 200]
-        assert layers in supported_layers, "supported layers are {} but input layer is {}".format(supported_layers, layers)
+        assert layers in supported_layers, "supported layers are {} but input layer is {}".format(
+            supported_layers, layers
+        )
 
         if layers == 18:
             depth = [2, 2, 2, 2]
@@ -135,7 +176,9 @@ class ResNet(nn.Module):
         num_channels = [64, 256, 512, 1024, 2048] if layers >= 50 else [64, 64, 128, 256]
         num_filters = [64, 128, 256, 512, 512]
 
-        self.conv1_1 = ConvBNLayer(in_channels=in_channels, out_channels=64, kernel_size=7, stride=2, act="relu", name="conv1_1")
+        self.conv1_1 = ConvBNLayer(
+            in_channels=in_channels, out_channels=64, kernel_size=7, stride=2, act="relu", name="conv1_1"
+        )
         self.pool2d_max = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
 
         self.stages = []

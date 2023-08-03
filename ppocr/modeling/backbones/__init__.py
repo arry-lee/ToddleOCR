@@ -70,16 +70,23 @@ def build_backbone(config, model_type):
         from .kie_unet_sdmgr import Kie_backbone
         from .vqa_layoutlm import LayoutLMForSer, LayoutLMv2ForSer, LayoutLMv2ForRe, LayoutXLMForSer, LayoutXLMForRe
 
-        support_dict = ["Kie_backbone", "LayoutLMForSer", "LayoutLMv2ForSer", "LayoutLMv2ForRe", "LayoutXLMForSer", "LayoutXLMForRe"]
+        support_dict = [
+            "Kie_backbone",
+            "LayoutLMForSer",
+            "LayoutLMv2ForSer",
+            "LayoutLMv2ForRe",
+            "LayoutXLMForSer",
+            "LayoutXLMForRe",
+        ]
     elif model_type == "table":
-        from .table_resnet_vd import ResNet
-        from .table_mobilenet_v3 import MobileNetV3
 
         support_dict = ["ResNet", "MobileNetV3"]
     else:
         raise NotImplementedError
 
     module_name = config.pop("name")
-    assert module_name in support_dict, Exception("when model typs is {}, backbone only support {}".format(model_type, support_dict))
+    assert module_name in support_dict, Exception(
+        "when model typs is {}, backbone only support {}".format(model_type, support_dict)
+    )
     module_class = eval(module_name)(**config)
     return module_class

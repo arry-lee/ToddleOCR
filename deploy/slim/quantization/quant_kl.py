@@ -48,7 +48,12 @@ dist.get_world_size()
 class PACT(paddle.nn.Layer):
     def __init__(self):
         super(PACT, self).__init__()
-        alpha_attr = paddle.ParamAttr(name=self.full_name() + ".pact", initializer=paddle.nn.initializer.Constant(value=20), learning_rate=1.0, regularizer=paddle.regularizer.L2Decay(2e-5))
+        alpha_attr = paddle.ParamAttr(
+            name=self.full_name() + ".pact",
+            initializer=paddle.nn.initializer.Constant(value=20),
+            learning_rate=1.0,
+            regularizer=paddle.regularizer.L2Decay(2e-5),
+        )
 
         self.alpha = self.create_parameter(shape=[1], attr=alpha_attr, dtype="float32")
 
@@ -114,7 +119,10 @@ def main(config, device, logger, vdl_writer):
 
     # build dataloader
     config["Train"]["loader"]["num_workers"] = 0
-    is_layoutxlm_ser = config["Architecture"]["model_type"] == "kie" and config["Architecture"]["Backbone"]["name"] == "LayoutXLMForSer"
+    is_layoutxlm_ser = (
+        config["Architecture"]["model_type"] == "kie"
+        and config["Architecture"]["Backbone"]["name"] == "LayoutXLMForSer"
+    )
     train_dataloader = build_dataloader(config, "Train", device, logger)
     if config["Eval"]:
         config["Eval"]["loader"]["num_workers"] = 0
@@ -131,8 +139,13 @@ def main(config, device, logger, vdl_writer):
         inference_model_dir = global_config["inference_model"]
     else:
         inference_model_dir = os.path.dirname(global_config["pretrained_model"])
-        if not (os.path.exists(os.path.join(inference_model_dir, "inference.pdmodel")) and os.path.exists(os.path.join(inference_model_dir, "inference.pdiparams"))):
-            raise ValueError("Please set inference model dir in Global.inference_model or Global.pretrained_model for post-quantazition")
+        if not (
+            os.path.exists(os.path.join(inference_model_dir, "inference.pdmodel"))
+            and os.path.exists(os.path.join(inference_model_dir, "inference.pdiparams"))
+        ):
+            raise ValueError(
+                "Please set inference model dir in Global.inference_model or Global.pretrained_model for post-quantazition"
+            )
 
     if is_layoutxlm_ser:
         generator = sample_generator_layoutxlm_ser(train_dataloader)

@@ -19,15 +19,15 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import numpy as np
-
 import torch
-from torch import nn
 import torch.nn.functional as F
+from torch import nn
 
 
 class BalanceLoss(nn.Module):
-    def __init__(self, balance_loss=True, main_loss_type="DiceLoss", negative_ratio=3, return_origin=False, eps=1e-6, **kwargs):
+    def __init__(
+        self, balance_loss=True, main_loss_type="DiceLoss", negative_ratio=3, return_origin=False, eps=1e-6, **kwargs
+    ):
         """
         The BalanceLoss for Differentiable Binarization text detection
         args:

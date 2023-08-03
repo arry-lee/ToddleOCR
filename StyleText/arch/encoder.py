@@ -13,21 +13,83 @@
 # limitations under the License.
 import torch
 import torch.nn as nn
-
-from arch.base_module import SNConv, SNConvTranspose, ResBlock
+from arch.base_module import ResBlock, SNConv, SNConvTranspose
 
 
 class Encoder(nn.Module):
-    def __init__(self, name, in_channels, encode_dim, use_bias, norm_layer, act, act_attr, conv_block_dropout, conv_block_num, conv_block_dilation):
+    def __init__(
+        self,
+        name,
+        in_channels,
+        encode_dim,
+        use_bias,
+        norm_layer,
+        act,
+        act_attr,
+        conv_block_dropout,
+        conv_block_num,
+        conv_block_dilation,
+    ):
         super(Encoder, self).__init__()
         self._pad2d = torch.nn.Pad2D([3, 3, 3, 3], mode="replicate")
-        self._in_conv = SNConv(name=name + "_in_conv", in_channels=in_channels, out_channels=encode_dim, kernel_size=7, use_bias=use_bias, norm_layer=norm_layer, act=act, act_attr=act_attr)
-        self._down1 = SNConv(name=name + "_down1", in_channels=encode_dim, out_channels=encode_dim * 2, kernel_size=3, stride=2, padding=1, use_bias=use_bias, norm_layer=norm_layer, act=act, act_attr=act_attr)
-        self._down2 = SNConv(name=name + "_down2", in_channels=encode_dim * 2, out_channels=encode_dim * 4, kernel_size=3, stride=2, padding=1, use_bias=use_bias, norm_layer=norm_layer, act=act, act_attr=act_attr)
-        self._down3 = SNConv(name=name + "_down3", in_channels=encode_dim * 4, out_channels=encode_dim * 4, kernel_size=3, stride=2, padding=1, use_bias=use_bias, norm_layer=norm_layer, act=act, act_attr=act_attr)
+        self._in_conv = SNConv(
+            name=name + "_in_conv",
+            in_channels=in_channels,
+            out_channels=encode_dim,
+            kernel_size=7,
+            use_bias=use_bias,
+            norm_layer=norm_layer,
+            act=act,
+            act_attr=act_attr,
+        )
+        self._down1 = SNConv(
+            name=name + "_down1",
+            in_channels=encode_dim,
+            out_channels=encode_dim * 2,
+            kernel_size=3,
+            stride=2,
+            padding=1,
+            use_bias=use_bias,
+            norm_layer=norm_layer,
+            act=act,
+            act_attr=act_attr,
+        )
+        self._down2 = SNConv(
+            name=name + "_down2",
+            in_channels=encode_dim * 2,
+            out_channels=encode_dim * 4,
+            kernel_size=3,
+            stride=2,
+            padding=1,
+            use_bias=use_bias,
+            norm_layer=norm_layer,
+            act=act,
+            act_attr=act_attr,
+        )
+        self._down3 = SNConv(
+            name=name + "_down3",
+            in_channels=encode_dim * 4,
+            out_channels=encode_dim * 4,
+            kernel_size=3,
+            stride=2,
+            padding=1,
+            use_bias=use_bias,
+            norm_layer=norm_layer,
+            act=act,
+            act_attr=act_attr,
+        )
         conv_blocks = []
         for i in range(conv_block_num):
-            conv_blocks.append(ResBlock(name="{}_conv_block_{}".format(name, i), channels=encode_dim * 4, norm_layer=norm_layer, use_dropout=conv_block_dropout, use_dilation=conv_block_dilation, use_bias=use_bias))
+            conv_blocks.append(
+                ResBlock(
+                    name="{}_conv_block_{}".format(name, i),
+                    channels=encode_dim * 4,
+                    norm_layer=norm_layer,
+                    use_dropout=conv_block_dropout,
+                    use_dilation=conv_block_dilation,
+                    use_bias=use_bias,
+                )
+            )
         self._conv_blocks = nn.Sequential(*conv_blocks)
 
     def forward(self, x):
@@ -45,13 +107,88 @@ class EncoderUnet(nn.Module):
     def __init__(self, name, in_channels, encode_dim, use_bias, norm_layer, act, act_attr):
         super(EncoderUnet, self).__init__()
         self._pad2d = torch.nn.Pad2D([3, 3, 3, 3], mode="replicate")
-        self._in_conv = SNConv(name=name + "_in_conv", in_channels=in_channels, out_channels=encode_dim, kernel_size=7, use_bias=use_bias, norm_layer=norm_layer, act=act, act_attr=act_attr)
-        self._down1 = SNConv(name=name + "_down1", in_channels=encode_dim, out_channels=encode_dim * 2, kernel_size=3, stride=2, padding=1, use_bias=use_bias, norm_layer=norm_layer, act=act, act_attr=act_attr)
-        self._down2 = SNConv(name=name + "_down2", in_channels=encode_dim * 2, out_channels=encode_dim * 2, kernel_size=3, stride=2, padding=1, use_bias=use_bias, norm_layer=norm_layer, act=act, act_attr=act_attr)
-        self._down3 = SNConv(name=name + "_down3", in_channels=encode_dim * 2, out_channels=encode_dim * 2, kernel_size=3, stride=2, padding=1, use_bias=use_bias, norm_layer=norm_layer, act=act, act_attr=act_attr)
-        self._down4 = SNConv(name=name + "_down4", in_channels=encode_dim * 2, out_channels=encode_dim * 2, kernel_size=3, stride=2, padding=1, use_bias=use_bias, norm_layer=norm_layer, act=act, act_attr=act_attr)
-        self._up1 = SNConvTranspose(name=name + "_up1", in_channels=encode_dim * 2, out_channels=encode_dim * 2, kernel_size=3, stride=2, padding=1, use_bias=use_bias, norm_layer=norm_layer, act=act, act_attr=act_attr)
-        self._up2 = SNConvTranspose(name=name + "_up2", in_channels=encode_dim * 4, out_channels=encode_dim * 4, kernel_size=3, stride=2, padding=1, use_bias=use_bias, norm_layer=norm_layer, act=act, act_attr=act_attr)
+        self._in_conv = SNConv(
+            name=name + "_in_conv",
+            in_channels=in_channels,
+            out_channels=encode_dim,
+            kernel_size=7,
+            use_bias=use_bias,
+            norm_layer=norm_layer,
+            act=act,
+            act_attr=act_attr,
+        )
+        self._down1 = SNConv(
+            name=name + "_down1",
+            in_channels=encode_dim,
+            out_channels=encode_dim * 2,
+            kernel_size=3,
+            stride=2,
+            padding=1,
+            use_bias=use_bias,
+            norm_layer=norm_layer,
+            act=act,
+            act_attr=act_attr,
+        )
+        self._down2 = SNConv(
+            name=name + "_down2",
+            in_channels=encode_dim * 2,
+            out_channels=encode_dim * 2,
+            kernel_size=3,
+            stride=2,
+            padding=1,
+            use_bias=use_bias,
+            norm_layer=norm_layer,
+            act=act,
+            act_attr=act_attr,
+        )
+        self._down3 = SNConv(
+            name=name + "_down3",
+            in_channels=encode_dim * 2,
+            out_channels=encode_dim * 2,
+            kernel_size=3,
+            stride=2,
+            padding=1,
+            use_bias=use_bias,
+            norm_layer=norm_layer,
+            act=act,
+            act_attr=act_attr,
+        )
+        self._down4 = SNConv(
+            name=name + "_down4",
+            in_channels=encode_dim * 2,
+            out_channels=encode_dim * 2,
+            kernel_size=3,
+            stride=2,
+            padding=1,
+            use_bias=use_bias,
+            norm_layer=norm_layer,
+            act=act,
+            act_attr=act_attr,
+        )
+        self._up1 = SNConvTranspose(
+            name=name + "_up1",
+            in_channels=encode_dim * 2,
+            out_channels=encode_dim * 2,
+            kernel_size=3,
+            stride=2,
+            padding=1,
+            use_bias=use_bias,
+            norm_layer=norm_layer,
+            act=act,
+            act_attr=act_attr,
+        )
+        self._up2 = SNConvTranspose(
+            name=name + "_up2",
+            in_channels=encode_dim * 4,
+            out_channels=encode_dim * 4,
+            kernel_size=3,
+            stride=2,
+            padding=1,
+            use_bias=use_bias,
+            norm_layer=norm_layer,
+            act=act,
+            act_attr=act_attr,
+        )
 
     def forward(self, x):
         output_dict = dict()

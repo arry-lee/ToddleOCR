@@ -16,18 +16,26 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import math
-import torch
-from torch import nn
 import torch.nn.functional as F
+from torch import nn
 
 
 class ConvBNLayer(nn.Module):
-    def __init__(self, in_channels, out_channels, kernel_size, stride, padding, groups=1, if_act=True, act=None, name=None):
+    def __init__(
+        self, in_channels, out_channels, kernel_size, stride, padding, groups=1, if_act=True, act=None, name=None
+    ):
         super(ConvBNLayer, self).__init__()
         self.if_act = if_act
         self.act = act
-        self.conv = nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size, stride=stride, padding=padding, groups=groups, bias=False)
+        self.conv = nn.Conv2d(
+            in_channels=in_channels,
+            out_channels=out_channels,
+            kernel_size=kernel_size,
+            stride=stride,
+            padding=padding,
+            groups=groups,
+            bias=False,
+        )
 
         self.bn = nn.BatchNorm2d(
             num_channels=out_channels,
@@ -54,10 +62,46 @@ class EASTHead(nn.Module):
         else:
             num_outputs = [64, 32, 1, 8]
 
-        self.det_conv1 = ConvBNLayer(in_channels=in_channels, out_channels=num_outputs[0], kernel_size=3, stride=1, padding=1, if_act=True, act="relu", name="det_head1")
-        self.det_conv2 = ConvBNLayer(in_channels=num_outputs[0], out_channels=num_outputs[1], kernel_size=3, stride=1, padding=1, if_act=True, act="relu", name="det_head2")
-        self.score_conv = ConvBNLayer(in_channels=num_outputs[1], out_channels=num_outputs[2], kernel_size=1, stride=1, padding=0, if_act=False, act=None, name="f_score")
-        self.geo_conv = ConvBNLayer(in_channels=num_outputs[1], out_channels=num_outputs[3], kernel_size=1, stride=1, padding=0, if_act=False, act=None, name="f_geo")
+        self.det_conv1 = ConvBNLayer(
+            in_channels=in_channels,
+            out_channels=num_outputs[0],
+            kernel_size=3,
+            stride=1,
+            padding=1,
+            if_act=True,
+            act="relu",
+            name="det_head1",
+        )
+        self.det_conv2 = ConvBNLayer(
+            in_channels=num_outputs[0],
+            out_channels=num_outputs[1],
+            kernel_size=3,
+            stride=1,
+            padding=1,
+            if_act=True,
+            act="relu",
+            name="det_head2",
+        )
+        self.score_conv = ConvBNLayer(
+            in_channels=num_outputs[1],
+            out_channels=num_outputs[2],
+            kernel_size=1,
+            stride=1,
+            padding=0,
+            if_act=False,
+            act=None,
+            name="f_score",
+        )
+        self.geo_conv = ConvBNLayer(
+            in_channels=num_outputs[1],
+            out_channels=num_outputs[3],
+            kernel_size=1,
+            stride=1,
+            padding=0,
+            if_act=False,
+            act=None,
+            name="f_geo",
+        )
 
     def forward(self, x, targets=None):
         f_det = self.det_conv1(x)

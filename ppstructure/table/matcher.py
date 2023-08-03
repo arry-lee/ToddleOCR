@@ -13,7 +13,8 @@
 # limitations under the License.
 
 import numpy as np
-from ppstructure.table.table_master_match import deal_eb_token, deal_bb
+
+from ppstructure.table.table_master_match import deal_bb, deal_eb_token
 
 
 def distance(box_1, box_2):
@@ -76,8 +77,15 @@ class TableMatch:
             distances = []
             for j, pred_box in enumerate(pred_bboxes):
                 if len(pred_box) == 8:
-                    pred_box = [np.min(pred_box[0::2]), np.min(pred_box[1::2]), np.max(pred_box[0::2]), np.max(pred_box[1::2])]
-                distances.append((distance(gt_box, pred_box), 1.0 - compute_iou(gt_box, pred_box)))  # compute iou and l1 distance
+                    pred_box = [
+                        np.min(pred_box[0::2]),
+                        np.min(pred_box[1::2]),
+                        np.max(pred_box[0::2]),
+                        np.max(pred_box[1::2]),
+                    ]
+                distances.append(
+                    (distance(gt_box, pred_box), 1.0 - compute_iou(gt_box, pred_box))
+                )  # compute iou and l1 distance
             sorted_distances = distances.copy()
             # select det box by iou and l1 distance
             sorted_distances = sorted(sorted_distances, key=lambda item: (item[1], item[0]))

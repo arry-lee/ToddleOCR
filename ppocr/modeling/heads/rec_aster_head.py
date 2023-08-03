@@ -19,8 +19,6 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import sys
-
 import torch
 from torch import nn
 from torch.nn import functional as F
@@ -65,7 +63,9 @@ class Embedding(nn.Module):
         self.in_planes = in_planes
         self.embed_dim = embed_dim
         self.mid_dim = mid_dim
-        self.eEmbed = nn.Linear(in_timestep * in_planes, self.embed_dim)  # Embed encoder output to a word-embedding like
+        self.eEmbed = nn.Linear(
+            in_timestep * in_planes, self.embed_dim
+        )  # Embed encoder output to a word-embedding like
 
     def forward(self, x):
         x = torch.reshape(x, [x.shape[0], -1])
@@ -97,7 +97,7 @@ class AttentionRecognitionHead(nn.Module):
         outputs = []
         for i in range(max(lengths)):
             if i == 0:
-                y_prev = torch.full([batch_size],self.num_classes)
+                y_prev = torch.full([batch_size], self.num_classes)
             else:
                 y_prev = targets[:, i - 1]
             output, state = self.decoder(x, state, y_prev)
@@ -115,7 +115,7 @@ class AttentionRecognitionHead(nn.Module):
         predicted_ids, predicted_scores = [], []
         for i in range(self.max_len_labels):
             if i == 0:
-                y_prev = torch.full([batch_size],self.num_classes)
+                y_prev = torch.full([batch_size], self.num_classes)
             else:
                 y_prev = predicted
 
@@ -147,12 +147,12 @@ class AttentionRecognitionHead(nn.Module):
         pos_index = torch.reshape(torch.arange(batch_size) * beam_width, shape=[-1, 1])
 
         # Initialize the scores
-        sequence_scores = torch.full([batch_size * beam_width, 1],-float("Inf"))
+        sequence_scores = torch.full([batch_size * beam_width, 1], -float("Inf"))
         index = [i * beam_width for i in range(0, batch_size)]
         sequence_scores[index] = 0.0
 
         # Initialize the input vector
-        y_prev = torch.full([batch_size * beam_width],self.num_classes)
+        y_prev = torch.full([batch_size * beam_width], self.num_classes)
 
         # Store decisions for backtracking
         stored_scores = list()
@@ -199,11 +199,15 @@ class AttentionRecognitionHead(nn.Module):
         # ====== backtrak ======#
         # Initialize return variables given different types
         p = list()
-        l = [[self.max_len_labels] * beam_width for _ in range(batch_size)]  # Placeholder for lengths of top-k sequences
+        l = [
+            [self.max_len_labels] * beam_width for _ in range(batch_size)
+        ]  # Placeholder for lengths of top-k sequences
 
         # the last step output of the beams are not sorted
         # thus they are sorted here
-        sorted_score, sorted_idx = torch.topk(torch.reshape(stored_scores[-1], shape=[batch_size, beam_width]), beam_width)
+        sorted_score, sorted_idx = torch.topk(
+            torch.reshape(stored_scores[-1], shape=[batch_size, beam_width]), beam_width
+        )
 
         # initialize the sequence scores with the sorted last step beam scores
         s = sorted_score.clone()
@@ -255,7 +259,10 @@ class AttentionRecognitionHead(nn.Module):
 
         # Reverse the sequences and re-order at the same time
         # It is reversed because the backtracking happens in reverse time order
-        p = [torch.reshape(torch.index_select(step, re_sorted_idx, 0), shape=[batch_size, beam_width, -1]) for step in reversed(p)]
+        p = [
+            torch.reshape(torch.index_select(step, re_sorted_idx, 0), shape=[batch_size, beam_width, -1])
+            for step in reversed(p)
+        ]
         p = torch.concat(p, -1)[:, 0, :]
         return p, torch.ones_like(p)
 
@@ -302,7 +309,9 @@ class DecoderUnit(nn.Module):
         self.emdDim = attDim
 
         self.attention_unit = AttentionUnit(sDim, xDim, attDim)
-        self.tgt_embedding = nn.Embedding(yDim + 1, self.emdDim, weight_attr=nn.initializer.Normal(std=0.01))  # the last is used for <BOS>
+        self.tgt_embedding = nn.Embedding(
+            yDim + 1, self.emdDim, weight_attr=nn.initializer.Normal(std=0.01)
+        )  # the last is used for <BOS>
         self.gru = nn.GRUCell(input_size=xDim + self.emdDim, hidden_size=sDim)
         self.fc = nn.Linear(sDim, yDim, bias=nn.initializer.Constant(value=0))
         self.embed_fc = nn.Linear(300, self.sDim)

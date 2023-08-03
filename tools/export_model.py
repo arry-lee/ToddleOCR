@@ -19,8 +19,6 @@ __dir__ = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(__dir__)
 sys.path.insert(0, os.path.abspath(os.path.join(__dir__, "..")))
 
-import argparse
-
 import torch
 from torch.jit import to_static
 
@@ -45,7 +43,10 @@ def export_single_model(model, arch_config, save_path, logger, input_shape=None,
         ]
         model = to_static(model, input_spec=other_shape)
     elif arch_config["algorithm"] == "SAR":
-        other_shape = [torch.static.InputSpec(shape=[None, 3, 48, 160], dtype="float32"), [torch.static.InputSpec(shape=[None], dtype="float32")]]
+        other_shape = [
+            torch.static.InputSpec(shape=[None, 3, 48, 160], dtype="float32"),
+            [torch.static.InputSpec(shape=[None], dtype="float32")],
+        ]
         model = to_static(model, input_spec=other_shape)
     elif arch_config["algorithm"] == "SVTR":
         if arch_config["Head"]["name"] == "MultiHead":
@@ -132,8 +133,14 @@ def export_single_model(model, arch_config, save_path, logger, input_shape=None,
         infer_shape = [3, -1, -1]
         if arch_config["model_type"] == "rec":
             infer_shape = [3, 32, -1]  # for rec model, H must be 32
-            if "Transform" in arch_config and arch_config["Transform"] is not None and arch_config["Transform"]["name"] == "TPS":
-                logger.info("When there is tps in the network, variable length input is not supported, and the input size needs to be the same as during training")
+            if (
+                "Transform" in arch_config
+                and arch_config["Transform"] is not None
+                and arch_config["Transform"]["name"] == "TPS"
+            ):
+                logger.info(
+                    "When there is tps in the network, variable length input is not supported, and the input size needs to be the same as during training"
+                )
                 infer_shape[-1] = 100
         elif arch_config["model_type"] == "table":
             infer_shape = [3, 488, 488]
