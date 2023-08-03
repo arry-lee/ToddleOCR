@@ -235,7 +235,7 @@ class PrePostProcessLayer(nn.Module):
                     self.add_sublayer(
                         "layer_norm_%d" % len(self.sublayers()),
                         torch.nn.LayerNorm(
-                            normalized_shape=d_model, weight_attr=torch.ParamAttr(initializer=torch.nn.initializer.Constant(1.0)), bias=torch.ParamAttr(initializer=torch.nn.initializer.Constant(0.0))
+                            normalized_shape=d_model, bias=torch.ParamAttr(initializer=torch.nn.initializer.Constant(0.0))
                         ),
                     )
                 )
@@ -286,7 +286,7 @@ class PrepareDecoder(nn.Module):
             num_embeddings=src_vocab_size,
             embedding_dim=self.src_emb_dim,
             padding_idx=bos_idx,
-            weight_attr=torch.ParamAttr(name=word_emb_param_name, initializer=nn.initializer.Normal(0.0, src_emb_dim**-0.5)),
+            initializer=nn.initializer.Normal(0.0, src_emb_dim**-0.5)),
         )
         self.emb1 = torch.nn.Embedding(num_embeddings=src_max_len, embedding_dim=self.src_emb_dim, weight_attr=torch.ParamAttr(name=pos_enc_param_name))
         self.dropout_rate = dropout_rate

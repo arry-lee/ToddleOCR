@@ -304,7 +304,7 @@ class DecoderUnit(nn.Module):
         self.attention_unit = AttentionUnit(sDim, xDim, attDim)
         self.tgt_embedding = nn.Embedding(yDim + 1, self.emdDim, weight_attr=nn.initializer.Normal(std=0.01))  # the last is used for <BOS>
         self.gru = nn.GRUCell(input_size=xDim + self.emdDim, hidden_size=sDim)
-        self.fc = nn.Linear(sDim, yDim, weight_attr=nn.initializer.Normal(std=0.01), bias=nn.initializer.Constant(value=0))
+        self.fc = nn.Linear(sDim, yDim, bias=nn.initializer.Constant(value=0))
         self.embed_fc = nn.Linear(300, self.sDim)
 
     def get_initial_state(self, embed, tile_times=1):

@@ -130,7 +130,7 @@ class GA_SPIN_Transformer(nn.Module):
         if norm_type == "BN":
             norm_layer = functools.partial(nn.BatchNorm2d, use_global_stats=True)
         elif norm_type == "IN":
-            norm_layer = functools.partial(nn.InstanceNorm2D, weight_attr=False, use_global_stats=False)
+            norm_layer = functools.partial(nn.InstanceNorm2D, use_global_stats=False)
         else:
             raise NotImplementedError("normalization layer [%s] is not found" % norm_type)
 
@@ -187,7 +187,7 @@ class GA_SPIN_Transformer(nn.Module):
             initial_bias = initial_bias.reshape(-1)
 
 
-            self.stucture_fc2 = nn.Linear(256, self.out_weight, weight_attr=param_attr, bias=bias)
+            self.stucture_fc2 = nn.Linear(256, self.out_weight, bias=bias)
             self.sigmoid = nn.Sigmoid()
 
             if offsets:

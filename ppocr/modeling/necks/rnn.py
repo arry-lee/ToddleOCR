@@ -87,7 +87,7 @@ class EncoderWithFC(nn.Module):
         super(EncoderWithFC, self).__init__()
         self.out_channels = hidden_size
         weight_attr, bias = get_para_bias_attr(l2_decay=0.00001, k=in_channels)
-        self.fc = nn.Linear(in_channels, hidden_size, weight_attr=weight_attr, bias=bias, name="reduce_encoder_fea")
+        self.fc = nn.Linear(in_channels, hidden_size, bias=bias, name="reduce_encoder_fea")
 
     def forward(self, x):
         x = self.fc(x)

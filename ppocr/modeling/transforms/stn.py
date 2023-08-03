@@ -31,7 +31,7 @@ from .tps_spatial_transformer import TPSSpatialTransformer
 def conv3x3_block(in_channels, out_channels, stride=1):
     n = 3 * 3 * out_channels
     w = math.sqrt(2.0 / n)
-    conv_layer = nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=stride, padding=1, weight_attr=nn.initializer.Normal(mean=0.0, std=w), bias=nn.initializer.Constant(0))
+    conv_layer = nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=stride, padding=1, bias=nn.initializer.Constant(0))
     block = nn.Sequential(conv_layer, nn.BatchNorm2d(out_channels), nn.ReLU())
     return block
 
@@ -55,9 +55,9 @@ class STN(nn.Module):
             nn.MaxPool2D(kernel_size=2, stride=2),
             conv3x3_block(256, 256),
         )  # 1*2
-        self.stn_fc1 = nn.Sequential(nn.Linear(2 * 256, 512, weight_attr=nn.initializer.Normal(0, 0.001), bias=nn.initializer.Constant(0)), nn.BatchNorm1D(512), nn.ReLU())
+        self.stn_fc1 = nn.Sequential(nn.Linear(2 * 256, 512, bias=nn.initializer.Constant(0)), nn.BatchNorm1D(512), nn.ReLU())
         fc2_bias = self.init_stn()
-        self.stn_fc2 = nn.Linear(512, num_ctrlpoints * 2, weight_attr=nn.initializer.Constant(0.0), bias=nn.initializer.Assign(fc2_bias))
+        self.stn_fc2 = nn.Linear(512, num_ctrlpoints * 2, bias=nn.initializer.Assign(fc2_bias))
 
     def init_stn(self):
         margin = 0.01

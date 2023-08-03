@@ -222,11 +222,11 @@ class FusionGeneratorSimple(nn.Module):
         else:
             use_bias = False
 
-        self._conv = nn.Conv2d(in_channels=6, out_channels=encode_dim, kernel_size=3, stride=1, padding=1, groups=1, weight_attr=torch.ParamAttr(name=name + "_conv_weights"), bias=False)
+        self._conv = nn.Conv2d(in_channels=6, out_channels=encode_dim, kernel_size=3, stride=1, padding=1, groups=1, bias=False)
 
         self._res_block = ResBlock(name="{}_conv_block".format(name), channels=encode_dim, norm_layer=norm_layer, use_dropout=conv_block_dropout, use_dilation=conv_block_dilation, use_bias=use_bias)
 
-        self._reduce_conv = nn.Conv2d(in_channels=encode_dim, out_channels=3, kernel_size=3, stride=1, padding=1, groups=1, weight_attr=torch.ParamAttr(name=name + "_reduce_conv_weights"), bias=False)
+        self._reduce_conv = nn.Conv2d(in_channels=encode_dim, out_channels=3, kernel_size=3, stride=1, padding=1, groups=1, bias=False)
 
     def forward(self, fake_text, fake_bg):
         fake_concat = torch.concat((fake_text, fake_bg), dim=1)

@@ -57,7 +57,7 @@ class DeformableConvV2(nn.Module):
             # in ResNet backbone, do not need bias
             dcn_bias_attr = False
         self.conv_dcn = DeformConv2D(
-            in_channels, out_channels, kernel_size, stride=stride, padding=(kernel_size - 1) // 2 * dilation, dilation=dilation, deformable_groups=groups, weight_attr=weight_attr, bias=dcn_bias_attr
+            in_channels, out_channels, kernel_size, stride=stride, padding=(kernel_size - 1) // 2 * dilation, dilation=dilation, deformable_groups=groups, bias=dcn_bias_attr
         )
 
         if lr_scale == 1 and regularizer is None:

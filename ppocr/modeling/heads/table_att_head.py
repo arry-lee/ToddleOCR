@@ -135,13 +135,13 @@ class SLAHead(nn.Module):
         weight_attr1_1, bias_attr1_1 = get_para_bias_attr(l2_decay=fc_decay, k=hidden_size)
         weight_attr1_2, bias_attr1_2 = get_para_bias_attr(l2_decay=fc_decay, k=hidden_size)
         self.structure_generator = nn.Sequential(
-            nn.Linear(self.hidden_size, self.hidden_size, weight_attr=weight_attr1_2, bias=bias_attr1_2), nn.Linear(hidden_size, out_channels, weight_attr=weight_attr, bias=bias)
+            nn.Linear(self.hidden_size, self.hidden_size, nn.Linear(hidden_size, out_channels, bias=bias)
         )
         # loc
         weight_attr1, bias_attr1 = get_para_bias_attr(l2_decay=fc_decay, k=self.hidden_size)
         weight_attr2, bias_attr2 = get_para_bias_attr(l2_decay=fc_decay, k=self.hidden_size)
         self.loc_generator = nn.Sequential(
-            nn.Linear(self.hidden_size, self.hidden_size, weight_attr=weight_attr1, bias=bias_attr1), nn.Linear(self.hidden_size, loc_reg_num, weight_attr=weight_attr2, bias=bias_attr2), nn.Sigmoid()
+            nn.Linear(self.hidden_size, self.hidden_size, nn.Linear(self.hidden_size, loc_reg_num, nn.Sigmoid()
         )
 
     def forward(self, inputs, targets=None):

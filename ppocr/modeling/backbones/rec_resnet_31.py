@@ -31,7 +31,7 @@ __all__ = ["ResNet31"]
 
 
 def conv3x3(in_channel, out_channel, stride=1, conv_weight_attr=None):
-    return nn.Conv2d(in_channel, out_channel, kernel_size=3, stride=stride, padding=1, weight_attr=conv_weight_attr, bias=False)
+    return nn.Conv2d(in_channel, out_channel, kernel_size=3, stride=stride, padding=1, bias=False)
 
 
 class BasicBlock(nn.Module):
@@ -47,7 +47,7 @@ class BasicBlock(nn.Module):
         self.downsample = downsample
         if downsample:
             self.downsample = nn.Sequential(
-                nn.Conv2d(in_channels, channels * self.expansion, 1, stride, weight_attr=conv_weight_attr, bias=False), nn.BatchNorm2d(channels * self.expansion, weight_attr=bn_weight_attr)
+                nn.Conv2d(in_channels, channels * self.expansion, 1, stride, bias=False), nn.BatchNorm2d(channels * self.expansion, weight_attr=bn_weight_attr)
             )
         else:
             self.downsample = nn.Sequential()
@@ -147,7 +147,7 @@ class ResNet31(nn.Module):
             downsample = None
             if input_channels != output_channels:
                 downsample = nn.Sequential(
-                    nn.Conv2d(input_channels, output_channels, kernel_size=1, stride=1, weight_attr=conv_weight_attr, bias=False), nn.BatchNorm2d(output_channels, weight_attr=bn_weight_attr)
+                    nn.Conv2d(input_channels, output_channels, kernel_size=1, stride=1, bias=False), nn.BatchNorm2d(output_channels, weight_attr=bn_weight_attr)
                 )
 
             layers.append(BasicBlock(input_channels, output_channels, downsample=downsample, conv_weight_attr=conv_weight_attr, bn_weight_attr=bn_weight_attr))
