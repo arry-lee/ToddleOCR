@@ -125,13 +125,13 @@ class SLAHead(nn.Module):
 
         self.structure_generator = nn.Sequential(
             nn.Linear(self.hidden_size, self.hidden_size, nn.Linear(hidden_size, out_channels, bias=True)
-        )
+        ))
         # loc
 
 
         self.loc_generator = nn.Sequential(
             nn.Linear(self.hidden_size, self.hidden_size, nn.Linear(self.hidden_size, loc_reg_num, nn.Sigmoid()
-        )
+        )))
 
     def forward(self, inputs, targets=None):
         fea = inputs[-1]
