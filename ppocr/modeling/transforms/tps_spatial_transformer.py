@@ -33,7 +33,7 @@ def grid_sample(input, grid, canvas=None):
     if canvas is None:
         return output
     else:
-        input_mask = torch.ones(shape=input.shape)
+        input_mask = torch.ones(input.shape)
         output_mask = F.grid_sample(input_mask, grid)
         padded_output = output * output_mask + canvas * (1 - output_mask)
         return padded_output
@@ -102,7 +102,7 @@ class TPSSpatialTransformer(nn.Module):
         X = X / (self.target_width - 1)
         target_coordinate = torch.concat([X, Y], axis=1)  # convert from (y, x) to (x, y)
         target_coordinate_partial_repr = compute_partial_repr(target_coordinate, target_control_points)
-        target_coordinate_repr = torch.concat([target_coordinate_partial_repr, torch.ones(shape=[HW, 1]), target_coordinate], axis=1)
+        target_coordinate_repr = torch.concat([target_coordinate_partial_repr, torch.ones([HW, 1]), target_coordinate], axis=1)
 
         # register precomputed matrices
         self.inverse_kernel = inverse_kernel
