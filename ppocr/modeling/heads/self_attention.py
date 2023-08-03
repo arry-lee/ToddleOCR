@@ -286,7 +286,7 @@ class PrepareDecoder(nn.Module):
             num_embeddings=src_vocab_size,
             embedding_dim=self.src_emb_dim,
             padding_idx=bos_idx,
-            initializer=nn.initializer.Normal(0.0, src_emb_dim**-0.5)),
+            initializer=nn.initializer.Normal(0.0, src_emb_dim**-0.5),
         )
         self.emb1 = torch.nn.Embedding(num_embeddings=src_max_len, embedding_dim=self.src_emb_dim, weight_attr=torch.ParamAttr(name=pos_enc_param_name))
         self.dropout_rate = dropout_rate
