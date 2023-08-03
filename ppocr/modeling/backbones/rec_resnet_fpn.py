@@ -16,7 +16,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from torch import nn, ParamAttr
+from torch import nn
 from torch.nn import functional as F
 import torch
 import numpy as np
