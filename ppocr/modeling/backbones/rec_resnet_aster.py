@@ -39,7 +39,7 @@ def get_sinusoid_encoding(n_position, feat_dim, wave_length=10000):
     dim_range = torch.arange(0, feat_dim)
     dim_range = torch.pow(wave_length, 2 * (dim_range // 2) / feat_dim)
     # [n_position, feat_dim]
-    angles = torch.unsqueeze(positions, axis=1) / torch.unsqueeze(dim_range, axis=0)
+    angles = torch.unsqueeze(positions, dim=1) / torch.unsqueeze(dim_range, dim=0)
     angles = torch.cast(angles, "float32")
     angles[:, 0::2] = torch.sin(angles[:, 0::2])
     angles[:, 1::2] = torch.cos(angles[:, 1::2])

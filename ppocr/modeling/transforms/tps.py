@@ -206,8 +206,8 @@ class GridGenerator(nn.Module):
         eps = self.eps
         n = P.shape[0]  # n (= self.I_r_width x self.I_r_height)
         # P_tile: n x 2 -> n x 1 x 2 -> n x F x 2
-        P_tile = torch.tile(torch.unsqueeze(P, axis=1), (1, F, 1))
-        C_tile = torch.unsqueeze(C, axis=0)  # 1 x F x 2
+        P_tile = torch.tile(torch.unsqueeze(P, dim=1), (1, F, 1))
+        C_tile = torch.unsqueeze(C, dim=0)  # 1 x F x 2
         P_diff = P_tile - C_tile  # n x F x 2
         # rbf_norm: n x F
         rbf_norm = torch.norm(P_diff, p=2, axis=2, keepdim=False)

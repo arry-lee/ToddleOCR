@@ -41,7 +41,7 @@ class PositionalEncoding(nn.Module):
         sinusoid_table[:, 0::2] = np.sin(sinusoid_table[:, 0::2])  # dim 2i
         sinusoid_table[:, 1::2] = np.cos(sinusoid_table[:, 1::2])  # dim 2i+1
         sinusoid_table = torch.Tensor(sinusoid_table, dtype="float32")
-        sinusoid_table = torch.unsqueeze(sinusoid_table, axis=0)
+        sinusoid_table = torch.unsqueeze(sinusoid_table, dim=0)
         return sinusoid_table
 
     def forward(self, x):
@@ -64,10 +64,10 @@ class ScaledDotProductAttention(nn.Module):
         if mask is not None:
             attn = attn.masked_fill(mask, -1e9)
             if mask.dim() == 3:
-                mask = torch.unsqueeze(mask, axis=1)
+                mask = torch.unsqueeze(mask, dim=1)
             elif mask.dim() == 2:
-                mask = torch.unsqueeze(mask, axis=1)
-                mask = torch.unsqueeze(mask, axis=1)
+                mask = torch.unsqueeze(mask, dim=1)
+                mask = torch.unsqueeze(mask, dim=1)
             repeat_times = [attn.shape[1] // mask.shape[1], attn.shape[2] // mask.shape[2]]
             mask = torch.tile(mask, [1, repeat_times[0], repeat_times[1], 1])
             attn[mask == 0] = -1e9
@@ -250,7 +250,7 @@ class MLM(nn.Module):
         # position embedding layer
         label_pos = torch.Tensor(label_pos, dtype="int64")
         pos_emb = self.pos_embedding(label_pos)
-        pos_emb = self.w0_linear(torch.unsqueeze(pos_emb, axis=2))
+        pos_emb = self.w0_linear(torch.unsqueeze(pos_emb, dim=2))
         pos_emb = torch.transpose(pos_emb, perm=[0, 2, 1])
         # fusion position embedding with features V & generate mask_c
         att_map_sub = self.active(pos_emb + self.wv(feature_v_seq))

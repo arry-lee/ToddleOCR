@@ -51,7 +51,7 @@ class SPINAttentionHead(nn.Module):
             for i in range(num_steps):
                 char_onehots = self._char_to_onehot(targets[:, i], onehot_dim=self.num_classes)
                 (outputs, hidden), alpha = self.attention_cell(hidden, inputs, char_onehots)
-                output_hiddens.append(torch.unsqueeze(outputs, axis=1))
+                output_hiddens.append(torch.unsqueeze(outputs, dim=1))
             output = torch.concat(output_hiddens, axis=1)
             probs = self.generator(output)
         else:
@@ -66,9 +66,9 @@ class SPINAttentionHead(nn.Module):
                 (outputs, hidden), alpha = self.attention_cell(hidden, inputs, char_onehots)
                 probs_step = self.generator(outputs)
                 if probs is None:
-                    probs = torch.unsqueeze(probs_step, axis=1)
+                    probs = torch.unsqueeze(probs_step, dim=1)
                 else:
-                    probs = torch.concat([probs, torch.unsqueeze(probs_step, axis=1)], axis=1)
+                    probs = torch.concat([probs, torch.unsqueeze(probs_step, dim=1)], axis=1)
                 next_input = probs_step.argmax(axis=1)
                 targets = next_input
         if not self.training:
@@ -91,7 +91,7 @@ class AttentionLSTMCell(nn.Module):
 
     def forward(self, prev_hidden, batch_H, char_onehots):
         batch_H_proj = self.i2h(batch_H)
-        prev_hidden_proj = torch.unsqueeze(self.h2h(prev_hidden[0]), axis=1)
+        prev_hidden_proj = torch.unsqueeze(self.h2h(prev_hidden[0]), dim=1)
         res = torch.add(batch_H_proj, prev_hidden_proj)
         res = torch.tanh(res)
         e = self.score(res)

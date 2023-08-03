@@ -161,7 +161,7 @@ class AttentionRecognitionHead(nn.Module):
 
         for i in range(self.max_len_labels):
             output, state = self.decoder(inflated_encoder_feats, state, y_prev)
-            state = torch.unsqueeze(state, axis=0)
+            state = torch.unsqueeze(state, dim=0)
             log_softmax_output = torch.nn.functional.log_softmax(output, axis=1)
 
             sequence_scores = _inflate(sequence_scores, self.num_classes, 1)
