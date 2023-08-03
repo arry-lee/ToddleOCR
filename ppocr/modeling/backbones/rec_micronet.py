@@ -127,7 +127,7 @@ class ChannelShuffle(nn.Module):
         # reshape
         x = torch.reshape(x, [b, self.groups, channels_per_group, h, w])
 
-        x = torch.transpose(x, (0, 2, 1, 3, 4))
+        x = x.permute(0, 2, 1, 3, 4)
         out = torch.reshape(x, [b, -1, h, w])
 
         return out

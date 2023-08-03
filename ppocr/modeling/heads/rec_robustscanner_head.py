@@ -84,7 +84,7 @@ class DotProductAttentionLayer(nn.Module):
         self.scale = dim_model**-0.5 if dim_model is not None else 1.0
 
     def forward(self, query, key, value, h, w, valid_ratios=None):
-        query = torch.transpose(query, (0, 2, 1))
+        query = query.permute(0, 2, 1)
         logits = torch.matmul(query, key) * self.scale
         n, c, t = logits.shape
         # reshape to (n, c, h, w)
@@ -99,9 +99,9 @@ class DotProductAttentionLayer(nn.Module):
         # reshape to (n, c, h, w)
         logits = torch.reshape(logits, [n, c, t])
         weights = F.softmax(logits, dim=2)
-        value = torch.transpose(value, (0, 2, 1))
+        value = value.permute(0, 2, 1)
         glimpse = torch.matmul(weights, value)
-        glimpse = torch.transpose(glimpse, (0, 2, 1))
+        glimpse = glimpse.permute(0, 2, 1)
         return glimpse
 
 
@@ -185,7 +185,7 @@ class SequenceAttentionDecoder(BaseDecoder):
         assert len_q <= self.max_seq_len
 
         query, _ = self.sequence_layer(tgt_embedding)
-        query = torch.transpose(query, (0, 2, 1))
+        query = query.permute(0, 2, 1)
         key = torch.reshape(out_enc, [n, c_enc, h * w])
         if self.encode_value:
             value = key
@@ -193,7 +193,7 @@ class SequenceAttentionDecoder(BaseDecoder):
             value = torch.reshape(feat, [n, c_feat, h * w])
 
         attn_out = self.attention_layer(query, key, value, h, w, valid_ratios)
-        attn_out = torch.transpose(attn_out, (0, 2, 1))
+        attn_out = attn_out.permute(0, 2, 1)
 
         if self.return_feature:
             return attn_out
@@ -257,7 +257,7 @@ class SequenceAttentionDecoder(BaseDecoder):
         assert c_q == self.dim_model
 
         query, _ = self.sequence_layer(embed)
-        query = torch.transpose(query, (0, 2, 1))
+        query = query.permute(0, 2, 1)
         key = torch.reshape(out_enc, [n, c_enc, h * w])
         if self.encode_value:
             value = key
@@ -289,11 +289,11 @@ class PositionAwareLayer(nn.Module):
 
     def forward(self, img_feature):
         n, c, h, w = img_feature.shape
-        rnn_input = torch.transpose(img_feature, (0, 2, 3, 1))
+        rnn_input = img_feature.permute(0, 2, 3, 1)
         rnn_input = torch.reshape(rnn_input, (n * h, w, c))
         rnn_output, _ = self.rnn(rnn_input)
         rnn_output = torch.reshape(rnn_output, (n, h, w, c))
-        rnn_output = torch.transpose(rnn_output, (0, 3, 1, 2))
+        rnn_output = rnn_output.permute(0, 3, 1, 2)
         out = self.mixer(rnn_output)
         return out
 
@@ -383,7 +383,7 @@ class PositionAttentionDecoder(BaseDecoder):
         position_out_enc = self.position_aware_module(out_enc)
 
         query = self.embedding(position_index)
-        query = torch.transpose(query, (0, 2, 1))
+        query = query.permute(0, 2, 1)
         key = torch.reshape(position_out_enc, (n, c_enc, h * w))
         if self.encode_value:
             value = torch.reshape(out_enc, (n, c_enc, h * w))
@@ -391,7 +391,7 @@ class PositionAttentionDecoder(BaseDecoder):
             value = torch.reshape(feat, (n, c_feat, h * w))
 
         attn_out = self.attention_layer(query, key, value, h, w, valid_ratios)
-        attn_out = torch.transpose(attn_out, (0, 2, 1))  # [n, len_q, dim_v]
+        attn_out = attn_out.permute(0, 2, 1)  # [n, len_q, dim_v]
 
         if self.return_feature:
             return attn_out
@@ -421,7 +421,7 @@ class PositionAttentionDecoder(BaseDecoder):
         position_out_enc = self.position_aware_module(out_enc)
 
         query = self.embedding(position_index)
-        query = torch.transpose(query, (0, 2, 1))
+        query = query.permute(0, 2, 1)
         key = torch.reshape(position_out_enc, (n, c_enc, h * w))
         if self.encode_value:
             value = torch.reshape(out_enc, (n, c_enc, h * w))
@@ -429,7 +429,7 @@ class PositionAttentionDecoder(BaseDecoder):
             value = torch.reshape(feat, (n, c_feat, h * w))
 
         attn_out = self.attention_layer(query, key, value, h, w, valid_ratios)
-        attn_out = torch.transpose(attn_out, (0, 2, 1))  # [n, len_q, dim_v]
+        attn_out = attn_out.permute(0, 2, 1)  # [n, len_q, dim_v]
 
         if self.return_feature:
             return attn_out

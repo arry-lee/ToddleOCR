@@ -90,9 +90,9 @@ class FCELoss(nn.Module):
         return results
 
     def forward_single(self, pred, gt):
-        cls_pred = torch.transpose(pred[0], (0, 2, 3, 1))
-        reg_pred = torch.transpose(pred[1], (0, 2, 3, 1))
-        gt = torch.transpose(gt, (0, 2, 3, 1))
+        cls_pred = pred[0].permute(0, 2, 3, 1)
+        reg_pred = pred[1].permute(0, 2, 3, 1)
+        gt = gt.permute(0, 2, 3, 1)
 
         k = 2 * self.fourier_degree + 1
         tr_pred = torch.reshape(cls_pred[:, :, :, :2], (-1, 2))
