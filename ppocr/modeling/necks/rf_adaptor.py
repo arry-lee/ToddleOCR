@@ -35,7 +35,7 @@ class S2VAdaptor(nn.Module):
 
         # feature strengthen module, channel attention
         self.channel_inter = nn.Linear(self.in_channels, self.in_channels, bias=False)
-        self.channel_bn = nn.BatchNorm1D(self.in_channels)
+        self.channel_bn = nn.BatchNorm1d(self.in_channels)
         self.channel_act = nn.ReLU()
         self.apply(self.init_weights)
 
@@ -44,7 +44,7 @@ class S2VAdaptor(nn.Module):
             kaiming_init_(m.weight)
             if isinstance(m, nn.Conv2d) and m.bias is not None:
                 zeros_(m.bias)
-        elif isinstance(m, (nn.BatchNorm2d, nn.BatchNorm2d, nn.BatchNorm1D)):
+        elif isinstance(m, (nn.BatchNorm2d, nn.BatchNorm2d, nn.BatchNorm1d)):
             zeros_(m.bias)
             ones_(m.weight)
 
@@ -76,7 +76,7 @@ class V2SAdaptor(nn.Module):
 
         # output transformation
         self.channel_inter = nn.Linear(self.in_channels, self.in_channels, bias=False)
-        self.channel_bn = nn.BatchNorm1D(self.in_channels)
+        self.channel_bn = nn.BatchNorm1d(self.in_channels)
         self.channel_act = nn.ReLU()
 
     def forward(self, visual):

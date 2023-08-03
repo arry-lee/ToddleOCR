@@ -55,7 +55,7 @@ class STN(nn.Module):
             nn.MaxPool2d(kernel_size=2, stride=2),
             conv3x3_block(256, 256),
         )  # 1*2
-        self.stn_fc1 = nn.Sequential(nn.Linear(2 * 256, 512, bias=nn.initializer.Constant(0)), nn.BatchNorm1D(512), nn.ReLU())
+        self.stn_fc1 = nn.Sequential(nn.Linear(2 * 256, 512, bias=nn.initializer.Constant(0)), nn.BatchNorm1d(512), nn.ReLU())
         fc2_bias = self.init_stn()
         self.stn_fc2 = nn.Linear(512, num_ctrlpoints * 2, bias=nn.initializer.Assign(fc2_bias))
 

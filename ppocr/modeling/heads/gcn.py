@@ -25,7 +25,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class BatchNorm1D(nn.BatchNorm1D):
+class BatchNorm1d(nn.BatchNorm1d):
     def __init__(self, num_features, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True):
         momentum = 1 - momentum
         weight_attr = None
@@ -65,7 +65,7 @@ class GraphConv(nn.Module):
 class GCN(nn.Module):
     def __init__(self, feat_len):
         super(GCN, self).__init__()
-        self.bn0 = BatchNorm1D(feat_len, affine=False)
+        self.bn0 = BatchNorm1d(feat_len, affine=False)
         self.conv1 = GraphConv(feat_len, 512)
         self.conv2 = GraphConv(512, 256)
         self.conv3 = GraphConv(256, 128)

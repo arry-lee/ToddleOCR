@@ -18,17 +18,14 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import math
-import numpy as np
 import torch
-, reshape, transpose
+
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.nn import Conv2d, BatchNorm2d, Linear, Dropout
-from torch.nn import AdaptiveAvgPool2d, MaxPool2d, AvgPool2d
-from torch.nn.initializer import KaimingNormal
-from torch.regularizer import L2Decay
-from torch.nn.functional import hardswish, hardsigmoid
+from torch.nn import Conv2d, BatchNorm2d
+from torch.nn import AdaptiveAvgPool2d
+from torch.nn.functional import hardsigmoid
+
 
 
 class ConvBNLayer(nn.Module):
