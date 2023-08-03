@@ -23,13 +23,6 @@ from torch import nn
 from torch.nn import functional as F
 
 
-def get_para_bias_attr(l2_decay, k):
-    regularizer = torch.regularizer.L2Decay(l2_decay)
-    stdv = 1.0 / math.sqrt(k * 1.0)
-    initializer = nn.initializer.Uniform(-stdv, stdv)
-
-
-    return [weight_attr, bias]
 
 
 class CTCHead(nn.Module):

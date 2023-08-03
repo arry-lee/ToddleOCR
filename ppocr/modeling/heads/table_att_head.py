@@ -26,17 +26,6 @@ import numpy as np
 from .rec_att_head import AttentionGRUCell
 
 
-def get_para_bias_attr(l2_decay, k):
-    if l2_decay > 0:
-        regularizer = torch.regularizer.L2Decay(l2_decay)
-        stdv = 1.0 / math.sqrt(k * 1.0)
-        initializer = nn.initializer.Uniform(-stdv, stdv)
-    else:
-        regularizer = None
-        initializer = None
-
-
-    return [weight_attr, bias]
 
 
 class TableAttentionHead(nn.Module):
