@@ -44,7 +44,7 @@ class PSEPostProcess(object):
     def __call__(self, outs_dict, shape_list):
         pred = outs_dict["maps"]
         if not isinstance(pred, torch.Tensor):
-            pred = torch.to_tensor(pred)
+            pred = torch.Tensor(pred)
         pred = F.interpolate(pred, scale_factor=4 // self.scale, mode="bilinear")
 
         score = F.sigmoid(pred[:, 0, :, :])

@@ -71,7 +71,7 @@ def main():
         batch = transform(data, ops)
 
         images = np.expand_dims(batch[0], axis=0)
-        images = torch.to_tensor(images)
+        images = torch.Tensor(images)
         preds = model(images)
         post_result = post_process_class(preds)
         for rec_result in post_result:

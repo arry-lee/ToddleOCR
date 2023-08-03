@@ -20,12 +20,10 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import numpy as np
 import torch
-from torch import ParamAttr
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.nn.initializer import Normal, XavierNormal
-import numpy as np
 
 
 class PositionalEncoding(nn.Module):
@@ -42,7 +40,7 @@ class PositionalEncoding(nn.Module):
         sinusoid_table = np.array([get_position_angle_vec(pos_i) for pos_i in range(n_position)])
         sinusoid_table[:, 0::2] = np.sin(sinusoid_table[:, 0::2])  # dim 2i
         sinusoid_table[:, 1::2] = np.cos(sinusoid_table[:, 1::2])  # dim 2i+1
-        sinusoid_table = torch.to_tensor(sinusoid_table, dtype="float32")
+        sinusoid_table = torch.Tensor(sinusoid_table, dtype="float32")
         sinusoid_table = torch.unsqueeze(sinusoid_table, axis=0)
         return sinusoid_table
 
@@ -250,7 +248,7 @@ class MLM(nn.Module):
         # transformer unit for generating mask_c
         feature_v_seq = self.MLM_SequenceModeling_mask(x, src_mask=None)
         # position embedding layer
-        label_pos = torch.to_tensor(label_pos, dtype="int64")
+        label_pos = torch.Tensor(label_pos, dtype="int64")
         pos_emb = self.pos_embedding(label_pos)
         pos_emb = self.w0_linear(torch.unsqueeze(pos_emb, axis=2))
         pos_emb = torch.transpose(pos_emb, perm=[0, 2, 1])

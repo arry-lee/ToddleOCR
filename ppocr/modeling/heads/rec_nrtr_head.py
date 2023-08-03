@@ -139,7 +139,7 @@ class Transformer(nn.Module):
             memory = src
         dec_seq = torch.full((bs, 1), 2, dtype=torch.int64)
         dec_prob = torch.full((bs, 1), 1.0, dtype=torch.float32)
-        for len_dec_seq in range(1, torch.to_tensor(self.max_len)):
+        for len_dec_seq in range(1, torch.Tensor(self.max_len)):
             dec_seq_embed = self.embedding(dec_seq)
             dec_seq_embed = self.positional_encoding(dec_seq_embed)
             tgt_mask = self.generate_square_subsequent_mask(torch.shape(dec_seq_embed)[1])
@@ -183,7 +183,7 @@ class Transformer(nn.Module):
 
             n_prev_active_inst = len(inst_idx_to_position_map)
             active_inst_idx = [inst_idx_to_position_map[k] for k in active_inst_idx_list]
-            active_inst_idx = torch.to_tensor(active_inst_idx, dtype="int64")
+            active_inst_idx = torch.Tensor(active_inst_idx, dtype="int64")
             active_src_enc = collect_active_part(src_enc.transpose([1, 0, 2]), active_inst_idx, n_prev_active_inst, n_bm).transpose([1, 0, 2])
             active_inst_idx_to_position_map = get_inst_idx_to_tensor_position_map(active_inst_idx_list)
             return active_src_enc, active_inst_idx_to_position_map
@@ -251,7 +251,7 @@ class Transformer(nn.Module):
             src_enc = torch.tile(src_enc, [1, n_bm, 1])
             inst_idx_to_position_map = get_inst_idx_to_tensor_position_map(active_inst_idx_list)
             # Decode
-            for len_dec_seq in range(1, torch.to_tensor(self.max_len)):
+            for len_dec_seq in range(1, torch.Tensor(self.max_len)):
                 src_enc_copy = src_enc.clone()
                 active_inst_idx_list = beam_decode_step(inst_dec_beams, len_dec_seq, src_enc_copy, inst_idx_to_position_map, n_bm)
                 if not active_inst_idx_list:
@@ -267,7 +267,7 @@ class Transformer(nn.Module):
             score = float(score) / l
             hyp_score = [score for _ in range(25)]
             hyp_scores.append(hyp_score)
-        return [torch.to_tensor(np.array(result_hyp), dtype=torch.int64), torch.to_tensor(hyp_scores)]
+        return [torch.Tensor(np.array(result_hyp), dtype=torch.int64), torch.Tensor(hyp_scores)]
 
     def generate_square_subsequent_mask(self, sz):
         """Generate a square mask for the sequence. The masked positions are filled with float('-inf').
@@ -546,7 +546,7 @@ class Beam:
 
     def sort_scores(self):
         "Sort the scores."
-        return self.scores, torch.to_tensor([i for i in range(int(self.scores.shape[0]))], dtype="int32")
+        return self.scores, torch.Tensor([i for i in range(int(self.scores.shape[0]))], dtype="int32")
 
     def get_the_best_score_and_idx(self):
         "Get the score of the best in the beam."
@@ -561,7 +561,7 @@ class Beam:
             _, keys = self.sort_scores()
             hyps = [self.get_hypothesis(k) for k in keys]
             hyps = [[2] + h for h in hyps]
-            dec_seq = torch.to_tensor(hyps, dtype="int64")
+            dec_seq = torch.Tensor(hyps, dtype="int64")
         return dec_seq
 
     def get_hypothesis(self, k):

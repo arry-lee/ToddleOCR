@@ -147,7 +147,7 @@ class GridGenerator(nn.Module):
         P = self.build_P_paddle(I_r_size)
 
         inv_delta_C_tensor = self.build_inv_delta_C_paddle(C).astype("float32")
-        P_hat_tensor = self.build_P_hat_paddle(C, torch.to_tensor(P)).astype("float32")
+        P_hat_tensor = self.build_P_hat_paddle(C, torch.Tensor(P)).astype("float32")
 
         inv_delta_C_tensor.stop_gradient = True
         P_hat_tensor.stop_gradient = True
@@ -174,9 +174,9 @@ class GridGenerator(nn.Module):
 
     def build_P_paddle(self, I_r_size):
         I_r_height, I_r_width = I_r_size
-        I_r_grid_x = (torch.arange(-I_r_width, I_r_width, 2, dtype="float64") + 1.0) / torch.to_tensor(np.array([I_r_width]))
+        I_r_grid_x = (torch.arange(-I_r_width, I_r_width, 2, dtype="float64") + 1.0) / torch.Tensor(np.array([I_r_width]))
 
-        I_r_grid_y = (torch.arange(-I_r_height, I_r_height, 2, dtype="float64") + 1.0) / torch.to_tensor(np.array([I_r_height]))
+        I_r_grid_y = (torch.arange(-I_r_height, I_r_height, 2, dtype="float64") + 1.0) / torch.Tensor(np.array([I_r_height]))
 
         # P: self.I_r_width x self.I_r_height x 2
         P = torch.stack(torch.meshgrid(I_r_grid_x, I_r_grid_y), axis=2)

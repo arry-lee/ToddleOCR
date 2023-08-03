@@ -34,7 +34,7 @@ class DictCollator(object):
                         to_tensor_keys.append(k)
                 data_dict[k].append(v)
         for k in to_tensor_keys:
-            data_dict[k] = torch.to_tensor(data_dict[k])
+            data_dict[k] = torch.Tensor(data_dict[k])
         return data_dict
 
 
@@ -54,7 +54,7 @@ class ListCollator(object):
                         to_tensor_idxs.append(idx)
                 data_dict[idx].append(v)
         for idx in to_tensor_idxs:
-            data_dict[idx] = torch.to_tensor(data_dict[idx])
+            data_dict[idx] = torch.Tensor(data_dict[idx])
         return list(data_dict.values())
 
 

@@ -32,7 +32,7 @@ def drop_path(x, drop_prob=0.0, training=False):
     """
     if drop_prob == 0.0 or not training:
         return x
-    keep_prob = torch.to_tensor(1 - drop_prob, dtype=x.dtype)
+    keep_prob = torch.Tensor(1 - drop_prob, dtype=x.dtype)
     shape = (torch.shape(x)[0],) + (1,) * (x.ndim - 1)
     random_tensor = keep_prob + torch.rand(shape, dtype=x.dtype)
     random_tensor = torch.floor(random_tensor)  # binarize

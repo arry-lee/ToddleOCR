@@ -28,8 +28,8 @@ def iou_single(a, b, mask, n_class):
     miou = []
     for i in range(n_class):
         if a.shape == [0] and a.shape == b.shape:
-            inter = torch.to_tensor(0.0)
-            union = torch.to_tensor(0.0)
+            inter = torch.Tensor(0.0)
+            union = torch.Tensor(0.0)
         else:
             inter = ((a == i).logical_and(b == i)).astype("float32")
             union = ((a == i).logical_or(b == i)).astype("float32")

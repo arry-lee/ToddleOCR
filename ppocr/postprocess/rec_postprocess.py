@@ -781,7 +781,7 @@ class VLLabelDecode(BaseRecLabelDecode):
             nsteps = self.max_text_length
 
             if not isinstance(text_pre, torch.Tensor):
-                text_pre = torch.to_tensor(text_pre, dtype="float32")
+                text_pre = torch.Tensor(text_pre, dtype="float32")
 
             out_res = torch.zeros(shape=[lenText, b, self.nclass], dtype=x.dtype)
             out_length = torch.zeros(shape=[b], dtype=x.dtype)
@@ -813,7 +813,7 @@ class VLLabelDecode(BaseRecLabelDecode):
             net_out = torch.concat([t[:l] for t, l in zip(net_out, length)])
         text = []
         if not isinstance(net_out, torch.Tensor):
-            net_out = torch.to_tensor(net_out, dtype="float32")
+            net_out = torch.Tensor(net_out, dtype="float32")
         net_out = F.softmax(net_out, axis=1)
         for i in range(0, length.shape[0]):
             preds_idx = net_out[int(length[:i].sum()) : int(length[:i].sum() + length[i])].topk(1)[1][:, 0].tolist()

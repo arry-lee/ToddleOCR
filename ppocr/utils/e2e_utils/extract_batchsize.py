@@ -75,10 +75,10 @@ def pre_process(label_list, pos_list, pos_mask, max_text_length, max_text_nums, 
             else:
                 break
         label.append(k)
-    label = torch.to_tensor(label)
+    label = torch.Tensor(label)
     label = torch.cast(label, dtype="int64")
-    pos_list = torch.to_tensor(pos_list)
-    pos_mask = torch.to_tensor(pos_mask)
-    label_list = torch.squeeze(torch.to_tensor(label_list), axis=2)
+    pos_list = torch.Tensor(pos_list)
+    pos_mask = torch.Tensor(pos_mask)
+    label_list = torch.squeeze(torch.Tensor(label_list), axis=2)
     label_list = torch.cast(label_list, dtype="int32")
     return pos_list, pos_mask, label_list, label

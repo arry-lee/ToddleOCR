@@ -188,7 +188,7 @@ class AttentionRecognitionHead(nn.Module):
                 sequence_scores = sequence_scores.numpy()
                 mask = mask.numpy()
                 sequence_scores[mask] = -float("inf")
-                sequence_scores = torch.to_tensor(sequence_scores)
+                sequence_scores = torch.Tensor(sequence_scores)
 
             # Cache results for backtracking
             stored_predecessors.append(predecessors)

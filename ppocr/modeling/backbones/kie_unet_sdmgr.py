@@ -112,20 +112,20 @@ class Kie_backbone(nn.Module):
             rois_num.append(bboxes.shape[0])
             rois_list.append(bboxes)
         rois = torch.concat(rois_list, 0)
-        rois_num = torch.to_tensor(rois_num, dtype="int32")
+        rois_num = torch.Tensor(rois_num, dtype="int32")
         return rois, rois_num
 
     def pre_process(self, img, relations, texts, gt_bboxes, tag, img_size):
         img, relations, texts, gt_bboxes, tag, img_size = img.numpy(), relations.numpy(), texts.numpy(), gt_bboxes.numpy(), tag.numpy().tolist(), img_size.numpy()
         temp_relations, temp_texts, temp_gt_bboxes = [], [], []
         h, w = int(np.max(img_size[:, 0])), int(np.max(img_size[:, 1]))
-        img = torch.to_tensor(img[:, :, :h, :w])
+        img = torch.Tensor(img[:, :, :h, :w])
         batch = len(tag)
         for i in range(batch):
             num, recoder_len = tag[i][0], tag[i][1]
-            temp_relations.append(torch.to_tensor(relations[i, :num, :num, :], dtype="float32"))
-            temp_texts.append(torch.to_tensor(texts[i, :num, :recoder_len], dtype="float32"))
-            temp_gt_bboxes.append(torch.to_tensor(gt_bboxes[i, :num, ...], dtype="float32"))
+            temp_relations.append(torch.Tensor(relations[i, :num, :num, :], dtype="float32"))
+            temp_texts.append(torch.Tensor(texts[i, :num, :recoder_len], dtype="float32"))
+            temp_gt_bboxes.append(torch.Tensor(gt_bboxes[i, :num, ...], dtype="float32"))
         return img, temp_relations, temp_texts, temp_gt_bboxes
 
     def forward(self, inputs):

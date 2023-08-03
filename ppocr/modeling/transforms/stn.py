@@ -72,7 +72,7 @@ class STN(nn.Module):
             pass
         elif self.activation == "sigmoid":
             ctrl_points = -np.log(1.0 / ctrl_points - 1.0)
-        ctrl_points = torch.to_tensor(ctrl_points)
+        ctrl_points = torch.Tensor(ctrl_points)
         fc2_bias = torch.reshape(ctrl_points, shape=[ctrl_points.shape[0] * ctrl_points.shape[1]])
         return fc2_bias
 

@@ -59,15 +59,15 @@ class FCELoss(nn.Module):
         # to tensor
         gts = [p3_maps, p4_maps, p5_maps]
         for idx, maps in enumerate(gts):
-            gts[idx] = torch.to_tensor(np.stack(maps))
+            gts[idx] = torch.Tensor(np.stack(maps))
 
         losses = multi_apply(self.forward_single, preds, gts)
 
-        loss_tr = torch.to_tensor(0.0).astype("float32")
-        loss_tcl = torch.to_tensor(0.0).astype("float32")
-        loss_reg_x = torch.to_tensor(0.0).astype("float32")
-        loss_reg_y = torch.to_tensor(0.0).astype("float32")
-        loss_all = torch.to_tensor(0.0).astype("float32")
+        loss_tr = torch.Tensor(0.0).astype("float32")
+        loss_tcl = torch.Tensor(0.0).astype("float32")
+        loss_reg_x = torch.Tensor(0.0).astype("float32")
+        loss_reg_y = torch.Tensor(0.0).astype("float32")
+        loss_all = torch.Tensor(0.0).astype("float32")
 
         for idx, loss in enumerate(losses):
             loss_all += sum(loss)
@@ -111,7 +111,7 @@ class FCELoss(nn.Module):
         # tr loss
         loss_tr = self.ohem(tr_pred, tr_mask, train_mask)
         # tcl loss
-        loss_tcl = torch.to_tensor(0.0).astype("float32")
+        loss_tcl = torch.Tensor(0.0).astype("float32")
         tr_neg_mask = tr_train_mask.logical_not()
         tr_neg_mask2 = torch.concat([tr_neg_mask.unsqueeze(1), tr_neg_mask.unsqueeze(1)], axis=1)
         if tr_train_mask.sum().item() > 0:
@@ -120,8 +120,8 @@ class FCELoss(nn.Module):
             loss_tcl = loss_tcl_pos + 0.5 * loss_tcl_neg
 
         # regression loss
-        loss_reg_x = torch.to_tensor(0.0).astype("float32")
-        loss_reg_y = torch.to_tensor(0.0).astype("float32")
+        loss_reg_x = torch.Tensor(0.0).astype("float32")
+        loss_reg_y = torch.Tensor(0.0).astype("float32")
         if tr_train_mask.sum().item() > 0:
             weight = (tr_mask.masked_select(tr_train_mask.astype("bool")).astype("float32") + tcl_mask.masked_select(tr_train_mask.astype("bool")).astype("float32")) / 2
             weight = weight.reshape([-1, 1])
@@ -152,7 +152,7 @@ class FCELoss(nn.Module):
             loss_neg = F.cross_entropy(predict.masked_select(neg2).reshape([-1, 2]), target.masked_select(neg).astype("int64"), reduction="none")
             n_neg = min(int(neg.astype("float32").sum().item()), int(self.ohem_ratio * n_pos.astype("float32")))
         else:
-            loss_pos = torch.to_tensor(0.0)
+            loss_pos = torch.Tensor(0.0)
             loss_neg = F.cross_entropy(predict.masked_select(neg2).reshape([-1, 2]), target.masked_select(neg).astype("int64"), reduction="none")
             n_neg = 100
         if len(loss_neg) > n_neg:

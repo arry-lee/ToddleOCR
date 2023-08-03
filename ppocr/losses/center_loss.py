@@ -41,7 +41,7 @@ class CenterLoss(nn.Module):
             with open(center_file_path, "rb") as f:
                 char_dict = pickle.load(f)
                 for key in char_dict.keys():
-                    self.centers[key] = torch.to_tensor(char_dict[key])
+                    self.centers[key] = torch.Tensor(char_dict[key])
 
     def __call__(self, predicts, batch):
         assert isinstance(predicts, (list, tuple))

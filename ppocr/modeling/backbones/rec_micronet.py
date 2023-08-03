@@ -215,7 +215,7 @@ class DYShiftMax(nn.Module):
             self.g = inp // self.g
 
         self.gc = inp // self.g
-        index = torch.to_tensor([range(inp)])
+        index = torch.Tensor([range(inp)])
         index = torch.reshape(index, [1, inp, 1, 1])
         index = torch.reshape(index, [1, self.g, self.gc, 1, 1])
         indexgs = torch.split(index, [1, self.g - 1], axis=1)
@@ -237,7 +237,7 @@ class DYShiftMax(nn.Module):
         y = (y - 0.5) * self.act_max
 
         n2, c2, h2, w2 = x_out.shape
-        x2 = torch.to_tensor(x_out.numpy()[:, self.index.numpy(), :, :])
+        x2 = torch.Tensor(x_out.numpy()[:, self.index.numpy(), :, :])
 
         if self.exp == 4:
             temp = y.shape

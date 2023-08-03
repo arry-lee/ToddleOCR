@@ -40,7 +40,7 @@ def load_confuse_matrix(confuse_dict_path):
     rearrange_data = np.concatenate((pad, rearrange_data), axis=1)
     rearrange_data = 1 / rearrange_data
     rearrange_data[rearrange_data == np.inf] = 1
-    rearrange_data = torch.to_tensor(rearrange_data)
+    rearrange_data = torch.Tensor(rearrange_data)
 
     lower_alpha = "abcdefghijklmnopqrstuvwxyz"
     # upper_alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'

@@ -94,7 +94,7 @@ class TableAttentionHead(nn.Module):
             elem_onehots = None
             outputs = None
             alpha = None
-            max_text_length = torch.to_tensor(self.max_text_length)
+            max_text_length = torch.Tensor(self.max_text_length)
             for i in range(max_text_length + 1):
                 elem_onehots = self._char_to_onehot(temp_elem, onehot_dim=self.out_channels)
                 (outputs, hidden), alpha = self.structure_attention_cell(hidden, fea, elem_onehots)
@@ -164,7 +164,7 @@ class SLAHead(nn.Module):
                 loc_preds[:, i, :] = loc_step
         else:
             pre_chars = torch.zeros(shape=[batch_size], dtype="int32")
-            max_text_length = torch.to_tensor(self.max_text_length)
+            max_text_length = torch.Tensor(self.max_text_length)
             # for export
             loc_step, structure_step = None, None
             for i in range(max_text_length + 1):

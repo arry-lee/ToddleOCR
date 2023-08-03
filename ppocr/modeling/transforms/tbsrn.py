@@ -150,7 +150,7 @@ class TBSRN(nn.Module):
         batch = len(label)
 
         length = [len(i) for i in label]
-        length_tensor = torch.to_tensor(length, dtype="int64")
+        length_tensor = torch.Tensor(length, dtype="int64")
 
         max_length = max(length)
         input_tensor = np.zeros((batch, max_length))
@@ -162,9 +162,9 @@ class TBSRN(nn.Module):
         for i in label:
             for j in i:
                 text_gt.append(self.english_dict[j])
-        text_gt = torch.to_tensor(text_gt, dtype="int64")
+        text_gt = torch.Tensor(text_gt, dtype="int64")
 
-        input_tensor = torch.to_tensor(input_tensor, dtype="int64")
+        input_tensor = torch.Tensor(input_tensor, dtype="int64")
         return length_tensor, input_tensor, text_gt
 
     def forward(self, x):

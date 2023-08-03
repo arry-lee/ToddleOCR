@@ -646,7 +646,7 @@ class RobustScannerHead(nn.Module):
 
         if self.training:
             label = targets[0]  # label
-            label = torch.to_tensor(label, dtype="int64")
+            label = torch.Tensor(label, dtype="int64")
             final_out = self.decoder(inputs, out_enc, label, valid_ratios, word_positions)
         if not self.training:
             final_out = self.decoder(inputs, out_enc, label=None, valid_ratios=valid_ratios, word_positions=word_positions, train_mode=False)

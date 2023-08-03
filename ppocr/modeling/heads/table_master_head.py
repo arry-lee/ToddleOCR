@@ -91,7 +91,7 @@ class TableMasterHead(nn.Module):
         input = SOS
         output = torch.zeros([input.shape[0], self.max_text_length + 1, self.out_channels])
         bbox_output = torch.zeros([input.shape[0], self.max_text_length + 1, self.loc_reg_num])
-        max_text_length = torch.to_tensor(self.max_text_length)
+        max_text_length = torch.Tensor(self.max_text_length)
         for i in range(max_text_length + 1):
             target_mask = self.make_mask(input)
             out_step, bbox_output_step = self.decode(input, feature, None, target_mask)

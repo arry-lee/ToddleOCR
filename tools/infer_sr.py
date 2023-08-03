@@ -78,7 +78,7 @@ def main():
         data = {"image_lr": img}
         batch = transform(data, ops)
         images = np.expand_dims(batch[0], axis=0)
-        images = torch.to_tensor(images)
+        images = torch.Tensor(images)
 
         preds = model(images)
         sr_img = preds["sr_img"][0]

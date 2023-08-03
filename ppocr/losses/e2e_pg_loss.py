@@ -85,7 +85,7 @@ class PGLoss(nn.Module):
         f_tcl_char_mask = torch.concat([f_tcl_char_fg, f_tcl_char_bg], axis=2)
         f_tcl_char_ld = torch.transpose(f_tcl_char_mask, (1, 0, 2))
         N, B, _ = f_tcl_char_ld.shape
-        input_lengths = torch.to_tensor([N] * B, dtype="int64")
+        input_lengths = torch.Tensor([N] * B, dtype="int64")
         cost = torch.nn.functional.ctc_loss(log_probs=f_tcl_char_ld, labels=tcl_label, input_lengths=input_lengths, label_lengths=label_t, blank=self.pad_num, reduction="none")
         cost = cost.mean()
         return cost

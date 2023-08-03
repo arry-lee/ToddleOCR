@@ -99,7 +99,7 @@ class StyleTextRecPredictor(object):
         new_img[:, 0:resized_w, :] = img
         img = new_img.transpose((2, 0, 1))
         img = img[np.newaxis, :, :, :]
-        return torch.to_tensor(img)
+        return torch.Tensor(img)
 
     def postprocess(self, tensor):
         img = tensor.numpy()[0]

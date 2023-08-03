@@ -87,7 +87,7 @@ class GCN(nn.Module):
         mid_feat_len = x.shape[-1]
         edge_feat = torch.zeros([num_local_graphs, k, mid_feat_len])
         for graph_ind in range(num_local_graphs):
-            edge_feat[graph_ind, :, :] = x[graph_ind][torch.to_tensor(knn_inds[graph_ind])]
+            edge_feat[graph_ind, :, :] = x[graph_ind][torch.Tensor(knn_inds[graph_ind])]
         edge_feat = edge_feat.reshape([-1, mid_feat_len])
         pred = self.classifier(edge_feat)
 

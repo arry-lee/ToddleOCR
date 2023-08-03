@@ -40,8 +40,8 @@ class VLLoss(nn.Module):
             cur_label = target[i].tolist()
             label_flatten += cur_label[: cur_label.index(0) + 1]
             label_length.append(cur_label.index(0) + 1)
-        label_flatten = torch.to_tensor(label_flatten, dtype="int64")
-        label_length = torch.to_tensor(label_length, dtype="int32")
+        label_flatten = torch.Tensor(label_flatten, dtype="int64")
+        label_length = torch.Tensor(label_length, dtype="int32")
         return (label_flatten, label_length)
 
     def _flatten(self, sources, lengths):

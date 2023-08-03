@@ -228,7 +228,7 @@ class DistillationDilaDBLoss(DBLoss):
             dilate_maps = np.zeros_like(th_shrink_maps).astype(np.float32)
             for i in range(th_shrink_maps.shape[0]):
                 dilate_maps[i] = cv2.dilate(th_shrink_maps[i, :, :].astype(np.uint8), dilation_w)
-            th_shrink_maps = torch.to_tensor(dilate_maps)
+            th_shrink_maps = torch.Tensor(dilate_maps)
 
             label_threshold_map, label_threshold_mask, label_shrink_map, label_shrink_mask = batch[1:]
 

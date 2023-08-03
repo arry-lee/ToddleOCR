@@ -51,7 +51,7 @@ class DRRGLoss(nn.Module):
             negative_loss = loss * negative
             negative_count = min(int(negative.sum()), int(positive_count * self.ohem_ratio))
         else:
-            positive_loss = torch.to_tensor(0.0)
+            positive_loss = torch.Tensor(0.0)
             loss = F.binary_cross_entropy(pred, gt, reduction="none")
             negative_loss = loss * negative
             negative_count = 100
@@ -160,7 +160,7 @@ class DRRGLoss(nn.Module):
         if int(text_mask.sum()) > 0:
             loss_center_positive = torch.sum(loss_center_map * text_mask) / torch.sum(text_mask)
         else:
-            loss_center_positive = torch.to_tensor(0.0)
+            loss_center_positive = torch.Tensor(0.0)
         loss_center_negative = torch.sum(loss_center_map * negative_text_mask) / torch.sum(negative_text_mask)
         loss_center = loss_center_positive + 0.5 * loss_center_negative
 
@@ -176,9 +176,9 @@ class DRRGLoss(nn.Module):
             loss_sin = torch.sum(F.smooth_l1_loss(pred_sin_map, gt["gt_sin_map"][0], reduction="none") * center_mask) / torch.sum(center_mask)
             loss_cos = torch.sum(F.smooth_l1_loss(pred_cos_map, gt["gt_cos_map"][0], reduction="none") * center_mask) / torch.sum(center_mask)
         else:
-            loss_height = torch.to_tensor(0.0)
-            loss_sin = torch.to_tensor(0.0)
-            loss_cos = torch.to_tensor(0.0)
+            loss_height = torch.Tensor(0.0)
+            loss_sin = torch.Tensor(0.0)
+            loss_cos = torch.Tensor(0.0)
 
         loss_gcn = self.gcn_loss(gcn_data)
 

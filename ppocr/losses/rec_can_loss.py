@@ -68,5 +68,5 @@ def gen_counting_label(labels, channel, tag):
                 continue
             else:
                 counting_labels[i][k] += 1
-    counting_labels = torch.to_tensor(counting_labels, dtype="float32")
+    counting_labels = torch.Tensor(counting_labels, dtype="float32")
     return counting_labels

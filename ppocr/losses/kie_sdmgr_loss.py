@@ -37,7 +37,7 @@ class SDMGRLoss(nn.Module):
         batch = len(tag)
         for i in range(batch):
             num, recoder_len = tag[i][0], tag[i][1]
-            temp_gts.append(torch.to_tensor(gts[i, :num, : num + 1], dtype="int64"))
+            temp_gts.append(torch.Tensor(gts[i, :num, : num + 1], dtype="int64"))
         return temp_gts
 
     def accuracy(self, pred, target, topk=1, thresh=None):
@@ -76,7 +76,7 @@ class SDMGRLoss(nn.Module):
         res = []
         for k in topk:
             correct_k = torch.sum(correct[:k].reshape([-1]).astype("float32"), axis=0, keepdim=True)
-            res.append(torch.multiply(correct_k, torch.to_tensor(100.0 / pred.shape[0])))
+            res.append(torch.multiply(correct_k, torch.Tensor(100.0 / pred.shape[0])))
         return res[0] if return_single else res
 
     def forward(self, pred, batch):

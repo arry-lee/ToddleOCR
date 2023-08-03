@@ -114,22 +114,22 @@ def main():
                 gsrm_slf_attn_bias1_list = np.expand_dims(batch[3], axis=0)
                 gsrm_slf_attn_bias2_list = np.expand_dims(batch[4], axis=0)
 
-                others = [torch.to_tensor(encoder_word_pos_list), torch.to_tensor(gsrm_word_pos_list), torch.to_tensor(gsrm_slf_attn_bias1_list), torch.to_tensor(gsrm_slf_attn_bias2_list)]
+                others = [torch.Tensor(encoder_word_pos_list), torch.Tensor(gsrm_word_pos_list), torch.Tensor(gsrm_slf_attn_bias1_list), torch.Tensor(gsrm_slf_attn_bias2_list)]
             if config["Architecture"]["algorithm"] == "SAR":
                 valid_ratio = np.expand_dims(batch[-1], axis=0)
-                img_metas = [torch.to_tensor(valid_ratio)]
+                img_metas = [torch.Tensor(valid_ratio)]
             if config["Architecture"]["algorithm"] == "RobustScanner":
                 valid_ratio = np.expand_dims(batch[1], axis=0)
                 word_positons = np.expand_dims(batch[2], axis=0)
                 img_metas = [
-                    torch.to_tensor(valid_ratio),
-                    torch.to_tensor(word_positons),
+                    torch.Tensor(valid_ratio),
+                    torch.Tensor(word_positons),
                 ]
             if config["Architecture"]["algorithm"] == "CAN":
                 image_mask = torch.ones((np.expand_dims(batch[0], axis=0).shape), dtype="float32")
                 label = torch.ones((1, 36), dtype="int64")
             images = np.expand_dims(batch[0], axis=0)
-            images = torch.to_tensor(images)
+            images = torch.Tensor(images)
             if config["Architecture"]["algorithm"] == "SRN":
                 preds = model(images, others)
             elif config["Architecture"]["algorithm"] == "SAR":

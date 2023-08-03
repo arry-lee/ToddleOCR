@@ -65,7 +65,7 @@ def build_output_control_points(num_control_points, margins):
     ctrl_pts_top = np.stack([ctrl_pts_x, ctrl_pts_y_top], axis=1)
     ctrl_pts_bottom = np.stack([ctrl_pts_x, ctrl_pts_y_bottom], axis=1)
     output_ctrl_pts_arr = np.concatenate([ctrl_pts_top, ctrl_pts_bottom], axis=0)
-    output_ctrl_pts = torch.to_tensor(output_ctrl_pts_arr)
+    output_ctrl_pts = torch.Tensor(output_ctrl_pts_arr)
     return output_ctrl_pts
 
 
@@ -96,7 +96,7 @@ class TPSSpatialTransformer(nn.Module):
         # create target cordinate matrix
         HW = self.target_height * self.target_width
         target_coordinate = list(itertools.product(range(self.target_height), range(self.target_width)))
-        target_coordinate = torch.to_tensor(target_coordinate)  # HW x 2
+        target_coordinate = torch.Tensor(target_coordinate)  # HW x 2
         Y, X = torch.split(target_coordinate, target_coordinate.shape[1], axis=1)
         Y = Y / (self.target_height - 1)
         X = X / (self.target_width - 1)

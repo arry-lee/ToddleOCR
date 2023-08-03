@@ -284,9 +284,9 @@ class ProposalLocalGraphs:
             pivot_ind = pivot_local_graph[0]
             node2ind_map = {j: i for i, j in enumerate(pivot_local_graph)}
 
-            knn_inds = torch.cast(torch.to_tensor([node2ind_map[i] for i in pivot_knn[1:]]), "int64")
+            knn_inds = torch.cast(torch.Tensor([node2ind_map[i] for i in pivot_knn[1:]]), "int64")
             pivot_feats = node_feats[pivot_ind]
-            normalized_feats = node_feats[torch.to_tensor(pivot_local_graph)] - pivot_feats
+            normalized_feats = node_feats[torch.Tensor(pivot_local_graph)] - pivot_feats
 
             adjacent_matrix = np.zeros((num_nodes, num_nodes), dtype=np.float32)
             for node in pivot_local_graph:
@@ -300,7 +300,7 @@ class ProposalLocalGraphs:
             pad_adjacent_matrix = torch.zeros(
                 (num_max_nodes, num_max_nodes),
             )
-            pad_adjacent_matrix[:num_nodes, :num_nodes] = torch.cast(torch.to_tensor(adjacent_matrix), "float32")
+            pad_adjacent_matrix[:num_nodes, :num_nodes] = torch.cast(torch.Tensor(adjacent_matrix), "float32")
 
             pad_normalized_feats = torch.concat(
                 [
@@ -312,7 +312,7 @@ class ProposalLocalGraphs:
                 axis=0,
             )
 
-            local_graph_nodes = torch.to_tensor(pivot_local_graph)
+            local_graph_nodes = torch.Tensor(pivot_local_graph)
             local_graph_nodes = torch.concat([local_graph_nodes, torch.zeros([num_max_nodes - num_nodes], dtype="int64")], axis=-1)
 
             local_graphs_node_feat.append(pad_normalized_feats)
@@ -367,14 +367,14 @@ class ProposalLocalGraphs:
         distance_matrix = euclidean_distance_matrix(comp_centers, comp_centers)
 
         geo_feats = feature_embedding(comp_attribs, self.node_geo_feat_dim)
-        geo_feats = torch.to_tensor(geo_feats)
+        geo_feats = torch.Tensor(geo_feats)
 
         batch_id = np.zeros((comp_attribs.shape[0], 1), dtype=np.float32)
         comp_attribs = comp_attribs.astype(np.float32)
         angle = np.arccos(comp_attribs[:, -2]) * np.sign(comp_attribs[:, -1])
         angle = angle.reshape((-1, 1))
         rotated_rois = np.hstack([batch_id, comp_attribs[:, :-2], angle])
-        rois = torch.to_tensor(rotated_rois)
+        rois = torch.Tensor(rotated_rois)
 
         content_feats = self.pooling(feat_maps, rois)
         content_feats = content_feats.reshape([content_feats.shape[0], -1])

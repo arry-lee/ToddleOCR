@@ -165,7 +165,7 @@ class MbConvBlock(nn.Module):
         keep_prob = 1 - p
         random_tensor = keep_prob
         random_tensor += torch.rand([batch_size, 1, 1, 1], dtype=inputs.dtype)
-        random_tensor = torch.to_tensor(random_tensor, place=inputs.place)
+        random_tensor = torch.Tensor(random_tensor, place=inputs.place)
         binary_tensor = torch.floor(random_tensor)
         output = inputs / keep_prob * binary_tensor
         return output

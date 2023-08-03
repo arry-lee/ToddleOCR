@@ -105,8 +105,8 @@ def make_input(ser_inputs, ser_results):
 
     # remove ocr_info segment_offset_id and label in ser input
     if isinstance(ser_inputs[0], torch.Tensor):
-        entities = torch.to_tensor(entities)
-        relations = torch.to_tensor(relations)
+        entities = torch.Tensor(entities)
+        relations = torch.Tensor(relations)
     ser_inputs = ser_inputs[:5] + [entities, relations]
 
     entity_idx_dict_batch = []
