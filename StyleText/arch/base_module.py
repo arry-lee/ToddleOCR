@@ -33,7 +33,7 @@ class CBN(nn.Module):
             dilation=dilation,
             groups=groups,
             weight_attr=torch.ParamAttr(name=name + "_weights"),
-            bias=bias,
+            bias=True,
         )
         if norm_layer:
             self._norm_layer = getattr(torch.nn, norm_layer)(num_features=out_channels, name=name + "_bn")
@@ -73,7 +73,7 @@ class SNConv(nn.Module):
                 dilation=dilation,
                 groups=groups,
                 weight_attr=torch.ParamAttr(name=name + "_weights"),
-                bias=bias,
+                bias=True,
             )
         )
         if norm_layer:
@@ -115,7 +115,7 @@ class SNConvTranspose(nn.Module):
                 dilation=dilation,
                 groups=groups,
                 weight_attr=torch.ParamAttr(name=name + "_weights"),
-                bias=bias,
+                bias=True,
             )
         )
         if norm_layer:

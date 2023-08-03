@@ -41,18 +41,18 @@ class ConvNormLayer(nn.Module):
             padding=(filter_size - 1) // 2,
             groups=groups,
             
-            bias=bias,
+            bias=True,
         )
 
         norm_lr = 0.0 if freeze_norm else 1.0
 
 
         if norm_type == "bn":
-            self.norm = nn.BatchNorm2d(ch_out, bias=bias)
+            self.norm = nn.BatchNorm2d(ch_out, bias=True)
         elif norm_type == "sync_bn":
-            self.norm = nn.SyncBatchNorm(ch_out, bias=bias)
+            self.norm = nn.SyncBatchNorm(ch_out, bias=True)
         elif norm_type == "gn":
-            self.norm = nn.GroupNorm(num_groups=norm_groups, num_channels=ch_out, bias=bias)
+            self.norm = nn.GroupNorm(num_groups=norm_groups, num_channels=ch_out, bias=True)
 
     def forward(self, inputs):
         out = self.conv(inputs)

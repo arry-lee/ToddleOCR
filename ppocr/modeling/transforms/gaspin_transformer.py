@@ -187,7 +187,7 @@ class GA_SPIN_Transformer(nn.Module):
             initial_bias = initial_bias.reshape(-1)
 
 
-            self.stucture_fc2 = nn.Linear(256, self.out_weight, bias=bias)
+            self.stucture_fc2 = nn.Linear(256, self.out_weight, bias=True)
             self.sigmoid = nn.Sigmoid()
 
             if offsets:

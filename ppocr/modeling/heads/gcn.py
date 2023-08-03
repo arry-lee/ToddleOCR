@@ -33,7 +33,7 @@ class BatchNorm1D(nn.BatchNorm1D):
         if not affine:
             weight_attr = torch.ParamAttr(learning_rate=0.0)
             bias = torch.ParamAttr(learning_rate=0.0)
-        super().__init__(num_features, momentum=momentum, epsilon=eps, bias=bias, use_global_stats=track_running_stats)
+        super().__init__(num_features, momentum=momentum, epsilon=eps, bias=True, use_global_stats=track_running_stats)
 
 
 class MeanAggregator(nn.Module):

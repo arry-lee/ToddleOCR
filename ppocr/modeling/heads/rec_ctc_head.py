@@ -37,7 +37,7 @@ class CTCHead(nn.Module):
         super(CTCHead, self).__init__()
         if mid_channels is None:
             weight_attr, bias = get_para_bias_attr(l2_decay=fc_decay, k=in_channels)
-            self.fc = nn.Linear(in_channels, out_channels, bias=bias)
+            self.fc = nn.Linear(in_channels, out_channels, bias=True)
         else:
             weight_attr1, bias_attr1 = get_para_bias_attr(l2_decay=fc_decay, k=in_channels)
             self.fc1 = nn.Linear(in_channels, mid_channels, weight_attr=weight_attr1, bias=bias_attr1)

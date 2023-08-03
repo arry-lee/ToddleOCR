@@ -87,7 +87,7 @@ class LocalizationNetwork(nn.Module):
         name = "loc_fc2"
 
 
-        self.fc2 = nn.Linear(fc_dim, F * 2, bias=bias, name=name)
+        self.fc2 = nn.Linear(fc_dim, F * 2, bias=True, name=name)
         self.out_channels = F * 2
 
     def forward(self, x):
@@ -132,7 +132,7 @@ class GridGenerator(nn.Module):
         initializer = nn.initializer.Constant(value=0.0)
 
 
-        self.fc = nn.Linear(in_channels, 6, bias=bias, name=name)
+        self.fc = nn.Linear(in_channels, 6, bias=True, name=name)
 
     def forward(self, batch_C_prime, I_r_size):
         """

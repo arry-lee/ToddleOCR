@@ -51,7 +51,7 @@ class ConvBNLayer(nn.Module):
             padding=padding,
             groups=groups,
             weight_attr=torch.ParamAttr(initializer=nn.initializer.KaimingUniform()),
-            bias=bias,
+            bias=True,
         )
         self.norm = nn.BatchNorm2d(out_channels)
         self.act = act()
