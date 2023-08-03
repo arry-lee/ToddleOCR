@@ -24,7 +24,7 @@ import torch
 from torch import ParamAttr, reshape, transpose
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.nn import Conv2D, BatchNorm, Linear, Dropout
+from torch.nn import Conv2D, BatchNorm2d, Linear, Dropout
 from torch.nn import AdaptiveAvgPool2D, MaxPool2D, AvgPool2D
 from torch.nn.initializer import KaimingNormal
 from torch.regularizer import L2Decay
@@ -46,7 +46,7 @@ class ConvBNLayer(nn.Module):
             bias=False,
         )
 
-        self._batch_norm = BatchNorm(num_filters, act=act, param_attr=ParamAttr(regularizer=L2Decay(0.0)), bias=ParamAttr(regularizer=L2Decay(0.0)))
+        self._batch_norm = BatchNorm2d(num_filters, act=act, param_attr=ParamAttr(regularizer=L2Decay(0.0)), bias=ParamAttr(regularizer=L2Decay(0.0)))
 
     def forward(self, inputs):
         y = self._conv(inputs)

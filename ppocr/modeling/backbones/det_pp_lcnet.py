@@ -18,7 +18,7 @@ import os
 import torch
 import torch.nn as nn
 from torch import ParamAttr
-from torch.nn import AdaptiveAvgPool2D, BatchNorm, Conv2D, Dropout, Linear
+from torch.nn import AdaptiveAvgPool2D, BatchNorm2d, Conv2D, Dropout, Linear
 from torch.regularizer import L2Decay
 from torch.nn.initializer import KaimingNormal
 from torch.utils.download import get_path_from_url
@@ -80,7 +80,7 @@ class ConvBNLayer(nn.Module):
             bias=False,
         )
 
-        self.bn = BatchNorm(num_filters, param_attr=ParamAttr(regularizer=L2Decay(0.0)), bias=ParamAttr(regularizer=L2Decay(0.0)))
+        self.bn = BatchNorm2d(num_filters, param_attr=ParamAttr(regularizer=L2Decay(0.0)), bias=ParamAttr(regularizer=L2Decay(0.0)))
         self.hardswish = nn.Hardswish()
 
     def forward(self, x):
