@@ -195,7 +195,7 @@ class VSFD(nn.Module):
     def forward(self, pvam_feature, gsrm_feature):
         b, t, c1 = pvam_feature.shape
         b, t, c2 = gsrm_feature.shape
-        combine_feature_ = torch.concat([pvam_feature, gsrm_feature], axis=2)
+        combine_feature_ = torch.concat([pvam_feature, gsrm_feature], dim=2)
         img_comb_feature_ = torch.reshape(combine_feature_, shape=[-1, c1 + c2])
         img_comb_feature_map = self.fc0(img_comb_feature_)
         img_comb_feature_map = F.sigmoid(img_comb_feature_map)

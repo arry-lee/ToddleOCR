@@ -84,7 +84,7 @@ class TableAttentionHead(nn.Module):
             loc_fea = fea.transpose([0, 2, 1])
             loc_fea = self.loc_fea_trans(loc_fea)
             loc_fea = loc_fea.transpose([0, 2, 1])
-            loc_concat = torch.concat([output_hiddens, loc_fea], axis=2)
+            loc_concat = torch.concat([output_hiddens, loc_fea], dim=2)
             loc_preds = self.loc_generator(loc_concat)
             loc_preds = F.sigmoid(loc_preds)
         else:
@@ -107,7 +107,7 @@ class TableAttentionHead(nn.Module):
             loc_fea = fea.transpose([0, 2, 1])
             loc_fea = self.loc_fea_trans(loc_fea)
             loc_fea = loc_fea.transpose([0, 2, 1])
-            loc_concat = torch.concat([output_hiddens, loc_fea], axis=2)
+            loc_concat = torch.concat([output_hiddens, loc_fea], dim=2)
             loc_preds = self.loc_generator(loc_concat)
             loc_preds = F.sigmoid(loc_preds)
         return {"structure_probs": structure_probs, "loc_preds": loc_preds}

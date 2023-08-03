@@ -219,9 +219,9 @@ class DYShiftMax(nn.Module):
         index = torch.reshape(index, [1, inp, 1, 1])
         index = torch.reshape(index, [1, self.g, self.gc, 1, 1])
         indexgs = torch.split(index, [1, self.g - 1], axis=1)
-        indexgs = torch.concat((indexgs[1], indexgs[0]), axis=1)
+        indexgs = torch.concat((indexgs[1], indexgs[0]), dim=1)
         indexs = torch.split(indexgs, [1, self.gc - 1], axis=2)
-        indexs = torch.concat((indexs[1], indexs[0]), axis=2)
+        indexs = torch.concat((indexs[1], indexs[0]), dim=2)
         self.index = torch.reshape(indexs, [inp])
         self.expansion = expansion
 

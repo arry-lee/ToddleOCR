@@ -122,7 +122,7 @@ class ResNetFPN(nn.Module):
                 else:
                     base = self.conv_trans[j - 1](base)
                     base = self.bn_block[j - 1](base)
-                base = torch.concat([base, F[-j - 1]], axis=1)
+                base = torch.concat([base, F[-j - 1]], dim=1)
             base = block(base)
         return base
 

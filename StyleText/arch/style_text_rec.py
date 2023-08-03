@@ -128,7 +128,7 @@ class TextGenerator(nn.Module):
         text_feature = self.encoder_text.forward(text_input)["res_blocks"]
         fake_c_temp = self.decoder_text.forward([text_feature, style_feature])["out_conv"]
         fake_sk = self.decoder_sk.forward([text_feature, style_feature])["out_conv"]
-        fake_text = self.middle(torch.concat((fake_c_temp, fake_sk), axis=1))
+        fake_text = self.middle(torch.concat((fake_c_temp, fake_sk), dim=1))
         return {"fake_sk": fake_sk, "fake_text": fake_text}
 
 
@@ -199,7 +199,7 @@ class BgGeneratorWithMask(nn.Module):
 
         fake_c_temp = decode_bg_output["out_conv"]
         fake_bg_mask = self.decoder_mask.forward(encode_bg_output["res_blocks"])["out_conv"]
-        fake_bg = self.middle(torch.concat((fake_c_temp, fake_bg_mask), axis=1))
+        fake_bg = self.middle(torch.concat((fake_c_temp, fake_bg_mask), dim=1))
         return {
             "bg_encode_feature": encode_bg_output["res_blocks"],
             "bg_decode_feature1": decode_bg_output["up1"],
@@ -229,7 +229,7 @@ class FusionGeneratorSimple(nn.Module):
         self._reduce_conv = nn.Conv2d(in_channels=encode_dim, out_channels=3, kernel_size=3, stride=1, padding=1, groups=1, weight_attr=torch.ParamAttr(name=name + "_reduce_conv_weights"), bias=False)
 
     def forward(self, fake_text, fake_bg):
-        fake_concat = torch.concat((fake_text, fake_bg), axis=1)
+        fake_concat = torch.concat((fake_text, fake_bg), dim=1)
         fake_concat_tmp = self._conv(fake_concat)
         output_res = self._res_block(fake_concat_tmp)
         fake_fusion = self._reduce_conv(output_res)

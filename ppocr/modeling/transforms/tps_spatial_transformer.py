@@ -100,9 +100,9 @@ class TPSSpatialTransformer(nn.Module):
         Y, X = torch.split(target_coordinate, target_coordinate.shape[1], axis=1)
         Y = Y / (self.target_height - 1)
         X = X / (self.target_width - 1)
-        target_coordinate = torch.concat([X, Y], axis=1)  # convert from (y, x) to (x, y)
+        target_coordinate = torch.concat([X, Y], dim=1)  # convert from (y, x) to (x, y)
         target_coordinate_partial_repr = compute_partial_repr(target_coordinate, target_control_points)
-        target_coordinate_repr = torch.concat([target_coordinate_partial_repr, torch.ones([HW, 1]), target_coordinate], axis=1)
+        target_coordinate_repr = torch.concat([target_coordinate_partial_repr, torch.ones([HW, 1]), target_coordinate], dim=1)
 
         # register precomputed matrices
         self.inverse_kernel = inverse_kernel

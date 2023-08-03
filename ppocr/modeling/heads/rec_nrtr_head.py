@@ -153,8 +153,8 @@ class Transformer(nn.Module):
             if torch.equal_all(preds_idx, torch.full(torch.shape(preds_idx), 3, dtype="int64")):
                 break
             preds_prob = torch.max(word_prob, axis=-1)
-            dec_seq = torch.concat([dec_seq, torch.reshape(preds_idx, [-1, 1])], axis=1)
-            dec_prob = torch.concat([dec_prob, torch.reshape(preds_prob, [-1, 1])], axis=1)
+            dec_seq = torch.concat([dec_seq, torch.reshape(preds_idx, [-1, 1])], dim=1)
+            dec_prob = torch.concat([dec_prob, torch.reshape(preds_prob, [-1, 1])], dim=1)
         return [dec_seq, dec_prob]
 
     def forward_beam(self, images):

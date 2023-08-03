@@ -72,13 +72,13 @@ class FPN_UNet(nn.Module):
 
         x = F.relu(self.up4(c5))
 
-        x = torch.concat([x, c4], axis=1)
+        x = torch.concat([x, c4], dim=1)
         x = F.relu(self.up_block3(x))
 
-        x = torch.concat([x, c3], axis=1)
+        x = torch.concat([x, c3], dim=1)
         x = F.relu(self.up_block2(x))
 
-        x = torch.concat([x, c2], axis=1)
+        x = torch.concat([x, c2], dim=1)
         x = F.relu(self.up_block1(x))
 
         x = self.up_block0(x)

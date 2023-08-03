@@ -186,8 +186,8 @@ class MultiHeadAttention(nn.Module):
             elif not static_kv:
                 # for decoder self-attention in inference
                 cache_k, cache_v = cache["k"], cache["v"]
-                k = torch.concat([cache_k, k], axis=2)
-                v = torch.concat([cache_v, v], axis=2)
+                k = torch.concat([cache_k, k], dim=2)
+                v = torch.concat([cache_v, v], dim=2)
                 cache["k"], cache["v"] = k, v
 
         return q, k, v

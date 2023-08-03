@@ -230,7 +230,7 @@ class Cross_Attention(nn.Module):
         f_v = F.relu(fv_weight + fv_sc)
 
         ######## merge ########
-        f_attn = torch.concat([f_h, f_v], axis=1)
+        f_attn = torch.concat([f_h, f_v], dim=1)
         f_attn = self.f_attn_conv(f_attn)
         return f_attn
 

@@ -110,7 +110,7 @@ class DBFPN(nn.Module):
         p4 = F.upsample(p4, scale_factor=4, mode="nearest", align_mode=1)
         p3 = F.upsample(p3, scale_factor=2, mode="nearest", align_mode=1)
 
-        fuse = torch.concat([p5, p4, p3, p2], axis=1)
+        fuse = torch.concat([p5, p4, p3, p2], dim=1)
 
         if self.use_asf is True:
             fuse = self.asf(fuse, [p5, p4, p3, p2])
@@ -170,7 +170,7 @@ class RSEFPN(nn.Module):
         p4 = F.upsample(p4, scale_factor=4, mode="nearest", align_mode=1)
         p3 = F.upsample(p3, scale_factor=2, mode="nearest", align_mode=1)
 
-        fuse = torch.concat([p5, p4, p3, p2], axis=1)
+        fuse = torch.concat([p5, p4, p3, p2], dim=1)
         return fuse
 
 
@@ -236,7 +236,7 @@ class LKPAN(nn.Module):
         p4 = F.upsample(p4, scale_factor=4, mode="nearest", align_mode=1)
         p3 = F.upsample(p3, scale_factor=2, mode="nearest", align_mode=1)
 
-        fuse = torch.concat([p5, p4, p3, p2], axis=1)
+        fuse = torch.concat([p5, p4, p3, p2], dim=1)
         return fuse
 
 
@@ -283,4 +283,4 @@ class ASFBlock(nn.Module):
         out_list = []
         for i in range(self.out_features_num):
             out_list.append(attention_scores[:, i : i + 1] * features_list[i])
-        return torch.concat(out_list, axis=1)
+        return torch.concat(out_list, dim=1)

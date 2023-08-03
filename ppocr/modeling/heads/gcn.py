@@ -56,7 +56,7 @@ class GraphConv(nn.Module):
         b, n, d = features.shape
         assert d == self.in_dim
         agg_feats = self.aggregator(features, A)
-        cat_feats = torch.concat([features, agg_feats], axis=2)
+        cat_feats = torch.concat([features, agg_feats], dim=2)
         out = torch.einsum("bnd,df->bnf", cat_feats, self.weight)
         out = F.relu(out + self.bias)
         return out

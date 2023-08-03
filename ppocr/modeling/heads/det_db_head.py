@@ -92,5 +92,5 @@ class DBHead(nn.Module):
 
         threshold_maps = self.thresh(x)
         binary_maps = self.step_function(shrink_maps, threshold_maps)
-        y = torch.concat([shrink_maps, threshold_maps, binary_maps], axis=1)
+        y = torch.concat([shrink_maps, threshold_maps, binary_maps], dim=1)
         return {"maps": y}

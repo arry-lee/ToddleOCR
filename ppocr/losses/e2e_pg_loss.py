@@ -82,7 +82,7 @@ class PGLoss(nn.Module):
         tcl_mask_fg = torch.expand(x=tcl_mask, shape=[b, c, self.pad_num * l])
         tcl_mask_fg.stop_gradient = True
         f_tcl_char_fg = f_tcl_char_fg * tcl_mask_fg + (1.0 - tcl_mask_fg) * (-20.0)
-        f_tcl_char_mask = torch.concat([f_tcl_char_fg, f_tcl_char_bg], axis=2)
+        f_tcl_char_mask = torch.concat([f_tcl_char_fg, f_tcl_char_bg], dim=2)
         f_tcl_char_ld = torch.transpose(f_tcl_char_mask, (1, 0, 2))
         N, B, _ = f_tcl_char_ld.shape
         input_lengths = torch.Tensor([N] * B, dtype="int64")

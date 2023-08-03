@@ -164,7 +164,7 @@ class EncoderWithSVTR(nn.Module):
         # last stage
         z = z.reshape([0, H, W, C]).transpose([0, 3, 1, 2])
         z = self.conv3(z)
-        z = torch.concat((h, z), axis=1)
+        z = torch.concat((h, z), dim=1)
         z = self.conv1x1(self.conv4(z))
         return z
 

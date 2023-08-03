@@ -96,5 +96,5 @@ class FPN(nn.Module):
         p4 = self._upsample(p4, 4)
         p5 = self._upsample(p5, 8)
 
-        fuse = torch.concat([p2, p3, p4, p5], axis=1)
+        fuse = torch.concat([p2, p3, p4, p5], dim=1)
         return fuse

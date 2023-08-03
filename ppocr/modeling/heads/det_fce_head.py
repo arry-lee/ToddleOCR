@@ -82,7 +82,7 @@ class FCEHead(nn.Module):
             for i in range(level_num):
                 tr_pred = F.softmax(cls_res[i][:, 0:2, :, :], axis=1)
                 tcl_pred = F.softmax(cls_res[i][:, 2:, :, :], axis=1)
-                outs["level_{}".format(i)] = torch.concat([tr_pred, tcl_pred, reg_res[i]], axis=1)
+                outs["level_{}".format(i)] = torch.concat([tr_pred, tcl_pred, reg_res[i]], dim=1)
         else:
             preds = [[cls_res[i], reg_res[i]] for i in range(level_num)]
             outs["levels"] = preds

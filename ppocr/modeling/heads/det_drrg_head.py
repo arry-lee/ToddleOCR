@@ -136,7 +136,7 @@ class DRRGHead(nn.Module):
             assert targets is not None
             gt_comp_attribs = targets[7]
             pred_maps = self.out_conv(inputs)
-            feat_maps = torch.concat([inputs, pred_maps], axis=1)
+            feat_maps = torch.concat([inputs, pred_maps], dim=1)
             node_feats, adjacent_matrices, knn_inds, gt_labels = self.graph_train(feat_maps, np.stack(gt_comp_attribs))
 
             gcn_pred = self.gcn(node_feats, adjacent_matrices, knn_inds)
@@ -163,7 +163,7 @@ class DRRGHead(nn.Module):
                     its score: (x1, y1, x2, y2, x3, y3, x4, y4, score).
         """
         pred_maps = self.out_conv(feat_maps)
-        feat_maps = torch.concat([feat_maps, pred_maps], axis=1)
+        feat_maps = torch.concat([feat_maps, pred_maps], dim=1)
 
         none_flag, graph_data = self.graph_test(pred_maps, feat_maps)
 

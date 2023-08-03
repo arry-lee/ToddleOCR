@@ -164,7 +164,7 @@ class SmoothL1Loss(nn.Module):
                 tmp1 = distance[i, :]
                 tmp2 = tmp1[self.coord[:, 1], self.coord[:, 0]]
                 select_distance_list.append(tmp2.unsqueeze(0))
-            select_distance = torch.concat(select_distance_list, axis=0)
+            select_distance = torch.concat(select_distance_list, dim=0)
 
             off_points = torch.cast(self.coord, "float32") + 10 * select_distance.transpose((1, 0))
 

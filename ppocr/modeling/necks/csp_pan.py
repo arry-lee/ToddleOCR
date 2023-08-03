@@ -157,7 +157,7 @@ class CSPLayer(nn.Module):
         x_main = self.main_conv(x)
         x_main = self.blocks(x_main)
 
-        x_final = torch.concat((x_main, x_short), axis=1)
+        x_final = torch.concat((x_main, x_short), dim=1)
         return self.final_conv(x_final)
 
 

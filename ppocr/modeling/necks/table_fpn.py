@@ -52,6 +52,6 @@ class TableFPN(nn.Module):
         p4 = F.upsample(out4, size=in5.shape[2:4], mode="nearest", align_mode=1)
         p3 = F.upsample(out3, size=in5.shape[2:4], mode="nearest", align_mode=1)
         p2 = F.upsample(out2, size=in5.shape[2:4], mode="nearest", align_mode=1)
-        fuse = torch.concat([in5, p4, p3, p2], axis=1)
+        fuse = torch.concat([in5, p4, p3, p2], dim=1)
         fuse_conv = self.fuse_conv(fuse) * 0.005
         return [c5 + fuse_conv]

@@ -107,13 +107,13 @@ class FCELoss(nn.Module):
         y_map = torch.reshape(gt[:, :, :, 3 + k :], (-1, k))
 
         tr_train_mask = (train_mask * tr_mask).astype("bool")
-        tr_train_mask2 = torch.concat([tr_train_mask.unsqueeze(1), tr_train_mask.unsqueeze(1)], axis=1)
+        tr_train_mask2 = torch.concat([tr_train_mask.unsqueeze(1), tr_train_mask.unsqueeze(1)], dim=1)
         # tr loss
         loss_tr = self.ohem(tr_pred, tr_mask, train_mask)
         # tcl loss
         loss_tcl = torch.Tensor(0.0).astype("float32")
         tr_neg_mask = tr_train_mask.logical_not()
-        tr_neg_mask2 = torch.concat([tr_neg_mask.unsqueeze(1), tr_neg_mask.unsqueeze(1)], axis=1)
+        tr_neg_mask2 = torch.concat([tr_neg_mask.unsqueeze(1), tr_neg_mask.unsqueeze(1)], dim=1)
         if tr_train_mask.sum().item() > 0:
             loss_tcl_pos = F.cross_entropy(tcl_pred.masked_select(tr_train_mask2).reshape([-1, 2]), tcl_mask.masked_select(tr_train_mask).astype("int64"))
             loss_tcl_neg = F.cross_entropy(tcl_pred.masked_select(tr_neg_mask2).reshape([-1, 2]), tcl_mask.masked_select(tr_neg_mask).astype("int64"))
@@ -131,7 +131,7 @@ class FCELoss(nn.Module):
 
             dim = ft_x.shape[1]
 
-            tr_train_mask3 = torch.concat([tr_train_mask.unsqueeze(1) for i in range(dim)], axis=1)
+            tr_train_mask3 = torch.concat([tr_train_mask.unsqueeze(1) for i in range(dim)], dim=1)
 
             loss_reg_x = torch.mean(weight * F.smooth_l1_loss(ft_x_pre.masked_select(tr_train_mask3).reshape([-1, dim]), ft_x.masked_select(tr_train_mask3).reshape([-1, dim]), reduction="none"))
             loss_reg_y = torch.mean(weight * F.smooth_l1_loss(ft_y_pre.masked_select(tr_train_mask3).reshape([-1, dim]), ft_y.masked_select(tr_train_mask3).reshape([-1, dim]), reduction="none"))
@@ -142,8 +142,8 @@ class FCELoss(nn.Module):
         pos = (target * train_mask).astype("bool")
         neg = ((1 - target) * train_mask).astype("bool")
 
-        pos2 = torch.concat([pos.unsqueeze(1), pos.unsqueeze(1)], axis=1)
-        neg2 = torch.concat([neg.unsqueeze(1), neg.unsqueeze(1)], axis=1)
+        pos2 = torch.concat([pos.unsqueeze(1), pos.unsqueeze(1)], dim=1)
+        neg2 = torch.concat([neg.unsqueeze(1), neg.unsqueeze(1)], dim=1)
 
         n_pos = pos.astype("float32").sum()
 

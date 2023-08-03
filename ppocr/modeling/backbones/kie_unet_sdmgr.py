@@ -61,7 +61,7 @@ class Decoder(nn.Module):
         x = self.conv0(inputs)
         x = self.bn0(x)
         x = torch.nn.functional.interpolate(x, scale_factor=2, mode="bilinear", align_corners=False)
-        x = torch.concat([inputs_prev, x], axis=1)
+        x = torch.concat([inputs_prev, x], dim=1)
         x = self.conv1(x)
         x = self.bn1(x)
         x = self.conv2(x)

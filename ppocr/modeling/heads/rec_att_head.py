@@ -48,7 +48,7 @@ class AttentionHead(nn.Module):
                 char_onehots = self._char_to_onehot(targets[:, i], onehot_dim=self.num_classes)
                 (outputs, hidden), alpha = self.attention_cell(hidden, inputs, char_onehots)
                 output_hiddens.append(torch.unsqueeze(outputs, dim=1))
-            output = torch.concat(output_hiddens, axis=1)
+            output = torch.concat(output_hiddens, dim=1)
             probs = self.generator(output)
         else:
             targets = torch.zeros([batch_size], dtype="int32")
@@ -64,7 +64,7 @@ class AttentionHead(nn.Module):
                 if probs is None:
                     probs = torch.unsqueeze(probs_step, dim=1)
                 else:
-                    probs = torch.concat([probs, torch.unsqueeze(probs_step, dim=1)], axis=1)
+                    probs = torch.concat([probs, torch.unsqueeze(probs_step, dim=1)], dim=1)
                 next_input = probs_step.argmax(axis=1)
                 targets = next_input
         if not self.training:
@@ -130,7 +130,7 @@ class AttentionLSTM(nn.Module):
 
                 hidden = (hidden[1][0], hidden[1][1])
                 output_hiddens.append(torch.unsqueeze(hidden[0], dim=1))
-            output = torch.concat(output_hiddens, axis=1)
+            output = torch.concat(output_hiddens, dim=1)
             probs = self.generator(output)
 
         else:
@@ -147,7 +147,7 @@ class AttentionLSTM(nn.Module):
                 if probs is None:
                     probs = torch.unsqueeze(probs_step, dim=1)
                 else:
-                    probs = torch.concat([probs, torch.unsqueeze(probs_step, dim=1)], axis=1)
+                    probs = torch.concat([probs, torch.unsqueeze(probs_step, dim=1)], dim=1)
 
                 next_input = probs_step.argmax(axis=1)
 

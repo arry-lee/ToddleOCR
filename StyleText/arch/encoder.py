@@ -82,6 +82,6 @@ class EncoderUnet(nn.Module):
         output_dict["down3"] = self._down3.forward(output_dict["down2"])
         output_dict["down4"] = self._down4.forward(output_dict["down3"])
         output_dict["up1"] = self._up1.forward(output_dict["down4"])
-        output_dict["up2"] = self._up2.forward(torch.concat((output_dict["down3"], output_dict["up1"]), axis=1))
-        output_dict["concat"] = torch.concat((output_dict["down2"], output_dict["up2"]), axis=1)
+        output_dict["up2"] = self._up2.forward(torch.concat((output_dict["down3"], output_dict["up1"]), dim=1))
+        output_dict["concat"] = torch.concat((output_dict["down2"], output_dict["up2"]), dim=1)
         return output_dict

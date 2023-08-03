@@ -97,7 +97,7 @@ class TableMasterHead(nn.Module):
             out_step, bbox_output_step = self.decode(input, feature, None, target_mask)
             prob = F.softmax(out_step, axis=-1)
             next_word = prob.argmax(axis=2, dtype="int64")
-            input = torch.concat([input, next_word[:, -1].unsqueeze(-1)], axis=1)
+            input = torch.concat([input, next_word[:, -1].unsqueeze(-1)], dim=1)
             if i == self.max_text_length:
                 output = out_step
                 bbox_output = bbox_output_step

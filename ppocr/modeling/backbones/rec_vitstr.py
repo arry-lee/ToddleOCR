@@ -103,7 +103,7 @@ class ViTSTR(nn.Module):
         B = x.shape[0]
         x = self.patch_embed(x)
         cls_tokens = torch.tile(self.cls_token, repeat_times=[B, 1, 1])
-        x = torch.concat((cls_tokens, x), axis=1)
+        x = torch.concat((cls_tokens, x), dim=1)
         x = x + self.pos_embed
         x = self.pos_drop(x)
         for blk in self.blocks:

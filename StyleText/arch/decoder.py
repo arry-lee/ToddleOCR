@@ -72,7 +72,7 @@ class Decoder(nn.Module):
 
     def forward(self, x):
         if isinstance(x, (list, tuple)):
-            x = torch.concat(x, axis=1)
+            x = torch.concat(x, dim=1)
         output_dict = dict()
         output_dict["conv_blocks"] = self.conv_blocks.forward(x)
         output_dict["up1"] = self._up1.forward(output_dict["conv_blocks"])
@@ -138,10 +138,10 @@ class DecoderUnet(nn.Module):
 
     def forward(self, x, y, feature2, feature1):
         output_dict = dict()
-        output_dict["conv_blocks"] = self._conv_blocks(torch.concat((x, y), axis=1))
+        output_dict["conv_blocks"] = self._conv_blocks(torch.concat((x, y), dim=1))
         output_dict["up1"] = self._up1.forward(output_dict["conv_blocks"])
-        output_dict["up2"] = self._up2.forward(torch.concat((output_dict["up1"], feature2), axis=1))
-        output_dict["up3"] = self._up3.forward(torch.concat((output_dict["up2"], feature1), axis=1))
+        output_dict["up2"] = self._up2.forward(torch.concat((output_dict["up1"], feature2), dim=1))
+        output_dict["up3"] = self._up3.forward(torch.concat((output_dict["up2"], feature1), dim=1))
         output_dict["pad2d"] = self._pad2d.forward(output_dict["up3"])
         output_dict["out_conv"] = self._out_conv.forward(output_dict["pad2d"])
         return output_dict
@@ -204,8 +204,8 @@ class SingleDecoder(nn.Module):
         output_dict = dict()
         output_dict["conv_blocks"] = self._conv_blocks.forward(x)
         output_dict["up1"] = self._up1.forward(output_dict["conv_blocks"])
-        output_dict["up2"] = self._up2.forward(torch.concat((output_dict["up1"], feature2), axis=1))
-        output_dict["up3"] = self._up3.forward(torch.concat((output_dict["up2"], feature1), axis=1))
+        output_dict["up2"] = self._up2.forward(torch.concat((output_dict["up1"], feature2), dim=1))
+        output_dict["up3"] = self._up3.forward(torch.concat((output_dict["up2"], feature1), dim=1))
         output_dict["pad2d"] = self._pad2d.forward(output_dict["up3"])
         output_dict["out_conv"] = self._out_conv.forward(output_dict["pad2d"])
         return output_dict

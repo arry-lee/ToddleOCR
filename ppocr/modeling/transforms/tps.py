@@ -156,7 +156,7 @@ class GridGenerator(nn.Module):
 
         batch_C_ex_part_tensor.stop_gradient = True
 
-        batch_C_prime_with_zeros = torch.concat([batch_C_prime, batch_C_ex_part_tensor], axis=1)
+        batch_C_prime_with_zeros = torch.concat([batch_C_prime, batch_C_ex_part_tensor], dim=1)
         batch_T = torch.matmul(inv_delta_C_tensor, batch_C_prime_with_zeros)
         batch_P_prime = torch.matmul(P_hat_tensor, batch_T)
         return batch_P_prime
@@ -169,7 +169,7 @@ class GridGenerator(nn.Module):
         ctrl_pts_y_bottom = torch.ones([int(F / 2)], dtype="float64")
         ctrl_pts_top = torch.stack([ctrl_pts_x, ctrl_pts_y_top], axis=1)
         ctrl_pts_bottom = torch.stack([ctrl_pts_x, ctrl_pts_y_bottom], axis=1)
-        C = torch.concat([ctrl_pts_top, ctrl_pts_bottom], axis=0)
+        C = torch.concat([ctrl_pts_top, ctrl_pts_bottom], dim=0)
         return C  # F x 2
 
     def build_P_paddle(self, I_r_size):
@@ -192,9 +192,9 @@ class GridGenerator(nn.Module):
         hat_C = (hat_C**2) * torch.log(hat_C)
         delta_C = torch.concat(  # F+3 x F+3
             [
-                torch.concat([torch.ones((F, 1), dtype="float64"), C, hat_C], axis=1),  # F x F+3
-                torch.concat([torch.zeros((2, 3), dtype="float64"), torch.transpose(C, perm=[1, 0])], axis=1),  # 2 x F+3
-                torch.concat([torch.zeros((1, 3), dtype="float64"), torch.ones((1, F), dtype="float64")], axis=1),  # 1 x F+3
+                torch.concat([torch.ones((F, 1), dtype="float64"), C, hat_C], dim=1),  # F x F+3
+                torch.concat([torch.zeros((2, 3), dtype="float64"), torch.transpose(C, perm=[1, 0])], dim=1),  # 2 x F+3
+                torch.concat([torch.zeros((1, 3), dtype="float64"), torch.ones((1, F), dtype="float64")], dim=1),  # 1 x F+3
             ],
             axis=0,
         )
@@ -214,7 +214,7 @@ class GridGenerator(nn.Module):
 
         # rbf: n x F
         rbf = torch.multiply(torch.square(rbf_norm), torch.log(rbf_norm + eps))
-        P_hat = torch.concat([torch.ones((n, 1), dtype="float64"), P, rbf], axis=1)
+        P_hat = torch.concat([torch.ones((n, 1), dtype="float64"), P, rbf], dim=1)
         return P_hat  # n x F+3
 
     def get_expand_tensor(self, batch_C_prime):

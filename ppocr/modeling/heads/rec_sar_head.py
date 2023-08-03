@@ -262,7 +262,7 @@ class ParallelSARDecoder(BaseDecoder):
         # bsz * seq_len * emb_dim
         out_enc = out_enc.unsqueeze(1)
         # bsz * 1 * emb_dim
-        in_dec = torch.concat((out_enc, lab_embedding), axis=1)
+        in_dec = torch.concat((out_enc, lab_embedding), dim=1)
         # bsz * (seq_len + 1) * C
         out_dec = self._2d_attention(in_dec, feat, out_enc, valid_ratios=valid_ratios)
 
@@ -288,7 +288,7 @@ class ParallelSARDecoder(BaseDecoder):
         # bsz * seq_len * emb_dim
         out_enc = out_enc.unsqueeze(1)
         # bsz * 1 * emb_dim
-        decoder_input = torch.concat((out_enc, start_token), axis=1)
+        decoder_input = torch.concat((out_enc, start_token), dim=1)
         # bsz * (seq_len + 1) * emb_dim
 
         outputs = []

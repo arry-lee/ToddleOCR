@@ -244,7 +244,7 @@ class LocalGraphs:
                 pad_adjacent_matrix = torch.zeros((num_max_nodes, num_max_nodes))
                 pad_adjacent_matrix[:num_nodes, :num_nodes] = torch.cast(torch.Tensor(adjacent_matrix), "float32")
 
-                pad_normalized_feats = torch.concat([normalized_feats, torch.zeros((num_max_nodes - num_nodes, normalized_feats.shape[1]))], axis=0)
+                pad_normalized_feats = torch.concat([normalized_feats, torch.zeros((num_max_nodes - num_nodes, normalized_feats.shape[1]))], dim=0)
                 local_graph_labels = node_labels[pivot_local_graph]
                 knn_labels = local_graph_labels[knn_inds.numpy()]
                 link_labels = ((node_labels[pivot_ind] == knn_labels) & (node_labels[pivot_ind] > 0)).astype(np.int64)
