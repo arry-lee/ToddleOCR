@@ -52,9 +52,9 @@ class SASTLoss(nn.Module):
         l_border_split, l_border_norm = torch.split(l_border, num_or_sections=[4, 1], dim=1)
         f_border_split = f_border
         border_ex_shape = l_border_norm.shape * np.array([1, 4, 1, 1])
-        l_border_norm_split = torch.expand(x=l_border_norm, shape=border_ex_shape)
-        l_border_score = torch.expand(x=l_score, shape=border_ex_shape)
-        l_border_mask = torch.expand(x=l_mask, shape=border_ex_shape)
+        l_border_norm_split = torch.unsqueeze(l_border_norm, 0).repeat(border_ex_shape)
+        l_border_score = torch.unsqueeze(l_score, 0).repeat(border_ex_shape)
+        l_border_mask = torch.unsqueeze(l_mask, 0).repeat(border_ex_shape)
 
         border_diff = l_border_split - f_border_split
         abs_border_diff = torch.abs(border_diff)
@@ -69,9 +69,9 @@ class SASTLoss(nn.Module):
         l_tvo_split, l_tvo_norm = torch.split(l_tvo, num_or_sections=[8, 1], dim=1)
         f_tvo_split = f_tvo
         tvo_ex_shape = l_tvo_norm.shape * np.array([1, 8, 1, 1])
-        l_tvo_norm_split = torch.expand(x=l_tvo_norm, shape=tvo_ex_shape)
-        l_tvo_score = torch.expand(x=l_score, shape=tvo_ex_shape)
-        l_tvo_mask = torch.expand(x=l_mask, shape=tvo_ex_shape)
+        l_tvo_norm_split = torch.unsqueeze(l_tvo_norm, 0).repeat(tvo_ex_shape)
+        l_tvo_score = torch.unsqueeze(l_score, 0).repeat(tvo_ex_shape)
+        l_tvo_mask = torch.unsqueeze(l_mask, 0).repeat(tvo_ex_shape)
         #
         tvo_geo_diff = l_tvo_split - f_tvo_split
         abs_tvo_geo_diff = torch.abs(tvo_geo_diff)
@@ -86,9 +86,9 @@ class SASTLoss(nn.Module):
         l_tco_split, l_tco_norm = torch.split(l_tco, num_or_sections=[2, 1], dim=1)
         f_tco_split = f_tco
         tco_ex_shape = l_tco_norm.shape * np.array([1, 2, 1, 1])
-        l_tco_norm_split = torch.expand(x=l_tco_norm, shape=tco_ex_shape)
-        l_tco_score = torch.expand(x=l_score, shape=tco_ex_shape)
-        l_tco_mask = torch.expand(x=l_mask, shape=tco_ex_shape)
+        l_tco_norm_split = torch.unsqueeze(l_tco_norm, 0).repeat(tco_ex_shape)
+        l_tco_score = torch.unsqueeze(l_score, 0).repeat(tco_ex_shape)
+        l_tco_mask = torch.unsqueeze(l_mask, 0).repeat(tco_ex_shape)
 
         tco_geo_diff = l_tco_split - f_tco_split
         abs_tco_geo_diff = torch.abs(tco_geo_diff)

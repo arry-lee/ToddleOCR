@@ -67,7 +67,7 @@ class CenterLoss(nn.Module):
 
         # generate the mask
         classes = torch.arange(self.num_classes).astype("int64")
-        label = torch.expand(torch.unsqueeze(label, 1), (batch_size, self.num_classes))
+        label = torch.unsqueeze(torch.unsqueeze(label, 0).repeat(1), (batch_size, self.num_classes))
         mask = torch.equal(torch.unsqueeze(classes, 0).repeat(batch_size, self.num_classes), label).astype("float64")
         dist = torch.multiply(distmat, mask)
 

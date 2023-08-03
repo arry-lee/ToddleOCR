@@ -54,7 +54,7 @@ class SDMGRHead(nn.Module):
         all_nums = torch.concat(char_nums)
         valid = torch.nonzero((all_nums > 0).astype(int))
         temp_all_nums = (torch.gather(all_nums, valid) - 1).unsqueeze(-1).unsqueeze(-1)
-        temp_all_nums = torch.expand(temp_all_nums, [temp_all_nums.shape[0], temp_all_nums.shape[1], rnn_nodes.shape[-1]])
+        temp_all_nums = torch.unsqueeze(temp_all_nums, 0).repeat(temp_all_nums.shape[0], temp_all_nums.shape[1], rnn_nodes.shape[-1]])
         temp_all_nodes = torch.gather(rnn_nodes, valid)
         N, C, A = temp_all_nodes.shape
         one_hot = F.one_hot(temp_all_nums[:, 0, :], num_classes=C).transpose([0, 2, 1])
