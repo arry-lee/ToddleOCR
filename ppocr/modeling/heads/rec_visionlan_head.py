@@ -55,7 +55,7 @@ class ScaledDotProductAttention(nn.Module):
         super(ScaledDotProductAttention, self).__init__()
         self.temperature = temperature
         self.dropout = nn.Dropout(attn_dropout)
-        self.softmax = nn.Softmax(axis=2)
+        self.softmax = nn.Softmax(dim=2)
 
     def forward(self, q, k, v, mask=None):
         k = k.permute(0, 2, 1)
@@ -182,7 +182,7 @@ class PP_layer(nn.Module):
         self.wv = nn.Linear(n_dim, n_dim)
         self.we = nn.Linear(n_dim, N_max_character)
         self.active = nn.Tanh()
-        self.softmax = nn.Softmax(axis=2)
+        self.softmax = nn.Softmax(dim=2)
 
     def forward(self, enc_output):
         # enc_output: b,256,512

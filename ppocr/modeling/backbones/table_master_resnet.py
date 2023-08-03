@@ -195,7 +195,7 @@ class MultiAspectGCAttention(nn.Module):
 
         if pooling_type == "att":
             self.conv_mask = nn.Conv2d(self.single_header_inplanes, 1, kernel_size=1)
-            self.softmax = nn.Softmax(axis=2)
+            self.softmax = nn.Softmax(dim=2)
         else:
             self.avg_pool = nn.AdaptiveAvgPool2d(1)
 

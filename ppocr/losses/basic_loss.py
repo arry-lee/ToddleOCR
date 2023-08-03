@@ -91,7 +91,7 @@ class DMLLoss(nn.Module):
         if act is not None:
             assert act in ["softmax", "sigmoid"]
         if act == "softmax":
-            self.act = nn.Softmax(axis=-1)
+            self.act = nn.Softmax(dim=-1)
         elif act == "sigmoid":
             self.act = nn.Sigmoid()
         else:
