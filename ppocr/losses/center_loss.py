@@ -34,7 +34,7 @@ class CenterLoss(nn.Module):
         super().__init__()
         self.num_classes = num_classes
         self.feat_dim = feat_dim
-        self.centers = torch.randn(shape=[self.num_classes, self.feat_dim]).astype("float64")
+        self.centers = torch.randn([self.num_classes, self.feat_dim]).astype("float64")
 
         if center_file_path is not None:
             assert os.path.exists(center_file_path), f"center path({center_file_path}) must exist when it is not None."
