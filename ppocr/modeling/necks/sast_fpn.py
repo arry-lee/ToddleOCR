@@ -42,7 +42,7 @@ class ConvBNLayer(nn.Module):
             num_channels=out_channels,
             act=act,
             param_attr=ParamAttr(name="bn_" + name + "_scale"),
-            bias=ParamAttr(name="bn_" + name + "_offset"),
+            bias=True,
             moving_mean_name="bn_" + name + "_mean",
             moving_variance_name="bn_" + name + "_variance",
         )
@@ -72,7 +72,7 @@ class DeConvBNLayer(nn.Module):
             num_channels=out_channels,
             act=act,
             param_attr=ParamAttr(name="bn_" + name + "_scale"),
-            bias=ParamAttr(name="bn_" + name + "_offset"),
+            bias=True,
             moving_mean_name="bn_" + name + "_mean",
             moving_variance_name="bn_" + name + "_variance",
         )

@@ -39,7 +39,7 @@ class ClsHead(nn.Module):
             in_channels,
             class_dim,
             
-            bias=ParamAttr(name="fc_0.b_0"),
+            bias=True,
         )
 
     def forward(self, x, targets=None):

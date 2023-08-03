@@ -93,7 +93,7 @@ class ResNetFPN(nn.Module):
             )
         self.base_block.append(
             self.add_sublayer(
-                "F_{}_base_block_3".format(i), nn.Conv2d(in_channels=out_ch_list[i], out_channels=512, kernel_size=1, bias=ParamAttr(trainable=True), )
+                "F_{}_base_block_3".format(i), nn.Conv2d(in_channels=out_ch_list[i], out_channels=512, kernel_size=1, bias=True, )
             )
         )
         self.out_channels = 512
@@ -150,7 +150,7 @@ class ConvBNLayer(nn.Module):
             num_channels=out_channels,
             act=act,
             param_attr=ParamAttr(name=name + ".output.1.w_0"),
-            bias=ParamAttr(name=name + ".output.1.b_0"),
+            bias=True,
             moving_mean_name=bn_name + "_mean",
             moving_variance_name=bn_name + "_variance",
         )
