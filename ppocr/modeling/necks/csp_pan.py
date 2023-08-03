@@ -162,7 +162,7 @@ class CSPLayer(nn.Module):
 class Channel_T(nn.Module):
     def __init__(self, in_channels=[116, 232, 464], out_channels=96, act="leaky_relu"):
         super(Channel_T, self).__init__()
-        self.convs = nn.LayerList()
+        self.convs = nn.ModuleList()
         for i in range(len(in_channels)):
             self.convs.append(ConvBNLayer(in_channels[i], out_channels, 1, act=act))
 
@@ -192,13 +192,13 @@ class CSPPAN(nn.Module):
 
         # build top-down blocks
         self.upsample = nn.Upsample(scale_factor=2, mode="nearest")
-        self.top_down_blocks = nn.LayerList()
+        self.top_down_blocks = nn.ModuleList()
         for idx in range(len(in_channels) - 1, 0, -1):
             self.top_down_blocks.append(CSPLayer(out_channels * 2, out_channels, kernel_size=kernel_size, num_blocks=num_csp_blocks, add_identity=False, use_depthwise=use_depthwise, act=act))
 
         # build bottom-up blocks
-        self.downsamples = nn.LayerList()
-        self.bottom_up_blocks = nn.LayerList()
+        self.downsamples = nn.ModuleList()
+        self.bottom_up_blocks = nn.ModuleList()
         for idx in range(len(in_channels) - 1):
             self.downsamples.append(conv_func(out_channels, out_channels, kernel_size=kernel_size, stride=2, act=act))
             self.bottom_up_blocks.append(CSPLayer(out_channels * 2, out_channels, kernel_size=kernel_size, num_blocks=num_csp_blocks, add_identity=False, use_depthwise=use_depthwise, act=act))

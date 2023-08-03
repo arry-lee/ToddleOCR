@@ -32,7 +32,7 @@ class SDMGRHead(nn.Module):
         hidden = node_embed // 2 if bidirectional else node_embed
         self.rnn = nn.LSTM(input_size=node_input, hidden_size=hidden, num_layers=1)
         self.edge_embed = nn.Linear(edge_input, edge_embed)
-        self.gnn_layers = nn.LayerList([GNNLayer(node_embed, edge_embed) for _ in range(num_gnn)])
+        self.gnn_layers = nn.ModuleList([GNNLayer(node_embed, edge_embed) for _ in range(num_gnn)])
         self.node_cls = nn.Linear(node_embed, num_classes)
         self.edge_cls = nn.Linear(edge_embed, 2)
 
@@ -116,8 +116,8 @@ class Block(nn.Module):
         # Modules
         self.linear0 = nn.Linear(input_dims[0], mm_dim)
         self.linear1 = self.linear0 if shared else nn.Linear(input_dims[1], mm_dim)
-        self.merge_linears0 = nn.LayerList()
-        self.merge_linears1 = nn.LayerList()
+        self.merge_linears0 = nn.ModuleList()
+        self.merge_linears1 = nn.ModuleList()
         self.chunks = self.chunk_sizes(mm_dim, chunks)
         for size in self.chunks:
             ml0 = nn.Linear(size, size * rank)

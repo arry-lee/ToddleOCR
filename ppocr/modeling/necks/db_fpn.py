@@ -142,8 +142,8 @@ class RSEFPN(nn.Module):
     def __init__(self, in_channels, out_channels, shortcut=True, **kwargs):
         super(RSEFPN, self).__init__()
         self.out_channels = out_channels
-        self.ins_conv = nn.LayerList()
-        self.inp_conv = nn.LayerList()
+        self.ins_conv = nn.ModuleList()
+        self.inp_conv = nn.ModuleList()
 
         for i in range(len(in_channels)):
             self.ins_conv.append(RSELayer(in_channels[i], out_channels, kernel_size=1, shortcut=shortcut))
@@ -180,11 +180,11 @@ class LKPAN(nn.Module):
         self.out_channels = out_channels
         weight_attr = torch.nn.initializer.KaimingUniform()
 
-        self.ins_conv = nn.LayerList()
-        self.inp_conv = nn.LayerList()
+        self.ins_conv = nn.ModuleList()
+        self.inp_conv = nn.ModuleList()
         # pan head
-        self.pan_head_conv = nn.LayerList()
-        self.pan_lat_conv = nn.LayerList()
+        self.pan_head_conv = nn.ModuleList()
+        self.pan_lat_conv = nn.ModuleList()
 
         if mode.lower() == "lite":
             p_layer = DSConv

@@ -69,7 +69,7 @@ class EncoderWithCascadeRNN(nn.Module):
     def __init__(self, in_channels, hidden_size, out_channels, num_layers=2, with_linear=False):
         super(EncoderWithCascadeRNN, self).__init__()
         self.out_channels = out_channels[-1]
-        self.encoder = nn.LayerList([BidirectionalLSTM(in_channels if i == 0 else out_channels[i - 1], hidden_size, output_size=out_channels[i], num_layers=1, direction="bidirectional", with_linear=with_linear) for i in range(num_layers)])
+        self.encoder = nn.ModuleList([BidirectionalLSTM(in_channels if i == 0 else out_channels[i - 1], hidden_size, output_size=out_channels[i], num_layers=1, direction="bidirectional", with_linear=with_linear) for i in range(num_layers)])
 
     def forward(self, x):
         for i, l in enumerate(self.encoder):
@@ -97,7 +97,7 @@ class EncoderWithSVTR(nn.Module):
         self.conv1 = ConvBNLayer(in_channels, in_channels // 8, padding=1, act=nn.Swish)
         self.conv2 = ConvBNLayer(in_channels // 8, hidden_dims, kernel_size=1, act=nn.Swish)
 
-        self.svtr_block = nn.LayerList(
+        self.svtr_block = nn.ModuleList(
             [
                 Block(
                     dim=hidden_dims,

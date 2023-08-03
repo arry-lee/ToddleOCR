@@ -42,7 +42,7 @@ class ViTSTR(nn.Module):
         self.pos_drop = nn.Dropout(p=drop_rate)
 
         dpr = np.linspace(0, drop_path_rate, depth)
-        self.blocks = nn.LayerList(
+        self.blocks = nn.ModuleList(
             [
                 Block(
                     dim=embed_dim,

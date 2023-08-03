@@ -35,7 +35,7 @@ def subsequent_mask(size):
 
 
 def clones(module, N):
-    return nn.LayerList([copy.deepcopy(module) for _ in range(N)])
+    return nn.ModuleList([copy.deepcopy(module) for _ in range(N)])
 
 
 def masked_fill(x, mask, value):

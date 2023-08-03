@@ -20,7 +20,7 @@ import math
 import torch
 from torch import nn
 import torch.nn.functional as F
-from torch.nn import LayerList
+from torch.nn import ModuleList
 from ppocr.modeling.heads.rec_nrtr_head import TransformerBlock, PositionalEncoding
 
 
@@ -35,7 +35,7 @@ class BCNLanguage(nn.Module):
         self.token_encoder = PositionalEncoding(dropout=0.1, dim=d_model, max_len=self.max_length)
         self.pos_encoder = PositionalEncoding(dropout=0, dim=d_model, max_len=self.max_length)
 
-        self.decoder = nn.LayerList([TransformerBlock(d_model=d_model, nhead=nhead, dim_feedforward=dim_feedforward, attention_dropout_rate=dropout, residual_dropout_rate=dropout, with_self_attn=False, with_cross_attn=True) for i in range(num_layers)])
+        self.decoder = nn.ModuleList([TransformerBlock(d_model=d_model, nhead=nhead, dim_feedforward=dim_feedforward, attention_dropout_rate=dropout, residual_dropout_rate=dropout, with_self_attn=False, with_cross_attn=True) for i in range(num_layers)])
 
         self.cls = nn.Linear(d_model, num_classes)
 
@@ -127,7 +127,7 @@ class ABINetHead(nn.Module):
         super().__init__()
         self.max_length = max_length + 1
         self.pos_encoder = PositionalEncoding(dropout=0.1, dim=d_model, max_len=8 * 32)
-        self.encoder = nn.LayerList([TransformerBlock(d_model=d_model, nhead=nhead, dim_feedforward=dim_feedforward, attention_dropout_rate=dropout, residual_dropout_rate=dropout, with_self_attn=True, with_cross_attn=False) for i in range(num_layers)])
+        self.encoder = nn.ModuleList([TransformerBlock(d_model=d_model, nhead=nhead, dim_feedforward=dim_feedforward, attention_dropout_rate=dropout, residual_dropout_rate=dropout, with_self_attn=True, with_cross_attn=False) for i in range(num_layers)])
         self.decoder = PositionAttention(
             max_length=max_length + 1,  # additional stop token
             mode="nearest",

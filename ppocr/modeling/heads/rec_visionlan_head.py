@@ -162,7 +162,7 @@ class Transformer_Encoder(nn.Module):
         super(Transformer_Encoder, self).__init__()
         self.position_enc = PositionalEncoding(d_word_vec, n_position=n_position)
         self.dropout = nn.Dropout(p=dropout)
-        self.layer_stack = nn.LayerList([EncoderLayer(d_model, d_inner, n_head, d_k, d_v, dropout=dropout) for _ in range(n_layers)])
+        self.layer_stack = nn.ModuleList([EncoderLayer(d_model, d_inner, n_head, d_k, d_v, dropout=dropout) for _ in range(n_layers)])
         self.layer_norm = nn.LayerNorm(d_model, epsilon=1e-6)
 
     def forward(self, enc_output, src_mask, return_attns=False):

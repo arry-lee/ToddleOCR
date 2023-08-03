@@ -348,7 +348,7 @@ class SVTRNet(nn.Module):
         Block_unit = eval(block_unit)
 
         dpr = np.linspace(0, drop_path_rate, sum(depth))
-        self.blocks1 = nn.LayerList(
+        self.blocks1 = nn.ModuleList(
             [
                 Block_unit(
                     dim=embed_dim[0],
@@ -376,7 +376,7 @@ class SVTRNet(nn.Module):
         else:
             HW = self.HW
         self.patch_merging = patch_merging
-        self.blocks2 = nn.LayerList(
+        self.blocks2 = nn.ModuleList(
             [
                 Block_unit(
                     dim=embed_dim[1],
@@ -403,7 +403,7 @@ class SVTRNet(nn.Module):
             HW = [self.HW[0] // 4, self.HW[1]]
         else:
             HW = self.HW
-        self.blocks3 = nn.LayerList(
+        self.blocks3 = nn.ModuleList(
             [
                 Block_unit(
                     dim=embed_dim[2],

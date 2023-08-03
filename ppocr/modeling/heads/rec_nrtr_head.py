@@ -16,7 +16,7 @@ import math
 import torch
 from torch import nn
 import torch.nn.functional as F
-from torch.nn import LayerList
+from torch.nn import ModuleList
 from torch.nn import Dropout, Linear, LayerNorm
 import numpy as np
 from ppocr.modeling.backbones.rec_svtrnet import Mlp, zeros_, ones_
@@ -62,11 +62,11 @@ class Transformer(nn.Module):
         self.positional_encoding = PositionalEncoding(dropout=residual_dropout_rate, dim=d_model)
 
         if num_encoder_layers > 0:
-            self.encoder = nn.LayerList([TransformerBlock(d_model, nhead, dim_feedforward, attention_dropout_rate, residual_dropout_rate, with_self_attn=True, with_cross_attn=False) for i in range(num_encoder_layers)])
+            self.encoder = nn.ModuleList([TransformerBlock(d_model, nhead, dim_feedforward, attention_dropout_rate, residual_dropout_rate, with_self_attn=True, with_cross_attn=False) for i in range(num_encoder_layers)])
         else:
             self.encoder = None
 
-        self.decoder = nn.LayerList([TransformerBlock(d_model, nhead, dim_feedforward, attention_dropout_rate, residual_dropout_rate, with_self_attn=True, with_cross_attn=True) for i in range(num_decoder_layers)])
+        self.decoder = nn.ModuleList([TransformerBlock(d_model, nhead, dim_feedforward, attention_dropout_rate, residual_dropout_rate, with_self_attn=True, with_cross_attn=True) for i in range(num_decoder_layers)])
 
         self.beam_size = beam_size
         self.d_model = d_model
