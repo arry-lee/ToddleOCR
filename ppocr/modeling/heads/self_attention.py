@@ -199,7 +199,7 @@ class MultiHeadAttention(nn.Module):
         q, k, v = self._prepare_qkv(queries, keys, values, cache)
 
         # scale dot product attention
-        product = torch.matmul(x=q, y=k, transpose_y=True)
+        product = torch.matmul(q, k, transpose_y=True)
         product = product * self.d_model**-0.5
         if attn_bias is not None:
             product += attn_bias

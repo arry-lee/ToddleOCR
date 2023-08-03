@@ -141,7 +141,7 @@ class GSRM(nn.Module):
             weight_sharing=True,
         )
 
-        self.mul = lambda x: torch.matmul(x=x, y=self.wrap_encoder0.prepare_decoder.emb0.weight, transpose_y=True)
+        self.mul = lambda x: torch.matmul(x, self.wrap_encoder0.prepare_decoder.emb0.weight, transpose_y=True)
 
     def forward(self, inputs, gsrm_word_pos, gsrm_slf_attn_bias1, gsrm_slf_attn_bias2):
         # ===== GSRM Visual-to-semantic embedding block =====
