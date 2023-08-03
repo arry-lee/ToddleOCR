@@ -55,10 +55,10 @@ class CenterLoss(nn.Module):
 
         # calc l2 distance between feats and centers
         square_feat = torch.sum(torch.square(feats_reshape), dim=1, keepdim=True)
-        square_feat = torch.expand(square_feat, [batch_size, self.num_classes])
+        square_feat = torch.unsqueeze(square_feat, 0).repeat(batch_size, self.num_classes)
 
         square_center = torch.sum(torch.square(self.centers), dim=1, keepdim=True)
-        square_center = torch.expand(square_center, [self.num_classes, batch_size]).astype("float64")
+        square_center = torch.unsqueeze(square_center, 0).repeat(self.num_classes, batch_size).astype("float64")
         square_center = torch.transpose(square_center, [1, 0])
 
         distmat = torch.add(square_feat, square_center)
@@ -68,7 +68,7 @@ class CenterLoss(nn.Module):
         # generate the mask
         classes = torch.arange(self.num_classes).astype("int64")
         label = torch.expand(torch.unsqueeze(label, 1), (batch_size, self.num_classes))
-        mask = torch.equal(torch.expand(classes, [batch_size, self.num_classes]), label).astype("float64")
+        mask = torch.equal(torch.unsqueeze(classes, 0).repeat(batch_size, self.num_classes), label).astype("float64")
         dist = torch.multiply(distmat, mask)
 
         loss = torch.sum(torch.clip(dist, min=1e-12, max=1e12)) / batch_size

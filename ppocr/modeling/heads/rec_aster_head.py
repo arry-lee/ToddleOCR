@@ -281,7 +281,7 @@ class AttentionUnit(nn.Module):
         sPrev = sPrev.squeeze(0)
         sProj = self.sEmbed(sPrev)  # [b x attDim]
         sProj = torch.unsqueeze(sProj, 1)  # [b x 1 x attDim]
-        sProj = torch.expand(sProj, [batch_size, T, self.attDim])  # [b x T x attDim]
+        sProj = torch.unsqueeze(sProj, 0).repeat(batch_size, T, self.attDim)  # [b x T x attDim]
 
         sumTanh = torch.tanh(sProj + xProj)
         sumTanh = torch.reshape(sumTanh, [-1, self.attDim])

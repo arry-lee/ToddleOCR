@@ -88,7 +88,7 @@ class GNNLayer(nn.Module):
         start, cat_nodes = 0, []
         for num in nums:
             sample_nodes = nodes[start : start + num]
-            cat_nodes.append(torch.concat([torch.expand(sample_nodes.unsqueeze(1), [-1, num, -1]), torch.expand(sample_nodes.unsqueeze(0), [num, -1, -1])], -1).reshape([num**2, -1]))
+            cat_nodes.append(torch.concat([torch.unsqueeze(sample_nodes.unsqueeze(1), 0).repeat(-1, num, -1), torch.unsqueeze(sample_nodes.unsqueeze(0), 0).repeat(num, -1, -1)], -1).reshape([num**2, -1]))
             start += num
         cat_nodes = torch.concat([torch.concat(cat_nodes), edges], -1)
         cat_nodes = self.relu(self.in_fc(cat_nodes))

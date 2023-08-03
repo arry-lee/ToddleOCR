@@ -116,7 +116,7 @@ class TPSSpatialTransformer(nn.Module):
         assert source_control_points.shape[2] == 2
         batch_size = source_control_points.shape[0]
 
-        padding_matrix = torch.expand(self.padding_matrix, shape=[batch_size, 3, 2])
+        padding_matrix = torch.unsqueeze(self.padding_matrix, 0).repeat(batch_size, 3, 2)
         Y = torch.concat([source_control_points, padding_matrix], 1)
         mapping_matrix = torch.matmul(self.inverse_kernel, Y)
         source_coordinate = torch.matmul(self.target_coordinate_repr, mapping_matrix)

@@ -222,7 +222,7 @@ class ParallelSARDecoder(BaseDecoder):
         # Linear transformation
         if self.pred_concat:
             hf_c = holistic_feat.shape[-1]
-            holistic_feat = torch.expand(holistic_feat, shape=[bsz, seq_len, hf_c])
+            holistic_feat = torch.unsqueeze(holistic_feat, 0).repeat(bsz, seq_len, hf_c)
             y = self.prediction(torch.concat((y, attn_feat, holistic_feat), 2))
         else:
             y = self.prediction(attn_feat)
@@ -269,7 +269,7 @@ class ParallelSARDecoder(BaseDecoder):
         # bsz * emb_dim
         emb_dim = start_token.shape[1]
         start_token = start_token.unsqueeze(1)
-        start_token = torch.expand(start_token, shape=[bsz, seq_len, emb_dim])
+        start_token = torch.unsqueeze(start_token, 0).repeat(bsz, seq_len, emb_dim)
         # bsz * seq_len * emb_dim
         out_enc = out_enc.unsqueeze(1)
         # bsz * 1 * emb_dim

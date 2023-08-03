@@ -36,11 +36,11 @@ class PGLoss(nn.Module):
         l_border_split, l_border_norm = torch.tensor.split(l_border, num_or_sections=[4, 1], dim=1)
         f_border_split = f_border
         b, c, h, w = l_border_norm.shape
-        l_border_norm_split = torch.expand(x=l_border_norm, shape=[b, 4 * c, h, w])
+        l_border_norm_split = torch.unsqueeze(l_border_norm, 0).repeat(b, 4 * c, h, w)
         b, c, h, w = l_score.shape
-        l_border_score = torch.expand(x=l_score, shape=[b, 4 * c, h, w])
+        l_border_score = torch.unsqueeze(l_score, 0).repeat(b, 4 * c, h, w)
         b, c, h, w = l_mask.shape
-        l_border_mask = torch.expand(x=l_mask, shape=[b, 4 * c, h, w])
+        l_border_mask = torch.unsqueeze(l_mask, 0).repeat(b, 4 * c, h, w)
         border_diff = l_border_split - f_border_split
         abs_border_diff = torch.abs(border_diff)
         border_sign = abs_border_diff < 1.0
@@ -55,11 +55,11 @@ class PGLoss(nn.Module):
         l_direction_split, l_direction_norm = torch.tensor.split(l_direction, num_or_sections=[2, 1], dim=1)
         f_direction_split = f_direction
         b, c, h, w = l_direction_norm.shape
-        l_direction_norm_split = torch.expand(x=l_direction_norm, shape=[b, 2 * c, h, w])
+        l_direction_norm_split = torch.unsqueeze(l_direction_norm, 0).repeat(b, 2 * c, h, w)
         b, c, h, w = l_score.shape
-        l_direction_score = torch.expand(x=l_score, shape=[b, 2 * c, h, w])
+        l_direction_score = torch.unsqueeze(l_score, 0).repeat(b, 2 * c, h, w)
         b, c, h, w = l_mask.shape
-        l_direction_mask = torch.expand(x=l_mask, shape=[b, 2 * c, h, w])
+        l_direction_mask = torch.unsqueeze(l_mask, 0).repeat(b, 2 * c, h, w)
         direction_diff = l_direction_split - f_direction_split
         abs_direction_diff = torch.abs(direction_diff)
         direction_sign = abs_direction_diff < 1.0
@@ -79,7 +79,7 @@ class PGLoss(nn.Module):
         f_tcl_char_fg, f_tcl_char_bg = torch.split(f_tcl_char, [self.pad_num, 1], dim=2)
         f_tcl_char_bg = f_tcl_char_bg * tcl_mask + (1.0 - tcl_mask) * 20.0
         b, c, l = tcl_mask.shape
-        tcl_mask_fg = torch.expand(x=tcl_mask, shape=[b, c, self.pad_num * l])
+        tcl_mask_fg = torch.unsqueeze(tcl_mask, 0).repeat(b, c, self.pad_num * l)
         tcl_mask_fg.stop_gradient = True
         f_tcl_char_fg = f_tcl_char_fg * tcl_mask_fg + (1.0 - tcl_mask_fg) * (-20.0)
         f_tcl_char_mask = torch.concat([f_tcl_char_fg, f_tcl_char_bg], dim=2)
