@@ -48,7 +48,7 @@ class Shape(object):
 
     def __init__(self, label=None, line_color=None, difficult=False, key_cls="None", paintLabel=False, paintIdx=False):
         self.label = label
-        self.idx = None # bbox order, only for table annotation
+        self.idx = None  # bbox order, only for table annotation
         self.points = []
         self.fill = False
         self.selected = False
@@ -87,13 +87,12 @@ class Shape(object):
         cosTheta = math.cos(theta)
         sinTheta = math.sin(theta)
         pResx = cosTheta * order.x() + sinTheta * order.y()
-        pResy = - sinTheta * order.x() + cosTheta * order.y()
+        pResy = -sinTheta * order.x() + cosTheta * order.y()
         pRes = QPointF(self.center.x() + pResx, self.center.y() + pResy)
         return pRes
 
     def close(self):
-        self.center = QPointF((self.points[0].x() + self.points[2].x()) / 2,
-                              (self.points[0].y() + self.points[2].y()) / 2)
+        self.center = QPointF((self.points[0].x() + self.points[2].x()) / 2, (self.points[0].y() + self.points[2].y()) / 2)
         self._closed = True
 
     def reachMaxPoints(self):
@@ -178,7 +177,7 @@ class Shape(object):
                     font.setPointSize(self.fontsize)
                     font.setBold(True)
                     painter.setFont(font)
-                    text = ''
+                    text = ""
                     if self.idx != None:
                         text = str(self.idx)
                     if min_y < MIN_Y_LABEL:

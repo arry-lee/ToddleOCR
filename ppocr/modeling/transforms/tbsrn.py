@@ -28,8 +28,7 @@ warnings.filterwarnings("ignore")
 from .tps_spatial_transformer import TPSSpatialTransformer
 from .stn import STN as STNHead
 from .tsrn import GruBlock, mish, UpsampleBLock
-from ppocr.modeling.heads.sr_rensnet_transformer import Transformer, LayerNorm, \
-    PositionwiseFeedForward, MultiHeadedAttention
+from ppocr.modeling.heads.sr_rensnet_transformer import Transformer, LayerNorm, PositionwiseFeedForward, MultiHeadedAttention
 
 
 def positionalencoding2d(d_model, height, width):
@@ -40,26 +39,23 @@ def positionalencoding2d(d_model, height, width):
     :return: d_model*height*width position matrix
     """
     if d_model % 4 != 0:
-        raise ValueError("Cannot use sin/cos positional encoding with "
-                         "odd dimension (got dim={:d})".format(d_model))
+        raise ValueError("Cannot use sin/cos positional encoding with " "odd dimension (got dim={:d})".format(d_model))
     pe = torch.zeros([d_model, height, width])
     # Each dimension use half of d_model
     d_model = int(d_model / 2)
-    div_term = torch.exp(torch.arange(0., d_model, 2) *
-                          -(math.log(10000.0) / d_model))
-    pos_w = torch.arange(0., width, dtype='float32').unsqueeze(1)
-    pos_h = torch.arange(0., height, dtype='float32').unsqueeze(1)
+    div_term = torch.exp(torch.arange(0.0, d_model, 2) * -(math.log(10000.0) / d_model))
+    pos_w = torch.arange(0.0, width, dtype="float32").unsqueeze(1)
+    pos_h = torch.arange(0.0, height, dtype="float32").unsqueeze(1)
 
     pe[0:d_model:2, :, :] = torch.sin(pos_w * div_term).transpose([1, 0]).unsqueeze(1).tile([1, height, 1])
     pe[1:d_model:2, :, :] = torch.cos(pos_w * div_term).transpose([1, 0]).unsqueeze(1).tile([1, height, 1])
     pe[d_model::2, :, :] = torch.sin(pos_h * div_term).transpose([1, 0]).unsqueeze(2).tile([1, 1, width])
-    pe[d_model + 1::2, :, :] = torch.cos(pos_h * div_term).transpose([1, 0]).unsqueeze(2).tile([1, 1, width])
+    pe[d_model + 1 :: 2, :, :] = torch.cos(pos_h * div_term).transpose([1, 0]).unsqueeze(2).tile([1, 1, width])
 
     return pe
 
 
 class FeatureEnhancer(nn.Module):
-
     def __init__(self):
         super(FeatureEnhancer, self).__init__()
 
@@ -72,13 +68,13 @@ class FeatureEnhancer(nn.Module):
         self.linear = nn.Linear(128, 64)
 
     def forward(self, conv_feature):
-        '''
+        """
         text : (batch, seq_len, embedding_size)
         global_info: (batch, embedding_size, 1, 1)
         conv_feature: (batch, channel, H, W)
-        '''
+        """
         batch = conv_feature.shape[0]
-        position2d = positionalencoding2d(64, 16, 64).cast('float32').unsqueeze(0).reshape([1, 64, 1024])
+        position2d = positionalencoding2d(64, 16, 64).cast("float32").unsqueeze(0).reshape([1, 64, 1024])
         position2d = position2d.tile([batch, 1, 1])
         conv_feature = torch.concat([conv_feature, position2d], 1)  # batch, 128(64+64), 32, 128
         result = conv_feature.transpose([0, 2, 1])
@@ -92,31 +88,22 @@ class FeatureEnhancer(nn.Module):
 
 def str_filt(str_, voc_type):
     alpha_dict = {
-        'digit': string.digits,
-        'lower': string.digits + string.ascii_lowercase,
-        'upper': string.digits + string.ascii_letters,
-        'all': string.digits + string.ascii_letters + string.punctuation
+        "digit": string.digits,
+        "lower": string.digits + string.ascii_lowercase,
+        "upper": string.digits + string.ascii_letters,
+        "all": string.digits + string.ascii_letters + string.punctuation,
     }
-    if voc_type == 'lower':
+    if voc_type == "lower":
         str_ = str_.lower()
     for char in str_:
         if char not in alpha_dict[voc_type]:
-            str_ = str_.replace(char, '')
+            str_ = str_.replace(char, "")
     str_ = str_.lower()
     return str_
 
 
 class TBSRN(nn.Module):
-    def __init__(self,
-                 in_channels=3,
-                 scale_factor=2,
-                 width=128,
-                 height=32,
-                 STN=True,
-                 srb_nums=5,
-                 mask=False,
-                 hidden_units=32,
-                 infer_mode=False):
+    def __init__(self, in_channels=3, scale_factor=2, width=128, height=32, STN=True, srb_nums=5, mask=False, hidden_units=32, infer_mode=False):
         super(TBSRN, self).__init__()
         in_planes = 3
         if mask:
@@ -130,18 +117,14 @@ class TBSRN(nn.Module):
         )
         self.srb_nums = srb_nums
         for i in range(srb_nums):
-            setattr(self, 'block%d' % (i + 2), RecurrentResidualBlock(2 * hidden_units))
+            setattr(self, "block%d" % (i + 2), RecurrentResidualBlock(2 * hidden_units))
 
-        setattr(self, 'block%d' % (srb_nums + 2),
-                nn.Sequential(
-                    nn.Conv2d(2 * hidden_units, 2 * hidden_units, kernel_size=3, padding=1),
-                    nn.BatchNorm2D(2 * hidden_units)
-                ))
+        setattr(self, "block%d" % (srb_nums + 2), nn.Sequential(nn.Conv2d(2 * hidden_units, 2 * hidden_units, kernel_size=3, padding=1), nn.BatchNorm2D(2 * hidden_units)))
 
         # self.non_local = NonLocalBlock2D(64, 64)
         block_ = [UpsampleBLock(2 * hidden_units, 2) for _ in range(upsample_block_num)]
         block_.append(nn.Conv2d(2 * hidden_units, in_planes, kernel_size=9, padding=4))
-        setattr(self, 'block%d' % (srb_nums + 3), nn.Sequential(*block_))
+        setattr(self, "block%d" % (srb_nums + 3), nn.Sequential(*block_))
         self.tps_inputsize = [height // scale_factor, width // scale_factor]
         tps_outputsize = [height // scale_factor, width // scale_factor]
         num_control_points = 20
@@ -149,22 +132,16 @@ class TBSRN(nn.Module):
         self.stn = STN
         self.out_channels = in_channels
         if self.stn:
-            self.tps = TPSSpatialTransformer(
-                output_image_size=tuple(tps_outputsize),
-                num_control_points=num_control_points,
-                margins=tuple(tps_margins))
+            self.tps = TPSSpatialTransformer(output_image_size=tuple(tps_outputsize), num_control_points=num_control_points, margins=tuple(tps_margins))
 
-            self.stn_head = STNHead(
-                in_channels=in_planes,
-                num_ctrlpoints=num_control_points,
-                activation='none')
+            self.stn_head = STNHead(in_channels=in_planes, num_ctrlpoints=num_control_points, activation="none")
         self.infer_mode = infer_mode
 
-        self.english_alphabet = '-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+        self.english_alphabet = "-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
         self.english_dict = {}
         for index in range(len(self.english_alphabet)):
             self.english_dict[self.english_alphabet[index]] = index
-        transformer = Transformer(alphabet='-0123456789abcdefghijklmnopqrstuvwxyz')
+        transformer = Transformer(alphabet="-0123456789abcdefghijklmnopqrstuvwxyz")
         self.transformer = transformer
         for param in self.transformer.parameters():
             param.trainable = False
@@ -173,7 +150,7 @@ class TBSRN(nn.Module):
         batch = len(label)
 
         length = [len(i) for i in label]
-        length_tensor = torch.to_tensor(length, dtype='int64')
+        length_tensor = torch.to_tensor(length, dtype="int64")
 
         max_length = max(length)
         input_tensor = np.zeros((batch, max_length))
@@ -185,9 +162,9 @@ class TBSRN(nn.Module):
         for i in label:
             for j in i:
                 text_gt.append(self.english_dict[j])
-        text_gt = torch.to_tensor(text_gt, dtype='int64')
+        text_gt = torch.to_tensor(text_gt, dtype="int64")
 
-        input_tensor = torch.to_tensor(input_tensor, dtype='int64')
+        input_tensor = torch.to_tensor(input_tensor, dtype="int64")
         return length_tensor, input_tensor, text_gt
 
     def forward(self, x):
@@ -202,13 +179,11 @@ class TBSRN(nn.Module):
         if self.stn and self.training:
             _, ctrl_points_x = self.stn_head(y)
             y, _ = self.tps(y, ctrl_points_x)
-        block = {'1': self.block1(y)}
+        block = {"1": self.block1(y)}
         for i in range(self.srb_nums + 1):
-            block[str(i + 2)] = getattr(self,
-                                        'block%d' % (i + 2))(block[str(i + 1)])
+            block[str(i + 2)] = getattr(self, "block%d" % (i + 2))(block[str(i + 1)])
 
-        block[str(self.srb_nums + 3)] = getattr(self, 'block%d' % (self.srb_nums + 3)) \
-            ((block['1'] + block[str(self.srb_nums + 2)]))
+        block[str(self.srb_nums + 3)] = getattr(self, "block%d" % (self.srb_nums + 3))((block["1"] + block[str(self.srb_nums + 2)]))
 
         sr_img = torch.tanh(block[str(self.srb_nums + 3)])
         output["sr_img"] = sr_img
@@ -217,12 +192,10 @@ class TBSRN(nn.Module):
             hr_img = x[1]
 
             # add transformer
-            label = [str_filt(i, 'lower') + '-' for i in x[2]]
+            label = [str_filt(i, "lower") + "-" for i in x[2]]
             length_tensor, input_tensor, text_gt = self.label_encoder(label)
-            hr_pred, word_attention_map_gt, hr_correct_list = self.transformer(hr_img, length_tensor,
-                                                                               input_tensor)
-            sr_pred, word_attention_map_pred, sr_correct_list = self.transformer(sr_img, length_tensor,
-                                                                                 input_tensor)
+            hr_pred, word_attention_map_gt, hr_correct_list = self.transformer(hr_img, length_tensor, input_tensor)
+            sr_pred, word_attention_map_pred, sr_correct_list = self.transformer(sr_img, length_tensor, input_tensor)
             output["hr_img"] = hr_img
             output["hr_pred"] = hr_pred
             output["text_gt"] = text_gt

@@ -21,7 +21,7 @@ logger_initialized = {}
 
 
 @functools.lru_cache()
-def get_logger(name='srnet', log_file=None, log_level=logging.INFO):
+def get_logger(name="srnet", log_file=None, log_level=logging.INFO):
     """Initialize and get a logger by name.
     If the logger has not been initialized, this method will initialize the
     logger by adding one or two handlers, otherwise the initialized logger will
@@ -44,9 +44,7 @@ def get_logger(name='srnet', log_file=None, log_level=logging.INFO):
         if name.startswith(logger_name):
             return logger
 
-    formatter = logging.Formatter(
-        '[%(asctime)s] %(name)s %(levelname)s: %(message)s',
-        datefmt="%Y/%m/%d %H:%M:%S")
+    formatter = logging.Formatter("[%(asctime)s] %(name)s %(levelname)s: %(message)s", datefmt="%Y/%m/%d %H:%M:%S")
 
     stream_handler = logging.StreamHandler(stream=sys.stdout)
     stream_handler.setFormatter(formatter)
@@ -54,7 +52,7 @@ def get_logger(name='srnet', log_file=None, log_level=logging.INFO):
     if log_file is not None and dist.get_rank() == 0:
         log_file_folder = os.path.split(log_file)[0]
         os.makedirs(log_file_folder, exist_ok=True)
-        file_handler = logging.FileHandler(log_file, 'a')
+        file_handler = logging.FileHandler(log_file, "a")
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
     if dist.get_rank() == 0:

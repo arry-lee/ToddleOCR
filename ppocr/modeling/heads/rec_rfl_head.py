@@ -22,29 +22,22 @@ from torch.nn.initializer import TruncatedNormal, Constant, Normal, KaimingNorma
 from .rec_att_head import AttentionLSTM
 
 kaiming_init_ = KaimingNormal()
-zeros_ = Constant(value=0.)
-ones_ = Constant(value=1.)
+zeros_ = Constant(value=0.0)
+ones_ = Constant(value=1.0)
 
 
 class CNTHead(nn.Module):
-    def __init__(self,
-                 embed_size=512,
-                 encode_length=26,
-                 out_channels=38,
-                 **kwargs):
+    def __init__(self, embed_size=512, encode_length=26, out_channels=38, **kwargs):
         super(CNTHead, self).__init__()
 
         self.out_channels = out_channels
 
         self.Wv_fusion = nn.Linear(embed_size, embed_size, bias=False)
-        self.Prediction_visual = nn.Linear(encode_length * embed_size,
-                                           self.out_channels)
+        self.Prediction_visual = nn.Linear(encode_length * embed_size, self.out_channels)
 
     def forward(self, visual_feature):
-
         b, c, h, w = visual_feature.shape
-        visual_feature = visual_feature.reshape([b, c, h * w]).transpose(
-            [0, 2, 1])
+        visual_feature = visual_feature.reshape([b, c, h * w]).transpose([0, 2, 1])
         visual_feature_num = self.Wv_fusion(visual_feature)  # batch * 26 * 512
         b, n, c = visual_feature_num.shape
         # using visual feature directly calculate the text length
@@ -55,31 +48,15 @@ class CNTHead(nn.Module):
 
 
 class RFLHead(nn.Module):
-    def __init__(self,
-                 in_channels=512,
-                 hidden_size=256,
-                 batch_max_legnth=25,
-                 out_channels=38,
-                 use_cnt=True,
-                 use_seq=True,
-                 **kwargs):
-
+    def __init__(self, in_channels=512, hidden_size=256, batch_max_legnth=25, out_channels=38, use_cnt=True, use_seq=True, **kwargs):
         super(RFLHead, self).__init__()
         assert use_cnt or use_seq
         self.use_cnt = use_cnt
         self.use_seq = use_seq
         if self.use_cnt:
-            self.cnt_head = CNTHead(
-                embed_size=in_channels,
-                encode_length=batch_max_legnth + 1,
-                out_channels=out_channels,
-                **kwargs)
+            self.cnt_head = CNTHead(embed_size=in_channels, encode_length=batch_max_legnth + 1, out_channels=out_channels, **kwargs)
         if self.use_seq:
-            self.seq_head = AttentionLSTM(
-                in_channels=in_channels,
-                out_channels=out_channels,
-                hidden_size=hidden_size,
-                **kwargs)
+            self.seq_head = AttentionLSTM(in_channels=in_channels, out_channels=out_channels, hidden_size=hidden_size, **kwargs)
         self.batch_max_legnth = batch_max_legnth
         self.num_class = out_channels
         self.apply(self.init_weights)
@@ -98,11 +75,9 @@ class RFLHead(nn.Module):
             cnt_outputs = None
         if self.use_seq:
             if self.training:
-                seq_outputs = self.seq_head(seq_inputs, targets[0],
-                                            self.batch_max_legnth)
+                seq_outputs = self.seq_head(seq_inputs, targets[0], self.batch_max_legnth)
             else:
-                seq_outputs = self.seq_head(seq_inputs, None,
-                                            self.batch_max_legnth)
+                seq_outputs = self.seq_head(seq_inputs, None, self.batch_max_legnth)
             return cnt_outputs, seq_outputs
         else:
             return cnt_outputs

@@ -31,8 +31,8 @@ def iou_single(a, b, mask, n_class):
             inter = torch.to_tensor(0.0)
             union = torch.to_tensor(0.0)
         else:
-            inter = ((a == i).logical_and(b == i)).astype('float32')
-            union = ((a == i).logical_or(b == i)).astype('float32')
+            inter = ((a == i).logical_and(b == i)).astype("float32")
+            union = ((a == i).logical_or(b == i)).astype("float32")
         miou.append(torch.sum(inter) / (torch.sum(union) + EPS))
     miou = sum(miou) / len(miou)
     return miou
@@ -45,7 +45,7 @@ def iou(a, b, mask, n_class=2, reduce=True):
     b = b.reshape([batch_size, -1])
     mask = mask.reshape([batch_size, -1])
 
-    iou = torch.zeros((batch_size, ), dtype='float32')
+    iou = torch.zeros((batch_size,), dtype="float32")
     for i in range(batch_size):
         iou[i] = iou_single(a[i], b[i], mask[i], n_class)
 

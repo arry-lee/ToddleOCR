@@ -24,40 +24,23 @@ import torch.nn.functional as F
 class BasicBlock(nn.Module):
     expansion = 1
 
-    def __init__(self,
-                 inplanes,
-                 planes,
-                 stride=1,
-                 downsample=None,
-                 gcb_config=None):
+    def __init__(self, inplanes, planes, stride=1, downsample=None, gcb_config=None):
         super(BasicBlock, self).__init__()
-        self.conv1 = nn.Conv2d(
-            inplanes,
-            planes,
-            kernel_size=3,
-            stride=stride,
-            padding=1,
-            bias=False)
+        self.conv1 = nn.Conv2d(inplanes, planes, kernel_size=3, stride=stride, padding=1, bias=False)
         self.bn1 = nn.BatchNorm2D(planes, momentum=0.9)
         self.relu = nn.ReLU()
-        self.conv2 = nn.Conv2d(
-            planes, planes, kernel_size=3, stride=1, padding=1, bias=False)
+        self.conv2 = nn.Conv2d(planes, planes, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn2 = nn.BatchNorm2D(planes, momentum=0.9)
         self.downsample = downsample
         self.stride = stride
         self.gcb_config = gcb_config
 
         if self.gcb_config is not None:
-            gcb_ratio = gcb_config['ratio']
-            gcb_headers = gcb_config['headers']
-            att_scale = gcb_config['att_scale']
-            fusion_type = gcb_config['fusion_type']
-            self.context_block = MultiAspectGCAttention(
-                inplanes=planes,
-                ratio=gcb_ratio,
-                headers=gcb_headers,
-                att_scale=att_scale,
-                fusion_type=fusion_type)
+            gcb_ratio = gcb_config["ratio"]
+            gcb_headers = gcb_config["headers"]
+            att_scale = gcb_config["att_scale"]
+            fusion_type = gcb_config["fusion_type"]
+            self.context_block = MultiAspectGCAttention(inplanes=planes, ratio=gcb_ratio, headers=gcb_headers, att_scale=att_scale, fusion_type=fusion_type)
 
     def forward(self, x):
         residual = x
@@ -82,7 +65,7 @@ class BasicBlock(nn.Module):
 
 
 def get_gcb_config(gcb_config, layer):
-    if gcb_config is None or not gcb_config['layers'][layer]:
+    if gcb_config is None or not gcb_config["layers"][layer]:
         return None
     else:
         return gcb_config
@@ -94,72 +77,41 @@ class TableResNetExtra(nn.Module):
 
         super(TableResNetExtra, self).__init__()
         self.inplanes = 128
-        self.conv1 = nn.Conv2d(
-            in_channels,
-            64,
-            kernel_size=3,
-            stride=1,
-            padding=1,
-            bias=False)
+        self.conv1 = nn.Conv2d(in_channels, 64, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn1 = nn.BatchNorm2D(64)
         self.relu1 = nn.ReLU()
 
-        self.conv2 = nn.Conv2d(
-            64, 128, kernel_size=3, stride=1, padding=1, bias=False)
+        self.conv2 = nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn2 = nn.BatchNorm2D(128)
         self.relu2 = nn.ReLU()
 
         self.maxpool1 = nn.MaxPool2D(kernel_size=2, stride=2)
 
-        self.layer1 = self._make_layer(
-            BasicBlock,
-            256,
-            layers[0],
-            stride=1,
-            gcb_config=get_gcb_config(gcb_config, 0))
+        self.layer1 = self._make_layer(BasicBlock, 256, layers[0], stride=1, gcb_config=get_gcb_config(gcb_config, 0))
 
-        self.conv3 = nn.Conv2d(
-            256, 256, kernel_size=3, stride=1, padding=1, bias=False)
+        self.conv3 = nn.Conv2d(256, 256, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn3 = nn.BatchNorm2D(256)
         self.relu3 = nn.ReLU()
 
         self.maxpool2 = nn.MaxPool2D(kernel_size=2, stride=2)
 
-        self.layer2 = self._make_layer(
-            BasicBlock,
-            256,
-            layers[1],
-            stride=1,
-            gcb_config=get_gcb_config(gcb_config, 1))
+        self.layer2 = self._make_layer(BasicBlock, 256, layers[1], stride=1, gcb_config=get_gcb_config(gcb_config, 1))
 
-        self.conv4 = nn.Conv2d(
-            256, 256, kernel_size=3, stride=1, padding=1, bias=False)
+        self.conv4 = nn.Conv2d(256, 256, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn4 = nn.BatchNorm2D(256)
         self.relu4 = nn.ReLU()
 
         self.maxpool3 = nn.MaxPool2D(kernel_size=2, stride=2)
 
-        self.layer3 = self._make_layer(
-            BasicBlock,
-            512,
-            layers[2],
-            stride=1,
-            gcb_config=get_gcb_config(gcb_config, 2))
+        self.layer3 = self._make_layer(BasicBlock, 512, layers[2], stride=1, gcb_config=get_gcb_config(gcb_config, 2))
 
-        self.conv5 = nn.Conv2d(
-            512, 512, kernel_size=3, stride=1, padding=1, bias=False)
+        self.conv5 = nn.Conv2d(512, 512, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn5 = nn.BatchNorm2D(512)
         self.relu5 = nn.ReLU()
 
-        self.layer4 = self._make_layer(
-            BasicBlock,
-            512,
-            layers[3],
-            stride=1,
-            gcb_config=get_gcb_config(gcb_config, 3))
+        self.layer4 = self._make_layer(BasicBlock, 512, layers[3], stride=1, gcb_config=get_gcb_config(gcb_config, 3))
 
-        self.conv6 = nn.Conv2d(
-            512, 512, kernel_size=3, stride=1, padding=1, bias=False)
+        self.conv6 = nn.Conv2d(512, 512, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn6 = nn.BatchNorm2D(512)
         self.relu6 = nn.ReLU()
 
@@ -169,22 +121,12 @@ class TableResNetExtra(nn.Module):
         downsample = None
         if stride != 1 or self.inplanes != planes * block.expansion:
             downsample = nn.Sequential(
-                nn.Conv2d(
-                    self.inplanes,
-                    planes * block.expansion,
-                    kernel_size=1,
-                    stride=stride,
-                    bias=False),
-                nn.BatchNorm2D(planes * block.expansion), )
+                nn.Conv2d(self.inplanes, planes * block.expansion, kernel_size=1, stride=stride, bias=False),
+                nn.BatchNorm2D(planes * block.expansion),
+            )
 
         layers = []
-        layers.append(
-            block(
-                self.inplanes,
-                planes,
-                stride,
-                downsample,
-                gcb_config=gcb_config))
+        layers.append(block(self.inplanes, planes, stride, downsample, gcb_config=gcb_config))
         self.inplanes = planes * block.expansion
         for _ in range(1, blocks):
             layers.append(block(self.inplanes, planes))
@@ -234,17 +176,11 @@ class TableResNetExtra(nn.Module):
 
 
 class MultiAspectGCAttention(nn.Module):
-    def __init__(self,
-                 inplanes,
-                 ratio,
-                 headers,
-                 pooling_type='att',
-                 att_scale=False,
-                 fusion_type='channel_add'):
+    def __init__(self, inplanes, ratio, headers, pooling_type="att", att_scale=False, fusion_type="channel_add"):
         super(MultiAspectGCAttention, self).__init__()
-        assert pooling_type in ['avg', 'att']
+        assert pooling_type in ["avg", "att"]
 
-        assert fusion_type in ['channel_add', 'channel_mul', 'channel_concat']
+        assert fusion_type in ["channel_add", "channel_mul", "channel_concat"]
         assert inplanes % headers == 0 and inplanes >= 8  # inplanes must be divided by headers evenly
 
         self.headers = headers
@@ -257,69 +193,48 @@ class MultiAspectGCAttention(nn.Module):
 
         self.single_header_inplanes = int(inplanes / headers)
 
-        if pooling_type == 'att':
-            self.conv_mask = nn.Conv2d(
-                self.single_header_inplanes, 1, kernel_size=1)
+        if pooling_type == "att":
+            self.conv_mask = nn.Conv2d(self.single_header_inplanes, 1, kernel_size=1)
             self.softmax = nn.Softmax(axis=2)
         else:
             self.avg_pool = nn.AdaptiveAvgPool2D(1)
 
-        if fusion_type == 'channel_add':
+        if fusion_type == "channel_add":
             self.channel_add_conv = nn.Sequential(
-                nn.Conv2d(
-                    self.inplanes, self.planes, kernel_size=1),
-                nn.LayerNorm([self.planes, 1, 1]),
-                nn.ReLU(),
-                nn.Conv2d(
-                    self.planes, self.inplanes, kernel_size=1))
-        elif fusion_type == 'channel_concat':
+                nn.Conv2d(self.inplanes, self.planes, kernel_size=1), nn.LayerNorm([self.planes, 1, 1]), nn.ReLU(), nn.Conv2d(self.planes, self.inplanes, kernel_size=1)
+            )
+        elif fusion_type == "channel_concat":
             self.channel_concat_conv = nn.Sequential(
-                nn.Conv2d(
-                    self.inplanes, self.planes, kernel_size=1),
-                nn.LayerNorm([self.planes, 1, 1]),
-                nn.ReLU(),
-                nn.Conv2d(
-                    self.planes, self.inplanes, kernel_size=1))
+                nn.Conv2d(self.inplanes, self.planes, kernel_size=1), nn.LayerNorm([self.planes, 1, 1]), nn.ReLU(), nn.Conv2d(self.planes, self.inplanes, kernel_size=1)
+            )
             # for concat
-            self.cat_conv = nn.Conv2d(
-                2 * self.inplanes, self.inplanes, kernel_size=1)
-        elif fusion_type == 'channel_mul':
+            self.cat_conv = nn.Conv2d(2 * self.inplanes, self.inplanes, kernel_size=1)
+        elif fusion_type == "channel_mul":
             self.channel_mul_conv = nn.Sequential(
-                nn.Conv2d(
-                    self.inplanes, self.planes, kernel_size=1),
-                nn.LayerNorm([self.planes, 1, 1]),
-                nn.ReLU(),
-                nn.Conv2d(
-                    self.planes, self.inplanes, kernel_size=1))
+                nn.Conv2d(self.inplanes, self.planes, kernel_size=1), nn.LayerNorm([self.planes, 1, 1]), nn.ReLU(), nn.Conv2d(self.planes, self.inplanes, kernel_size=1)
+            )
 
     def spatial_pool(self, x):
         batch, channel, height, width = x.shape
-        if self.pooling_type == 'att':
+        if self.pooling_type == "att":
             # [N*headers, C', H , W] C = headers * C'
-            x = x.reshape([
-                batch * self.headers, self.single_header_inplanes, height, width
-            ])
+            x = x.reshape([batch * self.headers, self.single_header_inplanes, height, width])
             input_x = x
 
             # [N*headers, C', H * W] C = headers * C'
             # input_x = input_x.view(batch, channel, height * width)
-            input_x = input_x.reshape([
-                batch * self.headers, self.single_header_inplanes,
-                height * width
-            ])
+            input_x = input_x.reshape([batch * self.headers, self.single_header_inplanes, height * width])
 
             # [N*headers, 1, C', H * W]
             input_x = input_x.unsqueeze(1)
             # [N*headers, 1, H, W]
             context_mask = self.conv_mask(x)
             # [N*headers, 1, H * W]
-            context_mask = context_mask.reshape(
-                [batch * self.headers, 1, height * width])
+            context_mask = context_mask.reshape([batch * self.headers, 1, height * width])
 
             # scale variance
             if self.att_scale and self.headers > 1:
-                context_mask = context_mask / torch.sqrt(
-                    self.single_header_inplanes)
+                context_mask = context_mask / torch.sqrt(self.single_header_inplanes)
 
             # [N*headers, 1, H * W]
             context_mask = self.softmax(context_mask)
@@ -330,8 +245,7 @@ class MultiAspectGCAttention(nn.Module):
             context = torch.matmul(input_x, context_mask)
 
             # [N, headers * C', 1, 1]
-            context = context.reshape(
-                [batch, self.headers * self.single_header_inplanes, 1, 1])
+            context = context.reshape([batch, self.headers * self.single_header_inplanes, 1, 1])
         else:
             # [N, C, 1, 1]
             context = self.avg_pool(x)
@@ -344,11 +258,11 @@ class MultiAspectGCAttention(nn.Module):
 
         out = x
 
-        if self.fusion_type == 'channel_mul':
+        if self.fusion_type == "channel_mul":
             # [N, C, 1, 1]
             channel_mul_term = F.sigmoid(self.channel_mul_conv(context))
             out = out * channel_mul_term
-        elif self.fusion_type == 'channel_add':
+        elif self.fusion_type == "channel_add":
             # [N, C, 1, 1]
             channel_add_term = self.channel_add_conv(context)
             out = out + channel_add_term
@@ -360,8 +274,7 @@ class MultiAspectGCAttention(nn.Module):
             _, C1, _, _ = channel_concat_term.shape
             N, C2, H, W = out.shape
 
-            out = torch.concat(
-                [out, channel_concat_term.expand([-1, -1, H, W])], axis=1)
+            out = torch.concat([out, channel_concat_term.expand([-1, -1, H, W])], axis=1)
             out = self.cat_conv(out)
             out = F.layer_norm(out, [self.inplanes, H, W])
             out = F.relu(out)

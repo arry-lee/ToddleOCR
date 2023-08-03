@@ -32,13 +32,9 @@ class Bottleneck(nn.Module):
         super(Bottleneck, self).__init__()
         interChannels = 4 * growthRate
         self.bn1 = nn.BatchNorm2D(interChannels)
-        self.conv1 = nn.Conv2d(
-            nChannels, interChannels, kernel_size=1,
-            bias=None)  # Xavier initialization
+        self.conv1 = nn.Conv2d(nChannels, interChannels, kernel_size=1, bias=None)  # Xavier initialization
         self.bn2 = nn.BatchNorm2D(growthRate)
-        self.conv2 = nn.Conv2d(
-            interChannels, growthRate, kernel_size=3, padding=1,
-            bias=None)  # Xavier initialization
+        self.conv2 = nn.Conv2d(interChannels, growthRate, kernel_size=3, padding=1, bias=None)  # Xavier initialization
         self.use_dropout = use_dropout
         self.dropout = nn.Dropout(p=0.2)
 
@@ -57,8 +53,7 @@ class SingleLayer(nn.Module):
     def __init__(self, nChannels, growthRate, use_dropout):
         super(SingleLayer, self).__init__()
         self.bn1 = nn.BatchNorm2D(nChannels)
-        self.conv1 = nn.Conv2d(
-            nChannels, growthRate, kernel_size=3, padding=1, bias=False)
+        self.conv1 = nn.Conv2d(nChannels, growthRate, kernel_size=3, padding=1, bias=False)
 
         self.use_dropout = use_dropout
         self.dropout = nn.Dropout(p=0.2)
@@ -76,8 +71,7 @@ class Transition(nn.Module):
     def __init__(self, nChannels, out_channels, use_dropout):
         super(Transition, self).__init__()
         self.bn1 = nn.BatchNorm2D(out_channels)
-        self.conv1 = nn.Conv2d(
-            nChannels, out_channels, kernel_size=1, bias=False)
+        self.conv1 = nn.Conv2d(nChannels, out_channels, kernel_size=1, bias=False)
         self.use_dropout = use_dropout
         self.dropout = nn.Dropout(p=0.2)
 
@@ -90,40 +84,29 @@ class Transition(nn.Module):
 
 
 class DenseNet(nn.Module):
-    def __init__(self, growthRate, reduction, bottleneck, use_dropout,
-                 input_channel, **kwargs):
+    def __init__(self, growthRate, reduction, bottleneck, use_dropout, input_channel, **kwargs):
         super(DenseNet, self).__init__()
 
         nDenseBlocks = 16
         nChannels = 2 * growthRate
 
-        self.conv1 = nn.Conv2d(
-            input_channel,
-            nChannels,
-            kernel_size=7,
-            padding=3,
-            stride=2,
-            bias=False)
-        self.dense1 = self._make_dense(nChannels, growthRate, nDenseBlocks,
-                                       bottleneck, use_dropout)
+        self.conv1 = nn.Conv2d(input_channel, nChannels, kernel_size=7, padding=3, stride=2, bias=False)
+        self.dense1 = self._make_dense(nChannels, growthRate, nDenseBlocks, bottleneck, use_dropout)
         nChannels += nDenseBlocks * growthRate
         out_channels = int(math.floor(nChannels * reduction))
         self.trans1 = Transition(nChannels, out_channels, use_dropout)
 
         nChannels = out_channels
-        self.dense2 = self._make_dense(nChannels, growthRate, nDenseBlocks,
-                                       bottleneck, use_dropout)
+        self.dense2 = self._make_dense(nChannels, growthRate, nDenseBlocks, bottleneck, use_dropout)
         nChannels += nDenseBlocks * growthRate
         out_channels = int(math.floor(nChannels * reduction))
         self.trans2 = Transition(nChannels, out_channels, use_dropout)
 
         nChannels = out_channels
-        self.dense3 = self._make_dense(nChannels, growthRate, nDenseBlocks,
-                                       bottleneck, use_dropout)
+        self.dense3 = self._make_dense(nChannels, growthRate, nDenseBlocks, bottleneck, use_dropout)
         self.out_channels = out_channels
 
-    def _make_dense(self, nChannels, growthRate, nDenseBlocks, bottleneck,
-                    use_dropout):
+    def _make_dense(self, nChannels, growthRate, nDenseBlocks, bottleneck, use_dropout):
         layers = []
         for i in range(int(nDenseBlocks)):
             if bottleneck:

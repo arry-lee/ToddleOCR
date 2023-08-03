@@ -32,24 +32,11 @@ __all__ = ["ResNet45"]
 
 
 def conv1x1(in_planes, out_planes, stride=1):
-    return nn.Conv2d(
-        in_planes,
-        out_planes,
-        kernel_size=1,
-        stride=1,
-        weight_attr=ParamAttr(initializer=KaimingNormal()),
-        bias=False)
+    return nn.Conv2d(in_planes, out_planes, kernel_size=1, stride=1, weight_attr=ParamAttr(initializer=KaimingNormal()), bias=False)
 
 
 def conv3x3(in_channel, out_channel, stride=1):
-    return nn.Conv2d(
-        in_channel,
-        out_channel,
-        kernel_size=3,
-        stride=stride,
-        padding=1,
-        weight_attr=ParamAttr(initializer=KaimingNormal()),
-        bias=False)
+    return nn.Conv2d(in_channel, out_channel, kernel_size=3, stride=stride, padding=1, weight_attr=ParamAttr(initializer=KaimingNormal()), bias=False)
 
 
 class BasicBlock(nn.Module):
@@ -84,21 +71,10 @@ class BasicBlock(nn.Module):
 
 
 class ResNet45(nn.Module):
-    def __init__(self,
-                 in_channels=3,
-                 block=BasicBlock,
-                 layers=[3, 4, 6, 6, 3],
-                 strides=[2, 1, 2, 1, 1]):
+    def __init__(self, in_channels=3, block=BasicBlock, layers=[3, 4, 6, 6, 3], strides=[2, 1, 2, 1, 1]):
         self.inplanes = 32
         super(ResNet45, self).__init__()
-        self.conv1 = nn.Conv2d(
-            in_channels,
-            32,
-            kernel_size=3,
-            stride=1,
-            padding=1,
-            weight_attr=ParamAttr(initializer=KaimingNormal()),
-            bias=False)
+        self.conv1 = nn.Conv2d(in_channels, 32, kernel_size=3, stride=1, padding=1, weight_attr=ParamAttr(initializer=KaimingNormal()), bias=False)
         self.bn1 = nn.BatchNorm2D(32)
         self.relu = nn.ReLU()
 
@@ -114,14 +90,9 @@ class ResNet45(nn.Module):
         if stride != 1 or self.inplanes != planes * block.expansion:
             # downsample = True
             downsample = nn.Sequential(
-                nn.Conv2d(
-                    self.inplanes,
-                    planes * block.expansion,
-                    kernel_size=1,
-                    stride=stride,
-                    weight_attr=ParamAttr(initializer=KaimingNormal()),
-                    bias=False),
-                nn.BatchNorm2D(planes * block.expansion), )
+                nn.Conv2d(self.inplanes, planes * block.expansion, kernel_size=1, stride=stride, weight_attr=ParamAttr(initializer=KaimingNormal()), bias=False),
+                nn.BatchNorm2D(planes * block.expansion),
+            )
 
         layers = []
         layers.append(block(self.inplanes, planes, stride, downsample))
@@ -132,7 +103,6 @@ class ResNet45(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, x):
-
         x = self.conv1(x)
         x = self.bn1(x)
         x = self.relu(x)

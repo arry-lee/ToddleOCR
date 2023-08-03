@@ -25,28 +25,15 @@ from torch import ParamAttr
 
 
 class SDMGRHead(nn.Module):
-    def __init__(self,
-                 in_channels,
-                 num_chars=92,
-                 visual_dim=16,
-                 fusion_dim=1024,
-                 node_input=32,
-                 node_embed=256,
-                 edge_input=5,
-                 edge_embed=256,
-                 num_gnn=2,
-                 num_classes=26,
-                 bidirectional=False):
+    def __init__(self, in_channels, num_chars=92, visual_dim=16, fusion_dim=1024, node_input=32, node_embed=256, edge_input=5, edge_embed=256, num_gnn=2, num_classes=26, bidirectional=False):
         super().__init__()
 
         self.fusion = Block([visual_dim, node_embed], node_embed, fusion_dim)
         self.node_embed = nn.Embedding(num_chars, node_input, 0)
         hidden = node_embed // 2 if bidirectional else node_embed
-        self.rnn = nn.LSTM(
-            input_size=node_input, hidden_size=hidden, num_layers=1)
+        self.rnn = nn.LSTM(input_size=node_input, hidden_size=hidden, num_layers=1)
         self.edge_embed = nn.Linear(edge_input, edge_embed)
-        self.gnn_layers = nn.LayerList(
-            [GNNLayer(node_embed, edge_embed) for _ in range(num_gnn)])
+        self.gnn_layers = nn.LayerList([GNNLayer(node_embed, edge_embed) for _ in range(num_gnn)])
         self.node_cls = nn.Linear(node_embed, num_classes)
         self.edge_cls = nn.Linear(edge_embed, 2)
 
@@ -58,12 +45,7 @@ class SDMGRHead(nn.Module):
             char_nums.append(torch.sum((text > -1).astype(int), axis=-1))
 
         max_num = max([char_num.max() for char_num in char_nums])
-        all_nodes = torch.concat([
-            torch.concat(
-                [text, torch.zeros(
-                    (text.shape[0], max_num - text.shape[1]))], -1)
-            for text in texts
-        ])
+        all_nodes = torch.concat([torch.concat([text, torch.zeros((text.shape[0], max_num - text.shape[1]))], -1) for text in texts])
         temp = torch.clip(all_nodes, min=0).astype(int)
         embed_nodes = self.node_embed(temp)
         rnn_nodes, _ = self.rnn(embed_nodes)
@@ -72,26 +54,20 @@ class SDMGRHead(nn.Module):
         nodes = torch.zeros([b, w])
         all_nums = torch.concat(char_nums)
         valid = torch.nonzero((all_nums > 0).astype(int))
-        temp_all_nums = (
-            torch.gather(all_nums, valid) - 1).unsqueeze(-1).unsqueeze(-1)
-        temp_all_nums = torch.expand(temp_all_nums, [
-            temp_all_nums.shape[0], temp_all_nums.shape[1], rnn_nodes.shape[-1]
-        ])
+        temp_all_nums = (torch.gather(all_nums, valid) - 1).unsqueeze(-1).unsqueeze(-1)
+        temp_all_nums = torch.expand(temp_all_nums, [temp_all_nums.shape[0], temp_all_nums.shape[1], rnn_nodes.shape[-1]])
         temp_all_nodes = torch.gather(rnn_nodes, valid)
         N, C, A = temp_all_nodes.shape
-        one_hot = F.one_hot(
-            temp_all_nums[:, 0, :], num_classes=C).transpose([0, 2, 1])
-        one_hot = torch.multiply(
-            temp_all_nodes, one_hot.astype("float32")).sum(axis=1, keepdim=True)
+        one_hot = F.one_hot(temp_all_nums[:, 0, :], num_classes=C).transpose([0, 2, 1])
+        one_hot = torch.multiply(temp_all_nodes, one_hot.astype("float32")).sum(axis=1, keepdim=True)
         t = one_hot.expand([N, 1, A]).squeeze(1)
         nodes = torch.scatter(nodes, valid.squeeze(1), t)
 
         if x is not None:
             nodes = self.fusion([x, nodes])
 
-        all_edges = torch.concat(
-            [rel.reshape([-1, rel.shape[-1]]) for rel in relations])
-        embed_edges = self.edge_embed(all_edges.astype('float32'))
+        all_edges = torch.concat([rel.reshape([-1, rel.shape[-1]]) for rel in relations])
+        embed_edges = self.edge_embed(all_edges.astype("float32"))
         embed_edges = F.normalize(embed_edges)
 
         for gnn_layer in self.gnn_layers:
@@ -112,12 +88,8 @@ class GNNLayer(nn.Module):
     def forward(self, nodes, edges, nums):
         start, cat_nodes = 0, []
         for num in nums:
-            sample_nodes = nodes[start:start + num]
-            cat_nodes.append(
-                torch.concat([
-                    torch.expand(sample_nodes.unsqueeze(1), [-1, num, -1]),
-                    torch.expand(sample_nodes.unsqueeze(0), [num, -1, -1])
-                ], -1).reshape([num**2, -1]))
+            sample_nodes = nodes[start : start + num]
+            cat_nodes.append(torch.concat([torch.expand(sample_nodes.unsqueeze(1), [-1, num, -1]), torch.expand(sample_nodes.unsqueeze(0), [num, -1, -1])], -1).reshape([num**2, -1]))
             start += num
         cat_nodes = torch.concat([torch.concat(cat_nodes), edges], -1)
         cat_nodes = self.relu(self.in_fc(cat_nodes))
@@ -125,11 +97,8 @@ class GNNLayer(nn.Module):
 
         start, residuals = 0, []
         for num in nums:
-            residual = F.softmax(
-                -torch.eye(num).unsqueeze(-1) * 1e9 +
-                coefs[start:start + num**2].reshape([num, num, -1]), 1)
-            residuals.append((residual * cat_nodes[start:start + num**2]
-                              .reshape([num, num, -1])).sum(1))
+            residual = F.softmax(-torch.eye(num).unsqueeze(-1) * 1e9 + coefs[start : start + num**2].reshape([num, num, -1]), 1)
+            residuals.append((residual * cat_nodes[start : start + num**2].reshape([num, num, -1])).sum(1))
             start += num**2
 
         nodes += self.relu(self.out_fc(torch.concat(residuals)))
@@ -137,28 +106,17 @@ class GNNLayer(nn.Module):
 
 
 class Block(nn.Module):
-    def __init__(self,
-                 input_dims,
-                 output_dim,
-                 mm_dim=1600,
-                 chunks=20,
-                 rank=15,
-                 shared=False,
-                 dropout_input=0.,
-                 dropout_pre_lin=0.,
-                 dropout_output=0.,
-                 pos_norm='before_cat'):
+    def __init__(self, input_dims, output_dim, mm_dim=1600, chunks=20, rank=15, shared=False, dropout_input=0.0, dropout_pre_lin=0.0, dropout_output=0.0, pos_norm="before_cat"):
         super().__init__()
         self.rank = rank
         self.dropout_input = dropout_input
         self.dropout_pre_lin = dropout_pre_lin
         self.dropout_output = dropout_output
-        assert (pos_norm in ['before_cat', 'after_cat'])
+        assert pos_norm in ["before_cat", "after_cat"]
         self.pos_norm = pos_norm
         # Modules
         self.linear0 = nn.Linear(input_dims[0], mm_dim)
-        self.linear1 = (self.linear0
-                        if shared else nn.Linear(input_dims[1], mm_dim))
+        self.linear1 = self.linear0 if shared else nn.Linear(input_dims[1], mm_dim)
         self.merge_linears0 = nn.LayerList()
         self.merge_linears1 = nn.LayerList()
         self.chunks = self.chunk_sizes(mm_dim, chunks)
@@ -179,17 +137,16 @@ class Block(nn.Module):
         x0_chunks = torch.split(x0, self.chunks, -1)
         x1_chunks = torch.split(x1, self.chunks, -1)
         zs = []
-        for x0_c, x1_c, m0, m1 in zip(x0_chunks, x1_chunks, self.merge_linears0,
-                                      self.merge_linears1):
+        for x0_c, x1_c, m0, m1 in zip(x0_chunks, x1_chunks, self.merge_linears0, self.merge_linears1):
             m = m0(x0_c) * m1(x1_c)  # bs x split_size*rank
             m = m.reshape([bs, self.rank, -1])
             z = torch.sum(m, 1)
-            if self.pos_norm == 'before_cat':
+            if self.pos_norm == "before_cat":
                 z = torch.sqrt(F.relu(z)) - torch.sqrt(F.relu(-z))
                 z = F.normalize(z)
             zs.append(z)
         z = torch.concat(zs, 1)
-        if self.pos_norm == 'after_cat':
+        if self.pos_norm == "after_cat":
             z = torch.sqrt(F.relu(z)) - torch.sqrt(F.relu(-z))
             z = F.normalize(z)
 

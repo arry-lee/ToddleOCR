@@ -38,10 +38,9 @@ class ClsHead(nn.Module):
         self.fc = nn.Linear(
             in_channels,
             class_dim,
-            weight_attr=ParamAttr(
-                name="fc_0.w_0",
-                initializer=nn.initializer.Uniform(-stdv, stdv)),
-            bias=ParamAttr(name="fc_0.b_0"), )
+            weight_attr=ParamAttr(name="fc_0.w_0", initializer=nn.initializer.Uniform(-stdv, stdv)),
+            bias=ParamAttr(name="fc_0.b_0"),
+        )
 
     def forward(self, x, targets=None):
         x = self.pool(x)

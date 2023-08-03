@@ -23,39 +23,33 @@ from torch import ParamAttr, nn
 from torch import nn, ParamAttr
 from torch.nn import functional as F
 import numpy as np
+
 gradient_clip = 10
 
 
 class WrapEncoderForFeature(nn.Module):
-    def __init__(self,
-                 src_vocab_size,
-                 max_length,
-                 n_layer,
-                 n_head,
-                 d_key,
-                 d_value,
-                 d_model,
-                 d_inner_hid,
-                 prepostprocess_dropout,
-                 attention_dropout,
-                 relu_dropout,
-                 preprocess_cmd,
-                 postprocess_cmd,
-                 weight_sharing,
-                 bos_idx=0):
+    def __init__(
+        self,
+        src_vocab_size,
+        max_length,
+        n_layer,
+        n_head,
+        d_key,
+        d_value,
+        d_model,
+        d_inner_hid,
+        prepostprocess_dropout,
+        attention_dropout,
+        relu_dropout,
+        preprocess_cmd,
+        postprocess_cmd,
+        weight_sharing,
+        bos_idx=0,
+    ):
         super(WrapEncoderForFeature, self).__init__()
 
-        self.prepare_encoder = PrepareEncoder(
-            src_vocab_size,
-            d_model,
-            max_length,
-            prepostprocess_dropout,
-            bos_idx=bos_idx,
-            word_emb_param_name="src_word_emb_table")
-        self.encoder = Encoder(n_layer, n_head, d_key, d_value, d_model,
-                               d_inner_hid, prepostprocess_dropout,
-                               attention_dropout, relu_dropout, preprocess_cmd,
-                               postprocess_cmd)
+        self.prepare_encoder = PrepareEncoder(src_vocab_size, d_model, max_length, prepostprocess_dropout, bos_idx=bos_idx, word_emb_param_name="src_word_emb_table")
+        self.encoder = Encoder(n_layer, n_head, d_key, d_value, d_model, d_inner_hid, prepostprocess_dropout, attention_dropout, relu_dropout, preprocess_cmd, postprocess_cmd)
 
     def forward(self, enc_inputs):
         conv_features, src_pos, src_slf_attn_bias = enc_inputs
@@ -69,34 +63,28 @@ class WrapEncoder(nn.Module):
     embedder + encoder
     """
 
-    def __init__(self,
-                 src_vocab_size,
-                 max_length,
-                 n_layer,
-                 n_head,
-                 d_key,
-                 d_value,
-                 d_model,
-                 d_inner_hid,
-                 prepostprocess_dropout,
-                 attention_dropout,
-                 relu_dropout,
-                 preprocess_cmd,
-                 postprocess_cmd,
-                 weight_sharing,
-                 bos_idx=0):
+    def __init__(
+        self,
+        src_vocab_size,
+        max_length,
+        n_layer,
+        n_head,
+        d_key,
+        d_value,
+        d_model,
+        d_inner_hid,
+        prepostprocess_dropout,
+        attention_dropout,
+        relu_dropout,
+        preprocess_cmd,
+        postprocess_cmd,
+        weight_sharing,
+        bos_idx=0,
+    ):
         super(WrapEncoder, self).__init__()
 
-        self.prepare_decoder = PrepareDecoder(
-            src_vocab_size,
-            d_model,
-            max_length,
-            prepostprocess_dropout,
-            bos_idx=bos_idx)
-        self.encoder = Encoder(n_layer, n_head, d_key, d_value, d_model,
-                               d_inner_hid, prepostprocess_dropout,
-                               attention_dropout, relu_dropout, preprocess_cmd,
-                               postprocess_cmd)
+        self.prepare_decoder = PrepareDecoder(src_vocab_size, d_model, max_length, prepostprocess_dropout, bos_idx=bos_idx)
+        self.encoder = Encoder(n_layer, n_head, d_key, d_value, d_model, d_inner_hid, prepostprocess_dropout, attention_dropout, relu_dropout, preprocess_cmd, postprocess_cmd)
 
     def forward(self, enc_inputs):
         src_word, src_pos, src_slf_attn_bias = enc_inputs
@@ -110,32 +98,15 @@ class Encoder(nn.Module):
     encoder
     """
 
-    def __init__(self,
-                 n_layer,
-                 n_head,
-                 d_key,
-                 d_value,
-                 d_model,
-                 d_inner_hid,
-                 prepostprocess_dropout,
-                 attention_dropout,
-                 relu_dropout,
-                 preprocess_cmd="n",
-                 postprocess_cmd="da"):
-
+    def __init__(self, n_layer, n_head, d_key, d_value, d_model, d_inner_hid, prepostprocess_dropout, attention_dropout, relu_dropout, preprocess_cmd="n", postprocess_cmd="da"):
         super(Encoder, self).__init__()
 
         self.encoder_layers = list()
         for i in range(n_layer):
             self.encoder_layers.append(
-                self.add_sublayer(
-                    "layer_%d" % i,
-                    EncoderLayer(n_head, d_key, d_value, d_model, d_inner_hid,
-                                 prepostprocess_dropout, attention_dropout,
-                                 relu_dropout, preprocess_cmd,
-                                 postprocess_cmd)))
-        self.processer = PrePostProcessLayer(preprocess_cmd, d_model,
-                                             prepostprocess_dropout)
+                self.add_sublayer("layer_%d" % i, EncoderLayer(n_head, d_key, d_value, d_model, d_inner_hid, prepostprocess_dropout, attention_dropout, relu_dropout, preprocess_cmd, postprocess_cmd))
+            )
+        self.processer = PrePostProcessLayer(preprocess_cmd, d_model, prepostprocess_dropout)
 
     def forward(self, enc_input, attn_bias):
         for encoder_layer in self.encoder_layers:
@@ -150,35 +121,18 @@ class EncoderLayer(nn.Module):
     EncoderLayer
     """
 
-    def __init__(self,
-                 n_head,
-                 d_key,
-                 d_value,
-                 d_model,
-                 d_inner_hid,
-                 prepostprocess_dropout,
-                 attention_dropout,
-                 relu_dropout,
-                 preprocess_cmd="n",
-                 postprocess_cmd="da"):
-
+    def __init__(self, n_head, d_key, d_value, d_model, d_inner_hid, prepostprocess_dropout, attention_dropout, relu_dropout, preprocess_cmd="n", postprocess_cmd="da"):
         super(EncoderLayer, self).__init__()
-        self.preprocesser1 = PrePostProcessLayer(preprocess_cmd, d_model,
-                                                 prepostprocess_dropout)
-        self.self_attn = MultiHeadAttention(d_key, d_value, d_model, n_head,
-                                            attention_dropout)
-        self.postprocesser1 = PrePostProcessLayer(postprocess_cmd, d_model,
-                                                  prepostprocess_dropout)
+        self.preprocesser1 = PrePostProcessLayer(preprocess_cmd, d_model, prepostprocess_dropout)
+        self.self_attn = MultiHeadAttention(d_key, d_value, d_model, n_head, attention_dropout)
+        self.postprocesser1 = PrePostProcessLayer(postprocess_cmd, d_model, prepostprocess_dropout)
 
-        self.preprocesser2 = PrePostProcessLayer(preprocess_cmd, d_model,
-                                                 prepostprocess_dropout)
+        self.preprocesser2 = PrePostProcessLayer(preprocess_cmd, d_model, prepostprocess_dropout)
         self.ffn = FFN(d_inner_hid, d_model, relu_dropout)
-        self.postprocesser2 = PrePostProcessLayer(postprocess_cmd, d_model,
-                                                  prepostprocess_dropout)
+        self.postprocesser2 = PrePostProcessLayer(postprocess_cmd, d_model, prepostprocess_dropout)
 
     def forward(self, enc_input, attn_bias):
-        attn_output = self.self_attn(
-            self.preprocesser1(enc_input), None, None, attn_bias)
+        attn_output = self.self_attn(self.preprocesser1(enc_input), None, None, attn_bias)
         attn_output = self.postprocesser1(attn_output, enc_input)
         ffn_output = self.ffn(self.preprocesser2(attn_output))
         ffn_output = self.postprocesser2(ffn_output, attn_output)
@@ -190,21 +144,17 @@ class MultiHeadAttention(nn.Module):
     Multi-Head Attention
     """
 
-    def __init__(self, d_key, d_value, d_model, n_head=1, dropout_rate=0.):
+    def __init__(self, d_key, d_value, d_model, n_head=1, dropout_rate=0.0):
         super(MultiHeadAttention, self).__init__()
         self.n_head = n_head
         self.d_key = d_key
         self.d_value = d_value
         self.d_model = d_model
         self.dropout_rate = dropout_rate
-        self.q_fc = torch.nn.Linear(
-            in_features=d_model, out_features=d_key * n_head, bias=False)
-        self.k_fc = torch.nn.Linear(
-            in_features=d_model, out_features=d_key * n_head, bias=False)
-        self.v_fc = torch.nn.Linear(
-            in_features=d_model, out_features=d_value * n_head, bias=False)
-        self.proj_fc = torch.nn.Linear(
-            in_features=d_value * n_head, out_features=d_model, bias=False)
+        self.q_fc = torch.nn.Linear(in_features=d_model, out_features=d_key * n_head, bias=False)
+        self.k_fc = torch.nn.Linear(in_features=d_model, out_features=d_key * n_head, bias=False)
+        self.v_fc = torch.nn.Linear(in_features=d_model, out_features=d_value * n_head, bias=False)
+        self.proj_fc = torch.nn.Linear(in_features=d_value * n_head, out_features=d_model, bias=False)
 
     def _prepare_qkv(self, queries, keys, values, cache=None):
         if keys is None:  # self-attention
@@ -255,8 +205,7 @@ class MultiHeadAttention(nn.Module):
             product += attn_bias
         weights = F.softmax(product)
         if self.dropout_rate:
-            weights = F.dropout(
-                weights, p=self.dropout_rate, mode="downscale_in_infer")
+            weights = F.dropout(weights, p=self.dropout_rate, mode="downscale_in_infer")
         out = torch.matmul(weights, v)
 
         # combine heads
@@ -286,15 +235,12 @@ class PrePostProcessLayer(nn.Module):
                     self.add_sublayer(
                         "layer_norm_%d" % len(self.sublayers()),
                         torch.nn.LayerNorm(
-                            normalized_shape=d_model,
-                            weight_attr=torch.ParamAttr(
-                                initializer=torch.nn.initializer.Constant(1.)),
-                            bias=torch.ParamAttr(
-                                initializer=torch.nn.initializer.Constant(0.)))))
+                            normalized_shape=d_model, weight_attr=torch.ParamAttr(initializer=torch.nn.initializer.Constant(1.0)), bias=torch.ParamAttr(initializer=torch.nn.initializer.Constant(0.0))
+                        ),
+                    )
+                )
             elif cmd == "d":  # add dropout
-                self.functors.append(lambda x: F.dropout(
-                    x, p=dropout_rate, mode="downscale_in_infer")
-                                     if dropout_rate else x)
+                self.functors.append(lambda x: F.dropout(x, p=dropout_rate, mode="downscale_in_infer") if dropout_rate else x)
 
     def forward(self, x, residual=None):
         for i, cmd in enumerate(self.process_cmd):
@@ -306,46 +252,30 @@ class PrePostProcessLayer(nn.Module):
 
 
 class PrepareEncoder(nn.Module):
-    def __init__(self,
-                 src_vocab_size,
-                 src_emb_dim,
-                 src_max_len,
-                 dropout_rate=0,
-                 bos_idx=0,
-                 word_emb_param_name=None,
-                 pos_enc_param_name=None):
+    def __init__(self, src_vocab_size, src_emb_dim, src_max_len, dropout_rate=0, bos_idx=0, word_emb_param_name=None, pos_enc_param_name=None):
         super(PrepareEncoder, self).__init__()
         self.src_emb_dim = src_emb_dim
         self.src_max_len = src_max_len
-        self.emb = torch.nn.Embedding(
-            num_embeddings=self.src_max_len, embedding_dim=self.src_emb_dim)
+        self.emb = torch.nn.Embedding(num_embeddings=self.src_max_len, embedding_dim=self.src_emb_dim)
         self.dropout_rate = dropout_rate
 
     def forward(self, src_word, src_pos):
         src_word_emb = src_word
-        src_word_emb = torch.cast(src_word_emb, 'float32')
+        src_word_emb = torch.cast(src_word_emb, "float32")
         src_word_emb = torch.scale(x=src_word_emb, scale=self.src_emb_dim**0.5)
         src_pos = torch.squeeze(src_pos, axis=-1)
         src_pos_enc = self.emb(src_pos)
         src_pos_enc.stop_gradient = True
         enc_input = src_word_emb + src_pos_enc
         if self.dropout_rate:
-            out = F.dropout(
-                x=enc_input, p=self.dropout_rate, mode="downscale_in_infer")
+            out = F.dropout(x=enc_input, p=self.dropout_rate, mode="downscale_in_infer")
         else:
             out = enc_input
         return out
 
 
 class PrepareDecoder(nn.Module):
-    def __init__(self,
-                 src_vocab_size,
-                 src_emb_dim,
-                 src_max_len,
-                 dropout_rate=0,
-                 bos_idx=0,
-                 word_emb_param_name=None,
-                 pos_enc_param_name=None):
+    def __init__(self, src_vocab_size, src_emb_dim, src_max_len, dropout_rate=0, bos_idx=0, word_emb_param_name=None, pos_enc_param_name=None):
         super(PrepareDecoder, self).__init__()
         self.src_emb_dim = src_emb_dim
         """
@@ -356,17 +286,13 @@ class PrepareDecoder(nn.Module):
             num_embeddings=src_vocab_size,
             embedding_dim=self.src_emb_dim,
             padding_idx=bos_idx,
-            weight_attr=torch.ParamAttr(
-                name=word_emb_param_name,
-                initializer=nn.initializer.Normal(0., src_emb_dim**-0.5)))
-        self.emb1 = torch.nn.Embedding(
-            num_embeddings=src_max_len,
-            embedding_dim=self.src_emb_dim,
-            weight_attr=torch.ParamAttr(name=pos_enc_param_name))
+            weight_attr=torch.ParamAttr(name=word_emb_param_name, initializer=nn.initializer.Normal(0.0, src_emb_dim**-0.5)),
+        )
+        self.emb1 = torch.nn.Embedding(num_embeddings=src_max_len, embedding_dim=self.src_emb_dim, weight_attr=torch.ParamAttr(name=pos_enc_param_name))
         self.dropout_rate = dropout_rate
 
     def forward(self, src_word, src_pos):
-        src_word = torch.cast(src_word, 'int64')
+        src_word = torch.cast(src_word, "int64")
         src_word = torch.squeeze(src_word, axis=-1)
         src_word_emb = self.emb0(src_word)
         src_word_emb = torch.scale(x=src_word_emb, scale=self.src_emb_dim**0.5)
@@ -375,8 +301,7 @@ class PrepareDecoder(nn.Module):
         src_pos_enc.stop_gradient = True
         enc_input = src_word_emb + src_pos_enc
         if self.dropout_rate:
-            out = F.dropout(
-                x=enc_input, p=self.dropout_rate, mode="downscale_in_infer")
+            out = F.dropout(x=enc_input, p=self.dropout_rate, mode="downscale_in_infer")
         else:
             out = enc_input
         return out
@@ -390,16 +315,13 @@ class FFN(nn.Module):
     def __init__(self, d_inner_hid, d_model, dropout_rate):
         super(FFN, self).__init__()
         self.dropout_rate = dropout_rate
-        self.fc1 = torch.nn.Linear(
-            in_features=d_model, out_features=d_inner_hid)
-        self.fc2 = torch.nn.Linear(
-            in_features=d_inner_hid, out_features=d_model)
+        self.fc1 = torch.nn.Linear(in_features=d_model, out_features=d_inner_hid)
+        self.fc2 = torch.nn.Linear(in_features=d_inner_hid, out_features=d_model)
 
     def forward(self, x):
         hidden = self.fc1(x)
         hidden = F.relu(hidden)
         if self.dropout_rate:
-            hidden = F.dropout(
-                hidden, p=self.dropout_rate, mode="downscale_in_infer")
+            hidden = F.dropout(hidden, p=self.dropout_rate, mode="downscale_in_infer")
         out = self.fc2(hidden)
         return out

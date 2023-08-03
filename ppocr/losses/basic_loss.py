@@ -1,16 +1,16 @@
-#copyright (c) 2021 PaddlePaddle Authors. All Rights Reserve.
+# copyright (c) 2021 PaddlePaddle Authors. All Rights Reserve.
 #
-#Licensed under the Apache License, Version 2.0 (the "License");
-#you may not use this file except in compliance with the License.
-#You may obtain a copy of the License at
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
 #    http://www.apache.org/licenses/LICENSE-2.0
 #
-#Unless required by applicable law or agreed to in writing, software
-#distributed under the License is distributed on an "AS IS" BASIS,
-#WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#See the License for the specific language governing permissions and
-#limitations under the License.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 import torch
 import torch.nn as nn
@@ -55,28 +55,21 @@ class CELoss(nn.Module):
 
 
 class KLJSLoss(object):
-    def __init__(self, mode='kl'):
-        assert mode in ['kl', 'js', 'KL', 'JS'
-                        ], "mode can only be one of ['kl', 'KL', 'js', 'JS']"
+    def __init__(self, mode="kl"):
+        assert mode in ["kl", "js", "KL", "JS"], "mode can only be one of ['kl', 'KL', 'js', 'JS']"
         self.mode = mode
 
     def __call__(self, p1, p2, reduction="mean", eps=1e-5):
-
-        if self.mode.lower() == 'kl':
-            loss = torch.multiply(p2,
-                                   torch.log((p2 + eps) / (p1 + eps) + eps))
-            loss += torch.multiply(p1,
-                                    torch.log((p1 + eps) / (p2 + eps) + eps))
+        if self.mode.lower() == "kl":
+            loss = torch.multiply(p2, torch.log((p2 + eps) / (p1 + eps) + eps))
+            loss += torch.multiply(p1, torch.log((p1 + eps) / (p2 + eps) + eps))
             loss *= 0.5
         elif self.mode.lower() == "js":
-            loss = torch.multiply(
-                p2, torch.log((2 * p2 + eps) / (p1 + p2 + eps) + eps))
-            loss += torch.multiply(
-                p1, torch.log((2 * p1 + eps) / (p1 + p2 + eps) + eps))
+            loss = torch.multiply(p2, torch.log((2 * p2 + eps) / (p1 + p2 + eps) + eps))
+            loss += torch.multiply(p1, torch.log((2 * p1 + eps) / (p1 + p2 + eps) + eps))
             loss *= 0.5
         else:
-            raise ValueError(
-                "The mode.lower() if KLJSLoss should be one of ['kl', 'js']")
+            raise ValueError("The mode.lower() if KLJSLoss should be one of ['kl', 'js']")
 
         if reduction == "mean":
             loss = torch.mean(loss, axis=[1, 2])
@@ -122,8 +115,7 @@ class DMLLoss(nn.Module):
             # for recognition distillation, log is needed for feature map
             log_out1 = torch.log(out1)
             log_out2 = torch.log(out2)
-            loss = (
-                self._kldiv(log_out1, out2) + self._kldiv(log_out2, out1)) / 2.0
+            loss = (self._kldiv(log_out1, out2) + self._kldiv(log_out2, out1)) / 2.0
         else:
             # for detection distillation log is not needed
             loss = self.jskl_loss(out1, out2)
@@ -151,7 +143,7 @@ class DistanceLoss(nn.Module):
 
 
 class LossFromOutput(nn.Module):
-    def __init__(self, key='loss', reduction='none'):
+    def __init__(self, key="loss", reduction="none"):
         super().__init__()
         self.key = key
         self.reduction = reduction
@@ -160,8 +152,8 @@ class LossFromOutput(nn.Module):
         loss = predicts
         if self.key is not None and isinstance(predicts, dict):
             loss = loss[self.key]
-        if self.reduction == 'mean':
+        if self.reduction == "mean":
             loss = torch.mean(loss)
-        elif self.reduction == 'sum':
+        elif self.reduction == "sum":
             loss = torch.sum(loss)
-        return {'loss': loss}
+        return {"loss": loss}

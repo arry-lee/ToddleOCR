@@ -32,25 +32,23 @@ def override(dl, ks, v):
         except Exception:
             return v
 
-    assert isinstance(dl, (list, dict)), ("{} should be a list or a dict")
-    assert len(ks) > 0, ('lenght of keys should larger than 0')
+    assert isinstance(dl, (list, dict)), "{} should be a list or a dict"
+    assert len(ks) > 0, "lenght of keys should larger than 0"
     if isinstance(dl, list):
         k = str2num(ks[0])
         if len(ks) == 1:
-            assert k < len(dl), ('index({}) out of range({})'.format(k, dl))
+            assert k < len(dl), "index({}) out of range({})".format(k, dl)
             dl[k] = str2num(v)
         else:
             override(dl[k], ks[1:], v)
     else:
         if len(ks) == 1:
-            #assert ks[0] in dl, ('{} is not exist in {}'.format(ks[0], dl))
+            # assert ks[0] in dl, ('{} is not exist in {}'.format(ks[0], dl))
             if not ks[0] in dl:
-                logger.warning('A new filed ({}) detected!'.format(ks[0], dl))
+                logger.warning("A new filed ({}) detected!".format(ks[0], dl))
             dl[ks[0]] = str2num(v)
         else:
-            assert ks[0] in dl, (
-                '({}) doesn\'t exist in {}, a new dict field is invalid'.
-                format(ks[0], dl))
+            assert ks[0] in dl, "({}) doesn't exist in {}, a new dict field is invalid".format(ks[0], dl)
             override(dl[ks[0]], ks[1:], v)
 
 
@@ -71,15 +69,12 @@ def override_config(config, options=None):
     """
     if options is not None:
         for opt in options:
-            assert isinstance(opt, str), (
-                "option({}) should be a str".format(opt))
-            assert "=" in opt, (
-                "option({}) should contain a ="
-                "to distinguish between key and value".format(opt))
-            pair = opt.split('=')
-            assert len(pair) == 2, ("there can be only a = in the option")
+            assert isinstance(opt, str), "option({}) should be a str".format(opt)
+            assert "=" in opt, "option({}) should contain a =" "to distinguish between key and value".format(opt)
+            pair = opt.split("=")
+            assert len(pair) == 2, "there can be only a = in the option"
             key, value = pair
-            keys = key.split('.')
+            keys = key.split(".")
             override(config, keys, value)
 
     return config
@@ -87,28 +82,17 @@ def override_config(config, options=None):
 
 class ArgsParser(ArgumentParser):
     def __init__(self):
-        super(ArgsParser, self).__init__(
-            formatter_class=RawDescriptionHelpFormatter)
+        super(ArgsParser, self).__init__(formatter_class=RawDescriptionHelpFormatter)
         self.add_argument("-c", "--config", help="configuration file to use")
-        self.add_argument(
-            "-t", "--tag", default="0", help="tag for marking worker")
-        self.add_argument(
-            '-o',
-            '--override',
-            action='append',
-            default=[],
-            help='config options to be overridden')
-        self.add_argument(
-            "--style_image", default="examples/style_images/1.jpg", help="tag for marking worker")
-        self.add_argument(
-            "--text_corpus", default="PaddleOCR", help="tag for marking worker")
-        self.add_argument(
-            "--language", default="en", help="tag for marking worker")
+        self.add_argument("-t", "--tag", default="0", help="tag for marking worker")
+        self.add_argument("-o", "--override", action="append", default=[], help="config options to be overridden")
+        self.add_argument("--style_image", default="examples/style_images/1.jpg", help="tag for marking worker")
+        self.add_argument("--text_corpus", default="PaddleOCR", help="tag for marking worker")
+        self.add_argument("--language", default="en", help="tag for marking worker")
 
     def parse_args(self, argv=None):
         args = super(ArgsParser, self).parse_args(argv)
-        assert args.config is not None, \
-            "Please specify --config=configure_file_path."
+        assert args.config is not None, "Please specify --config=configure_file_path."
         return args
 
 
@@ -120,8 +104,8 @@ def load_config(file_path):
     Returns: config
     """
     ext = os.path.splitext(file_path)[1]
-    assert ext in ['.yml', '.yaml'], "only support yaml files for now"
-    with open(file_path, 'rb') as f:
+    assert ext in [".yml", ".yaml"], "only support yaml files for now"
+    with open(file_path, "rb") as f:
         config = yaml.load(f, Loader=yaml.Loader)
 
     return config
@@ -141,20 +125,12 @@ def gen_config():
             "use_visualdl": False,
             "save_epoch_step": 10,
             "vgg_pretrain": "./pretrained/VGG19_pretrained",
-            "vgg_load_static_pretrain": True
+            "vgg_load_static_pretrain": True,
         },
         "Architecture": {
             "model_type": "data_aug",
             "algorithm": "SRNet",
-            "net_g": {
-                "name": "srnet_net_g",
-                "encode_dim": 64,
-                "norm": "batch",
-                "use_dropout": False,
-                "init_type": "xavier",
-                "init_gain": 0.02,
-                "use_dilation": 1
-            },
+            "net_g": {"name": "srnet_net_g", "encode_dim": 64, "norm": "batch", "use_dropout": False, "init_type": "xavier", "init_gain": 0.02, "use_dilation": 1},
             # input_nc, ndf, netD,
             # n_layers_D=3, norm='instance', use_sigmoid=False, init_type='normal', init_gain=0.02, gpu_id='cuda:0'
             "bg_discriminator": {
@@ -172,21 +148,12 @@ def gen_config():
                 "netD": "basic",
                 "norm": "none",
                 "init_type": "xavier",
-            }
+            },
         },
-        "Loss": {
-            "lamb": 10,
-            "perceptual_lamb": 1,
-            "muvar_lamb": 50,
-            "style_lamb": 500
-        },
+        "Loss": {"lamb": 10, "perceptual_lamb": 1, "muvar_lamb": 50, "style_lamb": 500},
         "Optimizer": {
             "name": "Adam",
-            "learning_rate": {
-                "name": "lambda",
-                "lr": 0.0002,
-                "lr_decay_iters": 50
-            },
+            "learning_rate": {"name": "lambda", "lr": 0.0002, "lr_decay_iters": 50},
             "beta1": 0.5,
             "beta2": 0.999,
         },
@@ -197,28 +164,17 @@ def gen_config():
                 "delimiter": "\t",
                 "data_dir": "/",
                 "label_file": "tmp/label.txt",
-                "transforms": [{
-                    "DecodeImage": {
-                        "to_rgb": True,
-                        "to_np": False,
-                        "channel_first": False
-                    }
-                }, {
-                    "NormalizeImage": {
-                        "scale": 1. / 255.,
-                        "mean": [0.485, 0.456, 0.406],
-                        "std": [0.229, 0.224, 0.225],
-                        "order": None
-                    }
-                }, {
-                    "ToCHWImage": None
-                }]
-            }
-        }
+                "transforms": [
+                    {"DecodeImage": {"to_rgb": True, "to_np": False, "channel_first": False}},
+                    {"NormalizeImage": {"scale": 1.0 / 255.0, "mean": [0.485, 0.456, 0.406], "std": [0.229, 0.224, 0.225], "order": None}},
+                    {"ToCHWImage": None},
+                ],
+            },
+        },
     }
     with open("config.yml", "w") as f:
         yaml.dump(base_config, f)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     gen_config()

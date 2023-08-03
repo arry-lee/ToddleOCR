@@ -43,14 +43,11 @@ def grid_sample(input, grid, canvas=None):
 def compute_partial_repr(input_points, control_points):
     N = input_points.shape[0]
     M = control_points.shape[0]
-    pairwise_diff = torch.reshape(
-        input_points, shape=[N, 1, 2]) - torch.reshape(
-            control_points, shape=[1, M, 2])
+    pairwise_diff = torch.reshape(input_points, shape=[N, 1, 2]) - torch.reshape(control_points, shape=[1, M, 2])
     # original implementation, very slow
     # pairwise_dist = torch.sum(pairwise_diff ** 2, dim = 2) # square of distance
     pairwise_diff_square = pairwise_diff * pairwise_diff
-    pairwise_dist = pairwise_diff_square[:, :, 0] + pairwise_diff_square[:, :,
-                                                                         1]
+    pairwise_dist = pairwise_diff_square[:, :, 0] + pairwise_diff_square[:, :, 1]
     repr_matrix = 0.5 * pairwise_dist * torch.log(pairwise_dist)
     # fix numerical error for 0 * log(0), substitute all nan with 0
     mask = np.array(repr_matrix != repr_matrix)
@@ -67,64 +64,45 @@ def build_output_control_points(num_control_points, margins):
     ctrl_pts_y_bottom = np.ones(num_ctrl_pts_per_side) * (1.0 - margin_y)
     ctrl_pts_top = np.stack([ctrl_pts_x, ctrl_pts_y_top], axis=1)
     ctrl_pts_bottom = np.stack([ctrl_pts_x, ctrl_pts_y_bottom], axis=1)
-    output_ctrl_pts_arr = np.concatenate(
-        [ctrl_pts_top, ctrl_pts_bottom], axis=0)
+    output_ctrl_pts_arr = np.concatenate([ctrl_pts_top, ctrl_pts_bottom], axis=0)
     output_ctrl_pts = torch.to_tensor(output_ctrl_pts_arr)
     return output_ctrl_pts
 
 
 class TPSSpatialTransformer(nn.Module):
-    def __init__(self,
-                 output_image_size=None,
-                 num_control_points=None,
-                 margins=None):
+    def __init__(self, output_image_size=None, num_control_points=None, margins=None):
         super(TPSSpatialTransformer, self).__init__()
         self.output_image_size = output_image_size
         self.num_control_points = num_control_points
         self.margins = margins
 
         self.target_height, self.target_width = output_image_size
-        target_control_points = build_output_control_points(num_control_points,
-                                                            margins)
+        target_control_points = build_output_control_points(num_control_points, margins)
         N = num_control_points
 
         # create padded kernel matrix
         forward_kernel = torch.zeros(shape=[N + 3, N + 3])
-        target_control_partial_repr = compute_partial_repr(
-            target_control_points, target_control_points)
-        target_control_partial_repr = torch.cast(target_control_partial_repr,
-                                                  forward_kernel.dtype)
+        target_control_partial_repr = compute_partial_repr(target_control_points, target_control_points)
+        target_control_partial_repr = torch.cast(target_control_partial_repr, forward_kernel.dtype)
         forward_kernel[:N, :N] = target_control_partial_repr
         forward_kernel[:N, -3] = 1
         forward_kernel[-3, :N] = 1
-        target_control_points = torch.cast(target_control_points,
-                                            forward_kernel.dtype)
+        target_control_points = torch.cast(target_control_points, forward_kernel.dtype)
         forward_kernel[:N, -2:] = target_control_points
-        forward_kernel[-2:, :N] = torch.transpose(
-            target_control_points, perm=[1, 0])
+        forward_kernel[-2:, :N] = torch.transpose(target_control_points, perm=[1, 0])
         # compute inverse matrix
         inverse_kernel = torch.inverse(forward_kernel)
 
         # create target cordinate matrix
         HW = self.target_height * self.target_width
-        target_coordinate = list(
-            itertools.product(
-                range(self.target_height), range(self.target_width)))
+        target_coordinate = list(itertools.product(range(self.target_height), range(self.target_width)))
         target_coordinate = torch.to_tensor(target_coordinate)  # HW x 2
-        Y, X = torch.split(
-            target_coordinate, target_coordinate.shape[1], axis=1)
+        Y, X = torch.split(target_coordinate, target_coordinate.shape[1], axis=1)
         Y = Y / (self.target_height - 1)
         X = X / (self.target_width - 1)
-        target_coordinate = torch.concat(
-            [X, Y], axis=1)  # convert from (y, x) to (x, y)
-        target_coordinate_partial_repr = compute_partial_repr(
-            target_coordinate, target_control_points)
-        target_coordinate_repr = torch.concat(
-            [
-                target_coordinate_partial_repr, torch.ones(shape=[HW, 1]),
-                target_coordinate
-            ],
-            axis=1)
+        target_coordinate = torch.concat([X, Y], axis=1)  # convert from (y, x) to (x, y)
+        target_coordinate_partial_repr = compute_partial_repr(target_coordinate, target_control_points)
+        target_coordinate_repr = torch.concat([target_coordinate_partial_repr, torch.ones(shape=[HW, 1]), target_coordinate], axis=1)
 
         # register precomputed matrices
         self.inverse_kernel = inverse_kernel
@@ -138,18 +116,13 @@ class TPSSpatialTransformer(nn.Module):
         assert source_control_points.shape[2] == 2
         batch_size = torch.shape(source_control_points)[0]
 
-        padding_matrix = torch.expand(
-            self.padding_matrix, shape=[batch_size, 3, 2])
+        padding_matrix = torch.expand(self.padding_matrix, shape=[batch_size, 3, 2])
         Y = torch.concat([source_control_points, padding_matrix], 1)
         mapping_matrix = torch.matmul(self.inverse_kernel, Y)
-        source_coordinate = torch.matmul(self.target_coordinate_repr,
-                                          mapping_matrix)
+        source_coordinate = torch.matmul(self.target_coordinate_repr, mapping_matrix)
 
-        grid = torch.reshape(
-            source_coordinate,
-            shape=[-1, self.target_height, self.target_width, 2])
-        grid = torch.clip(grid, 0,
-                           1)  # the source_control_points may be out of [0, 1].
+        grid = torch.reshape(source_coordinate, shape=[-1, self.target_height, self.target_width, 2])
+        grid = torch.clip(grid, 0, 1)  # the source_control_points may be out of [0, 1].
         # the input to grid_sample is normalized [-1, 1], but what we get is [0, 1]
         grid = 2.0 * grid - 1.0
         output_maps = grid_sample(input, grid, canvas=None)

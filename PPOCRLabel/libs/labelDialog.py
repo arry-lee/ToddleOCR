@@ -24,7 +24,6 @@ BB = QDialogButtonBox
 
 
 class LabelDialog(QDialog):
-
     def __init__(self, text="Enter object label", parent=None, listItem=None):
         super(LabelDialog, self).__init__(parent)
 
@@ -43,8 +42,8 @@ class LabelDialog(QDialog):
         layout = QVBoxLayout()
         layout.addWidget(self.edit)
         self.buttonBox = bb = BB(BB.Ok | BB.Cancel, Qt.Horizontal, self)
-        bb.button(BB.Ok).setIcon(newIcon('done'))
-        bb.button(BB.Cancel).setIcon(newIcon('undo'))
+        bb.button(BB.Ok).setIcon(newIcon("done"))
+        bb.button(BB.Cancel).setIcon(newIcon("undo"))
         bb.accepted.connect(self.validate)
         bb.rejected.connect(self.reject)
         layout.addWidget(bb)
@@ -77,7 +76,7 @@ class LabelDialog(QDialog):
             self.edit.setText(self.edit.text())
             print(self.edit.text())
 
-    def popUp(self, text='', move=True):
+    def popUp(self, text="", move=True):
         self.edit.setText(text)
         self.edit.setSelection(0, len(text))
         self.edit.setFocus(Qt.PopupFocusReason)

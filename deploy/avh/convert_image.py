@@ -24,13 +24,13 @@ import math
 from PIL import Image
 import numpy as np
 
+
 def resize_norm_img(img, image_shape, padding=True):
     imgC, imgH, imgW = image_shape
     h = img.shape[0]
     w = img.shape[1]
     if not padding:
-        resized_image = cv2.resize(
-            img, (imgW, imgH), interpolation=cv2.INTER_LINEAR)
+        resized_image = cv2.resize(img, (imgW, imgH), interpolation=cv2.INTER_LINEAR)
         resized_w = imgW
     else:
         ratio = w / float(h)
@@ -39,7 +39,7 @@ def resize_norm_img(img, image_shape, padding=True):
         else:
             resized_w = int(math.ceil(imgH * ratio))
         resized_image = cv2.resize(img, (resized_w, imgH))
-    resized_image = resized_image.astype('float32')
+    resized_image = resized_image.astype("float32")
     if image_shape[0] == 1:
         resized_image = resized_image / 255
         resized_image = resized_image[np.newaxis, :]
@@ -60,11 +60,7 @@ def create_header_file(name, tensor_name, tensor_data, output_path):
     # Create header file with npy_data as a C array
     raw_path = file_path.with_suffix(".h").resolve()
     with open(raw_path, "w") as header_file:
-        header_file.write(
-            "\n"
-            + f"const size_t {tensor_name}_len = {tensor_data.size};\n"
-            + f'__attribute__((section(".data.tvm"), aligned(16))) float {tensor_name}[] = '
-        )
+        header_file.write("\n" + f"const size_t {tensor_name}_len = {tensor_data.size};\n" + f'__attribute__((section(".data.tvm"), aligned(16))) float {tensor_name}[] = ')
 
         header_file.write("{")
         for i in np.ndindex(tensor_data.shape):
@@ -80,9 +76,9 @@ def create_headers(image_name):
 
     # Resize image to 32x320
     img = cv2.imread(img_path)
-    img = resize_norm_img(img, [3,32,320])
+    img = resize_norm_img(img, [3, 32, 320])
     img_data = img.astype("float32")
-    
+
     # # Add the batch dimension, as we are expecting 4-dimensional input: NCHW.
     img_data = np.expand_dims(img_data, axis=0)
 

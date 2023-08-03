@@ -27,65 +27,15 @@ class TableFPN(nn.Module):
         super(TableFPN, self).__init__()
         self.out_channels = 512
         weight_attr = torch.nn.initializer.KaimingUniform()
-        self.in2_conv = nn.Conv2d(
-            in_channels=in_channels[0],
-            out_channels=self.out_channels,
-            kernel_size=1,
-            weight_attr=ParamAttr(initializer=weight_attr),
-            bias=False)
-        self.in3_conv = nn.Conv2d(
-            in_channels=in_channels[1],
-            out_channels=self.out_channels,
-            kernel_size=1,
-            stride = 1,
-            weight_attr=ParamAttr(initializer=weight_attr),
-            bias=False)
-        self.in4_conv = nn.Conv2d(
-            in_channels=in_channels[2],
-            out_channels=self.out_channels,
-            kernel_size=1,
-            weight_attr=ParamAttr(initializer=weight_attr),
-            bias=False)
-        self.in5_conv = nn.Conv2d(
-            in_channels=in_channels[3],
-            out_channels=self.out_channels,
-            kernel_size=1,
-            weight_attr=ParamAttr(initializer=weight_attr),
-            bias=False)
-        self.p5_conv = nn.Conv2d(
-            in_channels=self.out_channels,
-            out_channels=self.out_channels // 4,
-            kernel_size=3,
-            padding=1,
-            weight_attr=ParamAttr(initializer=weight_attr),
-            bias=False)
-        self.p4_conv = nn.Conv2d(
-            in_channels=self.out_channels,
-            out_channels=self.out_channels // 4,
-            kernel_size=3,
-            padding=1,
-            weight_attr=ParamAttr(initializer=weight_attr),
-            bias=False)
-        self.p3_conv = nn.Conv2d(
-            in_channels=self.out_channels,
-            out_channels=self.out_channels // 4,
-            kernel_size=3,
-            padding=1,
-            weight_attr=ParamAttr(initializer=weight_attr),
-            bias=False)
-        self.p2_conv = nn.Conv2d(
-            in_channels=self.out_channels,
-            out_channels=self.out_channels // 4,
-            kernel_size=3,
-            padding=1,
-            weight_attr=ParamAttr(initializer=weight_attr),
-            bias=False)
-        self.fuse_conv = nn.Conv2d(
-            in_channels=self.out_channels * 4,
-            out_channels=512,
-            kernel_size=3,
-            padding=1,
-            weight_attr=ParamAttr(initializer=weight_attr), bias=False)
+        self.in2_conv = nn.Conv2d(in_channels=in_channels[0], out_channels=self.out_channels, kernel_size=1, weight_attr=ParamAttr(initializer=weight_attr), bias=False)
+        self.in3_conv = nn.Conv2d(in_channels=in_channels[1], out_channels=self.out_channels, kernel_size=1, stride=1, weight_attr=ParamAttr(initializer=weight_attr), bias=False)
+        self.in4_conv = nn.Conv2d(in_channels=in_channels[2], out_channels=self.out_channels, kernel_size=1, weight_attr=ParamAttr(initializer=weight_attr), bias=False)
+        self.in5_conv = nn.Conv2d(in_channels=in_channels[3], out_channels=self.out_channels, kernel_size=1, weight_attr=ParamAttr(initializer=weight_attr), bias=False)
+        self.p5_conv = nn.Conv2d(in_channels=self.out_channels, out_channels=self.out_channels // 4, kernel_size=3, padding=1, weight_attr=ParamAttr(initializer=weight_attr), bias=False)
+        self.p4_conv = nn.Conv2d(in_channels=self.out_channels, out_channels=self.out_channels // 4, kernel_size=3, padding=1, weight_attr=ParamAttr(initializer=weight_attr), bias=False)
+        self.p3_conv = nn.Conv2d(in_channels=self.out_channels, out_channels=self.out_channels // 4, kernel_size=3, padding=1, weight_attr=ParamAttr(initializer=weight_attr), bias=False)
+        self.p2_conv = nn.Conv2d(in_channels=self.out_channels, out_channels=self.out_channels // 4, kernel_size=3, padding=1, weight_attr=ParamAttr(initializer=weight_attr), bias=False)
+        self.fuse_conv = nn.Conv2d(in_channels=self.out_channels * 4, out_channels=512, kernel_size=3, padding=1, weight_attr=ParamAttr(initializer=weight_attr), bias=False)
 
     def forward(self, x):
         c2, c3, c4, c5 = x
@@ -95,12 +45,9 @@ class TableFPN(nn.Module):
         in3 = self.in3_conv(c3)
         in2 = self.in2_conv(c2)
 
-        out4 = in4 + F.upsample(
-            in5, size=in4.shape[2:4], mode="nearest", align_mode=1)  # 1/16
-        out3 = in3 + F.upsample(
-            out4, size=in3.shape[2:4], mode="nearest", align_mode=1)  # 1/8
-        out2 = in2 + F.upsample(
-            out3, size=in2.shape[2:4], mode="nearest", align_mode=1)  # 1/4
+        out4 = in4 + F.upsample(in5, size=in4.shape[2:4], mode="nearest", align_mode=1)  # 1/16
+        out3 = in3 + F.upsample(out4, size=in3.shape[2:4], mode="nearest", align_mode=1)  # 1/8
+        out2 = in2 + F.upsample(out3, size=in2.shape[2:4], mode="nearest", align_mode=1)  # 1/4
 
         p4 = F.upsample(out4, size=in5.shape[2:4], mode="nearest", align_mode=1)
         p3 = F.upsample(out3, size=in5.shape[2:4], mode="nearest", align_mode=1)

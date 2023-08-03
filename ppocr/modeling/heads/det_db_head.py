@@ -34,43 +34,29 @@ class Head(nn.Module):
     def __init__(self, in_channels, kernel_list=[3, 2, 2], **kwargs):
         super(Head, self).__init__()
 
-        self.conv1 = nn.Conv2d(
-            in_channels=in_channels,
-            out_channels=in_channels // 4,
-            kernel_size=kernel_list[0],
-            padding=int(kernel_list[0] // 2),
-            weight_attr=ParamAttr(),
-            bias=False)
+        self.conv1 = nn.Conv2d(in_channels=in_channels, out_channels=in_channels // 4, kernel_size=kernel_list[0], padding=int(kernel_list[0] // 2), bias=False)
         self.conv_bn1 = nn.BatchNorm2d(
-            num_channels=in_channels // 4,
-            param_attr=ParamAttr(
-                initializer=torch.nn.initializer.Constant(value=1.0)),
-            bias=ParamAttr(
-                initializer=torch.nn.initializer.Constant(value=1e-4)),
-            act='relu')
+            num_channels=in_channels // 4, param_attr=ParamAttr(initializer=torch.nn.initializer.Constant(value=1.0)), bias=ParamAttr(initializer=torch.nn.initializer.Constant(value=1e-4)), act="relu"
+        )
         self.conv2 = nn.ConvTranspose2d(
             in_channels=in_channels // 4,
             out_channels=in_channels // 4,
             kernel_size=kernel_list[1],
             stride=2,
-            weight_attr=ParamAttr(
-                initializer=torch.nn.initializer.KaimingUniform()),
-            bias=get_bias_attr(in_channels // 4))
+            weight_attr=ParamAttr(initializer=torch.nn.initializer.KaimingUniform()),
+            bias=get_bias_attr(in_channels // 4),
+        )
         self.conv_bn2 = nn.BatchNorm2d(
-            num_channels=in_channels // 4,
-            param_attr=ParamAttr(
-                initializer=torch.nn.initializer.Constant(value=1.0)),
-            bias=ParamAttr(
-                initializer=torch.nn.initializer.Constant(value=1e-4)),
-            act="relu")
+            num_channels=in_channels // 4, param_attr=ParamAttr(initializer=torch.nn.initializer.Constant(value=1.0)), bias=ParamAttr(initializer=torch.nn.initializer.Constant(value=1e-4)), act="relu"
+        )
         self.conv3 = nn.ConvTranspose2d(
             in_channels=in_channels // 4,
             out_channels=1,
             kernel_size=kernel_list[2],
             stride=2,
-            weight_attr=ParamAttr(
-                initializer=torch.nn.initializer.KaimingUniform()),
-            bias=get_bias_attr(in_channels // 4), )
+            weight_attr=ParamAttr(initializer=torch.nn.initializer.KaimingUniform()),
+            bias=get_bias_attr(in_channels // 4),
+        )
 
     def forward(self, x):
         x = self.conv1(x)
@@ -102,9 +88,9 @@ class DBHead(nn.Module):
     def forward(self, x, targets=None):
         shrink_maps = self.binarize(x)
         if not self.training:
-            return {'maps': shrink_maps}
+            return {"maps": shrink_maps}
 
         threshold_maps = self.thresh(x)
         binary_maps = self.step_function(shrink_maps, threshold_maps)
         y = torch.concat([shrink_maps, threshold_maps, binary_maps], axis=1)
-        return {'maps': y}
+        return {"maps": y}

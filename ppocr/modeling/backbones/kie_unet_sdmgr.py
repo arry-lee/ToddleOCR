@@ -27,23 +27,11 @@ __all__ = ["Kie_backbone"]
 class Encoder(nn.Module):
     def __init__(self, num_channels, num_filters):
         super(Encoder, self).__init__()
-        self.conv1 = nn.Conv2d(
-            num_channels,
-            num_filters,
-            kernel_size=3,
-            stride=1,
-            padding=1,
-            bias=False)
-        self.bn1 = nn.BatchNorm2d(num_filters, act='relu')
+        self.conv1 = nn.Conv2d(num_channels, num_filters, kernel_size=3, stride=1, padding=1, bias=False)
+        self.bn1 = nn.BatchNorm2d(num_filters, act="relu")
 
-        self.conv2 = nn.Conv2d(
-            num_filters,
-            num_filters,
-            kernel_size=3,
-            stride=1,
-            padding=1,
-            bias=False)
-        self.bn2 = nn.BatchNorm2d(num_filters, act='relu')
+        self.conv2 = nn.Conv2d(num_filters, num_filters, kernel_size=3, stride=1, padding=1, bias=False)
+        self.bn2 = nn.BatchNorm2d(num_filters, act="relu")
 
         self.pool = nn.MaxPool2D(kernel_size=3, stride=2, padding=1)
 
@@ -60,38 +48,19 @@ class Decoder(nn.Module):
     def __init__(self, num_channels, num_filters):
         super(Decoder, self).__init__()
 
-        self.conv1 = nn.Conv2d(
-            num_channels,
-            num_filters,
-            kernel_size=3,
-            stride=1,
-            padding=1,
-            bias=False)
-        self.bn1 = nn.BatchNorm2d(num_filters, act='relu')
+        self.conv1 = nn.Conv2d(num_channels, num_filters, kernel_size=3, stride=1, padding=1, bias=False)
+        self.bn1 = nn.BatchNorm2d(num_filters, act="relu")
 
-        self.conv2 = nn.Conv2d(
-            num_filters,
-            num_filters,
-            kernel_size=3,
-            stride=1,
-            padding=1,
-            bias=False)
-        self.bn2 = nn.BatchNorm2d(num_filters, act='relu')
+        self.conv2 = nn.Conv2d(num_filters, num_filters, kernel_size=3, stride=1, padding=1, bias=False)
+        self.bn2 = nn.BatchNorm2d(num_filters, act="relu")
 
-        self.conv0 = nn.Conv2d(
-            num_channels,
-            num_filters,
-            kernel_size=1,
-            stride=1,
-            padding=0,
-            bias=False)
-        self.bn0 = nn.BatchNorm2d(num_filters, act='relu')
+        self.conv0 = nn.Conv2d(num_channels, num_filters, kernel_size=1, stride=1, padding=0, bias=False)
+        self.bn0 = nn.BatchNorm2d(num_filters, act="relu")
 
     def forward(self, inputs_prev, inputs):
         x = self.conv0(inputs)
         x = self.bn0(x)
-        x = torch.nn.functional.interpolate(
-            x, scale_factor=2, mode='bilinear', align_corners=False)
+        x = torch.nn.functional.interpolate(x, scale_factor=2, mode="bilinear", align_corners=False)
         x = torch.concat([inputs_prev, x], axis=1)
         x = self.conv1(x)
         x = self.bn1(x)
@@ -143,39 +112,28 @@ class Kie_backbone(nn.Module):
             rois_num.append(bboxes.shape[0])
             rois_list.append(bboxes)
         rois = torch.concat(rois_list, 0)
-        rois_num = torch.to_tensor(rois_num, dtype='int32')
+        rois_num = torch.to_tensor(rois_num, dtype="int32")
         return rois, rois_num
 
     def pre_process(self, img, relations, texts, gt_bboxes, tag, img_size):
-        img, relations, texts, gt_bboxes, tag, img_size = img.numpy(
-        ), relations.numpy(), texts.numpy(), gt_bboxes.numpy(), tag.numpy(
-        ).tolist(), img_size.numpy()
+        img, relations, texts, gt_bboxes, tag, img_size = img.numpy(), relations.numpy(), texts.numpy(), gt_bboxes.numpy(), tag.numpy().tolist(), img_size.numpy()
         temp_relations, temp_texts, temp_gt_bboxes = [], [], []
         h, w = int(np.max(img_size[:, 0])), int(np.max(img_size[:, 1]))
         img = torch.to_tensor(img[:, :, :h, :w])
         batch = len(tag)
         for i in range(batch):
             num, recoder_len = tag[i][0], tag[i][1]
-            temp_relations.append(
-                torch.to_tensor(
-                    relations[i, :num, :num, :], dtype='float32'))
-            temp_texts.append(
-                torch.to_tensor(
-                    texts[i, :num, :recoder_len], dtype='float32'))
-            temp_gt_bboxes.append(
-                torch.to_tensor(
-                    gt_bboxes[i, :num, ...], dtype='float32'))
+            temp_relations.append(torch.to_tensor(relations[i, :num, :num, :], dtype="float32"))
+            temp_texts.append(torch.to_tensor(texts[i, :num, :recoder_len], dtype="float32"))
+            temp_gt_bboxes.append(torch.to_tensor(gt_bboxes[i, :num, ...], dtype="float32"))
         return img, temp_relations, temp_texts, temp_gt_bboxes
 
     def forward(self, inputs):
         img = inputs[0]
-        relations, texts, gt_bboxes, tag, img_size = inputs[1], inputs[
-            2], inputs[3], inputs[5], inputs[-1]
-        img, relations, texts, gt_bboxes = self.pre_process(
-            img, relations, texts, gt_bboxes, tag, img_size)
+        relations, texts, gt_bboxes, tag, img_size = inputs[1], inputs[2], inputs[3], inputs[5], inputs[-1]
+        img, relations, texts, gt_bboxes = self.pre_process(img, relations, texts, gt_bboxes, tag, img_size)
         x = self.img_feat(img)
         boxes, rois_num = self.bbox2roi(gt_bboxes)
-        feats = torch.vision.ops.roi_align(
-            x, boxes, spatial_scale=1.0, output_size=7, boxes_num=rois_num)
+        feats = torch.vision.ops.roi_align(x, boxes, spatial_scale=1.0, output_size=7, boxes_num=rois_num)
         feats = self.maxpool(feats).squeeze(-1).squeeze(-1)
         return [relations, texts, feats]

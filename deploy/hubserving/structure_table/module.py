@@ -18,6 +18,7 @@ from __future__ import print_function
 
 import os
 import sys
+
 sys.path.insert(0, ".")
 import copy
 
@@ -36,13 +37,7 @@ from ppstructure.utility import parse_args
 from deploy.hubserving.structure_table.params import read_params
 
 
-@moduleinfo(
-    name="structure_table",
-    version="1.0.0",
-    summary="PP-Structure table service",
-    author="paddle-dev",
-    author_email="paddle-dev@baidu.com",
-    type="cv/structure_table")
+@moduleinfo(name="structure_table", version="1.0.0", summary="PP-Structure table service", author="paddle-dev", author_email="paddle-dev@baidu.com", type="cv/structure_table")
 class TableSystem(hub.Module):
     def _initialize(self, use_gpu=False, enable_mkldnn=False):
         """
@@ -83,8 +78,7 @@ class TableSystem(hub.Module):
     def read_images(self, paths=[]):
         images = []
         for img_path in paths:
-            assert os.path.isfile(
-                img_path), "The {} isn't a valid file.".format(img_path)
+            assert os.path.isfile(img_path), "The {} isn't a valid file.".format(img_path)
             img = cv2.imread(img_path)
             if img is None:
                 logger.info("error in loading image:{}".format(img_path))
@@ -122,7 +116,7 @@ class TableSystem(hub.Module):
             elapse = time.time() - starttime
             logger.info("Predict time: {}".format(elapse))
 
-            all_results.append({'html': res['html']})
+            all_results.append({"html": res["html"]})
         return all_results
 
     @serving
@@ -135,9 +129,9 @@ class TableSystem(hub.Module):
         return results
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     table_system = TableSystem()
     table_system._initialize()
-    image_path = ['./ppstructure/docs/table/table.jpg']
+    image_path = ["./ppstructure/docs/table/table.jpg"]
     res = table_system.predict(paths=image_path)
     print(res)

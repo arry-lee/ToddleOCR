@@ -37,9 +37,7 @@ class SDMGRLoss(nn.Module):
         batch = len(tag)
         for i in range(batch):
             num, recoder_len = tag[i][0], tag[i][1]
-            temp_gts.append(
-                torch.to_tensor(
-                    gts[i, :num, :num + 1], dtype='int64'))
+            temp_gts.append(torch.to_tensor(gts[i, :num, : num + 1], dtype="int64"))
         return temp_gts
 
     def accuracy(self, pred, target, topk=1, thresh=None):
@@ -63,28 +61,22 @@ class SDMGRLoss(nn.Module):
         """
         assert isinstance(topk, (int, tuple))
         if isinstance(topk, int):
-            topk = (topk, )
+            topk = (topk,)
             return_single = True
         else:
             return_single = False
 
         maxk = max(topk)
         if pred.shape[0] == 0:
-            accu = [pred.new_tensor(0.) for i in range(len(topk))]
+            accu = [pred.new_tensor(0.0) for i in range(len(topk))]
             return accu[0] if return_single else accu
         pred_value, pred_label = torch.topk(pred, maxk, axis=1)
-        pred_label = pred_label.transpose(
-            [1, 0])  # transpose to shape (maxk, N)
-        correct = torch.equal(pred_label,
-                               (target.reshape([1, -1]).expand_as(pred_label)))
+        pred_label = pred_label.transpose([1, 0])  # transpose to shape (maxk, N)
+        correct = torch.equal(pred_label, (target.reshape([1, -1]).expand_as(pred_label)))
         res = []
         for k in topk:
-            correct_k = torch.sum(correct[:k].reshape([-1]).astype('float32'),
-                                   axis=0,
-                                   keepdim=True)
-            res.append(
-                torch.multiply(correct_k,
-                                torch.to_tensor(100.0 / pred.shape[0])))
+            correct_k = torch.sum(correct[:k].reshape([-1]).astype("float32"), axis=0, keepdim=True)
+            res.append(torch.multiply(correct_k, torch.to_tensor(100.0 / pred.shape[0])))
         return res[0] if return_single else res
 
     def forward(self, pred, batch):
@@ -107,9 +99,6 @@ class SDMGRLoss(nn.Module):
             loss=loss,
             loss_node=loss_node,
             loss_edge=loss_edge,
-            acc_node=self.accuracy(
-                torch.gather(node_preds, node_valids),
-                torch.gather(node_gts, node_valids)),
-            acc_edge=self.accuracy(
-                torch.gather(edge_preds, edge_valids),
-                torch.gather(edge_gts, edge_valids)))
+            acc_node=self.accuracy(torch.gather(node_preds, node_valids), torch.gather(node_gts, node_valids)),
+            acc_edge=self.accuracy(torch.gather(edge_preds, edge_valids), torch.gather(edge_gts, edge_valids)),
+        )
