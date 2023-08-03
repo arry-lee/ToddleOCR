@@ -145,10 +145,10 @@ class Transformer(nn.Module):
             dec_output = tgt
             dec_output = dec_output[:, -1, :]
             word_prob = F.softmax(self.tgt_word_prj(dec_output), axis=-1)
-            preds_idx = torch.argmax(word_prob, axis=-1)
+            preds_idx = torch.argmax(word_prob, dim=-1)
             if torch.equal_all(preds_idx, torch.full(preds_idx.shape, 3, dtype="int64")):
                 break
-            preds_prob = torch.max(word_prob, axis=-1)
+            preds_prob = torch.max(word_prob, dim=-1)
             dec_seq = torch.concat([dec_seq, torch.reshape(preds_idx, [-1, 1])], dim=1)
             dec_prob = torch.concat([dec_prob, torch.reshape(preds_prob, [-1, 1])], dim=1)
         return [dec_seq, dec_prob]

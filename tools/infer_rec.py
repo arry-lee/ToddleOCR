@@ -126,7 +126,7 @@ def main():
                     torch.Tensor(word_positons),
                 ]
             if config["Architecture"]["algorithm"] == "CAN":
-                image_mask = torch.ones((np.expand_dims(batch[0], axis=0).shape), dtype="float32")
+                image_mask = torch.ones((np.expand_dims(batch[0], dim=0).shape), dtype="float32")
                 label = torch.ones((1, 36), dtype="int64")
             images = np.expand_dims(batch[0], axis=0)
             images = torch.Tensor(images)

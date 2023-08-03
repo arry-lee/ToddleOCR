@@ -72,7 +72,7 @@ class DeformableConvV2(nn.Module):
 
     def forward(self, x):
         offset_mask = self.conv_offset(x)
-        offset, mask = torch.split(offset_mask, num_or_sections=[self.offset_channel, self.mask_channel], axis=1)
+        offset, mask = torch.split(offset_mask, num_or_sections=[self.offset_channel, self.mask_channel], dim=1)
         mask = F.sigmoid(mask)
         y = self.conv_dcn(x, offset, mask=mask)
         return y

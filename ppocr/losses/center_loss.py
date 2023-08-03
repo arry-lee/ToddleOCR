@@ -48,16 +48,16 @@ class CenterLoss(nn.Module):
         features, predicts = predicts
 
         feats_reshape = torch.reshape(features, [-1, features.shape[-1]]).astype("float64")
-        label = torch.argmax(predicts, axis=2)
+        label = torch.argmax(predicts, dim=2)
         label = torch.reshape(label, [label.shape[0] * label.shape[1]])
 
         batch_size = feats_reshape.shape[0]
 
         # calc l2 distance between feats and centers
-        square_feat = torch.sum(torch.square(feats_reshape), axis=1, keepdim=True)
+        square_feat = torch.sum(torch.square(feats_reshape), dim=1, keepdim=True)
         square_feat = torch.expand(square_feat, [batch_size, self.num_classes])
 
-        square_center = torch.sum(torch.square(self.centers), axis=1, keepdim=True)
+        square_center = torch.sum(torch.square(self.centers), dim=1, keepdim=True)
         square_center = torch.expand(square_center, [self.num_classes, batch_size]).astype("float64")
         square_center = torch.transpose(square_center, [1, 0])
 

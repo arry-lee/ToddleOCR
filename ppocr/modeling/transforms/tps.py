@@ -160,8 +160,8 @@ class GridGenerator(nn.Module):
         ctrl_pts_x = torch.linspace(-1.0, 1.0, int(F / 2), dtype="float64")
         ctrl_pts_y_top = -1 * torch.ones([int(F / 2)], dtype="float64")
         ctrl_pts_y_bottom = torch.ones([int(F / 2)], dtype="float64")
-        ctrl_pts_top = torch.stack([ctrl_pts_x, ctrl_pts_y_top], axis=1)
-        ctrl_pts_bottom = torch.stack([ctrl_pts_x, ctrl_pts_y_bottom], axis=1)
+        ctrl_pts_top = torch.stack([ctrl_pts_x, ctrl_pts_y_top], dim=1)
+        ctrl_pts_bottom = torch.stack([ctrl_pts_x, ctrl_pts_y_bottom], dim=1)
         C = torch.concat([ctrl_pts_top, ctrl_pts_bottom], dim=0)
         return C  # F x 2
 
@@ -172,7 +172,7 @@ class GridGenerator(nn.Module):
         I_r_grid_y = (torch.arange(-I_r_height, I_r_height, 2, dtype="float64") + 1.0) / torch.Tensor(np.array([I_r_height]))
 
         # P: self.I_r_width x self.I_r_height x 2
-        P = torch.stack(torch.meshgrid(I_r_grid_x, I_r_grid_y), axis=2)
+        P = torch.stack(torch.meshgrid(I_r_grid_x, I_r_grid_y), dim=2)
         P = torch.transpose(P, perm=[1, 0, 2])
         # n (= self.I_r_width x self.I_r_height) x 2
         return P.reshape([-1, 2])
@@ -181,7 +181,7 @@ class GridGenerator(nn.Module):
         """Return inv_delta_C which is needed to calculate T"""
         F = self.F
         hat_eye = torch.eye(F, dtype="float64")  # F x F
-        hat_C = torch.norm(C.reshape([1, F, 2]) - C.reshape([F, 1, 2]), axis=2) + hat_eye
+        hat_C = torch.norm(C.reshape([1, F, 2]) - C.reshape([F, 1, 2]), dim=2) + hat_eye
         hat_C = (hat_C**2) * torch.log(hat_C)
         delta_C = torch.concat(  # F+3 x F+3
             [
@@ -203,7 +203,7 @@ class GridGenerator(nn.Module):
         C_tile = torch.unsqueeze(C, dim=0)  # 1 x F x 2
         P_diff = P_tile - C_tile  # n x F x 2
         # rbf_norm: n x F
-        rbf_norm = torch.norm(P_diff, p=2, axis=2, keepdim=False)
+        rbf_norm = torch.norm(P_diff, p=2, dim=2, keepdim=False)
 
         # rbf: n x F
         rbf = torch.multiply(torch.square(rbf_norm), torch.log(rbf_norm + eps))

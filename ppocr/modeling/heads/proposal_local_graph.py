@@ -311,7 +311,7 @@ class ProposalLocalGraphs:
             )
 
             local_graph_nodes = torch.Tensor(pivot_local_graph)
-            local_graph_nodes = torch.concat([local_graph_nodes, torch.zeros([num_max_nodes - num_nodes], dtype="int64")], axis=-1)
+            local_graph_nodes = torch.concat([local_graph_nodes, torch.zeros([num_max_nodes - num_nodes], dtype="int64")], dim=-1)
 
             local_graphs_node_feat.append(pad_normalized_feats)
             adjacent_matrices.append(pad_adjacent_matrix)
@@ -376,7 +376,7 @@ class ProposalLocalGraphs:
 
         content_feats = self.pooling(feat_maps, rois)
         content_feats = content_feats.reshape([content_feats.shape[0], -1])
-        node_feats = torch.concat([content_feats, geo_feats], axis=-1)
+        node_feats = torch.concat([content_feats, geo_feats], dim=-1)
 
         sorted_dist_inds = np.argsort(distance_matrix, axis=1)
         (local_graphs_node_feat, adjacent_matrices, pivots_knn_inds, pivots_local_graphs) = self.generate_local_graphs(sorted_dist_inds, node_feats)

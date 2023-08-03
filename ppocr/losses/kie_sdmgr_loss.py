@@ -70,12 +70,12 @@ class SDMGRLoss(nn.Module):
         if pred.shape[0] == 0:
             accu = [pred.new_tensor(0.0) for i in range(len(topk))]
             return accu[0] if return_single else accu
-        pred_value, pred_label = torch.topk(pred, maxk, axis=1)
+        pred_value, pred_label = torch.topk(pred, maxk, dim=1)
         pred_label = pred_label.transpose([1, 0])  # transpose to shape (maxk, N)
         correct = torch.equal(pred_label, (target.reshape([1, -1]).expand_as(pred_label)))
         res = []
         for k in topk:
-            correct_k = torch.sum(correct[:k].reshape([-1]).astype("float32"), axis=0, keepdim=True)
+            correct_k = torch.sum(correct[:k].reshape([-1]).astype("float32"), dim=0, keepdim=True)
             res.append(torch.multiply(correct_k, torch.Tensor(100.0 / pred.shape[0])))
         return res[0] if return_single else res
 

@@ -308,7 +308,7 @@ class LocalGraphs:
             content_feats = content_feats.reshape([content_feats.shape[0], -1])
             geo_feats = feature_embedding(comp_geo_attribs, self.node_geo_feat_dim)
             geo_feats = torch.Tensor(geo_feats)
-            node_feats = torch.concat([content_feats, geo_feats], axis=-1)
+            node_feats = torch.concat([content_feats, geo_feats], dim=-1)
 
             sorted_dist_inds = np.argsort(distance_matrix, axis=1)
             pivot_local_graphs, pivot_knns = self.generate_local_graphs(sorted_dist_inds, node_labels)

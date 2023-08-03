@@ -275,7 +275,7 @@ class ASFBlock(nn.Module):
 
     def forward(self, fuse_features, features_list):
         fuse_features = self.conv(fuse_features)
-        spatial_x = torch.mean(fuse_features, axis=1, keepdim=True)
+        spatial_x = torch.mean(fuse_features, dim=1, keepdim=True)
         attention_scores = self.spatial_scale(spatial_x) + fuse_features
         attention_scores = self.channel_scale(attention_scores)
         assert len(features_list) == self.out_features_num

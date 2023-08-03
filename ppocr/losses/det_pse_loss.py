@@ -61,7 +61,7 @@ class PSELoss(nn.Module):
             gt_kernel_i = gt_kernels[:, i, :, :]
             loss_kernel_i = self.dice_loss(kernel_i, gt_kernel_i, selected_masks)
             loss_kernels.append(loss_kernel_i)
-        loss_kernels = torch.mean(torch.stack(loss_kernels, axis=1), axis=1)
+        loss_kernels = torch.mean(torch.stack(loss_kernels, axis=1), dim=1)
         iou_kernel = iou((kernels[:, -1, :, :] > 0).astype("int64"), gt_kernels[:, -1, :, :], training_masks * gt_texts, reduce=False)
         losses.update(dict(loss_kernels=loss_kernels, iou_kernel=iou_kernel))
         loss = self.alpha * loss_text + (1 - self.alpha) * loss_kernels

@@ -87,9 +87,9 @@ class SP_TransformerNetwork(nn.Module):
         if offsets is not None:
             batch_I = batch_I * (1 - lambda_color) + offsets * lambda_color
         batch_weight_params = torch.unsqueeze(torch.unsqueeze(weights, -1), -1)
-        batch_I_power = torch.stack([batch_I.pow(p) for p in self.power_list], axis=1)
+        batch_I_power = torch.stack([batch_I.pow(p) for p in self.power_list], dim=1)
 
-        batch_weight_sum = torch.sum(batch_I_power * batch_weight_params, axis=1)
+        batch_weight_sum = torch.sum(batch_I_power * batch_weight_params, dim=1)
         batch_weight_sum = self.bn(batch_weight_sum)
         batch_weight_sum = self.sigmoid(batch_weight_sum)
         batch_weight_sum = batch_weight_sum * 2 - 1

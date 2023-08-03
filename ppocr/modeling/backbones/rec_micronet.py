@@ -92,7 +92,7 @@ class MaxGroupPooling(nn.Module):
 
         # reshape
         y = torch.reshape(x, [b, c // self.channel_per_group, -1, h, w])
-        out = torch.max(y, axis=2)
+        out = torch.max(y, dim=2)
         return out
 
 
@@ -218,9 +218,9 @@ class DYShiftMax(nn.Module):
         index = torch.Tensor([range(inp)])
         index = torch.reshape(index, [1, inp, 1, 1])
         index = torch.reshape(index, [1, self.g, self.gc, 1, 1])
-        indexgs = torch.split(index, [1, self.g - 1], axis=1)
+        indexgs = torch.split(index, [1, self.g - 1], dim=1)
         indexgs = torch.concat((indexgs[1], indexgs[0]), dim=1)
-        indexs = torch.split(indexgs, [1, self.gc - 1], axis=2)
+        indexs = torch.split(indexgs, [1, self.gc - 1], dim=2)
         indexs = torch.concat((indexs[1], indexs[0]), dim=2)
         self.index = torch.reshape(indexs, [inp])
         self.expansion = expansion
@@ -241,7 +241,7 @@ class DYShiftMax(nn.Module):
 
         if self.exp == 4:
             temp = y.shape
-            a1, b1, a2, b2 = torch.split(y, temp[1] // self.oup, axis=1)
+            a1, b1, a2, b2 = torch.split(y, temp[1] // self.oup, dim=1)
 
             a1 = a1 + self.init_a[0]
             a2 = a2 + self.init_a[1]
@@ -256,7 +256,7 @@ class DYShiftMax(nn.Module):
 
         elif self.exp == 2:
             temp = y.shape
-            a1, b1 = torch.split(y, temp[1] // self.oup, axis=1)
+            a1, b1 = torch.split(y, temp[1] // self.oup, dim=1)
             a1 = a1 + self.init_a[0]
             b1 = b1 + self.init_b[0]
             out = x_out * a1 + x2 * b1

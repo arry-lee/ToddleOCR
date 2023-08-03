@@ -223,7 +223,7 @@ class SequenceAttentionDecoder(BaseDecoder):
         for i in range(seq_len):
             step_out = self.forward_test_step(feat, out_enc, decode_sequence, i, valid_ratios)
             outputs.append(step_out)
-            max_idx = torch.argmax(step_out, axis=1, keepdim=False)
+            max_idx = torch.argmax(step_out, dim=1, keepdim=False)
             if i < seq_len - 1:
                 decode_sequence[:, i + 1] = max_idx
 
@@ -352,7 +352,7 @@ class PositionAttentionDecoder(BaseDecoder):
         for i in range(batch_size):
             position_index = torch.arange(0, end=length, step=1, dtype="int64")
             position_index_list.append(position_index)
-        batch_position_index = torch.stack(position_index_list, axis=0)
+        batch_position_index = torch.stack(position_index_list, dim=0)
         return batch_position_index
 
     def forward_train(self, feat, out_enc, targets, valid_ratios, position_index):
@@ -588,7 +588,7 @@ class RobustScannerDecoder(BaseDecoder):
             char_out = self.prediction(fusion_out)
             char_out = F.softmax(char_out, -1)
             outputs.append(char_out)
-            max_idx = torch.argmax(char_out, axis=1, keepdim=False)
+            max_idx = torch.argmax(char_out, dim=1, keepdim=False)
             if i < seq_len - 1:
                 decode_sequence[:, i + 1] = max_idx
 

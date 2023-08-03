@@ -97,7 +97,7 @@ class TPSSpatialTransformer(nn.Module):
         HW = self.target_height * self.target_width
         target_coordinate = list(itertools.product(range(self.target_height), range(self.target_width)))
         target_coordinate = torch.Tensor(target_coordinate)  # HW x 2
-        Y, X = torch.split(target_coordinate, target_coordinate.shape[1], axis=1)
+        Y, X = torch.split(target_coordinate, target_coordinate.shape[1], dim=1)
         Y = Y / (self.target_height - 1)
         X = X / (self.target_width - 1)
         target_coordinate = torch.concat([X, Y], dim=1)  # convert from (y, x) to (x, y)

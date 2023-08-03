@@ -43,7 +43,7 @@ class CELoss(nn.Module):
             class_num = x.shape[-1]
             label = self._labelsmoothing(label, class_num)
             x = -F.log_softmax(x, axis=-1)
-            loss = torch.sum(x * label, axis=-1)
+            loss = torch.sum(x * label, dim=-1)
         else:
             if label.shape[-1] == x.shape[-1]:
                 label = F.softmax(label, axis=-1)
@@ -72,11 +72,11 @@ class KLJSLoss(object):
             raise ValueError("The mode.lower() if KLJSLoss should be one of ['kl', 'js']")
 
         if reduction == "mean":
-            loss = torch.mean(loss, axis=[1, 2])
+            loss = torch.mean(loss, dim=[1, 2])
         elif reduction == "none" or reduction is None:
             return loss
         else:
-            loss = torch.sum(loss, axis=[1, 2])
+            loss = torch.sum(loss, dim=[1, 2])
 
         return loss
 

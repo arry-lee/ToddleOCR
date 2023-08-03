@@ -113,9 +113,9 @@ class DiceLoss(nn.Module):
         input = input * mask
         target = target * mask
 
-        a = torch.sum(input * target, axis=1)
-        b = torch.sum(input * input, axis=1) + 0.001
-        c = torch.sum(target * target, axis=1) + 0.001
+        a = torch.sum(input * target, dim=1)
+        b = torch.sum(input * input, dim=1) + 0.001
+        c = torch.sum(target * target, dim=1) + 0.001
         d = (2 * a) / (b + c)
         loss = 1 - d
 
@@ -150,7 +150,7 @@ class SmoothL1Loss(nn.Module):
         loss = torch.where(diff < beta, 0.5 * diff * diff / beta, diff - 0.5 * beta)
         loss = torch.cast(loss.reshape((batch_size, -1)), "float32")
         mask = torch.cast(mask.reshape((batch_size, -1)), "float32")
-        loss = torch.sum(loss, axis=-1)
+        loss = torch.sum(loss, dim=-1)
         loss = loss / (mask.sum(axis=-1) + eps)
 
         return loss

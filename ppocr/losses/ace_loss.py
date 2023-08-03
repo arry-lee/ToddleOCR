@@ -35,7 +35,7 @@ class ACELoss(nn.Module):
         div = torch.Tensor([N]).astype("float32")
 
         predicts = nn.functional.softmax(predicts, axis=-1)
-        aggregation_preds = torch.sum(predicts, axis=1)
+        aggregation_preds = torch.sum(predicts, dim=1)
         aggregation_preds = torch.divide(aggregation_preds, div)
 
         length = batch[2].astype("float32")

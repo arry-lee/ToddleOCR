@@ -462,7 +462,7 @@ def eval(model, valid_dataloader, post_process_class, eval_class, model_type=Non
 def update_center(char_center, post_result, preds):
     result, label = post_result
     feats, logits = preds
-    logits = torch.argmax(logits, axis=-1)
+    logits = torch.argmax(logits, dim=-1)
     feats = feats.numpy()
     logits = logits.numpy()
 

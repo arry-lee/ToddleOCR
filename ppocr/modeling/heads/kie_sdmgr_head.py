@@ -41,7 +41,7 @@ class SDMGRHead(nn.Module):
         node_nums, char_nums = [], []
         for text in texts:
             node_nums.append(text.shape[0])
-            char_nums.append(torch.sum((text > -1).astype(int), axis=-1))
+            char_nums.append(torch.sum((text > -1).astype(int), dim=-1))
 
         max_num = max([char_num.max() for char_num in char_nums])
         all_nodes = torch.concat([torch.concat([text, torch.zeros((text.shape[0], max_num - text.shape[1]))], -1) for text in texts])
@@ -58,7 +58,7 @@ class SDMGRHead(nn.Module):
         temp_all_nodes = torch.gather(rnn_nodes, valid)
         N, C, A = temp_all_nodes.shape
         one_hot = F.one_hot(temp_all_nums[:, 0, :], num_classes=C).transpose([0, 2, 1])
-        one_hot = torch.multiply(temp_all_nodes, one_hot.astype("float32")).sum(axis=1, keepdim=True)
+        one_hot = torch.multiply(temp_all_nodes, one_hot.astype("float32")).sum(dim=1, keepdim=True)
         t = one_hot.expand([N, 1, A]).squeeze(1)
         nodes = torch.scatter(nodes, valid.squeeze(1), t)
 

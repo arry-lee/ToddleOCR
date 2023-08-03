@@ -49,7 +49,7 @@ class SASTLoss(nn.Module):
         score_loss = 1.0 - 2 * intersection / (union + 1e-5)
 
         # border loss
-        l_border_split, l_border_norm = torch.split(l_border, num_or_sections=[4, 1], axis=1)
+        l_border_split, l_border_norm = torch.split(l_border, num_or_sections=[4, 1], dim=1)
         f_border_split = f_border
         border_ex_shape = l_border_norm.shape * np.array([1, 4, 1, 1])
         l_border_norm_split = torch.expand(x=l_border_norm, shape=border_ex_shape)
@@ -66,7 +66,7 @@ class SASTLoss(nn.Module):
         border_loss = torch.sum(border_out_loss * l_border_score * l_border_mask) / (torch.sum(l_border_score * l_border_mask) + 1e-5)
 
         # tvo_loss
-        l_tvo_split, l_tvo_norm = torch.split(l_tvo, num_or_sections=[8, 1], axis=1)
+        l_tvo_split, l_tvo_norm = torch.split(l_tvo, num_or_sections=[8, 1], dim=1)
         f_tvo_split = f_tvo
         tvo_ex_shape = l_tvo_norm.shape * np.array([1, 8, 1, 1])
         l_tvo_norm_split = torch.expand(x=l_tvo_norm, shape=tvo_ex_shape)
@@ -83,7 +83,7 @@ class SASTLoss(nn.Module):
         tvo_loss = torch.sum(tvo_out_loss * l_tvo_score * l_tvo_mask) / (torch.sum(l_tvo_score * l_tvo_mask) + 1e-5)
 
         # tco_loss
-        l_tco_split, l_tco_norm = torch.split(l_tco, num_or_sections=[2, 1], axis=1)
+        l_tco_split, l_tco_norm = torch.split(l_tco, num_or_sections=[2, 1], dim=1)
         f_tco_split = f_tco
         tco_ex_shape = l_tco_norm.shape * np.array([1, 2, 1, 1])
         l_tco_norm_split = torch.expand(x=l_tco_norm, shape=tco_ex_shape)

@@ -37,8 +37,8 @@ class EASTLoss(nn.Module):
 
         # smoooth_l1_loss
         channels = 8
-        l_geo_split = torch.split(l_geo, num_or_sections=channels + 1, axis=1)
-        f_geo_split = torch.split(f_geo, num_or_sections=channels, axis=1)
+        l_geo_split = torch.split(l_geo, num_or_sections=channels + 1, dim=1)
+        f_geo_split = torch.split(f_geo, num_or_sections=channels, dim=1)
         smooth_l1 = 0
         for i in range(0, channels):
             geo_diff = l_geo_split[i] - f_geo_split[i]

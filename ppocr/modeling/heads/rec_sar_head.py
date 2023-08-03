@@ -88,7 +88,7 @@ class SAREncoder(nn.Module):
             for i in range(valid_ratios.shape[0]):
                 valid_step = torch.minimum(T, torch.ceil(valid_ratios[i] * T).astype("int32")) - 1
                 valid_hf.append(holistic_feat[i, valid_step, :])
-            valid_hf = torch.stack(valid_hf, axis=0)
+            valid_hf = torch.stack(valid_hf, dim=0)
         else:
             valid_hf = holistic_feat[:, -1, :]  # bsz * C
         holistic_feat = self.linear(valid_hf)  # bsz * C
@@ -184,7 +184,7 @@ class ParallelSARDecoder(BaseDecoder):
 
         attn_query = self.conv1x1_1(y)  # bsz * (seq_len + 1) * attn_size
         bsz, seq_len, attn_size = attn_query.shape
-        attn_query = torch.unsqueeze(attn_query, axis=[3, 4])
+        attn_query = torch.unsqueeze(attn_query, dim=[3, 4])
         # (bsz, seq_len + 1, attn_size, 1, 1)
 
         attn_key = self.conv3x3_1(feat)
@@ -282,7 +282,7 @@ class ParallelSARDecoder(BaseDecoder):
             char_output = decoder_output[:, i, :]  # bsz * num_classes
             char_output = F.softmax(char_output, -1)
             outputs.append(char_output)
-            max_idx = torch.argmax(char_output, axis=1, keepdim=False)
+            max_idx = torch.argmax(char_output, dim=1, keepdim=False)
             char_embedding = self.embedding(max_idx)  # bsz * emb_dim
             if i < seq_len:
                 decoder_input[:, i + 1, :] = char_embedding

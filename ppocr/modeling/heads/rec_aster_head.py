@@ -162,11 +162,11 @@ class AttentionRecognitionHead(nn.Module):
         for i in range(self.max_len_labels):
             output, state = self.decoder(inflated_encoder_feats, state, y_prev)
             state = torch.unsqueeze(state, dim=0)
-            log_softmax_output = torch.nn.functional.log_softmax(output, axis=1)
+            log_softmax_output = torch.nn.functional.log_softmax(output, dim=1)
 
             sequence_scores = _inflate(sequence_scores, self.num_classes, 1)
             sequence_scores += log_softmax_output
-            scores, candidates = torch.topk(torch.reshape(sequence_scores, [batch_size, -1]), beam_width, axis=1)
+            scores, candidates = torch.topk(torch.reshape(sequence_scores, [batch_size, -1]), beam_width, dim=1)
 
             # Reshape input = (bk, 1) and sequence_scores = (bk, 1)
             y_prev = torch.reshape(candidates % self.num_classes, shape=[batch_size * beam_width])
@@ -176,7 +176,7 @@ class AttentionRecognitionHead(nn.Module):
             pos_index = torch.expand_as(pos_index, candidates)
             predecessors = torch.cast(candidates / self.num_classes + pos_index, dtype="int64")
             predecessors = torch.reshape(predecessors, shape=[batch_size * beam_width, 1])
-            state = torch.index_select(state, index=predecessors.squeeze(), axis=1)
+            state = torch.index_select(state, index=predecessors.squeeze(), dim=1)
 
             # Update sequence socres and erase scores for <eos> symbol so that they aren't expanded
             stored_scores.append(sequence_scores.clone())
@@ -216,8 +216,8 @@ class AttentionRecognitionHead(nn.Module):
         t_predecessors = torch.reshape(sorted_idx + pos_index.expand_as(sorted_idx), shape=[batch_size * beam_width])
         while t >= 0:
             # Re-order the variables with the back pointer
-            current_symbol = torch.index_select(stored_emitted_symbols[t], index=t_predecessors, axis=0)
-            t_predecessors = torch.index_select(stored_predecessors[t].squeeze(), index=t_predecessors, axis=0)
+            current_symbol = torch.index_select(stored_emitted_symbols[t], index=t_predecessors, dim=0)
+            t_predecessors = torch.index_select(stored_predecessors[t].squeeze(), index=t_predecessors, dim=0)
             eos_indices = stored_emitted_symbols[t] == eos
             eos_indices = torch.nonzero(eos_indices)
 

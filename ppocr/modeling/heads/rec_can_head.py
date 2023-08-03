@@ -68,7 +68,7 @@ class CountingDecoder(nn.Module):
         if mask is not None:
             x = x * mask
         x = torch.reshape(x, [b, self.out_channel, -1])
-        x1 = torch.sum(x, axis=-1)
+        x1 = torch.sum(x, dim=-1)
 
         return x1, torch.reshape(x, [b, self.out_channel, h, w])
 
@@ -105,8 +105,8 @@ class PositionEmbeddingSine(nn.Module):
         pos_x = torch.unsqueeze(x_embed, [3]) / dim_t
         pos_y = torch.unsqueeze(y_embed, [3]) / dim_t
 
-        pos_x = torch.flatten(torch.stack([torch.sin(pos_x[:, :, :, 0::2]), torch.cos(pos_x[:, :, :, 1::2])], axis=4), 3)
-        pos_y = torch.flatten(torch.stack([torch.sin(pos_y[:, :, :, 0::2]), torch.cos(pos_y[:, :, :, 1::2])], axis=4), 3)
+        pos_x = torch.flatten(torch.stack([torch.sin(pos_x[:, :, :, 0::2]), torch.cos(pos_x[:, :, :, 1::2])], dim=4), 3)
+        pos_y = torch.flatten(torch.stack([torch.sin(pos_y[:, :, :, 0::2]), torch.cos(pos_y[:, :, :, 1::2])], dim=4), 3)
 
         pos = torch.transpose(torch.concat([pos_y, pos_x], dim=3), [0, 3, 1, 2])
 
@@ -192,7 +192,7 @@ class AttDecoder(nn.Module):
         return word_probs
 
     def init_hidden(self, features, feature_mask):
-        average = torch.sum(torch.sum(features * feature_mask, axis=-1), axis=-1) / torch.sum((torch.sum(feature_mask, axis=-1)), axis=-1)
+        average = torch.sum(torch.sum(features * feature_mask, axis=-1), axis=-1) / torch.sum((torch.sum(feature_mask, axis=-1)), dim=-1)
         average = self.init_weight(average)
         return torch.tanh(average)
 

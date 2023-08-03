@@ -150,7 +150,7 @@ def main():
                 batch = transform(data, ops)
                 batch_pred = [0] * len(batch)
                 for i in range(len(batch)):
-                    batch_pred[i] = torch.Tensor(np.expand_dims(batch[i], axis=0))
+                    batch_pred[i] = torch.Tensor(np.expand_dims(batch[i], dim=0))
                 st = time.time()
                 node, edge = model(batch_pred)
                 node = F.softmax(node, -1)
