@@ -34,7 +34,7 @@ class Head(nn.Module):
     def __init__(self, in_channels, kernel_list=[3, 2, 2], **kwargs):
         super(Head, self).__init__()
 
-        self.conv1 = nn.Conv2D(
+        self.conv1 = nn.Conv2d(
             in_channels=in_channels,
             out_channels=in_channels // 4,
             kernel_size=kernel_list[0],

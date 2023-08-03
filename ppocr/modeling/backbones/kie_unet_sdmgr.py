@@ -27,7 +27,7 @@ __all__ = ["Kie_backbone"]
 class Encoder(nn.Module):
     def __init__(self, num_channels, num_filters):
         super(Encoder, self).__init__()
-        self.conv1 = nn.Conv2D(
+        self.conv1 = nn.Conv2d(
             num_channels,
             num_filters,
             kernel_size=3,
@@ -36,7 +36,7 @@ class Encoder(nn.Module):
             bias_attr=False)
         self.bn1 = nn.BatchNorm(num_filters, act='relu')
 
-        self.conv2 = nn.Conv2D(
+        self.conv2 = nn.Conv2d(
             num_filters,
             num_filters,
             kernel_size=3,
@@ -60,7 +60,7 @@ class Decoder(nn.Module):
     def __init__(self, num_channels, num_filters):
         super(Decoder, self).__init__()
 
-        self.conv1 = nn.Conv2D(
+        self.conv1 = nn.Conv2d(
             num_channels,
             num_filters,
             kernel_size=3,
@@ -69,7 +69,7 @@ class Decoder(nn.Module):
             bias_attr=False)
         self.bn1 = nn.BatchNorm(num_filters, act='relu')
 
-        self.conv2 = nn.Conv2D(
+        self.conv2 = nn.Conv2d(
             num_filters,
             num_filters,
             kernel_size=3,
@@ -78,7 +78,7 @@ class Decoder(nn.Module):
             bias_attr=False)
         self.bn2 = nn.BatchNorm(num_filters, act='relu')
 
-        self.conv0 = nn.Conv2D(
+        self.conv0 = nn.Conv2d(
             num_channels,
             num_filters,
             kernel_size=1,

@@ -164,7 +164,7 @@ class ConvBNLayer(nn.Module):
         super(ConvBNLayer, self).__init__()
         self.if_act = if_act
         self.act = act
-        self.conv = nn.Conv2D(
+        self.conv = nn.Conv2d(
             in_channels=in_channels,
             out_channels=out_channels,
             kernel_size=kernel_size,
@@ -246,13 +246,13 @@ class SEModule(nn.Module):
     def __init__(self, in_channels, reduction=4):
         super(SEModule, self).__init__()
         self.avg_pool = nn.AdaptiveAvgPool2D(1)
-        self.conv1 = nn.Conv2D(
+        self.conv1 = nn.Conv2d(
             in_channels=in_channels,
             out_channels=in_channels // reduction,
             kernel_size=1,
             stride=1,
             padding=0)
-        self.conv2 = nn.Conv2D(
+        self.conv2 = nn.Conv2d(
             in_channels=in_channels // reduction,
             out_channels=in_channels,
             kernel_size=1,

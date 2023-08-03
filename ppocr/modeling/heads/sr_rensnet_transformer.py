@@ -103,36 +103,36 @@ class ResNet(nn.Module):
     def __init__(self, num_in, block, layers):
         super(ResNet, self).__init__()
 
-        self.conv1 = nn.Conv2D(num_in, 64, kernel_size=3, stride=1, padding=1)
+        self.conv1 = nn.Conv2d(num_in, 64, kernel_size=3, stride=1, padding=1)
         self.bn1 = nn.BatchNorm2D(64, use_global_stats=True)
         self.relu1 = nn.ReLU()
         self.pool = nn.MaxPool2D((2, 2), (2, 2))
 
-        self.conv2 = nn.Conv2D(64, 128, kernel_size=3, stride=1, padding=1)
+        self.conv2 = nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1)
         self.bn2 = nn.BatchNorm2D(128, use_global_stats=True)
         self.relu2 = nn.ReLU()
 
         self.layer1_pool = nn.MaxPool2D((2, 2), (2, 2))
         self.layer1 = self._make_layer(block, 128, 256, layers[0])
-        self.layer1_conv = nn.Conv2D(256, 256, 3, 1, 1)
+        self.layer1_conv = nn.Conv2d(256, 256, 3, 1, 1)
         self.layer1_bn = nn.BatchNorm2D(256, use_global_stats=True)
         self.layer1_relu = nn.ReLU()
 
         self.layer2_pool = nn.MaxPool2D((2, 2), (2, 2))
         self.layer2 = self._make_layer(block, 256, 256, layers[1])
-        self.layer2_conv = nn.Conv2D(256, 256, 3, 1, 1)
+        self.layer2_conv = nn.Conv2d(256, 256, 3, 1, 1)
         self.layer2_bn = nn.BatchNorm2D(256, use_global_stats=True)
         self.layer2_relu = nn.ReLU()
 
         self.layer3_pool = nn.MaxPool2D((2, 2), (2, 2))
         self.layer3 = self._make_layer(block, 256, 512, layers[2])
-        self.layer3_conv = nn.Conv2D(512, 512, 3, 1, 1)
+        self.layer3_conv = nn.Conv2d(512, 512, 3, 1, 1)
         self.layer3_bn = nn.BatchNorm2D(512, use_global_stats=True)
         self.layer3_relu = nn.ReLU()
 
         self.layer4_pool = nn.MaxPool2D((2, 2), (2, 2))
         self.layer4 = self._make_layer(block, 512, 512, layers[3])
-        self.layer4_conv2 = nn.Conv2D(512, 1024, 3, 1, 1)
+        self.layer4_conv2 = nn.Conv2d(512, 1024, 3, 1, 1)
         self.layer4_conv2_bn = nn.BatchNorm2D(1024, use_global_stats=True)
         self.layer4_conv2_relu = nn.ReLU()
 
@@ -140,7 +140,7 @@ class ResNet(nn.Module):
 
         if inplanes != planes:
             downsample = nn.Sequential(
-                nn.Conv2D(inplanes, planes, 3, 1, 1),
+                nn.Conv2d(inplanes, planes, 3, 1, 1),
                 nn.BatchNorm2D(
                     planes, use_global_stats=True), )
         else:
@@ -189,11 +189,11 @@ class ResNet(nn.Module):
 class Bottleneck(nn.Module):
     def __init__(self, input_dim):
         super(Bottleneck, self).__init__()
-        self.conv1 = nn.Conv2D(input_dim, input_dim, 1)
+        self.conv1 = nn.Conv2d(input_dim, input_dim, 1)
         self.bn1 = nn.BatchNorm2D(input_dim, use_global_stats=True)
         self.relu = nn.ReLU()
 
-        self.conv2 = nn.Conv2D(input_dim, input_dim, 3, 1, 1)
+        self.conv2 = nn.Conv2d(input_dim, input_dim, 3, 1, 1)
         self.bn2 = nn.BatchNorm2D(input_dim, use_global_stats=True)
 
     def forward(self, x):
@@ -328,11 +328,11 @@ class Decoder(nn.Module):
 class BasicBlock(nn.Module):
     def __init__(self, inplanes, planes, downsample):
         super(BasicBlock, self).__init__()
-        self.conv1 = nn.Conv2D(
+        self.conv1 = nn.Conv2d(
             inplanes, planes, kernel_size=3, stride=1, padding=1)
         self.bn1 = nn.BatchNorm2D(planes, use_global_stats=True)
         self.relu = nn.ReLU()
-        self.conv2 = nn.Conv2D(
+        self.conv2 = nn.Conv2d(
             planes, planes, kernel_size=3, stride=1, padding=1)
         self.bn2 = nn.BatchNorm2D(planes, use_global_stats=True)
         self.downsample = downsample

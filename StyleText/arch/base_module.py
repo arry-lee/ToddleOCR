@@ -36,7 +36,7 @@ class CBN(nn.Module):
             bias_attr = torch.ParamAttr(name=name + "_bias")
         else:
             bias_attr = None
-        self._conv = torch.nn.Conv2D(
+        self._conv = torch.nn.Conv2d(
             in_channels=in_channels,
             out_channels=out_channels,
             kernel_size=kernel_size,
@@ -89,7 +89,7 @@ class SNConv(nn.Module):
         else:
             bias_attr = None
         self._sn_conv = spectral_norm(
-            torch.nn.Conv2D(
+            torch.nn.Conv2d(
                 in_channels=in_channels,
                 out_channels=out_channels,
                 kernel_size=kernel_size,

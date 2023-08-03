@@ -31,7 +31,7 @@ from .tps_spatial_transformer import TPSSpatialTransformer
 def conv3x3_block(in_channels, out_channels, stride=1):
     n = 3 * 3 * out_channels
     w = math.sqrt(2. / n)
-    conv_layer = nn.Conv2D(
+    conv_layer = nn.Conv2d(
         in_channels,
         out_channels,
         kernel_size=3,

@@ -41,9 +41,9 @@ class S2VAdaptor(nn.Module):
         self.apply(self.init_weights)
 
     def init_weights(self, m):
-        if isinstance(m, nn.Conv2D):
+        if isinstance(m, nn.Conv2d):
             kaiming_init_(m.weight)
-            if isinstance(m, nn.Conv2D) and m.bias is not None:
+            if isinstance(m, nn.Conv2d) and m.bias is not None:
                 zeros_(m.bias)
         elif isinstance(m, (nn.BatchNorm, nn.BatchNorm2D, nn.BatchNorm1D)):
             zeros_(m.bias)

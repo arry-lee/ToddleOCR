@@ -92,7 +92,7 @@ class BasicBlock(nn.Module):
 
         """
 
-        return nn.Conv2D(in_planes, out_planes,
+        return nn.Conv2d(in_planes, out_planes,
                          kernel_size=3, stride=stride,
                          padding=1, weight_attr=conv_weight_attr,
                          bias_attr=False)
@@ -134,13 +134,13 @@ class ResNet(nn.Module):
                                      output_channel]
 
         self.inplanes = int(output_channel / 8)
-        self.conv0_1 = nn.Conv2D(input_channel, int(output_channel / 16),
+        self.conv0_1 = nn.Conv2d(input_channel, int(output_channel / 16),
                                  kernel_size=3, stride=1, 
                                  padding=1, 
                                  weight_attr=conv_weight_attr,
                                  bias_attr=False)
         self.bn0_1 = nn.BatchNorm2D(int(output_channel / 16))
-        self.conv0_2 = nn.Conv2D(int(output_channel / 16), self.inplanes,
+        self.conv0_2 = nn.Conv2d(int(output_channel / 16), self.inplanes,
                                  kernel_size=3, stride=1,
                                  padding=1, 
                                  weight_attr=conv_weight_attr,
@@ -152,7 +152,7 @@ class ResNet(nn.Module):
         self.layer1 = self._make_layer(block,
                                        self.output_channel_block[0],
                                        layers[0])
-        self.conv1 = nn.Conv2D(self.output_channel_block[0],
+        self.conv1 = nn.Conv2d(self.output_channel_block[0],
                                self.output_channel_block[0],
                                kernel_size=3, stride=1,
                                padding=1, 
@@ -164,7 +164,7 @@ class ResNet(nn.Module):
         self.layer2 = self._make_layer(block,
                                        self.output_channel_block[1],
                                        layers[1], stride=1)
-        self.conv2 = nn.Conv2D(self.output_channel_block[1],
+        self.conv2 = nn.Conv2d(self.output_channel_block[1],
                                self.output_channel_block[1],
                                kernel_size=3, stride=1,
                                padding=1, 
@@ -177,7 +177,7 @@ class ResNet(nn.Module):
                                      padding=(0, 1))
         self.layer3 = self._make_layer(block, self.output_channel_block[2],
                                        layers[2], stride=1)
-        self.conv3 = nn.Conv2D(self.output_channel_block[2],
+        self.conv3 = nn.Conv2d(self.output_channel_block[2],
                                self.output_channel_block[2],
                                kernel_size=3, stride=1,
                                padding=1, 
@@ -187,14 +187,14 @@ class ResNet(nn.Module):
 
         self.layer4 = self._make_layer(block, self.output_channel_block[3],
                                        layers[3], stride=1)
-        self.conv4_1 = nn.Conv2D(self.output_channel_block[3],
+        self.conv4_1 = nn.Conv2d(self.output_channel_block[3],
                                  self.output_channel_block[3],
                                  kernel_size=2, stride=(2, 1),
                                  padding=(0, 1), 
                                  weight_attr=conv_weight_attr,
                                  bias_attr=False)
         self.bn4_1 = nn.BatchNorm2D(self.output_channel_block[3])
-        self.conv4_2 = nn.Conv2D(self.output_channel_block[3],
+        self.conv4_2 = nn.Conv2d(self.output_channel_block[3],
                                  self.output_channel_block[3],
                                  kernel_size=2, stride=1,
                                  padding=0, 
@@ -218,7 +218,7 @@ class ResNet(nn.Module):
         downsample = None
         if stride != 1 or self.inplanes != planes * block.expansion:
             downsample = nn.Sequential(
-                nn.Conv2D(self.inplanes, planes * block.expansion,
+                nn.Conv2d(self.inplanes, planes * block.expansion,
                           kernel_size=1, stride=stride,
                           weight_attr=conv_weight_attr, 
                           bias_attr=False),

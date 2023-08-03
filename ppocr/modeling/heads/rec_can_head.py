@@ -55,7 +55,7 @@ class CountingDecoder(nn.Module):
         self.out_channel = out_channel
 
         self.trans_layer = nn.Sequential(
-            nn.Conv2D(
+            nn.Conv2d(
                 self.in_channel,
                 512,
                 kernel_size=kernel_size,
@@ -66,7 +66,7 @@ class CountingDecoder(nn.Module):
         self.channel_att = ChannelAtt(512, 16)
 
         self.pred_layer = nn.Sequential(
-            nn.Conv2D(
+            nn.Conv2d(
                 512, self.out_channel, kernel_size=1, bias_attr=False),
             nn.Sigmoid())
 
@@ -166,7 +166,7 @@ class AttDecoder(nn.Module):
         self.word_input_gru = nn.GRUCell(self.input_size, self.hidden_size)
         self.word_attention = Attention(hidden_size, attention['attention_dim'])
 
-        self.encoder_feature_conv = nn.Conv2D(
+        self.encoder_feature_conv = nn.Conv2d(
             self.out_channel,
             self.attention_dim,
             kernel_size=attention['word_conv_kernel'],
@@ -256,7 +256,7 @@ class Attention(nn.Module):
         self.hidden = hidden_size
         self.attention_dim = attention_dim
         self.hidden_weight = nn.Linear(self.hidden, self.attention_dim)
-        self.attention_conv = nn.Conv2D(
+        self.attention_conv = nn.Conv2d(
             1, 512, kernel_size=11, padding=5, bias_attr=False)
         self.attention_weight = nn.Linear(
             512, self.attention_dim, bias_attr=False)

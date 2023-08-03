@@ -41,7 +41,7 @@ class Conv_BN_ReLU(nn.Module):
                  stride=1,
                  padding=0):
         super(Conv_BN_ReLU, self).__init__()
-        self.conv = nn.Conv2D(
+        self.conv = nn.Conv2d(
             in_planes,
             out_planes,
             kernel_size=kernel_size,
@@ -52,7 +52,7 @@ class Conv_BN_ReLU(nn.Module):
         self.relu = nn.ReLU()
 
         for m in self.sublayers():
-            if isinstance(m, nn.Conv2D):
+            if isinstance(m, nn.Conv2d):
                 n = m._kernel_size[0] * m._kernel_size[1] * m._out_channels
                 normal_ = Normal(mean=0.0, std=math.sqrt(2. / n))
                 normal_(m.weight)
@@ -68,7 +68,7 @@ class FPEM(nn.Module):
     def __init__(self, in_channels, out_channels):
         super(FPEM, self).__init__()
         planes = out_channels
-        self.dwconv3_1 = nn.Conv2D(
+        self.dwconv3_1 = nn.Conv2d(
             planes,
             planes,
             kernel_size=3,
@@ -78,7 +78,7 @@ class FPEM(nn.Module):
             bias_attr=False)
         self.smooth_layer3_1 = Conv_BN_ReLU(planes, planes)
 
-        self.dwconv2_1 = nn.Conv2D(
+        self.dwconv2_1 = nn.Conv2d(
             planes,
             planes,
             kernel_size=3,
@@ -88,7 +88,7 @@ class FPEM(nn.Module):
             bias_attr=False)
         self.smooth_layer2_1 = Conv_BN_ReLU(planes, planes)
 
-        self.dwconv1_1 = nn.Conv2D(
+        self.dwconv1_1 = nn.Conv2d(
             planes,
             planes,
             kernel_size=3,
@@ -98,7 +98,7 @@ class FPEM(nn.Module):
             bias_attr=False)
         self.smooth_layer1_1 = Conv_BN_ReLU(planes, planes)
 
-        self.dwconv2_2 = nn.Conv2D(
+        self.dwconv2_2 = nn.Conv2d(
             planes,
             planes,
             kernel_size=3,
@@ -108,7 +108,7 @@ class FPEM(nn.Module):
             bias_attr=False)
         self.smooth_layer2_2 = Conv_BN_ReLU(planes, planes)
 
-        self.dwconv3_2 = nn.Conv2D(
+        self.dwconv3_2 = nn.Conv2d(
             planes,
             planes,
             kernel_size=3,
@@ -118,7 +118,7 @@ class FPEM(nn.Module):
             bias_attr=False)
         self.smooth_layer3_2 = Conv_BN_ReLU(planes, planes)
 
-        self.dwconv4_2 = nn.Conv2D(
+        self.dwconv4_2 = nn.Conv2d(
             planes,
             planes,
             kernel_size=3,

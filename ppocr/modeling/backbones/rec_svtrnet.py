@@ -51,7 +51,7 @@ class ConvBNLayer(nn.Module):
                  groups=1,
                  act=nn.GELU):
         super().__init__()
-        self.conv = nn.Conv2D(
+        self.conv = nn.Conv2d(
             in_channels=in_channels,
             out_channels=out_channels,
             kernel_size=kernel_size,
@@ -125,7 +125,7 @@ class ConvMixer(nn.Module):
         super().__init__()
         self.HW = HW
         self.dim = dim
-        self.local_mixer = nn.Conv2D(
+        self.local_mixer = nn.Conv2d(
             dim,
             dim,
             local_k,
@@ -330,7 +330,7 @@ class PatchEmbed(nn.Module):
                         act=nn.GELU,
                         bias_attr=None))
         elif mode == 'linear':
-            self.proj = nn.Conv2D(
+            self.proj = nn.Conv2d(
                 1, embed_dim, kernel_size=patch_size, stride=patch_size)
             self.num_patches = img_size[0] // patch_size[0] * img_size[
                 1] // patch_size[1]
@@ -360,7 +360,7 @@ class SubSample(nn.Module):
                 kernel_size=[3, 5], stride=stride, padding=[1, 2])
             self.proj = nn.Linear(in_channels, out_channels)
         else:
-            self.conv = nn.Conv2D(
+            self.conv = nn.Conv2d(
                 in_channels,
                 out_channels,
                 kernel_size=3,
@@ -519,7 +519,7 @@ class SVTRNet(nn.Module):
         self.last_stage = last_stage
         if last_stage:
             self.avg_pool = nn.AdaptiveAvgPool2D([1, out_char_num])
-            self.last_conv = nn.Conv2D(
+            self.last_conv = nn.Conv2d(
                 in_channels=embed_dim[2],
                 out_channels=self.out_channels,
                 kernel_size=1,

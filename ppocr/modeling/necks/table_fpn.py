@@ -27,60 +27,60 @@ class TableFPN(nn.Module):
         super(TableFPN, self).__init__()
         self.out_channels = 512
         weight_attr = torch.nn.initializer.KaimingUniform()
-        self.in2_conv = nn.Conv2D(
+        self.in2_conv = nn.Conv2d(
             in_channels=in_channels[0],
             out_channels=self.out_channels,
             kernel_size=1,
             weight_attr=ParamAttr(initializer=weight_attr),
             bias_attr=False)
-        self.in3_conv = nn.Conv2D(
+        self.in3_conv = nn.Conv2d(
             in_channels=in_channels[1],
             out_channels=self.out_channels,
             kernel_size=1,
             stride = 1,
             weight_attr=ParamAttr(initializer=weight_attr),
             bias_attr=False)
-        self.in4_conv = nn.Conv2D(
+        self.in4_conv = nn.Conv2d(
             in_channels=in_channels[2],
             out_channels=self.out_channels,
             kernel_size=1,
             weight_attr=ParamAttr(initializer=weight_attr),
             bias_attr=False)
-        self.in5_conv = nn.Conv2D(
+        self.in5_conv = nn.Conv2d(
             in_channels=in_channels[3],
             out_channels=self.out_channels,
             kernel_size=1,
             weight_attr=ParamAttr(initializer=weight_attr),
             bias_attr=False)
-        self.p5_conv = nn.Conv2D(
+        self.p5_conv = nn.Conv2d(
             in_channels=self.out_channels,
             out_channels=self.out_channels // 4,
             kernel_size=3,
             padding=1,
             weight_attr=ParamAttr(initializer=weight_attr),
             bias_attr=False)
-        self.p4_conv = nn.Conv2D(
+        self.p4_conv = nn.Conv2d(
             in_channels=self.out_channels,
             out_channels=self.out_channels // 4,
             kernel_size=3,
             padding=1,
             weight_attr=ParamAttr(initializer=weight_attr),
             bias_attr=False)
-        self.p3_conv = nn.Conv2D(
+        self.p3_conv = nn.Conv2d(
             in_channels=self.out_channels,
             out_channels=self.out_channels // 4,
             kernel_size=3,
             padding=1,
             weight_attr=ParamAttr(initializer=weight_attr),
             bias_attr=False)
-        self.p2_conv = nn.Conv2D(
+        self.p2_conv = nn.Conv2d(
             in_channels=self.out_channels,
             out_channels=self.out_channels // 4,
             kernel_size=3,
             padding=1,
             weight_attr=ParamAttr(initializer=weight_attr),
             bias_attr=False)
-        self.fuse_conv = nn.Conv2D(
+        self.fuse_conv = nn.Conv2d(
             in_channels=self.out_channels * 4,
             out_channels=512,
             kernel_size=3,

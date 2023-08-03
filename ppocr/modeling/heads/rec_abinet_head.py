@@ -81,7 +81,7 @@ class BCNLanguage(nn.Module):
 
 def encoder_layer(in_c, out_c, k=3, s=2, p=1):
     return nn.Sequential(
-        nn.Conv2D(in_c, out_c, k, s, p), nn.BatchNorm2D(out_c), nn.ReLU())
+        nn.Conv2d(in_c, out_c, k, s, p), nn.BatchNorm2D(out_c), nn.ReLU())
 
 
 def decoder_layer(in_c,
@@ -99,7 +99,7 @@ def decoder_layer(in_c,
             scale_factor=scale_factor,
             mode=mode,
             align_corners=align_corners),
-        nn.Conv2D(in_c, out_c, k, s, p),
+        nn.Conv2d(in_c, out_c, k, s, p),
         nn.BatchNorm2D(out_c),
         nn.ReLU())
 

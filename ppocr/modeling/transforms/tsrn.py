@@ -53,7 +53,7 @@ class TSRN(nn.Module):
         assert math.log(scale_factor, 2) % 1 == 0
         upsample_block_num = int(math.log(scale_factor, 2))
         self.block1 = nn.Sequential(
-            nn.Conv2D(
+            nn.Conv2d(
                 in_planes, 2 * hidden_units, kernel_size=9, padding=4),
             nn.PReLU())
         self.srb_nums = srb_nums
@@ -65,7 +65,7 @@ class TSRN(nn.Module):
             self,
             'block%d' % (srb_nums + 2),
             nn.Sequential(
-                nn.Conv2D(
+                nn.Conv2d(
                     2 * hidden_units,
                     2 * hidden_units,
                     kernel_size=3,
@@ -77,7 +77,7 @@ class TSRN(nn.Module):
             for _ in range(upsample_block_num)
         ]
         block_.append(
-            nn.Conv2D(
+            nn.Conv2d(
                 2 * hidden_units, in_planes, kernel_size=9, padding=4))
         setattr(self, 'block%d' % (srb_nums + 3), nn.Sequential(*block_))
         self.tps_inputsize = [height // scale_factor, width // scale_factor]
@@ -150,11 +150,11 @@ class TSRN(nn.Module):
 class RecurrentResidualBlock(nn.Module):
     def __init__(self, channels):
         super(RecurrentResidualBlock, self).__init__()
-        self.conv1 = nn.Conv2D(channels, channels, kernel_size=3, padding=1)
+        self.conv1 = nn.Conv2d(channels, channels, kernel_size=3, padding=1)
         self.bn1 = nn.BatchNorm2D(channels)
         self.gru1 = GruBlock(channels, channels)
         self.prelu = mish()
-        self.conv2 = nn.Conv2D(channels, channels, kernel_size=3, padding=1)
+        self.conv2 = nn.Conv2d(channels, channels, kernel_size=3, padding=1)
         self.bn2 = nn.BatchNorm2D(channels)
         self.gru2 = GruBlock(channels, channels)
 
@@ -173,7 +173,7 @@ class RecurrentResidualBlock(nn.Module):
 class UpsampleBLock(nn.Module):
     def __init__(self, in_channels, up_scale):
         super(UpsampleBLock, self).__init__()
-        self.conv = nn.Conv2D(
+        self.conv = nn.Conv2d(
             in_channels, in_channels * up_scale**2, kernel_size=3, padding=1)
 
         self.pixel_shuffle = nn.PixelShuffle(up_scale)
@@ -201,7 +201,7 @@ class GruBlock(nn.Module):
     def __init__(self, in_channels, out_channels):
         super(GruBlock, self).__init__()
         assert out_channels % 2 == 0
-        self.conv1 = nn.Conv2D(
+        self.conv1 = nn.Conv2d(
             in_channels, out_channels, kernel_size=1, padding=0)
         self.gru = nn.GRU(out_channels,
                           out_channels // 2,

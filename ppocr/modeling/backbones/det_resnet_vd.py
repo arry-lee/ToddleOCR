@@ -75,7 +75,7 @@ class DeformableConvV2(nn.Module):
                 initializer=Constant(0.),
                 learning_rate=lr_scale,
                 regularizer=regularizer)
-        self.conv_offset = nn.Conv2D(
+        self.conv_offset = nn.Conv2d(
             in_channels,
             groups * 3 * kernel_size**2,
             kernel_size,
@@ -114,7 +114,7 @@ class ConvBNLayer(nn.Module):
         self._pool2d_avg = nn.AvgPool2D(
             kernel_size=2, stride=2, padding=0, ceil_mode=True)
         if not is_dcn:
-            self._conv = nn.Conv2D(
+            self._conv = nn.Conv2d(
                 in_channels=in_channels,
                 out_channels=out_channels,
                 kernel_size=kernel_size,

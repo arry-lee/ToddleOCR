@@ -35,7 +35,7 @@ class ConvBNLayer(nn.Module):
         initializer = nn.initializer.KaimingUniform()
         self.act = act
         assert self.act in ['leaky_relu', "hard_swish"]
-        self.conv = nn.Conv2D(
+        self.conv = nn.Conv2d(
             in_channels=in_channel,
             out_channels=out_channel,
             kernel_size=kernel_size,
@@ -76,7 +76,7 @@ class DPModule(nn.Module):
         super(DPModule, self).__init__()
         initializer = nn.initializer.KaimingUniform()
         self.act = act
-        self.dwconv = nn.Conv2D(
+        self.dwconv = nn.Conv2d(
             in_channels=in_channel,
             out_channels=out_channel,
             kernel_size=kernel_size,
@@ -86,7 +86,7 @@ class DPModule(nn.Module):
             weight_attr=ParamAttr(initializer=initializer),
             bias_attr=False)
         self.bn1 = nn.BatchNorm2D(out_channel)
-        self.pwconv = nn.Conv2D(
+        self.pwconv = nn.Conv2d(
             in_channels=out_channel,
             out_channels=out_channel,
             kernel_size=1,

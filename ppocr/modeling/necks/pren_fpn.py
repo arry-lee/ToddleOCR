@@ -48,10 +48,10 @@ class PoolAggregate(nn.Module):
                 self.add_sublayer(
                     '{}'.format(i),
                     nn.Sequential(
-                        ('conv1', nn.Conv2D(
+                        ('conv1', nn.Conv2d(
                             self.d_in, self.d_middle, 3, 2, 1, bias_attr=False)
                          ), ('bn1', nn.BatchNorm(self.d_middle)),
-                        ('act', self.act), ('conv2', nn.Conv2D(
+                        ('act', self.act), ('conv2', nn.Conv2d(
                             self.d_middle, self.d_out, 3, 2, 1, bias_attr=False
                         )), ('bn2', nn.BatchNorm(self.d_out)))))
         return aggs
@@ -80,17 +80,17 @@ class WeightAggregate(nn.Module):
         self.act = nn.Swish()
 
         self.conv_n = nn.Sequential(
-            ('conv1', nn.Conv2D(
+            ('conv1', nn.Conv2d(
                 d_in, d_in, 3, 1, 1,
                 bias_attr=False)), ('bn1', nn.BatchNorm(d_in)),
-            ('act1', self.act), ('conv2', nn.Conv2D(
+            ('act1', self.act), ('conv2', nn.Conv2d(
                 d_in, n_r, 1, bias_attr=False)), ('bn2', nn.BatchNorm(n_r)),
             ('act2', nn.Sigmoid()))
         self.conv_d = nn.Sequential(
-            ('conv1', nn.Conv2D(
+            ('conv1', nn.Conv2d(
                 d_in, d_middle, 3, 1, 1,
                 bias_attr=False)), ('bn1', nn.BatchNorm(d_middle)),
-            ('act1', self.act), ('conv2', nn.Conv2D(
+            ('act1', self.act), ('conv2', nn.Conv2d(
                 d_middle, d_out, 1,
                 bias_attr=False)), ('bn2', nn.BatchNorm(d_out)))
 

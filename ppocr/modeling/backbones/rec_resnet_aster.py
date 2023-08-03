@@ -24,7 +24,7 @@ import math
 
 def conv3x3(in_planes, out_planes, stride=1):
     """3x3 convolution with padding"""
-    return nn.Conv2D(
+    return nn.Conv2d(
         in_planes,
         out_planes,
         kernel_size=3,
@@ -35,7 +35,7 @@ def conv3x3(in_planes, out_planes, stride=1):
 
 def conv1x1(in_planes, out_planes, stride=1):
     """1x1 convolution"""
-    return nn.Conv2D(
+    return nn.Conv2d(
         in_planes, out_planes, kernel_size=1, stride=stride, bias_attr=False)
 
 
@@ -90,7 +90,7 @@ class ResNet_ASTER(nn.Module):
         self.n_group = n_group
 
         self.layer0 = nn.Sequential(
-            nn.Conv2D(
+            nn.Conv2d(
                 in_channels,
                 32,
                 kernel_size=(3, 3),

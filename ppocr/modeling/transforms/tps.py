@@ -37,7 +37,7 @@ class ConvBNLayer(nn.Module):
                  act=None,
                  name=None):
         super(ConvBNLayer, self).__init__()
-        self.conv = nn.Conv2D(
+        self.conv = nn.Conv2d(
             in_channels=in_channels,
             out_channels=out_channels,
             kernel_size=kernel_size,

@@ -37,7 +37,7 @@ class ConvBNLayer(nn.Module):
         super(ConvBNLayer, self).__init__()
         self.if_act = if_act
         self.act = act
-        self.conv = nn.Conv2D(
+        self.conv = nn.Conv2d(
             in_channels=in_channels,
             out_channels=out_channels,
             kernel_size=kernel_size,
@@ -102,7 +102,7 @@ class PGHead(nn.Module):
             act='relu',
             name="conv_f_score{}".format(3))
 
-        self.conv1 = nn.Conv2D(
+        self.conv1 = nn.Conv2d(
             in_channels=128,
             out_channels=1,
             kernel_size=3,
@@ -136,7 +136,7 @@ class PGHead(nn.Module):
             padding=0,
             act='relu',
             name="conv_f_boder{}".format(3))
-        self.conv2 = nn.Conv2D(
+        self.conv2 = nn.Conv2d(
             in_channels=128,
             out_channels=4,
             kernel_size=3,
@@ -185,7 +185,7 @@ class PGHead(nn.Module):
             padding=0,
             act='relu',
             name="conv_f_char{}".format(5))
-        self.conv3 = nn.Conv2D(
+        self.conv3 = nn.Conv2d(
             in_channels=256,
             out_channels=character_length,
             kernel_size=3,
@@ -219,7 +219,7 @@ class PGHead(nn.Module):
             padding=0,
             act='relu',
             name="conv_f_direc{}".format(3))
-        self.conv4 = nn.Conv2D(
+        self.conv4 = nn.Conv2d(
             in_channels=128,
             out_channels=2,
             kernel_size=3,

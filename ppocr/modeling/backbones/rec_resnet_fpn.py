@@ -110,7 +110,7 @@ class ResNetFPN(nn.Module):
             self.base_block.append(
                 self.add_sublayer(
                     "F_{}_base_block_0".format(i),
-                    nn.Conv2D(
+                    nn.Conv2d(
                         in_channels=in_channels,
                         out_channels=out_ch_list[i],
                         kernel_size=1,
@@ -119,7 +119,7 @@ class ResNetFPN(nn.Module):
             self.base_block.append(
                 self.add_sublayer(
                     "F_{}_base_block_1".format(i),
-                    nn.Conv2D(
+                    nn.Conv2d(
                         in_channels=out_ch_list[i],
                         out_channels=out_ch_list[i],
                         kernel_size=3,
@@ -137,7 +137,7 @@ class ResNetFPN(nn.Module):
         self.base_block.append(
             self.add_sublayer(
                 "F_{}_base_block_3".format(i),
-                nn.Conv2D(
+                nn.Conv2d(
                     in_channels=out_ch_list[i],
                     out_channels=512,
                     kernel_size=1,
@@ -184,7 +184,7 @@ class ConvBNLayer(nn.Module):
                  act=None,
                  name=None):
         super(ConvBNLayer, self).__init__()
-        self.conv = nn.Conv2D(
+        self.conv = nn.Conv2d(
             in_channels=in_channels,
             out_channels=out_channels,
             kernel_size=2 if stride == (1, 1) else kernel_size,

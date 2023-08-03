@@ -32,11 +32,11 @@ class Bottleneck(nn.Module):
         super(Bottleneck, self).__init__()
         interChannels = 4 * growthRate
         self.bn1 = nn.BatchNorm2D(interChannels)
-        self.conv1 = nn.Conv2D(
+        self.conv1 = nn.Conv2d(
             nChannels, interChannels, kernel_size=1,
             bias_attr=None)  # Xavier initialization
         self.bn2 = nn.BatchNorm2D(growthRate)
-        self.conv2 = nn.Conv2D(
+        self.conv2 = nn.Conv2d(
             interChannels, growthRate, kernel_size=3, padding=1,
             bias_attr=None)  # Xavier initialization
         self.use_dropout = use_dropout
@@ -57,7 +57,7 @@ class SingleLayer(nn.Module):
     def __init__(self, nChannels, growthRate, use_dropout):
         super(SingleLayer, self).__init__()
         self.bn1 = nn.BatchNorm2D(nChannels)
-        self.conv1 = nn.Conv2D(
+        self.conv1 = nn.Conv2d(
             nChannels, growthRate, kernel_size=3, padding=1, bias_attr=False)
 
         self.use_dropout = use_dropout
@@ -76,7 +76,7 @@ class Transition(nn.Module):
     def __init__(self, nChannels, out_channels, use_dropout):
         super(Transition, self).__init__()
         self.bn1 = nn.BatchNorm2D(out_channels)
-        self.conv1 = nn.Conv2D(
+        self.conv1 = nn.Conv2d(
             nChannels, out_channels, kernel_size=1, bias_attr=False)
         self.use_dropout = use_dropout
         self.dropout = nn.Dropout(p=0.2)
@@ -97,7 +97,7 @@ class DenseNet(nn.Module):
         nDenseBlocks = 16
         nChannels = 2 * growthRate
 
-        self.conv1 = nn.Conv2D(
+        self.conv1 = nn.Conv2d(
             input_channel,
             nChannels,
             kernel_size=7,

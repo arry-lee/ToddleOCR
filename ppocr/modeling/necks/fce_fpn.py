@@ -45,7 +45,7 @@ class ConvNormLayer(nn.Module):
 
         bias_attr = False
 
-        self.conv = nn.Conv2D(
+        self.conv = nn.Conv2d(
             in_channels=ch_in,
             out_channels=ch_out,
             kernel_size=filter_size,
@@ -163,7 +163,7 @@ class FCEFPN(nn.Module):
             else:
                 lateral = self.add_sublayer(
                     lateral_name,
-                    nn.Conv2D(
+                    nn.Conv2d(
                         in_channels=in_c,
                         out_channels=out_channels,
                         kernel_size=1,
@@ -188,7 +188,7 @@ class FCEFPN(nn.Module):
             else:
                 fpn_conv = self.add_sublayer(
                     fpn_name,
-                    nn.Conv2D(
+                    nn.Conv2d(
                         in_channels=out_channels,
                         out_channels=out_channels,
                         kernel_size=3,
@@ -221,7 +221,7 @@ class FCEFPN(nn.Module):
                 else:
                     extra_fpn_conv = self.add_sublayer(
                         extra_fpn_name,
-                        nn.Conv2D(
+                        nn.Conv2d(
                             in_channels=in_c,
                             out_channels=out_channels,
                             kernel_size=3,

@@ -30,7 +30,7 @@ class Conv_BN_ReLU(nn.Module):
                  stride=1,
                  padding=0):
         super(Conv_BN_ReLU, self).__init__()
-        self.conv = nn.Conv2D(
+        self.conv = nn.Conv2d(
             in_planes,
             out_planes,
             kernel_size=kernel_size,
@@ -41,7 +41,7 @@ class Conv_BN_ReLU(nn.Module):
         self.relu = nn.ReLU()
 
         for m in self.sublayers():
-            if isinstance(m, nn.Conv2D):
+            if isinstance(m, nn.Conv2d):
                 n = m._kernel_size[0] * m._kernel_size[1] * m._out_channels
                 m.weight = torch.create_parameter(
                     shape=m.weight.shape,
@@ -91,7 +91,7 @@ class FPN(nn.Module):
 
         self.out_channels = out_channels * 4
         for m in self.sublayers():
-            if isinstance(m, nn.Conv2D):
+            if isinstance(m, nn.Conv2d):
                 n = m._kernel_size[0] * m._kernel_size[1] * m._out_channels
                 m.weight = torch.create_parameter(
                     shape=m.weight.shape,

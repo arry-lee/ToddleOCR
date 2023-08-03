@@ -185,7 +185,7 @@ class ParallelSARDecoder(BaseDecoder):
 
         # 2D attention layer
         self.conv1x1_1 = nn.Linear(decoder_rnn_out_size, d_k)
-        self.conv3x3_1 = nn.Conv2D(
+        self.conv3x3_1 = nn.Conv2d(
             d_model, d_k, kernel_size=3, stride=1, padding=1)
         self.conv1x1_2 = nn.Linear(d_k, 1)
 

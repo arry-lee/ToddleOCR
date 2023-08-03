@@ -36,16 +36,16 @@ class CT_Head(nn.Module):
                  loss_kernel=None,
                  loss_loc=None):
         super(CT_Head, self).__init__()
-        self.conv1 = nn.Conv2D(
+        self.conv1 = nn.Conv2d(
             in_channels, hidden_dim, kernel_size=3, stride=1, padding=1)
         self.bn1 = nn.BatchNorm2D(hidden_dim)
         self.relu1 = nn.ReLU()
 
-        self.conv2 = nn.Conv2D(
+        self.conv2 = nn.Conv2d(
             hidden_dim, num_classes, kernel_size=1, stride=1, padding=0)
 
         for m in self.sublayers():
-            if isinstance(m, nn.Conv2D):
+            if isinstance(m, nn.Conv2d):
                 n = m._kernel_size[0] * m._kernel_size[1] * m._out_channels
                 normal_ = Normal(mean=0.0, std=math.sqrt(2. / n))
                 normal_(m.weight)

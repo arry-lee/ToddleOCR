@@ -65,7 +65,7 @@ class ChannelReductionEncoder(nn.Module):
                  **kwargs):
         super(ChannelReductionEncoder, self).__init__()
 
-        self.layer = nn.Conv2D(
+        self.layer = nn.Conv2d(
             in_channels, out_channels, kernel_size=1, stride=1, padding=0, weight_attr=nn.initializer.XavierNormal())
 
     def forward(self, feat):
@@ -318,10 +318,10 @@ class PositionAwareLayer(nn.Module):
             time_major=False)
 
         self.mixer = nn.Sequential(
-            nn.Conv2D(
+            nn.Conv2d(
                 dim_model, dim_model, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
-            nn.Conv2D(
+            nn.Conv2d(
                 dim_model, dim_model, kernel_size=3, stride=1, padding=1))
 
     def forward(self, img_feature):

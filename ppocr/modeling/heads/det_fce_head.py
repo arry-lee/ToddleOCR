@@ -53,7 +53,7 @@ class FCEHead(nn.Module):
         self.out_channels_cls = 4
         self.out_channels_reg = (2 * self.fourier_degree + 1) * 2
 
-        self.out_conv_cls = nn.Conv2D(
+        self.out_conv_cls = nn.Conv2d(
             in_channels=self.in_channels,
             out_channels=self.out_channels_cls,
             kernel_size=3,
@@ -65,7 +65,7 @@ class FCEHead(nn.Module):
                 initializer=Normal(
                     mean=0., std=0.01)),
             bias_attr=True)
-        self.out_conv_reg = nn.Conv2D(
+        self.out_conv_reg = nn.Conv2d(
             in_channels=self.in_channels,
             out_channels=self.out_channels_reg,
             kernel_size=3,

@@ -88,7 +88,7 @@ class DRRGHead(nn.Module):
         self.center_region_area_thr = center_region_area_thr
         self.local_graph_thr = local_graph_thr
 
-        self.out_conv = nn.Conv2D(
+        self.out_conv = nn.Conv2d(
             in_channels=self.in_channels,
             out_channels=self.out_channels,
             kernel_size=1,

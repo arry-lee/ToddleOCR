@@ -102,13 +102,13 @@ class SpatialSepConvSF(nn.Module):
 
         oup1, oup2 = oups
         self.conv = nn.Sequential(
-            nn.Conv2D(
+            nn.Conv2d(
                 inp,
                 oup1, (kernel_size, 1), (stride, 1), (kernel_size // 2, 0),
                 bias_attr=False,
                 groups=1),
             nn.BatchNorm2D(oup1),
-            nn.Conv2D(
+            nn.Conv2d(
                 oup1,
                 oup1 * oup2, (1, kernel_size), (1, stride),
                 (0, kernel_size // 2),
@@ -165,14 +165,14 @@ class DepthSpatialSepConv(nn.Module):
         oup = inp * exp1 * exp2
 
         self.conv = nn.Sequential(
-            nn.Conv2D(
+            nn.Conv2d(
                 inp,
                 inp * exp1, (kernel_size, 1), (stride, 1),
                 (kernel_size // 2, 0),
                 bias_attr=False,
                 groups=inp),
             nn.BatchNorm2D(inp * exp1),
-            nn.Conv2D(
+            nn.Conv2d(
                 hidden_dim,
                 oup, (1, kernel_size),
                 1, (0, kernel_size // 2),
@@ -192,7 +192,7 @@ class GroupConv(nn.Module):
         self.oup = oup
         self.groups = groups
         self.conv = nn.Sequential(
-            nn.Conv2D(
+            nn.Conv2d(
                 inp, oup, 1, 1, 0, bias_attr=False, groups=self.groups[0]),
             nn.BatchNorm2D(oup))
 
@@ -205,7 +205,7 @@ class DepthConv(nn.Module):
     def __init__(self, inp, oup, kernel_size, stride):
         super(DepthConv, self).__init__()
         self.conv = nn.Sequential(
-            nn.Conv2D(
+            nn.Conv2d(
                 inp,
                 oup,
                 kernel_size,

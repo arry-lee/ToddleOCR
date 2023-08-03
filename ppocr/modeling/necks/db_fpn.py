@@ -46,7 +46,7 @@ class DSConv(nn.Module):
             groups = in_channels
         self.if_act = if_act
         self.act = act
-        self.conv1 = nn.Conv2D(
+        self.conv1 = nn.Conv2d(
             in_channels=in_channels,
             out_channels=in_channels,
             kernel_size=kernel_size,
@@ -57,7 +57,7 @@ class DSConv(nn.Module):
 
         self.bn1 = nn.BatchNorm(num_channels=in_channels, act=None)
 
-        self.conv2 = nn.Conv2D(
+        self.conv2 = nn.Conv2d(
             in_channels=in_channels,
             out_channels=int(in_channels * 4),
             kernel_size=1,
@@ -66,7 +66,7 @@ class DSConv(nn.Module):
 
         self.bn2 = nn.BatchNorm(num_channels=int(in_channels * 4), act=None)
 
-        self.conv3 = nn.Conv2D(
+        self.conv3 = nn.Conv2d(
             in_channels=int(in_channels * 4),
             out_channels=out_channels,
             kernel_size=1,
@@ -74,7 +74,7 @@ class DSConv(nn.Module):
             bias_attr=False)
         self._c = [in_channels, out_channels]
         if in_channels != out_channels:
-            self.conv_end = nn.Conv2D(
+            self.conv_end = nn.Conv2d(
                 in_channels=in_channels,
                 out_channels=out_channels,
                 kernel_size=1,
@@ -111,52 +111,52 @@ class DBFPN(nn.Module):
         self.use_asf = use_asf
         weight_attr = torch.nn.initializer.KaimingUniform()
 
-        self.in2_conv = nn.Conv2D(
+        self.in2_conv = nn.Conv2d(
             in_channels=in_channels[0],
             out_channels=self.out_channels,
             kernel_size=1,
             weight_attr=ParamAttr(initializer=weight_attr),
             bias_attr=False)
-        self.in3_conv = nn.Conv2D(
+        self.in3_conv = nn.Conv2d(
             in_channels=in_channels[1],
             out_channels=self.out_channels,
             kernel_size=1,
             weight_attr=ParamAttr(initializer=weight_attr),
             bias_attr=False)
-        self.in4_conv = nn.Conv2D(
+        self.in4_conv = nn.Conv2d(
             in_channels=in_channels[2],
             out_channels=self.out_channels,
             kernel_size=1,
             weight_attr=ParamAttr(initializer=weight_attr),
             bias_attr=False)
-        self.in5_conv = nn.Conv2D(
+        self.in5_conv = nn.Conv2d(
             in_channels=in_channels[3],
             out_channels=self.out_channels,
             kernel_size=1,
             weight_attr=ParamAttr(initializer=weight_attr),
             bias_attr=False)
-        self.p5_conv = nn.Conv2D(
+        self.p5_conv = nn.Conv2d(
             in_channels=self.out_channels,
             out_channels=self.out_channels // 4,
             kernel_size=3,
             padding=1,
             weight_attr=ParamAttr(initializer=weight_attr),
             bias_attr=False)
-        self.p4_conv = nn.Conv2D(
+        self.p4_conv = nn.Conv2d(
             in_channels=self.out_channels,
             out_channels=self.out_channels // 4,
             kernel_size=3,
             padding=1,
             weight_attr=ParamAttr(initializer=weight_attr),
             bias_attr=False)
-        self.p3_conv = nn.Conv2D(
+        self.p3_conv = nn.Conv2d(
             in_channels=self.out_channels,
             out_channels=self.out_channels // 4,
             kernel_size=3,
             padding=1,
             weight_attr=ParamAttr(initializer=weight_attr),
             bias_attr=False)
-        self.p2_conv = nn.Conv2D(
+        self.p2_conv = nn.Conv2d(
             in_channels=self.out_channels,
             out_channels=self.out_channels // 4,
             kernel_size=3,
@@ -203,7 +203,7 @@ class RSELayer(nn.Module):
         super(RSELayer, self).__init__()
         weight_attr = torch.nn.initializer.KaimingUniform()
         self.out_channels = out_channels
-        self.in_conv = nn.Conv2D(
+        self.in_conv = nn.Conv2d(
             in_channels=in_channels,
             out_channels=self.out_channels,
             kernel_size=kernel_size,
@@ -286,7 +286,7 @@ class LKPAN(nn.Module):
         if mode.lower() == 'lite':
             p_layer = DSConv
         elif mode.lower() == 'large':
-            p_layer = nn.Conv2D
+            p_layer = nn.Conv2d
         else:
             raise ValueError(
                 "mode can only be one of ['lite', 'large'], but received {}".
@@ -294,7 +294,7 @@ class LKPAN(nn.Module):
 
         for i in range(len(in_channels)):
             self.ins_conv.append(
-                nn.Conv2D(
+                nn.Conv2d(
                     in_channels=in_channels[i],
                     out_channels=self.out_channels,
                     kernel_size=1,
@@ -312,7 +312,7 @@ class LKPAN(nn.Module):
 
             if i > 0:
                 self.pan_head_conv.append(
-                    nn.Conv2D(
+                    nn.Conv2d(
                         in_channels=self.out_channels // 4,
                         out_channels=self.out_channels // 4,
                         kernel_size=3,
@@ -385,11 +385,11 @@ class ASFBlock(nn.Module):
         self.in_channels = in_channels
         self.inter_channels = inter_channels
         self.out_features_num = out_features_num
-        self.conv = nn.Conv2D(in_channels, inter_channels, 3, padding=1)
+        self.conv = nn.Conv2d(in_channels, inter_channels, 3, padding=1)
 
         self.spatial_scale = nn.Sequential(
             #Nx1xHxW
-            nn.Conv2D(
+            nn.Conv2d(
                 in_channels=1,
                 out_channels=1,
                 kernel_size=3,
@@ -397,7 +397,7 @@ class ASFBlock(nn.Module):
                 padding=1,
                 weight_attr=ParamAttr(initializer=weight_attr)),
             nn.ReLU(),
-            nn.Conv2D(
+            nn.Conv2d(
                 in_channels=1,
                 out_channels=1,
                 kernel_size=1,
@@ -406,7 +406,7 @@ class ASFBlock(nn.Module):
             nn.Sigmoid())
 
         self.channel_scale = nn.Sequential(
-            nn.Conv2D(
+            nn.Conv2d(
                 in_channels=inter_channels,
                 out_channels=out_features_num,
                 kernel_size=1,

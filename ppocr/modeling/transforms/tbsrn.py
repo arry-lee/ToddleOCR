@@ -124,7 +124,7 @@ class TBSRN(nn.Module):
         assert math.log(scale_factor, 2) % 1 == 0
         upsample_block_num = int(math.log(scale_factor, 2))
         self.block1 = nn.Sequential(
-            nn.Conv2D(in_planes, 2 * hidden_units, kernel_size=9, padding=4),
+            nn.Conv2d(in_planes, 2 * hidden_units, kernel_size=9, padding=4),
             nn.PReLU()
             # nn.ReLU()
         )
@@ -134,13 +134,13 @@ class TBSRN(nn.Module):
 
         setattr(self, 'block%d' % (srb_nums + 2),
                 nn.Sequential(
-                    nn.Conv2D(2 * hidden_units, 2 * hidden_units, kernel_size=3, padding=1),
+                    nn.Conv2d(2 * hidden_units, 2 * hidden_units, kernel_size=3, padding=1),
                     nn.BatchNorm2D(2 * hidden_units)
                 ))
 
         # self.non_local = NonLocalBlock2D(64, 64)
         block_ = [UpsampleBLock(2 * hidden_units, 2) for _ in range(upsample_block_num)]
-        block_.append(nn.Conv2D(2 * hidden_units, in_planes, kernel_size=9, padding=4))
+        block_.append(nn.Conv2d(2 * hidden_units, in_planes, kernel_size=9, padding=4))
         setattr(self, 'block%d' % (srb_nums + 3), nn.Sequential(*block_))
         self.tps_inputsize = [height // scale_factor, width // scale_factor]
         tps_outputsize = [height // scale_factor, width // scale_factor]
@@ -236,12 +236,12 @@ class TBSRN(nn.Module):
 class RecurrentResidualBlock(nn.Module):
     def __init__(self, channels):
         super(RecurrentResidualBlock, self).__init__()
-        self.conv1 = nn.Conv2D(channels, channels, kernel_size=3, padding=1)
+        self.conv1 = nn.Conv2d(channels, channels, kernel_size=3, padding=1)
         self.bn1 = nn.BatchNorm2D(channels)
         self.gru1 = GruBlock(channels, channels)
         # self.prelu = nn.ReLU()
         self.prelu = mish()
-        self.conv2 = nn.Conv2D(channels, channels, kernel_size=3, padding=1)
+        self.conv2 = nn.Conv2d(channels, channels, kernel_size=3, padding=1)
         self.bn2 = nn.BatchNorm2D(channels)
         self.gru2 = GruBlock(channels, channels)
         self.feature_enhancer = FeatureEnhancer()
