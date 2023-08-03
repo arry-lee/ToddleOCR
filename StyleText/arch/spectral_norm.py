@@ -125,7 +125,7 @@ class SpectralNorm(object):
 
 def spectral_norm(module, name="weight", n_power_iterations=1, eps=1e-12, dim=None):
     if dim is None:
-        if isinstance(module, (nn.Conv1DTranspose, nn.ConvTranspose2d, nn.Conv3DTranspose, nn.Linear)):
+        if isinstance(module, (nn.ConvTranspose1d, nn.ConvTranspose2d, nn.ConvTranspose3d, nn.Linear)):
             dim = 1
         else:
             dim = 0
