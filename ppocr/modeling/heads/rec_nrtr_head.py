@@ -270,7 +270,7 @@ class Transformer(nn.Module):
         Unmasked positions are filled with float(0.0).
         """
         mask = torch.zeros([sz, sz], dtype="float32")
-        mask_inf = torch.triu(torch.full(shape=[sz, sz], dtype="float32", fill_value="-inf"), diagonal=1)
+        mask_inf = torch.triu(torch.full([sz, sz], dtype="float32","-inf"), diagonal=1)
         mask = mask + mask_inf
         return mask.unsqueeze([0, 1])
 

@@ -97,7 +97,7 @@ class AttentionRecognitionHead(nn.Module):
         outputs = []
         for i in range(max(lengths)):
             if i == 0:
-                y_prev = torch.full(shape=[batch_size], fill_value=self.num_classes)
+                y_prev = torch.full([batch_size],self.num_classes)
             else:
                 y_prev = targets[:, i - 1]
             output, state = self.decoder(x, state, y_prev)
@@ -115,7 +115,7 @@ class AttentionRecognitionHead(nn.Module):
         predicted_ids, predicted_scores = [], []
         for i in range(self.max_len_labels):
             if i == 0:
-                y_prev = torch.full(shape=[batch_size], fill_value=self.num_classes)
+                y_prev = torch.full([batch_size],self.num_classes)
             else:
                 y_prev = predicted
 
@@ -147,12 +147,12 @@ class AttentionRecognitionHead(nn.Module):
         pos_index = torch.reshape(torch.arange(batch_size) * beam_width, shape=[-1, 1])
 
         # Initialize the scores
-        sequence_scores = torch.full(shape=[batch_size * beam_width, 1], fill_value=-float("Inf"))
+        sequence_scores = torch.full([batch_size * beam_width, 1],-float("Inf"))
         index = [i * beam_width for i in range(0, batch_size)]
         sequence_scores[index] = 0.0
 
         # Initialize the input vector
-        y_prev = torch.full(shape=[batch_size * beam_width], fill_value=self.num_classes)
+        y_prev = torch.full([batch_size * beam_width],self.num_classes)
 
         # Store decisions for backtracking
         stored_scores = list()
