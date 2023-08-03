@@ -21,7 +21,7 @@ from __future__ import print_function
 import math
 import numpy as np
 import torch
-from torch import ParamAttr, reshape, transpose
+, reshape, transpose
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.nn import Conv2d, BatchNorm2d, Linear, Dropout

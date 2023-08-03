@@ -17,7 +17,7 @@ from __future__ import absolute_import, division, print_function
 import os
 import torch
 import torch.nn as nn
-from torch import ParamAttr
+
 from torch.nn import AdaptiveAvgPool2D, BatchNorm2d, Conv2d, Dropout, Linear
 from torch.regularizer import L2Decay
 from torch.nn.initializer import KaimingNormal

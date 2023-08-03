@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from torch import ParamAttr
+
 from torch.nn.initializer import KaimingNormal
 import numpy as np
 import torch

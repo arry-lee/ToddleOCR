@@ -22,7 +22,7 @@ from __future__ import division
 from __future__ import print_function
 
 import torch
-from torch import ParamAttr
+
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np

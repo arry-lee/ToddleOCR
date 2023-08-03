@@ -18,7 +18,7 @@ from __future__ import print_function
 
 import math
 import torch
-from torch import ParamAttr
+
 import torch.nn as nn
 import torch.nn.functional as F
 

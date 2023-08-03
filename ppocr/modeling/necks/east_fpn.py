@@ -19,7 +19,7 @@ from __future__ import print_function
 import torch
 from torch import nn
 import torch.nn.functional as F
-from torch import ParamAttr
+
 
 
 class ConvBNLayer(nn.Module):

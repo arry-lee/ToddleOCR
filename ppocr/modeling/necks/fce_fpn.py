@@ -18,7 +18,7 @@ https://github.com/PaddlePaddle/PaddleDetection/blob/release/2.3/ppdet/modeling/
 
 import torch.nn as nn
 import torch.nn.functional as F
-from torch import ParamAttr
+
 from torch.nn.initializer import XavierUniform
 from torch.nn.initializer import Normal
 from torch.regularizer import L2Decay

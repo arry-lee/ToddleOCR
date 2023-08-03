@@ -19,7 +19,7 @@ from __future__ import print_function
 import math
 
 import torch
-from torch import ParamAttr, nn
+, nn
 from torch.nn import functional as F
 
 
