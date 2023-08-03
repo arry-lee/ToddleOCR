@@ -129,7 +129,7 @@ class ResNetFPN(nn.Module):
             self.base_block.append(
                 self.add_sublayer(
                     "F_{}_base_block_2".format(i),
-                    nn.BatchNorm(
+                    nn.BatchNorm2d(
                         num_channels=out_ch_list[i],
                         act="relu",
                         param_attr=ParamAttr(trainable=True),
@@ -199,7 +199,7 @@ class ConvBNLayer(nn.Module):
             bn_name = "bn_" + name
         else:
             bn_name = "bn" + name[3:]
-        self.bn = nn.BatchNorm(
+        self.bn = nn.BatchNorm2d(
             num_channels=out_channels,
             act=act,
             param_attr=ParamAttr(name=name + '.output.1.w_0'),

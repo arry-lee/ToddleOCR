@@ -45,7 +45,7 @@ class ConvBNLayer(nn.Module):
             weight_attr=ParamAttr(name=name + '_weights'),
             bias_attr=False)
   
-        self.bn = nn.BatchNorm(
+        self.bn = nn.BatchNorm2d(
             num_channels=out_channels,
             act=act,
             param_attr=ParamAttr(name="bn_" + name + "_scale"),
@@ -81,7 +81,7 @@ class DeConvBNLayer(nn.Module):
             groups=groups,
             weight_attr=ParamAttr(name=name + '_weights'),
             bias_attr=False)
-        self.bn = nn.BatchNorm(
+        self.bn = nn.BatchNorm2d(
             num_channels=out_channels,
             act=act,
             param_attr=ParamAttr(name="bn_" + name + "_scale"),

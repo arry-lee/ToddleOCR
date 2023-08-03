@@ -55,7 +55,7 @@ class DSConv(nn.Module):
             groups=groups,
             bias_attr=False)
 
-        self.bn1 = nn.BatchNorm(num_channels=in_channels, act=None)
+        self.bn1 = nn.BatchNorm2d(num_channels=in_channels, act=None)
 
         self.conv2 = nn.Conv2d(
             in_channels=in_channels,
@@ -64,7 +64,7 @@ class DSConv(nn.Module):
             stride=1,
             bias_attr=False)
 
-        self.bn2 = nn.BatchNorm(num_channels=int(in_channels * 4), act=None)
+        self.bn2 = nn.BatchNorm2d(num_channels=int(in_channels * 4), act=None)
 
         self.conv3 = nn.Conv2d(
             in_channels=int(in_channels * 4),

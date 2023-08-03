@@ -45,7 +45,7 @@ class S2VAdaptor(nn.Module):
             kaiming_init_(m.weight)
             if isinstance(m, nn.Conv2d) and m.bias is not None:
                 zeros_(m.bias)
-        elif isinstance(m, (nn.BatchNorm, nn.BatchNorm2D, nn.BatchNorm1D)):
+        elif isinstance(m, (nn.BatchNorm2d, nn.BatchNorm2D, nn.BatchNorm1D)):
             zeros_(m.bias)
             ones_(m.weight)
 

@@ -41,7 +41,7 @@ class Head(nn.Module):
             padding=int(kernel_list[0] // 2),
             weight_attr=ParamAttr(),
             bias_attr=False)
-        self.conv_bn1 = nn.BatchNorm(
+        self.conv_bn1 = nn.BatchNorm2d(
             num_channels=in_channels // 4,
             param_attr=ParamAttr(
                 initializer=torch.nn.initializer.Constant(value=1.0)),
@@ -56,7 +56,7 @@ class Head(nn.Module):
             weight_attr=ParamAttr(
                 initializer=torch.nn.initializer.KaimingUniform()),
             bias_attr=get_bias_attr(in_channels // 4))
-        self.conv_bn2 = nn.BatchNorm(
+        self.conv_bn2 = nn.BatchNorm2d(
             num_channels=in_channels // 4,
             param_attr=ParamAttr(
                 initializer=torch.nn.initializer.Constant(value=1.0)),

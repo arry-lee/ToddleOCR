@@ -47,7 +47,7 @@ class ConvBNLayer(nn.Module):
             weight_attr=ParamAttr(name=name + "_weights"),
             bias_attr=False)
         bn_name = "bn_" + name
-        self.bn = nn.BatchNorm(
+        self.bn = nn.BatchNorm2d(
             out_channels,
             act=act,
             param_attr=ParamAttr(name=bn_name + '_scale'),

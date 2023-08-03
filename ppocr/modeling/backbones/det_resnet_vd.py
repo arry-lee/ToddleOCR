@@ -131,7 +131,7 @@ class ConvBNLayer(nn.Module):
                 padding=(kernel_size - 1) // 2,
                 groups=dcn_groups,  #groups,
                 bias_attr=False)
-        self._batch_norm = nn.BatchNorm(out_channels, act=act)
+        self._batch_norm = nn.BatchNorm2d(out_channels, act=act)
 
     def forward(self, inputs):
         if self.is_vd_mode:
