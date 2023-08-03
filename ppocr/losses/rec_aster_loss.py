@@ -27,7 +27,7 @@ class CosineEmbeddingLoss(nn.Module):
         self.epsilon = 1e-12
 
     def forward(self, x1, x2, target):
-        similarity = torch.sum(x1 * x2, axis=-1) / (torch.norm(x1, axis=-1) * torch.norm(x2, dim=-1) + self.epsilon)
+        similarity = torch.sum(x1 * x2, axis=-1) / (torch.norm(x1, dim=-1) * torch.norm(x2, dim=-1) + self.epsilon)
         one_list = torch.full_like(target, fill_value=1)
         out = torch.mean(torch.where(torch.equal(target, one_list), 1.0 - similarity, torch.maximum(torch.zeros_like(similarity), similarity - self.margin)))
 

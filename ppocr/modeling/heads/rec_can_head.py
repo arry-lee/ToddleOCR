@@ -192,7 +192,7 @@ class AttDecoder(nn.Module):
         return word_probs
 
     def init_hidden(self, features, feature_mask):
-        average = torch.sum(torch.sum(features * feature_mask, axis=-1), axis=-1) / torch.sum((torch.sum(feature_mask, axis=-1)), dim=-1)
+        average = torch.sum(torch.sum(features * feature_mask, axis=-1), axis=-1) / torch.sum((torch.sum(feature_mask, dim=-1)), dim=-1)
         average = self.init_weight(average)
         return torch.tanh(average)
 
