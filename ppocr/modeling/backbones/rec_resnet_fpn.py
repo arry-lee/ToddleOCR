@@ -79,7 +79,7 @@ class ResNetFPN(nn.Module):
 
             self.base_block.append(
                 self.add_sublayer(
-                    "F_{}_base_block_0".format(i), nn.Conv2d(in_channels=in_channels, out_channels=out_ch_list[i], kernel_size=1,  bias=ParamAttr(trainable=True))
+                    "F_{}_base_block_0".format(i), nn.Conv2d(in_channels=in_channels, out_channels=out_ch_list[i], kernel_size=1,  bias=True)
                 )
             )
             self.base_block.append(
@@ -89,7 +89,7 @@ class ResNetFPN(nn.Module):
                 )
             )
             self.base_block.append(
-                self.add_sublayer("F_{}_base_block_2".format(i), nn.BatchNorm2d(num_channels=out_ch_list[i], act="relu", param_attr=ParamAttr(trainable=True), bias=ParamAttr(trainable=True)))
+                self.add_sublayer("F_{}_base_block_2".format(i), nn.BatchNorm2d(num_channels=out_ch_list[i], act="relu", param_attr=ParamAttr(trainable=True), bias=True)
             )
         self.base_block.append(
             self.add_sublayer(
