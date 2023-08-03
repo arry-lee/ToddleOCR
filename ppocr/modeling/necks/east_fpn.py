@@ -16,10 +16,10 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import paddle
-from paddle import nn
-import paddle.nn.functional as F
-from paddle import ParamAttr
+import torch
+from torch import nn
+import torch.nn.functional as F
+from torch import ParamAttr
 
 
 class ConvBNLayer(nn.Layer):
@@ -175,13 +175,13 @@ class EASTFPN(nn.Layer):
 
         h = f[0]
         g = self.g0_deconv(h)
-        h = paddle.concat([g, f[1]], axis=1)
+        h = torch.concat([g, f[1]], axis=1)
         h = self.h1_conv(h)
         g = self.g1_deconv(h)
-        h = paddle.concat([g, f[2]], axis=1)
+        h = torch.concat([g, f[2]], axis=1)
         h = self.h2_conv(h)
         g = self.g2_deconv(h)
-        h = paddle.concat([g, f[3]], axis=1)
+        h = torch.concat([g, f[3]], axis=1)
         h = self.h3_conv(h)
         g = self.g3_conv(h)
 

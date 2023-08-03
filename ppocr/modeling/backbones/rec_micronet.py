@@ -21,8 +21,8 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import paddle
-import paddle.nn as nn
+import torch
+import torch.nn as nn
 
 from ppocr.modeling.backbones.det_mobilenet_v3 import make_divisible
 
@@ -91,8 +91,8 @@ class MaxGroupPooling(nn.Layer):
         b, c, h, w = x.shape
 
         # reshape
-        y = paddle.reshape(x, [b, c // self.channel_per_group, -1, h, w])
-        out = paddle.max(y, axis=2)
+        y = torch.reshape(x, [b, c // self.channel_per_group, -1, h, w])
+        out = torch.max(y, axis=2)
         return out
 
 
@@ -133,10 +133,10 @@ class ChannelShuffle(nn.Layer):
         channels_per_group = c // self.groups
 
         # reshape
-        x = paddle.reshape(x, [b, self.groups, channels_per_group, h, w])
+        x = torch.reshape(x, [b, self.groups, channels_per_group, h, w])
 
-        x = paddle.transpose(x, (0, 2, 1, 3, 4))
-        out = paddle.reshape(x, [b, -1, h, w])
+        x = torch.transpose(x, (0, 2, 1, 3, 4))
+        out = torch.reshape(x, [b, -1, h, w])
 
         return out
 
@@ -259,14 +259,14 @@ class DYShiftMax(nn.Layer):
             self.g = inp // self.g
 
         self.gc = inp // self.g
-        index = paddle.to_tensor([range(inp)])
-        index = paddle.reshape(index, [1, inp, 1, 1])
-        index = paddle.reshape(index, [1, self.g, self.gc, 1, 1])
-        indexgs = paddle.split(index, [1, self.g - 1], axis=1)
-        indexgs = paddle.concat((indexgs[1], indexgs[0]), axis=1)
-        indexs = paddle.split(indexgs, [1, self.gc - 1], axis=2)
-        indexs = paddle.concat((indexs[1], indexs[0]), axis=2)
-        self.index = paddle.reshape(indexs, [inp])
+        index = torch.to_tensor([range(inp)])
+        index = torch.reshape(index, [1, inp, 1, 1])
+        index = torch.reshape(index, [1, self.g, self.gc, 1, 1])
+        indexgs = torch.split(index, [1, self.g - 1], axis=1)
+        indexgs = torch.concat((indexgs[1], indexgs[0]), axis=1)
+        indexs = torch.split(indexgs, [1, self.gc - 1], axis=2)
+        indexs = torch.concat((indexs[1], indexs[0]), axis=2)
+        self.index = torch.reshape(indexs, [inp])
         self.expansion = expansion
 
     def forward(self, x):
@@ -275,17 +275,17 @@ class DYShiftMax(nn.Layer):
 
         b, c, _, _ = x_in.shape
         y = self.avg_pool(x_in)
-        y = paddle.reshape(y, [b, c])
+        y = torch.reshape(y, [b, c])
         y = self.fc(y)
-        y = paddle.reshape(y, [b, self.oup * self.exp, 1, 1])
+        y = torch.reshape(y, [b, self.oup * self.exp, 1, 1])
         y = (y - 0.5) * self.act_max
 
         n2, c2, h2, w2 = x_out.shape
-        x2 = paddle.to_tensor(x_out.numpy()[:, self.index.numpy(), :, :])
+        x2 = torch.to_tensor(x_out.numpy()[:, self.index.numpy(), :, :])
 
         if self.exp == 4:
             temp = y.shape
-            a1, b1, a2, b2 = paddle.split(y, temp[1] // self.oup, axis=1)
+            a1, b1, a2, b2 = torch.split(y, temp[1] // self.oup, axis=1)
 
             a1 = a1 + self.init_a[0]
             a2 = a2 + self.init_a[1]
@@ -296,11 +296,11 @@ class DYShiftMax(nn.Layer):
             z1 = x_out * a1 + x2 * b1
             z2 = x_out * a2 + x2 * b2
 
-            out = paddle.maximum(z1, z2)
+            out = torch.maximum(z1, z2)
 
         elif self.exp == 2:
             temp = y.shape
-            a1, b1 = paddle.split(y, temp[1] // self.oup, axis=1)
+            a1, b1 = torch.split(y, temp[1] // self.oup, axis=1)
             a1 = a1 + self.init_a[0]
             b1 = b1 + self.init_b[0]
             out = x_out * a1 + x2 * b1

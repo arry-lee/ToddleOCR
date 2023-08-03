@@ -21,9 +21,9 @@ from __future__ import division
 from __future__ import print_function
 
 import math
-import paddle
-from paddle import nn, ParamAttr
-from paddle.nn import functional as F
+import torch
+from torch import nn, ParamAttr
+from torch.nn import functional as F
 import numpy as np
 
 
@@ -189,7 +189,7 @@ class GridGenerator(nn.Layer):
 
         inv_delta_C_tensor = self.build_inv_delta_C_paddle(C).astype('float32')
         P_hat_tensor = self.build_P_hat_paddle(
-            C, paddle.to_tensor(P)).astype('float32')
+            C, torch.to_tensor(P)).astype('float32')
 
         inv_delta_C_tensor.stop_gradient = True
         P_hat_tensor.stop_gradient = True
@@ -198,68 +198,68 @@ class GridGenerator(nn.Layer):
 
         batch_C_ex_part_tensor.stop_gradient = True
 
-        batch_C_prime_with_zeros = paddle.concat(
+        batch_C_prime_with_zeros = torch.concat(
             [batch_C_prime, batch_C_ex_part_tensor], axis=1)
-        batch_T = paddle.matmul(inv_delta_C_tensor, batch_C_prime_with_zeros)
-        batch_P_prime = paddle.matmul(P_hat_tensor, batch_T)
+        batch_T = torch.matmul(inv_delta_C_tensor, batch_C_prime_with_zeros)
+        batch_P_prime = torch.matmul(P_hat_tensor, batch_T)
         return batch_P_prime
 
     def build_C_paddle(self):
         """ Return coordinates of fiducial points in I_r; C """
         F = self.F
-        ctrl_pts_x = paddle.linspace(-1.0, 1.0, int(F / 2), dtype='float64')
-        ctrl_pts_y_top = -1 * paddle.ones([int(F / 2)], dtype='float64')
-        ctrl_pts_y_bottom = paddle.ones([int(F / 2)], dtype='float64')
-        ctrl_pts_top = paddle.stack([ctrl_pts_x, ctrl_pts_y_top], axis=1)
-        ctrl_pts_bottom = paddle.stack([ctrl_pts_x, ctrl_pts_y_bottom], axis=1)
-        C = paddle.concat([ctrl_pts_top, ctrl_pts_bottom], axis=0)
+        ctrl_pts_x = torch.linspace(-1.0, 1.0, int(F / 2), dtype='float64')
+        ctrl_pts_y_top = -1 * torch.ones([int(F / 2)], dtype='float64')
+        ctrl_pts_y_bottom = torch.ones([int(F / 2)], dtype='float64')
+        ctrl_pts_top = torch.stack([ctrl_pts_x, ctrl_pts_y_top], axis=1)
+        ctrl_pts_bottom = torch.stack([ctrl_pts_x, ctrl_pts_y_bottom], axis=1)
+        C = torch.concat([ctrl_pts_top, ctrl_pts_bottom], axis=0)
         return C  # F x 2
 
     def build_P_paddle(self, I_r_size):
         I_r_height, I_r_width = I_r_size
-        I_r_grid_x = (paddle.arange(
+        I_r_grid_x = (torch.arange(
             -I_r_width, I_r_width, 2, dtype='float64') + 1.0
-                      ) / paddle.to_tensor(np.array([I_r_width]))
+                      ) / torch.to_tensor(np.array([I_r_width]))
 
-        I_r_grid_y = (paddle.arange(
+        I_r_grid_y = (torch.arange(
             -I_r_height, I_r_height, 2, dtype='float64') + 1.0
-                      ) / paddle.to_tensor(np.array([I_r_height]))
+                      ) / torch.to_tensor(np.array([I_r_height]))
 
         # P: self.I_r_width x self.I_r_height x 2
-        P = paddle.stack(paddle.meshgrid(I_r_grid_x, I_r_grid_y), axis=2)
-        P = paddle.transpose(P, perm=[1, 0, 2])
+        P = torch.stack(torch.meshgrid(I_r_grid_x, I_r_grid_y), axis=2)
+        P = torch.transpose(P, perm=[1, 0, 2])
         # n (= self.I_r_width x self.I_r_height) x 2
         return P.reshape([-1, 2])
 
     def build_inv_delta_C_paddle(self, C):
         """ Return inv_delta_C which is needed to calculate T """
         F = self.F
-        hat_eye = paddle.eye(F, dtype='float64')  # F x F
-        hat_C = paddle.norm(
+        hat_eye = torch.eye(F, dtype='float64')  # F x F
+        hat_C = torch.norm(
             C.reshape([1, F, 2]) - C.reshape([F, 1, 2]), axis=2) + hat_eye
-        hat_C = (hat_C**2) * paddle.log(hat_C)
-        delta_C = paddle.concat(  # F+3 x F+3
+        hat_C = (hat_C**2) * torch.log(hat_C)
+        delta_C = torch.concat(  # F+3 x F+3
             [
-                paddle.concat(
-                    [paddle.ones(
+                torch.concat(
+                    [torch.ones(
                         (F, 1), dtype='float64'), C, hat_C], axis=1),  # F x F+3
-                paddle.concat(
+                torch.concat(
                     [
-                        paddle.zeros(
-                            (2, 3), dtype='float64'), paddle.transpose(
+                        torch.zeros(
+                            (2, 3), dtype='float64'), torch.transpose(
                                 C, perm=[1, 0])
                     ],
                     axis=1),  # 2 x F+3
-                paddle.concat(
+                torch.concat(
                     [
-                        paddle.zeros(
-                            (1, 3), dtype='float64'), paddle.ones(
+                        torch.zeros(
+                            (1, 3), dtype='float64'), torch.ones(
                                 (1, F), dtype='float64')
                     ],
                     axis=1)  # 1 x F+3
             ],
             axis=0)
-        inv_delta_C = paddle.inverse(delta_C)
+        inv_delta_C = torch.inverse(delta_C)
         return inv_delta_C  # F+3 x F+3
 
     def build_P_hat_paddle(self, C, P):
@@ -267,17 +267,17 @@ class GridGenerator(nn.Layer):
         eps = self.eps
         n = P.shape[0]  # n (= self.I_r_width x self.I_r_height)
         # P_tile: n x 2 -> n x 1 x 2 -> n x F x 2
-        P_tile = paddle.tile(paddle.unsqueeze(P, axis=1), (1, F, 1))
-        C_tile = paddle.unsqueeze(C, axis=0)  # 1 x F x 2
+        P_tile = torch.tile(torch.unsqueeze(P, axis=1), (1, F, 1))
+        C_tile = torch.unsqueeze(C, axis=0)  # 1 x F x 2
         P_diff = P_tile - C_tile  # n x F x 2
         # rbf_norm: n x F
-        rbf_norm = paddle.norm(P_diff, p=2, axis=2, keepdim=False)
+        rbf_norm = torch.norm(P_diff, p=2, axis=2, keepdim=False)
 
         # rbf: n x F
-        rbf = paddle.multiply(
-            paddle.square(rbf_norm), paddle.log(rbf_norm + eps))
-        P_hat = paddle.concat(
-            [paddle.ones(
+        rbf = torch.multiply(
+            torch.square(rbf_norm), torch.log(rbf_norm + eps))
+        P_hat = torch.concat(
+            [torch.ones(
                 (n, 1), dtype='float64'), P, rbf], axis=1)
         return P_hat  # n x F+3
 

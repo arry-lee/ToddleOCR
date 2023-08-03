@@ -16,8 +16,8 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import paddle
-from paddle import nn
+import torch
+from torch import nn
 
 
 class AttentionLoss(nn.Layer):
@@ -33,7 +33,7 @@ class AttentionLoss(nn.Layer):
         assert len(targets.shape) == len(list(predicts.shape)) - 1, \
             "The target's shape and inputs's shape is [N, d] and [N, num_steps]"
 
-        inputs = paddle.reshape(predicts, [-1, predicts.shape[-1]])
-        targets = paddle.reshape(targets, [-1])
+        inputs = torch.reshape(predicts, [-1, predicts.shape[-1]])
+        targets = torch.reshape(targets, [-1])
 
-        return {'loss': paddle.sum(self.loss_func(inputs, targets))}
+        return {'loss': torch.sum(self.loss_func(inputs, targets))}

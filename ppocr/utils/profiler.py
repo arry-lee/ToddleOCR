@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import sys
-import paddle
+import torch
 
 # A global variable to record the number of calling times for profiler
 # functions. It is used to specify the tracing range of training steps.
@@ -99,10 +99,10 @@ def add_profiler_step(options_str=None):
         _profiler_options = ProfilerOptions(options_str)
 
     if _profiler_step_id == _profiler_options['batch_range'][0]:
-        paddle.utils.profiler.start_profiler(
+        torch.utils.profiler.start_profiler(
             _profiler_options['state'], _profiler_options['tracer_option'])
     elif _profiler_step_id == _profiler_options['batch_range'][1]:
-        paddle.utils.profiler.stop_profiler(_profiler_options['sorted_key'],
+        torch.utils.profiler.stop_profiler(_profiler_options['sorted_key'],
                                             _profiler_options['profile_path'])
         if _profiler_options['exit_on_finished']:
             sys.exit(0)

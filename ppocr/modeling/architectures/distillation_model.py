@@ -15,7 +15,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from paddle import nn
+from torch import nn
 from ppocr.modeling.transforms import build_transform
 from ppocr.modeling.backbones import build_backbone
 from ppocr.modeling.necks import build_neck

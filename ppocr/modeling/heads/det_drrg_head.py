@@ -23,9 +23,9 @@ from __future__ import print_function
 import warnings
 import cv2
 import numpy as np
-import paddle
-import paddle.nn as nn
-import paddle.nn.functional as F
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
 from .gcn import GCN
 from .local_graph import LocalGraphs
 from .proposal_local_graph import ProposalLocalGraphs
@@ -132,7 +132,7 @@ class DRRGHead(nn.Layer):
             assert targets is not None
             gt_comp_attribs = targets[7]
             pred_maps = self.out_conv(inputs)
-            feat_maps = paddle.concat([inputs, pred_maps], axis=1)
+            feat_maps = torch.concat([inputs, pred_maps], axis=1)
             node_feats, adjacent_matrices, knn_inds, gt_labels = self.graph_train(
                 feat_maps, np.stack(gt_comp_attribs))
 
@@ -160,7 +160,7 @@ class DRRGHead(nn.Layer):
                     its score: (x1, y1, x2, y2, x3, y3, x4, y4, score).
         """
         pred_maps = self.out_conv(feat_maps)
-        feat_maps = paddle.concat([feat_maps, pred_maps], axis=1)
+        feat_maps = torch.concat([feat_maps, pred_maps], axis=1)
 
         none_flag, graph_data = self.graph_test(pred_maps, feat_maps)
 

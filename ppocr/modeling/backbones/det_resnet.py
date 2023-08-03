@@ -17,19 +17,19 @@ from __future__ import division
 from __future__ import print_function
 
 import numpy as np
-import paddle
-from paddle import ParamAttr
-import paddle.nn as nn
-import paddle.nn.functional as F
-from paddle.nn import Conv2D, BatchNorm, Linear, Dropout
-from paddle.nn import AdaptiveAvgPool2D, MaxPool2D, AvgPool2D
-from paddle.nn.initializer import Uniform
+import torch
+from torch import ParamAttr
+import torch.nn as nn
+import torch.nn.functional as F
+from torch.nn import Conv2D, BatchNorm, Linear, Dropout
+from torch.nn import AdaptiveAvgPool2D, MaxPool2D, AvgPool2D
+from torch.nn.initializer import Uniform
 
 import math
 
-from paddle.vision.ops import DeformConv2D
-from paddle.regularizer import L2Decay
-from paddle.nn.initializer import Normal, Constant, XavierUniform
+from torch.vision.ops import DeformConv2D
+from torch.regularizer import L2Decay
+from torch.nn.initializer import Normal, Constant, XavierUniform
 from .det_resnet_vd import DeformableConvV2, ConvBNLayer
 
 
@@ -82,7 +82,7 @@ class BottleneckBlock(nn.Layer):
         else:
             short = self.short(inputs)
 
-        y = paddle.add(x=short, y=conv2)
+        y = torch.add(x=short, y=conv2)
         y = F.relu(y)
         return y
 
@@ -125,7 +125,7 @@ class BasicBlock(nn.Layer):
             short = inputs
         else:
             short = self.short(inputs)
-        y = paddle.add(x=short, y=conv1)
+        y = torch.add(x=short, y=conv1)
         y = F.relu(y)
         return y
 

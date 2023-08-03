@@ -20,14 +20,14 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import paddle
-from paddle import nn
+import torch
+from torch import nn
 
 
 class VLLoss(nn.Layer):
     def __init__(self, mode='LF_1', weight_res=0.5, weight_mas=0.5, **kwargs):
         super(VLLoss, self).__init__()
-        self.loss_func = paddle.nn.loss.CrossEntropyLoss(reduction="mean")
+        self.loss_func = torch.nn.loss.CrossEntropyLoss(reduction="mean")
         assert mode in ['LF_1', 'LF_2', 'LA']
         self.mode = mode
         self.weight_res = weight_res
@@ -40,12 +40,12 @@ class VLLoss(nn.Layer):
             cur_label = target[i].tolist()
             label_flatten += cur_label[:cur_label.index(0) + 1]
             label_length.append(cur_label.index(0) + 1)
-        label_flatten = paddle.to_tensor(label_flatten, dtype='int64')
-        label_length = paddle.to_tensor(label_length, dtype='int32')
+        label_flatten = torch.to_tensor(label_flatten, dtype='int64')
+        label_length = torch.to_tensor(label_length, dtype='int32')
         return (label_flatten, label_length)
 
     def _flatten(self, sources, lengths):
-        return paddle.concat([t[:l] for t, l in zip(sources, lengths)])
+        return torch.concat([t[:l] for t, l in zip(sources, lengths)])
 
     def forward(self, predicts, batch):
         text_pre = predicts[0]

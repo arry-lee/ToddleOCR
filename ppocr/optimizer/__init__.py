@@ -17,7 +17,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 import copy
-import paddle
+import torch
 
 __all__ = ['build_optimizer']
 
@@ -52,10 +52,10 @@ def build_optimizer(config, epochs, step_each_epoch, model):
     optim_name = config.pop('name')
     if 'clip_norm' in config:
         clip_norm = config.pop('clip_norm')
-        grad_clip = paddle.nn.ClipGradByNorm(clip_norm=clip_norm)
+        grad_clip = torch.nn.ClipGradByNorm(clip_norm=clip_norm)
     elif 'clip_norm_global' in config:
         clip_norm = config.pop('clip_norm_global')
-        grad_clip = paddle.nn.ClipGradByGlobalNorm(clip_norm=clip_norm)
+        grad_clip = torch.nn.ClipGradByGlobalNorm(clip_norm=clip_norm)
     else:
         grad_clip = None
     optim = getattr(optimizer, optim_name)(learning_rate=lr,

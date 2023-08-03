@@ -16,9 +16,9 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from paddle import nn, ParamAttr
-from paddle.nn import functional as F
-import paddle
+from torch import nn, ParamAttr
+from torch.nn import functional as F
+import torch
 import numpy as np
 
 __all__ = ["ResNetFPN"]
@@ -169,7 +169,7 @@ class ResNetFPN(nn.Layer):
                 else:
                     base = self.conv_trans[j - 1](base)
                     base = self.bn_block[j - 1](base)
-                base = paddle.concat([base, F[-j - 1]], axis=1)
+                base = torch.concat([base, F[-j - 1]], axis=1)
             base = block(base)
         return base
 

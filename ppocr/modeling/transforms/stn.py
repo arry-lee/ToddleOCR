@@ -20,9 +20,9 @@ from __future__ import division
 from __future__ import print_function
 
 import math
-import paddle
-from paddle import nn, ParamAttr
-from paddle.nn import functional as F
+import torch
+from torch import nn, ParamAttr
+from torch.nn import functional as F
 import numpy as np
 
 from .tps_spatial_transformer import TPSSpatialTransformer
@@ -96,20 +96,20 @@ class STN(nn.Layer):
             pass
         elif self.activation == 'sigmoid':
             ctrl_points = -np.log(1. / ctrl_points - 1.)
-        ctrl_points = paddle.to_tensor(ctrl_points)
-        fc2_bias = paddle.reshape(
+        ctrl_points = torch.to_tensor(ctrl_points)
+        fc2_bias = torch.reshape(
             ctrl_points, shape=[ctrl_points.shape[0] * ctrl_points.shape[1]])
         return fc2_bias
 
     def forward(self, x):
         x = self.stn_convnet(x)
         batch_size, _, h, w = x.shape
-        x = paddle.reshape(x, shape=(batch_size, -1))
+        x = torch.reshape(x, shape=(batch_size, -1))
         img_feat = self.stn_fc1(x)
         x = self.stn_fc2(0.1 * img_feat)
         if self.activation == 'sigmoid':
             x = F.sigmoid(x)
-        x = paddle.reshape(x, shape=[-1, self.num_ctrlpoints, 2])
+        x = torch.reshape(x, shape=[-1, self.num_ctrlpoints, 2])
         return img_feat, x
 
 
@@ -128,7 +128,7 @@ class STN_ON(nn.Layer):
         self.out_channels = in_channels
 
     def forward(self, image):
-        stn_input = paddle.nn.functional.interpolate(
+        stn_input = torch.nn.functional.interpolate(
             image, self.tps_inputsize, mode="bilinear", align_corners=True)
         stn_img_feat, ctrl_points = self.stn_head(stn_input)
         x, _ = self.tps(image, ctrl_points)

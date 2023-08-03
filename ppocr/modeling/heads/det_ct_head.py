@@ -17,13 +17,13 @@ from __future__ import division
 from __future__ import print_function
 
 import math
-import paddle
-from paddle import nn
-import paddle.nn.functional as F
-from paddle import ParamAttr
+import torch
+from torch import nn
+import torch.nn.functional as F
+from torch import ParamAttr
 
 import math
-from paddle.nn.initializer import TruncatedNormal, Constant, Normal
+from torch.nn.initializer import TruncatedNormal, Constant, Normal
 ones_ = Constant(value=1.)
 zeros_ = Constant(value=0.)
 

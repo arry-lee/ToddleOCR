@@ -17,7 +17,7 @@ https://github.com/open-mmlab/mmocr/blob/v0.3.0/mmocr/models/textdet/postprocess
 """
 
 import cv2
-import paddle
+import torch
 import numpy as np
 from numpy.fft import ifft
 from ppocr.utils.poly_nms import poly_nms, valid_boundary
@@ -90,7 +90,7 @@ class FCEPostProcess(object):
     def __call__(self, preds, shape_list):
         score_maps = []
         for key, value in preds.items():
-            if isinstance(value, paddle.Tensor):
+            if isinstance(value, torch.Tensor):
                 value = value.numpy()
             cls_res = value[:, :4, :, :]
             reg_res = value[:, 4:, :, :]

@@ -20,10 +20,10 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import paddle
-import paddle.nn as nn
+import torch
+import torch.nn as nn
 
-from paddle.nn.initializer import TruncatedNormal, Constant, Normal, KaimingNormal
+from torch.nn.initializer import TruncatedNormal, Constant, Normal, KaimingNormal
 
 kaiming_init_ = KaimingNormal()
 zeros_ = Constant(value=0.)

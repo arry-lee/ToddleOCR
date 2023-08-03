@@ -17,7 +17,7 @@ from __future__ import division
 from __future__ import print_function
 
 import numpy as np
-import paddle.nn.functional as F
+import torch.nn.functional as F
 
 import os
 import sys
@@ -29,7 +29,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(__dir__, '..')))
 os.environ["FLAGS_allocator_strategy"] = 'auto_growth'
 
 import cv2
-import paddle
+import torch
 
 from ppocr.data import create_operators, transform
 from ppocr.modeling.architectures import build_model
@@ -52,7 +52,7 @@ def draw_kie_result(batch, node, idx_to_cls, count):
     boxes = batch[7]
     h, w = img.shape[:2]
     pred_img = np.ones((h, w * 2, 3), dtype=np.uint8) * 255
-    max_value, max_idx = paddle.max(node, -1), paddle.argmax(node, -1)
+    max_value, max_idx = torch.max(node, -1), torch.argmax(node, -1)
     node_pred_label = max_idx.numpy().tolist()
     node_pred_score = max_value.numpy().tolist()
 
@@ -96,7 +96,7 @@ def write_kie_result(fout, node, data):
     import json
     label = data['label']
     annotations = json.loads(label)
-    max_value, max_idx = paddle.max(node, -1), paddle.argmax(node, -1)
+    max_value, max_idx = torch.max(node, -1), torch.argmax(node, -1)
     node_pred_label = max_idx.numpy().tolist()
     node_pred_score = max_value.numpy().tolist()
     res = []
@@ -154,7 +154,7 @@ def main():
                 batch = transform(data, ops)
                 batch_pred = [0] * len(batch)
                 for i in range(len(batch)):
-                    batch_pred[i] = paddle.to_tensor(
+                    batch_pred[i] = torch.to_tensor(
                         np.expand_dims(
                             batch[i], axis=0))
                 st = time.time()

@@ -18,9 +18,9 @@ https://github.com/JiaquanYe/TableMASTER-mmocr/blob/master/mmocr/models/textreco
 
 import copy
 import math
-import paddle
-from paddle import nn
-from paddle.nn import functional as F
+import torch
+from torch import nn
+from torch.nn import functional as F
 
 
 class TableMasterHead(nn.Layer):
@@ -71,14 +71,14 @@ class TableMasterHead(nn.Layer):
         """
         trg_pad_mask = (tgt != self.PAD).unsqueeze(1).unsqueeze(3)
 
-        tgt_len = paddle.shape(tgt)[1]
-        trg_sub_mask = paddle.tril(
-            paddle.ones(
-                ([tgt_len, tgt_len]), dtype=paddle.float32))
+        tgt_len = torch.shape(tgt)[1]
+        trg_sub_mask = torch.tril(
+            torch.ones(
+                ([tgt_len, tgt_len]), dtype=torch.float32))
 
-        tgt_mask = paddle.logical_and(
-            trg_pad_mask.astype(paddle.float32), trg_sub_mask)
-        return tgt_mask.astype(paddle.float32)
+        tgt_mask = torch.logical_and(
+            trg_pad_mask.astype(torch.float32), trg_sub_mask)
+        return tgt_mask.astype(torch.float32)
 
     def decode(self, input, feature, src_mask, tgt_mask):
         # main process of transformer decoder.
@@ -102,18 +102,18 @@ class TableMasterHead(nn.Layer):
 
     def greedy_forward(self, SOS, feature):
         input = SOS
-        output = paddle.zeros(
+        output = torch.zeros(
             [input.shape[0], self.max_text_length + 1, self.out_channels])
-        bbox_output = paddle.zeros(
+        bbox_output = torch.zeros(
             [input.shape[0], self.max_text_length + 1, self.loc_reg_num])
-        max_text_length = paddle.to_tensor(self.max_text_length)
+        max_text_length = torch.to_tensor(self.max_text_length)
         for i in range(max_text_length + 1):
             target_mask = self.make_mask(input)
             out_step, bbox_output_step = self.decode(input, feature, None,
                                                      target_mask)
             prob = F.softmax(out_step, axis=-1)
             next_word = prob.argmax(axis=2, dtype="int64")
-            input = paddle.concat(
+            input = torch.concat(
                 [input, next_word[:, -1].unsqueeze(-1)], axis=1)
             if i == self.max_text_length:
                 output = out_step
@@ -133,7 +133,7 @@ class TableMasterHead(nn.Layer):
 
     def forward_test(self, out_enc):
         batch_size = out_enc.shape[0]
-        SOS = paddle.zeros([batch_size, 1], dtype='int64') + self.SOS
+        SOS = torch.zeros([batch_size, 1], dtype='int64') + self.SOS
         output, bbox_output = self.greedy_forward(SOS, out_enc)
         output = F.softmax(output)
         return {'structure_probs': output, 'loc_preds': bbox_output}
@@ -222,7 +222,7 @@ class SubLayerConnection(nn.Layer):
 
 def masked_fill(x, mask, value):
     mask = mask.astype(x.dtype)
-    return x * paddle.logical_not(mask).astype(x.dtype) + mask * value
+    return x * torch.logical_not(mask).astype(x.dtype) + mask * value
 
 
 def self_attention(query, key, value, mask=None, dropout=None):
@@ -231,7 +231,7 @@ def self_attention(query, key, value, mask=None, dropout=None):
     """
     d_k = value.shape[-1]
 
-    score = paddle.matmul(query, key.transpose([0, 1, 3, 2]) / math.sqrt(d_k))
+    score = torch.matmul(query, key.transpose([0, 1, 3, 2]) / math.sqrt(d_k))
     if mask is not None:
         # score = score.masked_fill(mask == 0, -1e9) # b, h, L, L
         score = masked_fill(score, mask == 0, -6.55e4)  # for fp16
@@ -240,7 +240,7 @@ def self_attention(query, key, value, mask=None, dropout=None):
 
     if dropout is not None:
         p_attn = dropout(p_attn)
-    return paddle.matmul(p_attn, value), p_attn
+    return torch.matmul(p_attn, value), p_attn
 
 
 def clones(module, N):
@@ -267,15 +267,15 @@ class PositionalEncoding(nn.Layer):
         self.dropout = nn.Dropout(p=dropout)
 
         # Compute the positional encodings once in log space.
-        pe = paddle.zeros([max_len, d_model])
-        position = paddle.arange(0, max_len).unsqueeze(1).astype('float32')
-        div_term = paddle.exp(
-            paddle.arange(0, d_model, 2) * -math.log(10000.0) / d_model)
-        pe[:, 0::2] = paddle.sin(position * div_term)
-        pe[:, 1::2] = paddle.cos(position * div_term)
+        pe = torch.zeros([max_len, d_model])
+        position = torch.arange(0, max_len).unsqueeze(1).astype('float32')
+        div_term = torch.exp(
+            torch.arange(0, d_model, 2) * -math.log(10000.0) / d_model)
+        pe[:, 0::2] = torch.sin(position * div_term)
+        pe[:, 1::2] = torch.cos(position * div_term)
         pe = pe.unsqueeze(0)
         self.register_buffer('pe', pe)
 
     def forward(self, feat, **kwargs):
-        feat = feat + self.pe[:, :paddle.shape(feat)[1]]  # pe 1*5000*512
+        feat = feat + self.pe[:, :torch.shape(feat)[1]]  # pe 1*5000*512
         return self.dropout(feat)

@@ -24,8 +24,8 @@ sys.path.append(__dir__)
 sys.path.insert(0, os.path.abspath(os.path.join(__dir__, '..')))
 
 import yaml
-import paddle
-import paddle.distributed as dist
+import torch
+import torch.distributed as dist
 
 from ppocr.data import build_dataloader
 from ppocr.modeling.architectures import build_model
@@ -122,7 +122,7 @@ def main(config, device, logger, vdl_writer):
 
     use_sync_bn = config["Global"].get("use_sync_bn", False)
     if use_sync_bn:
-        model = paddle.nn.SyncBatchNorm.convert_sync_batchnorm(model)
+        model = torch.nn.SyncBatchNorm.convert_sync_batchnorm(model)
         logger.info('convert_sync_batchnorm')
 
     model = apply_to_static(model, config, logger)
@@ -150,19 +150,19 @@ def main(config, device, logger, vdl_writer):
     amp_custom_black_list = config['Global'].get('amp_custom_black_list', [])
     if use_amp:
         AMP_RELATED_FLAGS_SETTING = {'FLAGS_max_inplace_grad_add': 8, }
-        if paddle.is_compiled_with_cuda():
+        if torch.is_compiled_with_cuda():
             AMP_RELATED_FLAGS_SETTING.update({
                 'FLAGS_cudnn_batchnorm_spatial_persistent': 1
             })
-        paddle.fluid.set_flags(AMP_RELATED_FLAGS_SETTING)
+        torch.fluid.set_flags(AMP_RELATED_FLAGS_SETTING)
         scale_loss = config["Global"].get("scale_loss", 1.0)
         use_dynamic_loss_scaling = config["Global"].get(
             "use_dynamic_loss_scaling", False)
-        scaler = paddle.amp.GradScaler(
+        scaler = torch.amp.GradScaler(
             init_loss_scaling=scale_loss,
             use_dynamic_loss_scaling=use_dynamic_loss_scaling)
         if amp_level == "O2":
-            model, optimizer = paddle.amp.decorate(
+            model, optimizer = torch.amp.decorate(
                 models=model,
                 optimizers=optimizer,
                 level=amp_level,
@@ -175,7 +175,7 @@ def main(config, device, logger, vdl_writer):
                                      config['Architecture']["model_type"])
 
     if config['Global']['distributed']:
-        model = paddle.DataParallel(model)
+        model = torch.DataParallel(model)
     # start train
     program.train(config, train_dataloader, valid_dataloader, device, model,
                   loss_class, optimizer, lr_scheduler, post_process_class,

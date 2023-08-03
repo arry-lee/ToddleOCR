@@ -24,7 +24,7 @@ import os
 import os.path as osp
 import numpy as np
 import cv2
-import paddle
+import torch
 import pyclipper
 
 
@@ -48,9 +48,9 @@ class CTPostProcess(object):
         outs = preds['maps']
         out_scores = preds['score']
 
-        if isinstance(outs, paddle.Tensor):
+        if isinstance(outs, torch.Tensor):
             outs = outs.numpy()
-        if isinstance(out_scores, paddle.Tensor):
+        if isinstance(out_scores, torch.Tensor):
             out_scores = out_scores.numpy()
 
         batch_size = outs.shape[0]

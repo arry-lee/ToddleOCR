@@ -15,8 +15,8 @@
 import copy
 import importlib
 
-from paddle.jit import to_static
-from paddle.static import InputSpec
+from torch.jit import to_static
+from torch.static import InputSpec
 
 from .base_model import BaseModel
 from .distillation_model import DistillationModel

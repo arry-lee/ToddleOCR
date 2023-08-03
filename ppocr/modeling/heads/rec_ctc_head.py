@@ -18,13 +18,13 @@ from __future__ import print_function
 
 import math
 
-import paddle
-from paddle import ParamAttr, nn
-from paddle.nn import functional as F
+import torch
+from torch import ParamAttr, nn
+from torch.nn import functional as F
 
 
 def get_para_bias_attr(l2_decay, k):
-    regularizer = paddle.regularizer.L2Decay(l2_decay)
+    regularizer = torch.regularizer.L2Decay(l2_decay)
     stdv = 1.0 / math.sqrt(k * 1.0)
     initializer = nn.initializer.Uniform(-stdv, stdv)
     weight_attr = ParamAttr(regularizer=regularizer, initializer=initializer)

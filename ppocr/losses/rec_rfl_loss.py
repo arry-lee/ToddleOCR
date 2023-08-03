@@ -19,8 +19,8 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import paddle
-from paddle import nn
+import torch
+from torch import nn
 
 from .basic_loss import CELoss, DistanceLoss
 
@@ -43,7 +43,7 @@ class RFLLoss(nn.Layer):
         # batch [image, label, length, cnt_label]
         if cnt_outputs is not None:
             cnt_loss = self.cnt_loss(cnt_outputs,
-                                     paddle.cast(batch[3], paddle.float32))
+                                     torch.cast(batch[3], torch.float32))
             self.total_loss['cnt_loss'] = cnt_loss
             total_loss += cnt_loss
 
@@ -58,8 +58,8 @@ class RFLLoss(nn.Layer):
             inputs = seq_outputs[:, :-1, :]
             targets = targets[:, 1:]
 
-            inputs = paddle.reshape(inputs, [-1, inputs.shape[-1]])
-            targets = paddle.reshape(targets, [-1])
+            inputs = torch.reshape(inputs, [-1, inputs.shape[-1]])
+            targets = torch.reshape(targets, [-1])
             seq_loss = self.seq_loss(inputs, targets)
             self.total_loss['seq_loss'] = seq_loss
             total_loss += seq_loss

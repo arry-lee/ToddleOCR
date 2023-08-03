@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import paddle
+import torch
 
 
 class VQAReTokenLayoutLMPostProcess(object):
@@ -22,7 +22,7 @@ class VQAReTokenLayoutLMPostProcess(object):
 
     def __call__(self, preds, label=None, *args, **kwargs):
         pred_relations = preds['pred_relations']
-        if isinstance(preds['pred_relations'], paddle.Tensor):
+        if isinstance(preds['pred_relations'], torch.Tensor):
             pred_relations = pred_relations.numpy()
         pred_relations = self.decode_pred(pred_relations)
 

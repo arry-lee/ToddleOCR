@@ -15,13 +15,13 @@
 from __future__ import absolute_import, division, print_function
 
 import os
-import paddle
-import paddle.nn as nn
-from paddle import ParamAttr
-from paddle.nn import AdaptiveAvgPool2D, BatchNorm, Conv2D, Dropout, Linear
-from paddle.regularizer import L2Decay
-from paddle.nn.initializer import KaimingNormal
-from paddle.utils.download import get_path_from_url
+import torch
+import torch.nn as nn
+from torch import ParamAttr
+from torch.nn import AdaptiveAvgPool2D, BatchNorm, Conv2D, Dropout, Linear
+from torch.regularizer import L2Decay
+from torch.nn.initializer import KaimingNormal
+from torch.utils.download import get_path_from_url
 
 MODEL_URLS = {
     "PPLCNet_x0.25":
@@ -166,7 +166,7 @@ class SEModule(nn.Layer):
         x = self.relu(x)
         x = self.conv2(x)
         x = self.hardsigmoid(x)
-        x = paddle.multiply(x=identity, y=x)
+        x = torch.multiply(x=identity, y=x)
         return x
 
 
@@ -266,6 +266,6 @@ class PPLCNet(nn.Layer):
         print(pretrained_url)
         local_weight_path = get_path_from_url(
             pretrained_url, os.path.expanduser("~/.paddleclas/weights"))
-        param_state_dict = paddle.load(local_weight_path)
+        param_state_dict = torch.load(local_weight_path)
         self.set_dict(param_state_dict)
         return

@@ -25,7 +25,7 @@ sys.path.append(os.path.join(__dir__, '..'))
 
 import numpy as np
 from .locality_aware_nms import nms_locality
-import paddle
+import torch
 import cv2
 import time
 
@@ -323,7 +323,7 @@ class SASTPostProcess(object):
         border_list = outs_dict['f_border']
         tvo_list = outs_dict['f_tvo']
         tco_list = outs_dict['f_tco']
-        if isinstance(score_list, paddle.Tensor):
+        if isinstance(score_list, torch.Tensor):
             score_list = score_list.numpy()
             border_list = border_list.numpy()
             tvo_list = tvo_list.numpy()

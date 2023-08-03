@@ -16,8 +16,8 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import paddle
-from paddle import nn
+import torch
+from torch import nn
 
 from ppocr.modeling.heads.rec_ctc_head import get_para_bias_attr
 from ppocr.modeling.backbones.rec_svtrnet import Block, ConvBNLayer, trunc_normal_, zeros_, ones_
@@ -198,7 +198,7 @@ class EncoderWithSVTR(nn.Layer):
         # last stage
         z = z.reshape([0, H, W, C]).transpose([0, 3, 1, 2])
         z = self.conv3(z)
-        z = paddle.concat((h, z), axis=1)
+        z = torch.concat((h, z), axis=1)
         z = self.conv1x1(self.conv4(z))
         return z
 

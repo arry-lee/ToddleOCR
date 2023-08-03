@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import paddle
+import torch
 
 
 class ClsPostProcess(object):
@@ -30,7 +30,7 @@ class ClsPostProcess(object):
         if label_list is None:
             label_list = {idx: idx for idx in range(preds.shape[-1])}
 
-        if isinstance(preds, paddle.Tensor):
+        if isinstance(preds, torch.Tensor):
             preds = preds.numpy()
 
         pred_idxs = preds.argmax(axis=1)

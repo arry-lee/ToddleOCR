@@ -22,9 +22,9 @@ from __future__ import print_function
 
 import cv2
 import numpy as np
-import paddle
-import paddle.nn as nn
-import paddle.nn.functional as F
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
 from lanms import merge_quadrangle_n9 as la_nms
 
 from ppocr.ext_op import RoIAlignRotated
@@ -296,11 +296,11 @@ class ProposalLocalGraphs:
             pivot_ind = pivot_local_graph[0]
             node2ind_map = {j: i for i, j in enumerate(pivot_local_graph)}
 
-            knn_inds = paddle.cast(
-                paddle.to_tensor([node2ind_map[i]
+            knn_inds = torch.cast(
+                torch.to_tensor([node2ind_map[i]
                                   for i in pivot_knn[1:]]), 'int64')
             pivot_feats = node_feats[pivot_ind]
-            normalized_feats = node_feats[paddle.to_tensor(
+            normalized_feats = node_feats[torch.to_tensor(
                 pivot_local_graph)] - pivot_feats
 
             adjacent_matrix = np.zeros((num_nodes, num_nodes), dtype=np.float32)
@@ -314,22 +314,22 @@ class ProposalLocalGraphs:
                             node]] = 1
 
             adjacent_matrix = normalize_adjacent_matrix(adjacent_matrix)
-            pad_adjacent_matrix = paddle.zeros((num_max_nodes, num_max_nodes), )
-            pad_adjacent_matrix[:num_nodes, :num_nodes] = paddle.cast(
-                paddle.to_tensor(adjacent_matrix), 'float32')
+            pad_adjacent_matrix = torch.zeros((num_max_nodes, num_max_nodes), )
+            pad_adjacent_matrix[:num_nodes, :num_nodes] = torch.cast(
+                torch.to_tensor(adjacent_matrix), 'float32')
 
-            pad_normalized_feats = paddle.concat(
+            pad_normalized_feats = torch.concat(
                 [
-                    normalized_feats, paddle.zeros(
+                    normalized_feats, torch.zeros(
                         (num_max_nodes - num_nodes, normalized_feats.shape[1]),
                     )
                 ],
                 axis=0)
 
-            local_graph_nodes = paddle.to_tensor(pivot_local_graph)
-            local_graph_nodes = paddle.concat(
+            local_graph_nodes = torch.to_tensor(pivot_local_graph)
+            local_graph_nodes = torch.concat(
                 [
-                    local_graph_nodes, paddle.zeros(
+                    local_graph_nodes, torch.zeros(
                         [num_max_nodes - num_nodes], dtype='int64')
                 ],
                 axis=-1)
@@ -339,10 +339,10 @@ class ProposalLocalGraphs:
             pivots_knn_inds.append(knn_inds)
             pivots_local_graphs.append(local_graph_nodes)
 
-        local_graphs_node_feat = paddle.stack(local_graphs_node_feat, 0)
-        adjacent_matrices = paddle.stack(adjacent_matrices, 0)
-        pivots_knn_inds = paddle.stack(pivots_knn_inds, 0)
-        pivots_local_graphs = paddle.stack(pivots_local_graphs, 0)
+        local_graphs_node_feat = torch.stack(local_graphs_node_feat, 0)
+        adjacent_matrices = torch.stack(adjacent_matrices, 0)
+        pivots_knn_inds = torch.stack(pivots_knn_inds, 0)
+        pivots_local_graphs = torch.stack(pivots_local_graphs, 0)
 
         return (local_graphs_node_feat, adjacent_matrices, pivots_knn_inds,
                 pivots_local_graphs)
@@ -369,7 +369,7 @@ class ProposalLocalGraphs:
         """
         if preds.ndim == 4:
             assert preds.shape[0] == 1
-            preds = paddle.squeeze(preds)
+            preds = torch.squeeze(preds)
         pred_text_region = F.sigmoid(preds[0]).numpy()
         pred_center_region = F.sigmoid(preds[1]).numpy()
         pred_sin_map = preds[2].numpy()
@@ -389,18 +389,18 @@ class ProposalLocalGraphs:
         distance_matrix = euclidean_distance_matrix(comp_centers, comp_centers)
 
         geo_feats = feature_embedding(comp_attribs, self.node_geo_feat_dim)
-        geo_feats = paddle.to_tensor(geo_feats)
+        geo_feats = torch.to_tensor(geo_feats)
 
         batch_id = np.zeros((comp_attribs.shape[0], 1), dtype=np.float32)
         comp_attribs = comp_attribs.astype(np.float32)
         angle = np.arccos(comp_attribs[:, -2]) * np.sign(comp_attribs[:, -1])
         angle = angle.reshape((-1, 1))
         rotated_rois = np.hstack([batch_id, comp_attribs[:, :-2], angle])
-        rois = paddle.to_tensor(rotated_rois)
+        rois = torch.to_tensor(rotated_rois)
 
         content_feats = self.pooling(feat_maps, rois)
         content_feats = content_feats.reshape([content_feats.shape[0], -1])
-        node_feats = paddle.concat([content_feats, geo_feats], axis=-1)
+        node_feats = torch.concat([content_feats, geo_feats], axis=-1)
 
         sorted_dist_inds = np.argsort(distance_matrix, axis=1)
         (local_graphs_node_feat, adjacent_matrices, pivots_knn_inds,

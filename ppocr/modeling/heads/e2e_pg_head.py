@@ -17,10 +17,10 @@ from __future__ import division
 from __future__ import print_function
 
 import math
-import paddle
-from paddle import nn
-import paddle.nn.functional as F
-from paddle import ParamAttr
+import torch
+from torch import nn
+import torch.nn.functional as F
+from torch import ParamAttr
 
 
 class ConvBNLayer(nn.Layer):

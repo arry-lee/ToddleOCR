@@ -16,9 +16,9 @@ This code is refer from:
 https://github.com/open-mmlab/mmcv/blob/master/mmcv/ops/roi_align_rotated.py
 """
 
-import paddle
-import paddle.nn as nn
-from paddle.utils.cpp_extension import load
+import torch
+import torch.nn as nn
+from torch.utils.cpp_extension import load
 custom_ops = load(
     name="custom_jit_ops",
     sources=[

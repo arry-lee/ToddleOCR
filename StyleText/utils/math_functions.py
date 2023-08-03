@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import paddle
+import torch
 
 
 def compute_mean_covariance(img):
@@ -30,7 +30,7 @@ def compute_mean_covariance(img):
     # batch_size * num_pixels * channel_num
     img_hat_transpose = img_hat.transpose([0, 2, 1])
     # batch_size * channel_num * channel_num
-    covariance = paddle.bmm(img_hat, img_hat_transpose)
+    covariance = torch.bmm(img_hat, img_hat_transpose)
     covariance = covariance / num_pixels
 
     return mu, covariance
@@ -38,8 +38,8 @@ def compute_mean_covariance(img):
 
 def dice_coefficient(y_true_cls, y_pred_cls, training_mask):
     eps = 1e-5
-    intersection = paddle.sum(y_true_cls * y_pred_cls * training_mask)
-    union = paddle.sum(y_true_cls * training_mask) + paddle.sum(
+    intersection = torch.sum(y_true_cls * y_pred_cls * training_mask)
+    union = torch.sum(y_true_cls * training_mask) + torch.sum(
         y_pred_cls * training_mask) + eps
     loss = 1. - (2 * intersection / union)
     return loss

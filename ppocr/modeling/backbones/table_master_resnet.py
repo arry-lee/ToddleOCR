@@ -16,9 +16,9 @@ This code is refer from:
 https://github.com/JiaquanYe/TableMASTER-mmocr/blob/master/mmocr/models/textrecog/backbones/table_resnet_extra.py
 """
 
-import paddle
-import paddle.nn as nn
-import paddle.nn.functional as F
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
 
 
 class BasicBlock(nn.Layer):
@@ -318,7 +318,7 @@ class MultiAspectGCAttention(nn.Layer):
 
             # scale variance
             if self.att_scale and self.headers > 1:
-                context_mask = context_mask / paddle.sqrt(
+                context_mask = context_mask / torch.sqrt(
                     self.single_header_inplanes)
 
             # [N*headers, 1, H * W]
@@ -327,7 +327,7 @@ class MultiAspectGCAttention(nn.Layer):
             # [N*headers, 1, H * W, 1]
             context_mask = context_mask.unsqueeze(-1)
             # [N*headers, 1, C', 1] = [N*headers, 1, C', H * W] * [N*headers, 1, H * W, 1]
-            context = paddle.matmul(input_x, context_mask)
+            context = torch.matmul(input_x, context_mask)
 
             # [N, headers * C', 1, 1]
             context = context.reshape(
@@ -360,7 +360,7 @@ class MultiAspectGCAttention(nn.Layer):
             _, C1, _, _ = channel_concat_term.shape
             N, C2, H, W = out.shape
 
-            out = paddle.concat(
+            out = torch.concat(
                 [out, channel_concat_term.expand([-1, -1, H, W])], axis=1)
             out = self.cat_conv(out)
             out = F.layer_norm(out, [self.inplanes, H, W])

@@ -17,7 +17,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from paddle import optimizer as optim
+from torch import optimizer as optim
 
 
 class Momentum(object):
@@ -83,8 +83,8 @@ class Adam(object):
     def __call__(self, model):
         if self.group_lr:
             if self.training_step == 'LF_2':
-                import paddle
-                if isinstance(model, paddle.fluid.dygraph.parallel.
+                import torch
+                if isinstance(model, torch.fluid.dygraph.parallel.
                               DataParallel):  # multi gpu
                     mlm = model._layers.head.MLM_VRM.MLM.parameters()
                     pre_mlm_pp = model._layers.head.MLM_VRM.Prediction.pp_share.parameters(

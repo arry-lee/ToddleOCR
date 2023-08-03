@@ -29,7 +29,7 @@ os.environ["FLAGS_allocator_strategy"] = 'auto_growth'
 
 import cv2
 import json
-import paddle
+import torch
 
 from ppocr.data import create_operators, transform
 from ppocr.modeling.architectures import build_model
@@ -53,7 +53,7 @@ def draw_det_res(dt_boxes, config, img, img_name, save_path):
         logger.info("The detected Image saved in {}".format(save_path))
 
 
-@paddle.no_grad()
+@torch.no_grad()
 def main():
     global_config = config['Global']
 
@@ -91,7 +91,7 @@ def main():
 
             images = np.expand_dims(batch[0], axis=0)
             shape_list = np.expand_dims(batch[1], axis=0)
-            images = paddle.to_tensor(images)
+            images = torch.to_tensor(images)
             preds = model(images)
             post_result = post_process_class(preds, shape_list)
 

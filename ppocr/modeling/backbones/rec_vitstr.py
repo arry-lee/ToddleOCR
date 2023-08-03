@@ -17,8 +17,8 @@ https://github.com/roatienza/deep-text-recognition-benchmark/blob/master/modules
 """
 
 import numpy as np
-import paddle
-import paddle.nn as nn
+import torch
+import torch.nn as nn
 from ppocr.modeling.backbones.rec_svtrnet import Block, PatchEmbed, zeros_, trunc_normal_, ones_
 
 scale_dim_heads = {'tiny': [192, 3], 'small': [384, 6], 'base': [768, 12]}
@@ -105,8 +105,8 @@ class ViTSTR(nn.Layer):
     def forward_features(self, x):
         B = x.shape[0]
         x = self.patch_embed(x)
-        cls_tokens = paddle.tile(self.cls_token, repeat_times=[B, 1, 1])
-        x = paddle.concat((cls_tokens, x), axis=1)
+        cls_tokens = torch.tile(self.cls_token, repeat_times=[B, 1, 1])
+        x = torch.concat((cls_tokens, x), axis=1)
         x = x + self.pos_embed
         x = self.pos_drop(x)
         for blk in self.blocks:

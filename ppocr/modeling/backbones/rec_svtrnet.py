@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from paddle import ParamAttr
-from paddle.nn.initializer import KaimingNormal
+from torch import ParamAttr
+from torch.nn.initializer import KaimingNormal
 import numpy as np
-import paddle
-import paddle.nn as nn
-from paddle.nn.initializer import TruncatedNormal, Constant, Normal
+import torch
+import torch.nn as nn
+from torch.nn.initializer import TruncatedNormal, Constant, Normal
 
 trunc_normal_ = TruncatedNormal(std=.02)
 normal_ = Normal
@@ -32,10 +32,10 @@ def drop_path(x, drop_prob=0., training=False):
     """
     if drop_prob == 0. or not training:
         return x
-    keep_prob = paddle.to_tensor(1 - drop_prob, dtype=x.dtype)
-    shape = (paddle.shape(x)[0], ) + (1, ) * (x.ndim - 1)
-    random_tensor = keep_prob + paddle.rand(shape, dtype=x.dtype)
-    random_tensor = paddle.floor(random_tensor)  # binarize
+    keep_prob = torch.to_tensor(1 - drop_prob, dtype=x.dtype)
+    shape = (torch.shape(x)[0], ) + (1, ) * (x.ndim - 1)
+    random_tensor = keep_prob + torch.rand(shape, dtype=x.dtype)
+    random_tensor = torch.floor(random_tensor)  # binarize
     output = x.divide(keep_prob) * random_tensor
     return output
 
@@ -58,7 +58,7 @@ class ConvBNLayer(nn.Layer):
             stride=stride,
             padding=padding,
             groups=groups,
-            weight_attr=paddle.ParamAttr(
+            weight_attr=torch.ParamAttr(
                 initializer=nn.initializer.KaimingUniform()),
             bias_attr=bias_attr)
         self.norm = nn.BatchNorm2D(out_channels)
@@ -171,14 +171,14 @@ class Attention(nn.Layer):
         if mixer == 'Local' and HW is not None:
             hk = local_k[0]
             wk = local_k[1]
-            mask = paddle.ones([H * W, H + hk - 1, W + wk - 1], dtype='float32')
+            mask = torch.ones([H * W, H + hk - 1, W + wk - 1], dtype='float32')
             for h in range(0, H):
                 for w in range(0, W):
                     mask[h * W + w, h:h + hk, w:w + wk] = 0.
             mask_paddle = mask[:, hk // 2:H + hk // 2, wk // 2:W + wk //
                                2].flatten(1)
-            mask_inf = paddle.full([H * W, H * W], '-inf', dtype='float32')
-            mask = paddle.where(mask_paddle < 1, mask_paddle, mask_inf)
+            mask_inf = torch.full([H * W, H * W], '-inf', dtype='float32')
+            mask = torch.where(mask_paddle < 1, mask_paddle, mask_inf)
             self.mask = mask.unsqueeze([0, 1])
         self.mixer = mixer
 

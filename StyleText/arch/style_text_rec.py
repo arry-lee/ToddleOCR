@@ -11,8 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import paddle
-import paddle.nn as nn
+import torch
+import torch.nn as nn
 
 from arch.base_module import MiddleNet, ResBlock
 from arch.encoder import Encoder
@@ -148,7 +148,7 @@ class TextGenerator(nn.Layer):
                                                  style_feature])["out_conv"]
         fake_sk = self.decoder_sk.forward([text_feature,
                                            style_feature])["out_conv"]
-        fake_text = self.middle(paddle.concat((fake_c_temp, fake_sk), axis=1))
+        fake_text = self.middle(torch.concat((fake_c_temp, fake_sk), axis=1))
         return {"fake_sk": fake_sk, "fake_text": fake_text}
 
 
@@ -225,7 +225,7 @@ class BgGeneratorWithMask(nn.Layer):
         fake_bg_mask = self.decoder_mask.forward(encode_bg_output[
             "res_blocks"])["out_conv"]
         fake_bg = self.middle(
-            paddle.concat(
+            torch.concat(
                 (fake_c_temp, fake_bg_mask), axis=1))
         return {
             "bg_encode_feature": encode_bg_output["res_blocks"],
@@ -256,7 +256,7 @@ class FusionGeneratorSimple(nn.Layer):
             stride=1,
             padding=1,
             groups=1,
-            weight_attr=paddle.ParamAttr(name=name + "_conv_weights"),
+            weight_attr=torch.ParamAttr(name=name + "_conv_weights"),
             bias_attr=False)
 
         self._res_block = ResBlock(
@@ -274,11 +274,11 @@ class FusionGeneratorSimple(nn.Layer):
             stride=1,
             padding=1,
             groups=1,
-            weight_attr=paddle.ParamAttr(name=name + "_reduce_conv_weights"),
+            weight_attr=torch.ParamAttr(name=name + "_reduce_conv_weights"),
             bias_attr=False)
 
     def forward(self, fake_text, fake_bg):
-        fake_concat = paddle.concat((fake_text, fake_bg), axis=1)
+        fake_concat = torch.concat((fake_text, fake_bg), axis=1)
         fake_concat_tmp = self._conv(fake_concat)
         output_res = self._res_block(fake_concat_tmp)
         fake_fusion = self._reduce_conv(output_res)

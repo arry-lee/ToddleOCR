@@ -16,8 +16,8 @@ This code is refer from:
 https://github.com/JiaquanYe/TableMASTER-mmocr/tree/master/mmocr/models/textrecog/losses
 """
 
-import paddle
-from paddle import nn
+import torch
+from torch import nn
 
 
 class TableMasterLoss(nn.Layer):

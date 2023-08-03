@@ -1,6 +1,6 @@
-import paddle
-from paddle import nn
-import paddle.nn.functional as F
+import torch
+from torch import nn
+import torch.nn.functional as F
 
 
 class CELoss(nn.Layer):
@@ -26,8 +26,8 @@ class CELoss(nn.Layer):
             for name, logits in pred.items():
                 if isinstance(logits, list):
                     logit_num = len(logits)
-                    all_tgt = paddle.concat([batch[1]] * logit_num, 0)
-                    all_logits = paddle.concat(logits, 0)
+                    all_tgt = torch.concat([batch[1]] * logit_num, 0)
+                    all_logits = torch.concat(logits, 0)
                     flt_logtis = all_logits.reshape([-1, all_logits.shape[2]])
                     flt_tgt = all_tgt.reshape([-1])
                 else:
@@ -56,8 +56,8 @@ class CELoss(nn.Layer):
                     one_hot = one_hot * (1 - eps) + (1 - one_hot) * eps / (
                         n_class - 1)
                     log_prb = F.log_softmax(pred, axis=1)
-                    non_pad_mask = paddle.not_equal(
-                        tgt, paddle.zeros(
+                    non_pad_mask = torch.not_equal(
+                        tgt, torch.zeros(
                             tgt.shape, dtype=tgt.dtype))
                     loss = -(one_hot * log_prb).sum(axis=1)
                     loss = loss.masked_select(non_pad_mask).mean()

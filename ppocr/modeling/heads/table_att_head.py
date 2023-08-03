@@ -17,10 +17,10 @@ from __future__ import division
 from __future__ import print_function
 
 import math
-import paddle
-import paddle.nn as nn
-from paddle import ParamAttr
-import paddle.nn.functional as F
+import torch
+import torch.nn as nn
+from torch import ParamAttr
+import torch.nn.functional as F
 import numpy as np
 
 from .rec_att_head import AttentionGRUCell
@@ -28,7 +28,7 @@ from .rec_att_head import AttentionGRUCell
 
 def get_para_bias_attr(l2_decay, k):
     if l2_decay > 0:
-        regularizer = paddle.regularizer.L2Decay(l2_decay)
+        regularizer = torch.regularizer.L2Decay(l2_decay)
         stdv = 1.0 / math.sqrt(k * 1.0)
         initializer = nn.initializer.Uniform(-stdv, stdv)
     else:
@@ -77,12 +77,12 @@ class TableAttentionHead(nn.Layer):
         # if you modify the var in just one branch, then the modification will not work.
         fea = inputs[-1]
         last_shape = int(np.prod(fea.shape[2:]))  # gry added
-        fea = paddle.reshape(fea, [fea.shape[0], fea.shape[1], last_shape])
+        fea = torch.reshape(fea, [fea.shape[0], fea.shape[1], last_shape])
         fea = fea.transpose([0, 2, 1])  # (NTC)(batch, width, channels)
         batch_size = fea.shape[0]
 
-        hidden = paddle.zeros((batch_size, self.hidden_size))
-        output_hiddens = paddle.zeros(
+        hidden = torch.zeros((batch_size, self.hidden_size))
+        output_hiddens = torch.zeros(
             (batch_size, self.max_text_length + 1, self.hidden_size))
         if self.training and targets is not None:
             structure = targets[0]
@@ -96,17 +96,17 @@ class TableAttentionHead(nn.Layer):
             loc_fea = fea.transpose([0, 2, 1])
             loc_fea = self.loc_fea_trans(loc_fea)
             loc_fea = loc_fea.transpose([0, 2, 1])
-            loc_concat = paddle.concat([output_hiddens, loc_fea], axis=2)
+            loc_concat = torch.concat([output_hiddens, loc_fea], axis=2)
             loc_preds = self.loc_generator(loc_concat)
             loc_preds = F.sigmoid(loc_preds)
         else:
-            temp_elem = paddle.zeros(shape=[batch_size], dtype="int32")
+            temp_elem = torch.zeros(shape=[batch_size], dtype="int32")
             structure_probs = None
             loc_preds = None
             elem_onehots = None
             outputs = None
             alpha = None
-            max_text_length = paddle.to_tensor(self.max_text_length)
+            max_text_length = torch.to_tensor(self.max_text_length)
             for i in range(max_text_length + 1):
                 elem_onehots = self._char_to_onehot(
                     temp_elem, onehot_dim=self.out_channels)
@@ -121,7 +121,7 @@ class TableAttentionHead(nn.Layer):
             loc_fea = fea.transpose([0, 2, 1])
             loc_fea = self.loc_fea_trans(loc_fea)
             loc_fea = loc_fea.transpose([0, 2, 1])
-            loc_concat = paddle.concat([output_hiddens, loc_fea], axis=2)
+            loc_concat = torch.concat([output_hiddens, loc_fea], axis=2)
             loc_preds = self.loc_generator(loc_concat)
             loc_preds = F.sigmoid(loc_preds)
         return {'structure_probs': structure_probs, 'loc_preds': loc_preds}
@@ -192,13 +192,13 @@ class SLAHead(nn.Layer):
         fea = inputs[-1]
         batch_size = fea.shape[0]
         # reshape
-        fea = paddle.reshape(fea, [fea.shape[0], fea.shape[1], -1])
+        fea = torch.reshape(fea, [fea.shape[0], fea.shape[1], -1])
         fea = fea.transpose([0, 2, 1])  # (NTC)(batch, width, channels)
 
-        hidden = paddle.zeros((batch_size, self.hidden_size))
-        structure_preds = paddle.zeros(
+        hidden = torch.zeros((batch_size, self.hidden_size))
+        structure_preds = torch.zeros(
             (batch_size, self.max_text_length + 1, self.num_embeddings))
-        loc_preds = paddle.zeros(
+        loc_preds = torch.zeros(
             (batch_size, self.max_text_length + 1, self.loc_reg_num))
         structure_preds.stop_gradient = True
         loc_preds.stop_gradient = True
@@ -210,8 +210,8 @@ class SLAHead(nn.Layer):
                 structure_preds[:, i, :] = structure_step
                 loc_preds[:, i, :] = loc_step
         else:
-            pre_chars = paddle.zeros(shape=[batch_size], dtype="int32")
-            max_text_length = paddle.to_tensor(self.max_text_length)
+            pre_chars = torch.zeros(shape=[batch_size], dtype="int32")
+            max_text_length = torch.to_tensor(self.max_text_length)
             # for export
             loc_step, structure_step = None, None
             for i in range(max_text_length + 1):

@@ -20,11 +20,11 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import paddle
-from paddle import ParamAttr
-import paddle.nn as nn
-import paddle.nn.functional as F
-from paddle.nn.initializer import Normal, XavierNormal
+import torch
+from torch import ParamAttr
+import torch.nn as nn
+import torch.nn.functional as F
+from torch.nn.initializer import Normal, XavierNormal
 import numpy as np
 
 
@@ -47,8 +47,8 @@ class PositionalEncoding(nn.Layer):
             [get_position_angle_vec(pos_i) for pos_i in range(n_position)])
         sinusoid_table[:, 0::2] = np.sin(sinusoid_table[:, 0::2])  # dim 2i
         sinusoid_table[:, 1::2] = np.cos(sinusoid_table[:, 1::2])  # dim 2i+1
-        sinusoid_table = paddle.to_tensor(sinusoid_table, dtype='float32')
-        sinusoid_table = paddle.unsqueeze(sinusoid_table, axis=0)
+        sinusoid_table = torch.to_tensor(sinusoid_table, dtype='float32')
+        sinusoid_table = torch.unsqueeze(sinusoid_table, axis=0)
         return sinusoid_table
 
     def forward(self, x):
@@ -65,24 +65,24 @@ class ScaledDotProductAttention(nn.Layer):
         self.softmax = nn.Softmax(axis=2)
 
     def forward(self, q, k, v, mask=None):
-        k = paddle.transpose(k, perm=[0, 2, 1])
-        attn = paddle.bmm(q, k)
+        k = torch.transpose(k, perm=[0, 2, 1])
+        attn = torch.bmm(q, k)
         attn = attn / self.temperature
         if mask is not None:
             attn = attn.masked_fill(mask, -1e9)
             if mask.dim() == 3:
-                mask = paddle.unsqueeze(mask, axis=1)
+                mask = torch.unsqueeze(mask, axis=1)
             elif mask.dim() == 2:
-                mask = paddle.unsqueeze(mask, axis=1)
-                mask = paddle.unsqueeze(mask, axis=1)
+                mask = torch.unsqueeze(mask, axis=1)
+                mask = torch.unsqueeze(mask, axis=1)
             repeat_times = [
                 attn.shape[1] // mask.shape[1], attn.shape[2] // mask.shape[2]
             ]
-            mask = paddle.tile(mask, [1, repeat_times[0], repeat_times[1], 1])
+            mask = torch.tile(mask, [1, repeat_times[0], repeat_times[1], 1])
             attn[mask == 0] = -1e9
         attn = self.softmax(attn)
         attn = self.dropout(attn)
-        output = paddle.bmm(attn, v)
+        output = torch.bmm(attn, v)
         return output
 
 
@@ -127,27 +127,27 @@ class MultiHeadAttention(nn.Layer):
         residual = q
 
         q = self.w_qs(q)
-        q = paddle.reshape(
+        q = torch.reshape(
             q, shape=[-1, len_q, n_head, d_k])  # 4*21*512 ---- 4*21*8*64
         k = self.w_ks(k)
-        k = paddle.reshape(k, shape=[-1, len_k, n_head, d_k])
+        k = torch.reshape(k, shape=[-1, len_k, n_head, d_k])
         v = self.w_vs(v)
-        v = paddle.reshape(v, shape=[-1, len_v, n_head, d_v])
+        v = torch.reshape(v, shape=[-1, len_v, n_head, d_v])
 
-        q = paddle.transpose(q, perm=[2, 0, 1, 3])
-        q = paddle.reshape(q, shape=[-1, len_q, d_k])  # (n*b) x lq x dk
-        k = paddle.transpose(k, perm=[2, 0, 1, 3])
-        k = paddle.reshape(k, shape=[-1, len_k, d_k])  # (n*b) x lk x dk
-        v = paddle.transpose(v, perm=[2, 0, 1, 3])
-        v = paddle.reshape(v, shape=[-1, len_v, d_v])  # (n*b) x lv x dv
+        q = torch.transpose(q, perm=[2, 0, 1, 3])
+        q = torch.reshape(q, shape=[-1, len_q, d_k])  # (n*b) x lq x dk
+        k = torch.transpose(k, perm=[2, 0, 1, 3])
+        k = torch.reshape(k, shape=[-1, len_k, d_k])  # (n*b) x lk x dk
+        v = torch.transpose(v, perm=[2, 0, 1, 3])
+        v = torch.reshape(v, shape=[-1, len_v, d_v])  # (n*b) x lv x dv
 
-        mask = paddle.tile(
+        mask = torch.tile(
             mask,
             [n_head, 1, 1]) if mask is not None else None  # (n*b) x .. x ..
         output = self.attention(q, k, v, mask=mask)
-        output = paddle.reshape(output, shape=[n_head, -1, len_q, d_v])
-        output = paddle.transpose(output, perm=[1, 2, 0, 3])
-        output = paddle.reshape(
+        output = torch.reshape(output, shape=[n_head, -1, len_q, d_v])
+        output = torch.transpose(output, perm=[1, 2, 0, 3])
+        output = torch.reshape(
             output, shape=[-1, len_q, n_head * d_v])  # b x lq x (n*dv)
         output = self.dropout(self.fc(output))
         output = self.layer_norm(output + residual)
@@ -164,9 +164,9 @@ class PositionwiseFeedForward(nn.Layer):
 
     def forward(self, x):
         residual = x
-        x = paddle.transpose(x, perm=[0, 2, 1])
+        x = torch.transpose(x, perm=[0, 2, 1])
         x = self.w_2(F.relu(self.w_1(x)))
-        x = paddle.transpose(x, perm=[0, 2, 1])
+        x = torch.transpose(x, perm=[0, 2, 1])
         x = self.dropout(x)
         x = self.layer_norm(x + residual)
         return x
@@ -234,20 +234,20 @@ class PP_layer(nn.Layer):
 
     def forward(self, enc_output):
         # enc_output: b,256,512
-        reading_order = paddle.arange(self.character_len, dtype='int64')
+        reading_order = torch.arange(self.character_len, dtype='int64')
         reading_order = reading_order.unsqueeze(0).expand(
             [enc_output.shape[0], self.character_len])  # (S,) -> (B, S)
         reading_order = self.f0_embedding(reading_order)  # b,25,512
 
         # calculate attention
-        reading_order = paddle.transpose(reading_order, perm=[0, 2, 1])
+        reading_order = torch.transpose(reading_order, perm=[0, 2, 1])
         t = self.w0(reading_order)  # b,512,256
         t = self.active(
-            paddle.transpose(
+            torch.transpose(
                 t, perm=[0, 2, 1]) + self.wv(enc_output))  # b,256,512
         t = self.we(t)  # b,256,25
-        t = self.softmax(paddle.transpose(t, perm=[0, 2, 1]))  # b,25,256
-        g_output = paddle.bmm(t, enc_output)  # b,25,512
+        t = self.softmax(torch.transpose(t, perm=[0, 2, 1]))  # b,25,256
+        g_output = torch.bmm(t, enc_output)  # b,25,512
         return g_output
 
 
@@ -308,18 +308,18 @@ class MLM(nn.Layer):
         # transformer unit for generating mask_c
         feature_v_seq = self.MLM_SequenceModeling_mask(x, src_mask=None)
         # position embedding layer
-        label_pos = paddle.to_tensor(label_pos, dtype='int64')
+        label_pos = torch.to_tensor(label_pos, dtype='int64')
         pos_emb = self.pos_embedding(label_pos)
-        pos_emb = self.w0_linear(paddle.unsqueeze(pos_emb, axis=2))
-        pos_emb = paddle.transpose(pos_emb, perm=[0, 2, 1])
+        pos_emb = self.w0_linear(torch.unsqueeze(pos_emb, axis=2))
+        pos_emb = torch.transpose(pos_emb, perm=[0, 2, 1])
         # fusion position embedding with features V & generate mask_c
         att_map_sub = self.active(pos_emb + self.wv(feature_v_seq))
         att_map_sub = self.we(att_map_sub)  # b,256,1
-        att_map_sub = paddle.transpose(att_map_sub, perm=[0, 2, 1])
+        att_map_sub = torch.transpose(att_map_sub, perm=[0, 2, 1])
         att_map_sub = self.sigmoid(att_map_sub)  # b,1,256
         # WCL
         ## generate inputs for WCL
-        att_map_sub = paddle.transpose(att_map_sub, perm=[0, 2, 1])
+        att_map_sub = torch.transpose(att_map_sub, perm=[0, 2, 1])
         f_res = x * (1 - att_map_sub)  # second path with remaining string
         f_sub = x * att_map_sub  # first path with occluded character
         ## transformer units in WCL
@@ -330,9 +330,9 @@ class MLM(nn.Layer):
 
 def trans_1d_2d(x):
     b, w_h, c = x.shape  # b, 256, 512
-    x = paddle.transpose(x, perm=[0, 2, 1])
-    x = paddle.reshape(x, [-1, c, 32, 8])
-    x = paddle.transpose(x, perm=[0, 1, 3, 2])  # [b, c, 8, 32]
+    x = torch.transpose(x, perm=[0, 2, 1])
+    x = torch.reshape(x, [-1, c, 32, 8])
+    x = torch.transpose(x, perm=[0, 1, 3, 2])  # [b, c, 8, 32]
     return x
 
 
@@ -375,9 +375,9 @@ class MLM_VRM(nn.Layer):
     def forward(self, x, label_pos, training_step, train_mode=False):
         b, c, h, w = x.shape
         nT = self.max_text_length
-        x = paddle.transpose(x, perm=[0, 1, 3, 2])
-        x = paddle.reshape(x, [-1, c, h * w])
-        x = paddle.transpose(x, perm=[0, 2, 1])
+        x = torch.transpose(x, perm=[0, 1, 3, 2])
+        x = torch.reshape(x, [-1, c, h * w])
+        x = torch.transpose(x, perm=[0, 2, 1])
         if train_mode:
             if training_step == 'LF_1':
                 f_res = 0
@@ -399,11 +399,11 @@ class MLM_VRM(nn.Layer):
                 f_res, f_sub, mask_c = self.MLM(x, label_pos)
                 ## use the mask_c (1 for occluded character and 0 for remaining characters) to occlude input
                 ## ratio controls the occluded number in a batch
-                character_mask = paddle.zeros_like(mask_c)
+                character_mask = torch.zeros_like(mask_c)
 
                 ratio = b // 2
                 if ratio >= 1:
-                    with paddle.no_grad():
+                    with torch.no_grad():
                         character_mask[0:ratio, :, :] = mask_c[0:ratio, :, :]
                 else:
                     character_mask = mask_c
@@ -428,7 +428,7 @@ class MLM_VRM(nn.Layer):
                 f_sub,
                 train_mode=False,
                 use_mlm=False)
-            text_pre = paddle.transpose(
+            text_pre = torch.transpose(
                 text_pre, perm=[1, 0, 2])  # (26, b, 37))
             return text_pre, x
 

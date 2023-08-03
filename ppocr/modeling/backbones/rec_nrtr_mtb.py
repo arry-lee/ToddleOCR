@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from paddle import nn
-import paddle
+from torch import nn
+import torch
 
 
 class MTB(nn.Layer):
@@ -41,8 +41,8 @@ class MTB(nn.Layer):
         x = self.block(images)
         if self.cnn_num == 2:
             # (b, w, h, c)
-            x = paddle.transpose(x, [0, 3, 2, 1])
-            x_shape = paddle.shape(x)
-            x = paddle.reshape(
+            x = torch.transpose(x, [0, 3, 2, 1])
+            x_shape = torch.shape(x)
+            x = torch.reshape(
                 x, [x_shape[0], x_shape[1], x_shape[2] * x_shape[3]])
         return x

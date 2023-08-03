@@ -15,10 +15,10 @@
 # The code is based on:
 # https://github.com/PaddlePaddle/PaddleDetection/blob/release%2F2.3/ppdet/modeling/necks/csp_pan.py
 
-import paddle
-import paddle.nn as nn
-import paddle.nn.functional as F
-from paddle import ParamAttr
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from torch import ParamAttr
 
 __all__ = ['CSPPAN']
 
@@ -208,7 +208,7 @@ class CSPLayer(nn.Layer):
         x_main = self.main_conv(x)
         x_main = self.blocks(x_main)
 
-        x_final = paddle.concat((x_main, x_short), axis=1)
+        x_final = torch.concat((x_main, x_short), axis=1)
         return self.final_conv(x_final)
 
 
@@ -305,10 +305,10 @@ class CSPPAN(nn.Layer):
             feat_heigh = inner_outs[0]
             feat_low = inputs[idx - 1]
             upsample_feat = F.upsample(
-                feat_heigh, size=paddle.shape(feat_low)[2:4], mode="nearest")
+                feat_heigh, size=torch.shape(feat_low)[2:4], mode="nearest")
 
             inner_out = self.top_down_blocks[len(self.in_channels) - 1 - idx](
-                paddle.concat([upsample_feat, feat_low], 1))
+                torch.concat([upsample_feat, feat_low], 1))
             inner_outs.insert(0, inner_out)
 
         # bottom-up path
@@ -317,7 +317,7 @@ class CSPPAN(nn.Layer):
             feat_low = outs[-1]
             feat_height = inner_outs[idx + 1]
             downsample_feat = self.downsamples[idx](feat_low)
-            out = self.bottom_up_blocks[idx](paddle.concat(
+            out = self.bottom_up_blocks[idx](torch.concat(
                 [downsample_feat, feat_height], 1))
             outs.append(out)
 

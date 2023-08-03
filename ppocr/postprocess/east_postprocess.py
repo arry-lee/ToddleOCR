@@ -19,7 +19,7 @@ from __future__ import print_function
 import numpy as np
 from .locality_aware_nms import nms_locality
 import cv2
-import paddle
+import torch
 
 import os
 import sys
@@ -112,7 +112,7 @@ class EASTPostProcess(object):
     def __call__(self, outs_dict, shape_list):
         score_list = outs_dict['f_score']
         geo_list = outs_dict['f_geo']
-        if isinstance(score_list, paddle.Tensor):
+        if isinstance(score_list, torch.Tensor):
             score_list = score_list.numpy()
             geo_list = geo_list.numpy()
         img_num = len(shape_list)

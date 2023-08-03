@@ -16,9 +16,9 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import paddle
-from paddle import nn
-from paddle.nn import functional as F
+import torch
+from torch import nn
+from torch.nn import functional as F
 
 
 class TableAttentionLoss(nn.Layer):
@@ -32,12 +32,12 @@ class TableAttentionLoss(nn.Layer):
         structure_probs = predicts['structure_probs']
         structure_targets = batch[1].astype("int64")
         structure_targets = structure_targets[:, 1:]
-        structure_probs = paddle.reshape(structure_probs,
+        structure_probs = torch.reshape(structure_probs,
                                          [-1, structure_probs.shape[-1]])
-        structure_targets = paddle.reshape(structure_targets, [-1])
+        structure_targets = torch.reshape(structure_targets, [-1])
         structure_loss = self.loss_func(structure_probs, structure_targets)
 
-        structure_loss = paddle.mean(structure_loss) * self.structure_weight
+        structure_loss = torch.mean(structure_loss) * self.structure_weight
 
         loc_preds = predicts['loc_preds']
         loc_targets = batch[2].astype("float32")
@@ -71,7 +71,7 @@ class SLALoss(nn.Layer):
 
         structure_loss = self.loss_func(structure_probs, structure_targets)
 
-        structure_loss = paddle.mean(structure_loss) * self.structure_weight
+        structure_loss = torch.mean(structure_loss) * self.structure_weight
 
         loc_preds = predicts['loc_preds']
         loc_targets = batch[2].astype("float32")

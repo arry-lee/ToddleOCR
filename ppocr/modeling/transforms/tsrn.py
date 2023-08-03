@@ -17,9 +17,9 @@ https://github.com/FudanVI/FudanOCR/blob/main/text-gestalt/model/tsrn.py
 """
 
 import math
-import paddle
-import paddle.nn.functional as F
-from paddle import nn
+import torch
+import torch.nn.functional as F
+from torch import nn
 from collections import OrderedDict
 import sys
 import numpy as np
@@ -122,7 +122,7 @@ class TSRN(nn.Layer):
         block[str(self.srb_nums + 3)] = getattr(self, 'block%d' % (self.srb_nums + 3)) \
             ((block['1'] + block[str(self.srb_nums + 2)]))
 
-        sr_img = paddle.tanh(block[str(self.srb_nums + 3)])
+        sr_img = torch.tanh(block[str(self.srb_nums + 3)])
 
         output["sr_img"] = sr_img
 
@@ -193,7 +193,7 @@ class mish(nn.Layer):
 
     def forward(self, x):
         if self.activated:
-            x = x * (paddle.tanh(F.softplus(x)))
+            x = x * (torch.tanh(F.softplus(x)))
         return x
 
 

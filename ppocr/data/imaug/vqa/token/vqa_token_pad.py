@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import paddle
+import torch
 import numpy as np
 
 
@@ -33,7 +33,7 @@ class VQATokenPad(object):
         self.truncation_strategy = truncation_strategy
         self.return_overflowing_tokens = return_overflowing_tokens
         self.return_special_tokens_mask = return_special_tokens_mask
-        self.pad_token_label_id = paddle.nn.CrossEntropyLoss().ignore_index
+        self.pad_token_label_id = torch.nn.CrossEntropyLoss().ignore_index
         self.infer_mode = infer_mode
 
     def __call__(self, data):

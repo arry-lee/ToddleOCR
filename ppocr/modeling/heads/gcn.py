@@ -20,9 +20,9 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import paddle
-import paddle.nn as nn
-import paddle.nn.functional as F
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
 
 
 class BatchNorm1D(nn.BatchNorm1D):
@@ -36,8 +36,8 @@ class BatchNorm1D(nn.BatchNorm1D):
         weight_attr = None
         bias_attr = None
         if not affine:
-            weight_attr = paddle.ParamAttr(learning_rate=0.0)
-            bias_attr = paddle.ParamAttr(learning_rate=0.0)
+            weight_attr = torch.ParamAttr(learning_rate=0.0)
+            bias_attr = torch.ParamAttr(learning_rate=0.0)
         super().__init__(
             num_features,
             momentum=momentum,
@@ -49,7 +49,7 @@ class BatchNorm1D(nn.BatchNorm1D):
 
 class MeanAggregator(nn.Layer):
     def forward(self, features, A):
-        x = paddle.bmm(A, features)
+        x = torch.bmm(A, features)
         return x
 
 
@@ -72,8 +72,8 @@ class GraphConv(nn.Layer):
         b, n, d = features.shape
         assert d == self.in_dim
         agg_feats = self.aggregator(features, A)
-        cat_feats = paddle.concat([features, agg_feats], axis=2)
-        out = paddle.einsum('bnd,df->bnf', cat_feats, self.weight)
+        cat_feats = torch.concat([features, agg_feats], axis=2)
+        out = torch.einsum('bnd,df->bnf', cat_feats, self.weight)
         out = F.relu(out + self.bias)
         return out
 
@@ -103,9 +103,9 @@ class GCN(nn.Layer):
         x = self.conv4(x, A)
         k = knn_inds.shape[-1]
         mid_feat_len = x.shape[-1]
-        edge_feat = paddle.zeros([num_local_graphs, k, mid_feat_len])
+        edge_feat = torch.zeros([num_local_graphs, k, mid_feat_len])
         for graph_ind in range(num_local_graphs):
-            edge_feat[graph_ind, :, :] = x[graph_ind][paddle.to_tensor(knn_inds[
+            edge_feat[graph_ind, :, :] = x[graph_ind][torch.to_tensor(knn_inds[
                 graph_ind])]
         edge_feat = edge_feat.reshape([-1, mid_feat_len])
         pred = self.classifier(edge_feat)

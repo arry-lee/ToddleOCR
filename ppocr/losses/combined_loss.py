@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import paddle
-import paddle.nn as nn
+import torch
+import torch.nn as nn
 
 from .rec_ctc_loss import CTCLoss
 from .center_loss import CenterLoss
@@ -56,7 +56,7 @@ class CombinedLoss(nn.Layer):
         loss_all = 0.
         for idx, loss_func in enumerate(self.loss_func):
             loss = loss_func(input, batch, **kargs)
-            if isinstance(loss, paddle.Tensor):
+            if isinstance(loss, torch.Tensor):
                 loss = {"loss_{}_{}".format(str(loss), idx): loss}
 
             weight = self.loss_weight[idx]
@@ -66,7 +66,7 @@ class CombinedLoss(nn.Layer):
             if "loss" in loss:
                 loss_all += loss["loss"]
             else:
-                loss_all += paddle.add_n(list(loss.values()))
+                loss_all += torch.add_n(list(loss.values()))
             loss_dict.update(loss)
         loss_dict["loss"] = loss_all
         return loss_dict

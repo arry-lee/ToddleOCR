@@ -17,15 +17,15 @@ from __future__ import division
 from __future__ import print_function
 
 import math
-import paddle
-from paddle import nn
-import paddle.nn.functional as F
-from paddle import ParamAttr
+import torch
+from torch import nn
+import torch.nn.functional as F
+from torch import ParamAttr
 
 
 def get_bias_attr(k):
     stdv = 1.0 / math.sqrt(k * 1.0)
-    initializer = paddle.nn.initializer.Uniform(-stdv, stdv)
+    initializer = torch.nn.initializer.Uniform(-stdv, stdv)
     bias_attr = ParamAttr(initializer=initializer)
     return bias_attr
 
@@ -44,9 +44,9 @@ class Head(nn.Layer):
         self.conv_bn1 = nn.BatchNorm(
             num_channels=in_channels // 4,
             param_attr=ParamAttr(
-                initializer=paddle.nn.initializer.Constant(value=1.0)),
+                initializer=torch.nn.initializer.Constant(value=1.0)),
             bias_attr=ParamAttr(
-                initializer=paddle.nn.initializer.Constant(value=1e-4)),
+                initializer=torch.nn.initializer.Constant(value=1e-4)),
             act='relu')
         self.conv2 = nn.Conv2DTranspose(
             in_channels=in_channels // 4,
@@ -54,14 +54,14 @@ class Head(nn.Layer):
             kernel_size=kernel_list[1],
             stride=2,
             weight_attr=ParamAttr(
-                initializer=paddle.nn.initializer.KaimingUniform()),
+                initializer=torch.nn.initializer.KaimingUniform()),
             bias_attr=get_bias_attr(in_channels // 4))
         self.conv_bn2 = nn.BatchNorm(
             num_channels=in_channels // 4,
             param_attr=ParamAttr(
-                initializer=paddle.nn.initializer.Constant(value=1.0)),
+                initializer=torch.nn.initializer.Constant(value=1.0)),
             bias_attr=ParamAttr(
-                initializer=paddle.nn.initializer.Constant(value=1e-4)),
+                initializer=torch.nn.initializer.Constant(value=1e-4)),
             act="relu")
         self.conv3 = nn.Conv2DTranspose(
             in_channels=in_channels // 4,
@@ -69,7 +69,7 @@ class Head(nn.Layer):
             kernel_size=kernel_list[2],
             stride=2,
             weight_attr=ParamAttr(
-                initializer=paddle.nn.initializer.KaimingUniform()),
+                initializer=torch.nn.initializer.KaimingUniform()),
             bias_attr=get_bias_attr(in_channels // 4), )
 
     def forward(self, x):
@@ -97,7 +97,7 @@ class DBHead(nn.Layer):
         self.thresh = Head(in_channels, **kwargs)
 
     def step_function(self, x, y):
-        return paddle.reciprocal(1 + paddle.exp(-self.k * (x - y)))
+        return torch.reciprocal(1 + torch.exp(-self.k * (x - y)))
 
     def forward(self, x, targets=None):
         shrink_maps = self.binarize(x)
@@ -106,5 +106,5 @@ class DBHead(nn.Layer):
 
         threshold_maps = self.thresh(x)
         binary_maps = self.step_function(shrink_maps, threshold_maps)
-        y = paddle.concat([shrink_maps, threshold_maps, binary_maps], axis=1)
+        y = torch.concat([shrink_maps, threshold_maps, binary_maps], axis=1)
         return {'maps': y}

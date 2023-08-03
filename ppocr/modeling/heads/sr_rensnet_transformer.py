@@ -18,22 +18,22 @@ https://github.com/FudanVI/FudanOCR/blob/main/text-gestalt/loss/transformer_engl
 import copy
 import math
 
-import paddle
-import paddle.nn as nn
-import paddle.nn.functional as F
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
 
 
 def subsequent_mask(size):
     """Generate a square mask for the sequence. The masked positions are filled with float('-inf').
         Unmasked positions are filled with float(0.0).
     """
-    mask = paddle.ones([1, size, size], dtype='float32')
-    mask_inf = paddle.triu(
-        paddle.full(
+    mask = torch.ones([1, size, size], dtype='float32')
+    mask_inf = torch.triu(
+        torch.full(
             shape=[1, size, size], dtype='float32', fill_value='-inf'),
         diagonal=1)
     mask = mask + mask_inf
-    padding_mask = paddle.equal(mask, paddle.to_tensor(1, dtype=mask.dtype))
+    padding_mask = torch.equal(mask, torch.to_tensor(1, dtype=mask.dtype))
     return padding_mask
 
 
@@ -42,14 +42,14 @@ def clones(module, N):
 
 
 def masked_fill(x, mask, value):
-    y = paddle.full(x.shape, value, x.dtype)
-    return paddle.where(mask, y, x)
+    y = torch.full(x.shape, value, x.dtype)
+    return torch.where(mask, y, x)
 
 
 def attention(query, key, value, mask=None, dropout=None, attention_map=None):
     d_k = query.shape[-1]
-    scores = paddle.matmul(query,
-                           paddle.transpose(key, [0, 1, 3, 2])) / math.sqrt(d_k)
+    scores = torch.matmul(query,
+                           torch.transpose(key, [0, 1, 3, 2])) / math.sqrt(d_k)
 
     if mask is not None:
         scores = masked_fill(scores, mask == 0, float('-inf'))
@@ -60,7 +60,7 @@ def attention(query, key, value, mask=None, dropout=None, attention_map=None):
 
     if dropout is not None:
         p_attn = dropout(p_attn)
-    return paddle.matmul(p_attn, value), p_attn
+    return torch.matmul(p_attn, value), p_attn
 
 
 class MultiHeadedAttention(nn.Layer):
@@ -81,7 +81,7 @@ class MultiHeadedAttention(nn.Layer):
         nbatches = query.shape[0]
 
         query, key, value = \
-            [paddle.transpose(l(x).reshape([nbatches, -1, self.h, self.d_k]), [0,2,1,3])
+            [torch.transpose(l(x).reshape([nbatches, -1, self.h, self.d_k]), [0,2,1,3])
              for l, x in zip(self.linears, (query, key, value))]
 
         x, attention_map = attention(
@@ -92,8 +92,8 @@ class MultiHeadedAttention(nn.Layer):
             dropout=self.dropout,
             attention_map=attention_map)
 
-        x = paddle.reshape(
-            paddle.transpose(x, [0, 2, 1, 3]),
+        x = torch.reshape(
+            torch.transpose(x, [0, 2, 1, 3]),
             [nbatches, -1, self.h * self.d_k])
 
         return self.linears[-1](x), attention_map
@@ -219,18 +219,18 @@ class PositionalEncoding(nn.Layer):
         super(PositionalEncoding, self).__init__()
         self.dropout = nn.Dropout(p=dropout, mode="downscale_in_infer")
 
-        pe = paddle.zeros([max_len, dim])
-        position = paddle.arange(0, max_len, dtype=paddle.float32).unsqueeze(1)
-        div_term = paddle.exp(
-            paddle.arange(0, dim, 2).astype('float32') *
+        pe = torch.zeros([max_len, dim])
+        position = torch.arange(0, max_len, dtype=torch.float32).unsqueeze(1)
+        div_term = torch.exp(
+            torch.arange(0, dim, 2).astype('float32') *
             (-math.log(10000.0) / dim))
-        pe[:, 0::2] = paddle.sin(position * div_term)
-        pe[:, 1::2] = paddle.cos(position * div_term)
-        pe = paddle.unsqueeze(pe, 0)
+        pe[:, 0::2] = torch.sin(position * div_term)
+        pe[:, 1::2] = torch.cos(position * div_term)
+        pe = torch.unsqueeze(pe, 0)
         self.register_buffer('pe', pe)
 
     def forward(self, x):
-        x = x + self.pe[:, :paddle.shape(x)[1]]
+        x = x + self.pe[:, :torch.shape(x)[1]]
         return self.dropout(x)
 
 
@@ -278,10 +278,10 @@ class LayerNorm(nn.Layer):
         super(LayerNorm, self).__init__()
         self.a_2 = self.create_parameter(
             shape=[features],
-            default_initializer=paddle.nn.initializer.Constant(1.0))
+            default_initializer=torch.nn.initializer.Constant(1.0))
         self.b_2 = self.create_parameter(
             shape=[features],
-            default_initializer=paddle.nn.initializer.Constant(0.0))
+            default_initializer=torch.nn.initializer.Constant(0.0))
         self.eps = eps
 
     def forward(self, x):
@@ -311,7 +311,7 @@ class Decoder(nn.Layer):
         result = self.mul_layernorm1(result + self.mask_multihead(
             text, text, text, mask=mask)[0])
         b, c, h, w = conv_feature.shape
-        conv_feature = paddle.transpose(
+        conv_feature = torch.transpose(
             conv_feature.reshape([b, c, h * w]), [0, 2, 1])
         word_image_align, attention_map = self.multihead(
             result,
@@ -399,8 +399,8 @@ class Transformer(nn.Layer):
         text_embedding = self.embedding_word_with_upperword(
             text_input)  # batch, text_max_length, 512
         postion_embedding = self.pe(
-            paddle.zeros(text_embedding.shape))  # batch, text_max_length, 512
-        text_input_with_pe = paddle.concat([text_embedding, postion_embedding],
+            torch.zeros(text_embedding.shape))  # batch, text_max_length, 512
+        text_input_with_pe = torch.concat([text_embedding, postion_embedding],
                                            2)  # batch, text_max_length, 1024
         batch, seq_len, _ = text_input_with_pe.shape
 
@@ -411,8 +411,8 @@ class Transformer(nn.Layer):
             text_input_with_pe)
 
         if self.training:
-            total_length = paddle.sum(text_length)
-            probs_res = paddle.zeros([total_length, self.get_alphabet_len()])
+            total_length = torch.sum(text_length)
+            probs_res = torch.zeros([total_length, self.get_alphabet_len()])
             start = 0
 
             for index, length in enumerate(text_length):

@@ -15,7 +15,7 @@ import os
 import sys
 import logging
 import functools
-import paddle.distributed as dist
+import torch.distributed as dist
 
 logger_initialized = {}
 

@@ -11,13 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import paddle
-import paddle.nn as nn
-import paddle.nn.functional as F
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
 
 
 def normal_(x, mean=0., std=1.):
-    temp_value = paddle.normal(mean, std, shape=x.shape)
+    temp_value = torch.normal(mean, std, shape=x.shape)
     x.set_value(temp_value)
     return x
 
@@ -53,11 +53,11 @@ class SpectralNorm(object):
         weight_mat = self.reshape_weight_to_matrix(weight)
 
         if do_power_iteration:
-            with paddle.no_grad():
+            with torch.no_grad():
                 for _ in range(self.n_power_iterations):
                     v.set_value(
                         F.normalize(
-                            paddle.matmul(
+                            torch.matmul(
                                 weight_mat,
                                 u,
                                 transpose_x=True,
@@ -67,19 +67,19 @@ class SpectralNorm(object):
 
                     u.set_value(
                         F.normalize(
-                            paddle.matmul(weight_mat, v),
+                            torch.matmul(weight_mat, v),
                             axis=0,
                             epsilon=self.eps, ))
                 if self.n_power_iterations > 0:
                     u = u.clone()
                     v = v.clone()
 
-        sigma = paddle.dot(u, paddle.mv(weight_mat, v))
+        sigma = torch.dot(u, torch.mv(weight_mat, v))
         weight = weight / sigma
         return weight
 
     def remove(self, module):
-        with paddle.no_grad():
+        with torch.no_grad():
             weight = self.compute_weight(module, do_power_iteration=False)
         delattr(module, self.name)
         delattr(module, self.name + '_u')
@@ -106,7 +106,7 @@ class SpectralNorm(object):
         fn = SpectralNorm(name, n_power_iterations, dim, eps)
         weight = module._parameters[name]
 
-        with paddle.no_grad():
+        with torch.no_grad():
             weight_mat = fn.reshape_weight_to_matrix(weight)
             h, w = weight_mat.shape
 

@@ -21,9 +21,9 @@ from __future__ import print_function
 
 import numpy as np
 
-import paddle
-from paddle import nn
-import paddle.nn.functional as F
+import torch
+from torch import nn
+import torch.nn.functional as F
 
 
 class BalanceLoss(nn.Layer):
@@ -91,7 +91,7 @@ class BalanceLoss(nn.Layer):
 
         positive_loss = positive * loss
         negative_loss = negative * loss
-        negative_loss = paddle.reshape(negative_loss, shape=[-1])
+        negative_loss = torch.reshape(negative_loss, shape=[-1])
         if negative_count > 0:
             sort_loss = negative_loss.sort(descending=True)
             negative_loss = sort_loss[:negative_count]
@@ -121,9 +121,9 @@ class DiceLoss(nn.Layer):
         if weights is not None:
             assert weights.shape == mask.shape
             mask = weights * mask
-        intersection = paddle.sum(pred * gt * mask)
+        intersection = torch.sum(pred * gt * mask)
 
-        union = paddle.sum(pred * mask) + paddle.sum(gt * mask) + self.eps
+        union = torch.sum(pred * mask) + torch.sum(gt * mask) + self.eps
         loss = 1 - 2.0 * intersection / union
         assert loss <= 1
         return loss
@@ -138,8 +138,8 @@ class MaskL1Loss(nn.Layer):
         """
         Mask L1 Loss
         """
-        loss = (paddle.abs(pred - gt) * mask).sum() / (mask.sum() + self.eps)
-        loss = paddle.mean(loss)
+        loss = (torch.abs(pred - gt) * mask).sum() / (mask.sum() + self.eps)
+        loss = torch.mean(loss)
         return loss
 
 

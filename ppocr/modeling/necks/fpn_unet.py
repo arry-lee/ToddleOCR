@@ -16,9 +16,9 @@ This code is refer from:
 https://github.com/open-mmlab/mmocr/blob/main/mmocr/models/textdet/necks/fpn_unet.py
 """
 
-import paddle
-import paddle.nn as nn
-import paddle.nn.functional as F
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
 
 
 class UpBlock(nn.Layer):
@@ -84,13 +84,13 @@ class FPN_UNet(nn.Layer):
 
         x = F.relu(self.up4(c5))
 
-        x = paddle.concat([x, c4], axis=1)
+        x = torch.concat([x, c4], axis=1)
         x = F.relu(self.up_block3(x))
 
-        x = paddle.concat([x, c3], axis=1)
+        x = torch.concat([x, c3], axis=1)
         x = F.relu(self.up_block2(x))
 
-        x = paddle.concat([x, c2], axis=1)
+        x = torch.concat([x, c2], axis=1)
         x = F.relu(self.up_block1(x))
 
         x = self.up_block0(x)

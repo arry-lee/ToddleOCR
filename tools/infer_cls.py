@@ -27,7 +27,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(__dir__, '..')))
 
 os.environ["FLAGS_allocator_strategy"] = 'auto_growth'
 
-import paddle
+import torch
 
 from ppocr.data import create_operators, transform
 from ppocr.modeling.architectures import build_model
@@ -72,7 +72,7 @@ def main():
         batch = transform(data, ops)
 
         images = np.expand_dims(batch[0], axis=0)
-        images = paddle.to_tensor(images)
+        images = torch.to_tensor(images)
         preds = model(images)
         post_result = post_process_class(preds)
         for rec_result in post_result:

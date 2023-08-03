@@ -15,7 +15,7 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-import paddle
+import torch
 import os
 import sys
 
@@ -47,7 +47,7 @@ class PGNet_PostProcess(object):
         p_border = self.outs_dict['f_border']
         p_char = self.outs_dict['f_char']
         p_direction = self.outs_dict['f_direction']
-        if isinstance(p_score, paddle.Tensor):
+        if isinstance(p_score, torch.Tensor):
             p_score = p_score[0].numpy()
             p_border = p_border[0].numpy()
             p_direction = p_direction[0].numpy()
@@ -80,7 +80,7 @@ class PGNet_PostProcess(object):
         p_border = self.outs_dict['f_border']
         p_char = self.outs_dict['f_char']
         p_direction = self.outs_dict['f_direction']
-        if isinstance(p_score, paddle.Tensor):
+        if isinstance(p_score, torch.Tensor):
             p_score = p_score[0].numpy()
             p_border = p_border[0].numpy()
             p_direction = p_direction[0].numpy()

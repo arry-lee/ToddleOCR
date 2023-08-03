@@ -17,7 +17,7 @@ import os
 import cv2
 import random
 import numpy as np
-import paddle
+import torch
 
 
 def print_dict(d, logger, delimiter=0):
@@ -145,7 +145,7 @@ def load_vqa_bio_label_maps(label_map_path):
 def set_seed(seed=1024):
     random.seed(seed)
     np.random.seed(seed)
-    paddle.seed(seed)
+    torch.seed(seed)
 
 
 class AverageMeter:

@@ -16,9 +16,9 @@ This code is refer from:
 https://github.com/hikopensource/DAVAR-Lab-OCR/blob/main/davarocr/davar_rcg/models/connects/single_block/RFAdaptor.py
 """
 
-import paddle
-import paddle.nn as nn
-from paddle.nn.initializer import TruncatedNormal, Constant, Normal, KaimingNormal
+import torch
+import torch.nn as nn
+from torch.nn.initializer import TruncatedNormal, Constant, Normal, KaimingNormal
 
 kaiming_init_ = KaimingNormal()
 zeros_ = Constant(value=0.)

@@ -16,10 +16,10 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import paddle
-from paddle import nn
-import paddle.nn.functional as F
-from paddle import ParamAttr
+import torch
+from torch import nn
+import torch.nn.functional as F
+from torch import ParamAttr
 
 
 class ConvBNLayer(nn.Layer):
@@ -269,12 +269,12 @@ class PGFPN(nn.Layer):
         h[2] = self.conv_bn_layer_3(f[2])
 
         g[0] = self.conv_bn_layer_4(h[0])
-        g[1] = paddle.add(g[0], h[1])
+        g[1] = torch.add(g[0], h[1])
         g[1] = F.relu(g[1])
         g[1] = self.conv_bn_layer_5(g[1])
         g[1] = self.conv_bn_layer_6(g[1])
 
-        g[2] = paddle.add(g[1], h[2])
+        g[2] = torch.add(g[1], h[2])
         g[2] = F.relu(g[2])
         g[2] = self.conv_bn_layer_7(g[2])
         f_down = self.conv_bn_layer_8(g[2])
@@ -290,25 +290,25 @@ class PGFPN(nn.Layer):
         h[4] = self.conv_h4(f1[4])
 
         g[0] = self.dconv0(h[0])
-        g[1] = paddle.add(g[0], h[1])
+        g[1] = torch.add(g[0], h[1])
         g[1] = F.relu(g[1])
         g[1] = self.conv_g1(g[1])
         g[1] = self.dconv1(g[1])
 
-        g[2] = paddle.add(g[1], h[2])
+        g[2] = torch.add(g[1], h[2])
         g[2] = F.relu(g[2])
         g[2] = self.conv_g2(g[2])
         g[2] = self.dconv2(g[2])
 
-        g[3] = paddle.add(g[2], h[3])
+        g[3] = torch.add(g[2], h[3])
         g[3] = F.relu(g[3])
         g[3] = self.conv_g3(g[3])
         g[3] = self.dconv3(g[3])
 
-        g[4] = paddle.add(x=g[3], y=h[4])
+        g[4] = torch.add(x=g[3], y=h[4])
         g[4] = F.relu(g[4])
         g[4] = self.conv_g4(g[4])
         f_up = self.convf(g[4])
-        f_common = paddle.add(f_down, f_up)
+        f_common = torch.add(f_down, f_up)
         f_common = F.relu(f_common)
         return f_common

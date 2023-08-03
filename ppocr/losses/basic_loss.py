@@ -12,13 +12,13 @@
 #See the License for the specific language governing permissions and
 #limitations under the License.
 
-import paddle
-import paddle.nn as nn
-import paddle.nn.functional as F
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
 
-from paddle.nn import L1Loss
-from paddle.nn import MSELoss as L2Loss
-from paddle.nn import SmoothL1Loss
+from torch.nn import L1Loss
+from torch.nn import MSELoss as L2Loss
+from torch.nn import SmoothL1Loss
 
 
 class CELoss(nn.Layer):
@@ -34,7 +34,7 @@ class CELoss(nn.Layer):
         else:
             one_hot_target = target
         soft_target = F.label_smooth(one_hot_target, epsilon=self.epsilon)
-        soft_target = paddle.reshape(soft_target, shape=[-1, class_num])
+        soft_target = torch.reshape(soft_target, shape=[-1, class_num])
         return soft_target
 
     def forward(self, x, label):
@@ -43,7 +43,7 @@ class CELoss(nn.Layer):
             class_num = x.shape[-1]
             label = self._labelsmoothing(label, class_num)
             x = -F.log_softmax(x, axis=-1)
-            loss = paddle.sum(x * label, axis=-1)
+            loss = torch.sum(x * label, axis=-1)
         else:
             if label.shape[-1] == x.shape[-1]:
                 label = F.softmax(label, axis=-1)
@@ -63,27 +63,27 @@ class KLJSLoss(object):
     def __call__(self, p1, p2, reduction="mean", eps=1e-5):
 
         if self.mode.lower() == 'kl':
-            loss = paddle.multiply(p2,
-                                   paddle.log((p2 + eps) / (p1 + eps) + eps))
-            loss += paddle.multiply(p1,
-                                    paddle.log((p1 + eps) / (p2 + eps) + eps))
+            loss = torch.multiply(p2,
+                                   torch.log((p2 + eps) / (p1 + eps) + eps))
+            loss += torch.multiply(p1,
+                                    torch.log((p1 + eps) / (p2 + eps) + eps))
             loss *= 0.5
         elif self.mode.lower() == "js":
-            loss = paddle.multiply(
-                p2, paddle.log((2 * p2 + eps) / (p1 + p2 + eps) + eps))
-            loss += paddle.multiply(
-                p1, paddle.log((2 * p1 + eps) / (p1 + p2 + eps) + eps))
+            loss = torch.multiply(
+                p2, torch.log((2 * p2 + eps) / (p1 + p2 + eps) + eps))
+            loss += torch.multiply(
+                p1, torch.log((2 * p1 + eps) / (p1 + p2 + eps) + eps))
             loss *= 0.5
         else:
             raise ValueError(
                 "The mode.lower() if KLJSLoss should be one of ['kl', 'js']")
 
         if reduction == "mean":
-            loss = paddle.mean(loss, axis=[1, 2])
+            loss = torch.mean(loss, axis=[1, 2])
         elif reduction == "none" or reduction is None:
             return loss
         else:
-            loss = paddle.sum(loss, axis=[1, 2])
+            loss = torch.sum(loss, axis=[1, 2])
 
         return loss
 
@@ -109,9 +109,9 @@ class DMLLoss(nn.Layer):
 
     def _kldiv(self, x, target):
         eps = 1.0e-10
-        loss = target * (paddle.log(target + eps) - x)
+        loss = target * (torch.log(target + eps) - x)
         # batch mean loss
-        loss = paddle.sum(loss) / loss.shape[0]
+        loss = torch.sum(loss) / loss.shape[0]
         return loss
 
     def forward(self, out1, out2):
@@ -120,8 +120,8 @@ class DMLLoss(nn.Layer):
             out2 = self.act(out2) + 1e-10
         if self.use_log:
             # for recognition distillation, log is needed for feature map
-            log_out1 = paddle.log(out1)
-            log_out2 = paddle.log(out2)
+            log_out1 = torch.log(out1)
+            log_out2 = torch.log(out2)
             loss = (
                 self._kldiv(log_out1, out2) + self._kldiv(log_out2, out1)) / 2.0
         else:
@@ -161,7 +161,7 @@ class LossFromOutput(nn.Layer):
         if self.key is not None and isinstance(predicts, dict):
             loss = loss[self.key]
         if self.reduction == 'mean':
-            loss = paddle.mean(loss)
+            loss = torch.mean(loss)
         elif self.reduction == 'sum':
-            loss = paddle.sum(loss)
+            loss = torch.sum(loss)
         return {'loss': loss}

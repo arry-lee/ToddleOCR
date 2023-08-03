@@ -16,10 +16,10 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import paddle
-from paddle import ParamAttr
-import paddle.nn as nn
-import paddle.nn.functional as F
+import torch
+from torch import ParamAttr
+import torch.nn as nn
+import torch.nn.functional as F
 
 __all__ = ["ResNet"]
 
@@ -117,7 +117,7 @@ class BottleneckBlock(nn.Layer):
             short = inputs
         else:
             short = self.short(inputs)
-        y = paddle.add(x=short, y=conv2)
+        y = torch.add(x=short, y=conv2)
         y = F.relu(y)
         return y
 
@@ -165,7 +165,7 @@ class BasicBlock(nn.Layer):
             short = inputs
         else:
             short = self.short(inputs)
-        y = paddle.add(x=short, y=conv1)
+        y = torch.add(x=short, y=conv1)
         y = F.relu(y)
         return y
 

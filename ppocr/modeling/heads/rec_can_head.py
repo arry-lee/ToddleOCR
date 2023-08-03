@@ -24,8 +24,8 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import paddle.nn as nn
-import paddle
+import torch.nn as nn
+import torch
 import math
 '''
 Counting Module
@@ -43,8 +43,8 @@ class ChannelAtt(nn.Layer):
 
     def forward(self, x):
         b, c, _, _ = x.shape
-        y = paddle.reshape(self.avg_pool(x), [b, c])
-        y = paddle.reshape(self.fc(y), [b, c, 1, 1])
+        y = torch.reshape(self.avg_pool(x), [b, c])
+        y = torch.reshape(self.fc(y), [b, c, 1, 1])
         return x * y
 
 
@@ -78,10 +78,10 @@ class CountingDecoder(nn.Layer):
 
         if mask is not None:
             x = x * mask
-        x = paddle.reshape(x, [b, self.out_channel, -1])
-        x1 = paddle.sum(x, axis=-1)
+        x = torch.reshape(x, [b, self.out_channel, -1])
+        x1 = torch.sum(x, axis=-1)
 
-        return x1, paddle.reshape(x, [b, self.out_channel, h, w])
+        return x1, torch.reshape(x, [b, self.out_channel, h, w])
 
 
 '''
@@ -106,40 +106,40 @@ class PositionEmbeddingSine(nn.Layer):
         self.scale = scale
 
     def forward(self, x, mask):
-        y_embed = paddle.cumsum(mask, 1, dtype='float32')
-        x_embed = paddle.cumsum(mask, 2, dtype='float32')
+        y_embed = torch.cumsum(mask, 1, dtype='float32')
+        x_embed = torch.cumsum(mask, 2, dtype='float32')
 
         if self.normalize:
             eps = 1e-6
             y_embed = y_embed / (y_embed[:, -1:, :] + eps) * self.scale
             x_embed = x_embed / (x_embed[:, :, -1:] + eps) * self.scale
-        dim_t = paddle.arange(self.num_pos_feats, dtype='float32')
-        dim_d = paddle.expand(paddle.to_tensor(2), dim_t.shape)
+        dim_t = torch.arange(self.num_pos_feats, dtype='float32')
+        dim_d = torch.expand(torch.to_tensor(2), dim_t.shape)
         dim_t = self.temperature**(2 * (dim_t / dim_d).astype('int64') /
                                    self.num_pos_feats)
 
-        pos_x = paddle.unsqueeze(x_embed, [3]) / dim_t
-        pos_y = paddle.unsqueeze(y_embed, [3]) / dim_t
+        pos_x = torch.unsqueeze(x_embed, [3]) / dim_t
+        pos_y = torch.unsqueeze(y_embed, [3]) / dim_t
 
-        pos_x = paddle.flatten(
-            paddle.stack(
+        pos_x = torch.flatten(
+            torch.stack(
                 [
-                    paddle.sin(pos_x[:, :, :, 0::2]),
-                    paddle.cos(pos_x[:, :, :, 1::2])
+                    torch.sin(pos_x[:, :, :, 0::2]),
+                    torch.cos(pos_x[:, :, :, 1::2])
                 ],
                 axis=4),
             3)
-        pos_y = paddle.flatten(
-            paddle.stack(
+        pos_y = torch.flatten(
+            torch.stack(
                 [
-                    paddle.sin(pos_y[:, :, :, 0::2]),
-                    paddle.cos(pos_y[:, :, :, 1::2])
+                    torch.sin(pos_y[:, :, :, 0::2]),
+                    torch.cos(pos_y[:, :, :, 1::2])
                 ],
                 axis=4),
             3)
 
-        pos = paddle.transpose(
-            paddle.concat(
+        pos = torch.transpose(
+            torch.concat(
                 [pos_y, pos_x], axis=3), [0, 3, 1, 2])
 
         return pos
@@ -192,8 +192,8 @@ class AttDecoder(nn.Layer):
         batch_size, _, height, width = cnn_features.shape
         images_mask = images_mask[:, :, ::self.ratio, ::self.ratio]
 
-        word_probs = paddle.zeros((batch_size, num_steps, self.word_num))
-        word_alpha_sum = paddle.zeros((batch_size, 1, height, width))
+        word_probs = torch.zeros((batch_size, num_steps, self.word_num))
+        word_alpha_sum = torch.zeros((batch_size, 1, height, width))
 
         hidden = self.init_hidden(cnn_features, images_mask)
         counting_context_weighted = self.counting_context_weight(counting_preds)
@@ -204,7 +204,7 @@ class AttDecoder(nn.Layer):
 
         cnn_features_trans = cnn_features_trans + pos
 
-        word = paddle.ones([batch_size, 1], dtype='int64')  # init word as sos
+        word = torch.ones([batch_size, 1], dtype='int64')  # init word as sos
         word = word.squeeze(axis=1)
         for i in range(num_steps):
             word_embedding = self.embedding(word)
@@ -231,18 +231,18 @@ class AttDecoder(nn.Layer):
                 word = labels[:, i]
             else:
                 word = word_prob.argmax(1)
-                word = paddle.multiply(
+                word = torch.multiply(
                     word, labels[:, i]
                 )  # labels are oneslike tensor in infer/predict mode
 
         return word_probs
 
     def init_hidden(self, features, feature_mask):
-        average = paddle.sum(paddle.sum(features * feature_mask, axis=-1),
-                             axis=-1) / paddle.sum(
-                                 (paddle.sum(feature_mask, axis=-1)), axis=-1)
+        average = torch.sum(torch.sum(features * feature_mask, axis=-1),
+                             axis=-1) / torch.sum(
+                                 (torch.sum(feature_mask, axis=-1)), axis=-1)
         average = self.init_weight(average)
-        return paddle.tanh(average)
+        return torch.tanh(average)
 
 
 '''
@@ -271,21 +271,21 @@ class Attention(nn.Layer):
         query = self.hidden_weight(hidden)
         alpha_sum_trans = self.attention_conv(alpha_sum)
         coverage_alpha = self.attention_weight(
-            paddle.transpose(alpha_sum_trans, [0, 2, 3, 1]))
-        alpha_score = paddle.tanh(
-            paddle.unsqueeze(query, [1, 2]) + coverage_alpha + paddle.transpose(
+            torch.transpose(alpha_sum_trans, [0, 2, 3, 1]))
+        alpha_score = torch.tanh(
+            torch.unsqueeze(query, [1, 2]) + coverage_alpha + torch.transpose(
                 cnn_features_trans, [0, 2, 3, 1]))
         energy = self.alpha_convert(alpha_score)
         energy = energy - energy.max()
-        energy_exp = paddle.exp(paddle.squeeze(energy, -1))
+        energy_exp = torch.exp(torch.squeeze(energy, -1))
 
         if image_mask is not None:
-            energy_exp = energy_exp * paddle.squeeze(image_mask, 1)
-        alpha = energy_exp / (paddle.unsqueeze(
-            paddle.sum(paddle.sum(energy_exp, -1), -1), [1, 2]) + 1e-10)
-        alpha_sum = paddle.unsqueeze(alpha, 1) + alpha_sum
-        context_vector = paddle.sum(
-            paddle.sum((paddle.unsqueeze(alpha, 1) * cnn_features), -1), -1)
+            energy_exp = energy_exp * torch.squeeze(image_mask, 1)
+        alpha = energy_exp / (torch.unsqueeze(
+            torch.sum(torch.sum(energy_exp, -1), -1), [1, 2]) + 1e-10)
+        alpha_sum = torch.unsqueeze(alpha, 1) + alpha_sum
+        context_vector = torch.sum(
+            torch.sum((torch.unsqueeze(alpha, 1) * cnn_features), -1), -1)
 
         return context_vector, alpha, alpha_sum
 

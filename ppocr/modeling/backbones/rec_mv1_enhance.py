@@ -20,15 +20,15 @@ from __future__ import print_function
 
 import math
 import numpy as np
-import paddle
-from paddle import ParamAttr, reshape, transpose
-import paddle.nn as nn
-import paddle.nn.functional as F
-from paddle.nn import Conv2D, BatchNorm, Linear, Dropout
-from paddle.nn import AdaptiveAvgPool2D, MaxPool2D, AvgPool2D
-from paddle.nn.initializer import KaimingNormal
-from paddle.regularizer import L2Decay
-from paddle.nn.functional import hardswish, hardsigmoid
+import torch
+from torch import ParamAttr, reshape, transpose
+import torch.nn as nn
+import torch.nn.functional as F
+from torch.nn import Conv2D, BatchNorm, Linear, Dropout
+from torch.nn import AdaptiveAvgPool2D, MaxPool2D, AvgPool2D
+from torch.nn.initializer import KaimingNormal
+from torch.regularizer import L2Decay
+from torch.nn.functional import hardswish, hardsigmoid
 
 
 class ConvBNLayer(nn.Layer):
@@ -253,4 +253,4 @@ class SEModule(nn.Layer):
         outputs = F.relu(outputs)
         outputs = self.conv2(outputs)
         outputs = hardsigmoid(outputs)
-        return paddle.multiply(x=inputs, y=outputs)
+        return torch.multiply(x=inputs, y=outputs)

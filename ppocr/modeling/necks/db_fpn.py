@@ -16,10 +16,10 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import paddle
-from paddle import nn
-import paddle.nn.functional as F
-from paddle import ParamAttr
+import torch
+from torch import nn
+import torch.nn.functional as F
+from torch import ParamAttr
 import os
 import sys
 
@@ -109,7 +109,7 @@ class DBFPN(nn.Layer):
         super(DBFPN, self).__init__()
         self.out_channels = out_channels
         self.use_asf = use_asf
-        weight_attr = paddle.nn.initializer.KaimingUniform()
+        weight_attr = torch.nn.initializer.KaimingUniform()
 
         self.in2_conv = nn.Conv2D(
             in_channels=in_channels[0],
@@ -190,7 +190,7 @@ class DBFPN(nn.Layer):
         p4 = F.upsample(p4, scale_factor=4, mode="nearest", align_mode=1)
         p3 = F.upsample(p3, scale_factor=2, mode="nearest", align_mode=1)
 
-        fuse = paddle.concat([p5, p4, p3, p2], axis=1)
+        fuse = torch.concat([p5, p4, p3, p2], axis=1)
 
         if self.use_asf is True:
             fuse = self.asf(fuse, [p5, p4, p3, p2])
@@ -201,7 +201,7 @@ class DBFPN(nn.Layer):
 class RSELayer(nn.Layer):
     def __init__(self, in_channels, out_channels, kernel_size, shortcut=True):
         super(RSELayer, self).__init__()
-        weight_attr = paddle.nn.initializer.KaimingUniform()
+        weight_attr = torch.nn.initializer.KaimingUniform()
         self.out_channels = out_channels
         self.in_conv = nn.Conv2D(
             in_channels=in_channels,
@@ -267,7 +267,7 @@ class RSEFPN(nn.Layer):
         p4 = F.upsample(p4, scale_factor=4, mode="nearest", align_mode=1)
         p3 = F.upsample(p3, scale_factor=2, mode="nearest", align_mode=1)
 
-        fuse = paddle.concat([p5, p4, p3, p2], axis=1)
+        fuse = torch.concat([p5, p4, p3, p2], axis=1)
         return fuse
 
 
@@ -275,7 +275,7 @@ class LKPAN(nn.Layer):
     def __init__(self, in_channels, out_channels, mode='large', **kwargs):
         super(LKPAN, self).__init__()
         self.out_channels = out_channels
-        weight_attr = paddle.nn.initializer.KaimingUniform()
+        weight_attr = torch.nn.initializer.KaimingUniform()
 
         self.ins_conv = nn.LayerList()
         self.inp_conv = nn.LayerList()
@@ -362,7 +362,7 @@ class LKPAN(nn.Layer):
         p4 = F.upsample(p4, scale_factor=4, mode="nearest", align_mode=1)
         p3 = F.upsample(p3, scale_factor=2, mode="nearest", align_mode=1)
 
-        fuse = paddle.concat([p5, p4, p3, p2], axis=1)
+        fuse = torch.concat([p5, p4, p3, p2], axis=1)
         return fuse
 
 
@@ -381,7 +381,7 @@ class ASFBlock(nn.Layer):
             out_features_num: the number of fused stages
         """
         super(ASFBlock, self).__init__()
-        weight_attr = paddle.nn.initializer.KaimingUniform()
+        weight_attr = torch.nn.initializer.KaimingUniform()
         self.in_channels = in_channels
         self.inter_channels = inter_channels
         self.out_features_num = out_features_num
@@ -416,7 +416,7 @@ class ASFBlock(nn.Layer):
 
     def forward(self, fuse_features, features_list):
         fuse_features = self.conv(fuse_features)
-        spatial_x = paddle.mean(fuse_features, axis=1, keepdim=True)
+        spatial_x = torch.mean(fuse_features, axis=1, keepdim=True)
         attention_scores = self.spatial_scale(spatial_x) + fuse_features
         attention_scores = self.channel_scale(attention_scores)
         assert len(features_list) == self.out_features_num
@@ -424,4 +424,4 @@ class ASFBlock(nn.Layer):
         out_list = []
         for i in range(self.out_features_num):
             out_list.append(attention_scores[:, i:i + 1] * features_list[i])
-        return paddle.concat(out_list, axis=1)
+        return torch.concat(out_list, axis=1)

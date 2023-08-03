@@ -20,7 +20,7 @@ import copy
 from PIL import Image
 from .text_image_aug import tia_perspective, tia_stretch, tia_distort
 from .abinet_aug import CVGeometry, CVDeterioration, CVColorJitter, SVTRGeometry, SVTRDeterioration
-from paddle.vision.transforms import Compose
+from torch.vision.transforms import Compose
 
 
 class RecAug(object):

@@ -20,44 +20,44 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import paddle
-from paddle import nn
-import paddle.nn.functional as F
+import torch
+from torch import nn
+import torch.nn.functional as F
 import numpy as np
 
 
 def ohem_single(score, gt_text, training_mask):
     # online hard example mining
 
-    pos_num = int(paddle.sum(gt_text > 0.5)) - int(
-        paddle.sum((gt_text > 0.5) & (training_mask <= 0.5)))
+    pos_num = int(torch.sum(gt_text > 0.5)) - int(
+        torch.sum((gt_text > 0.5) & (training_mask <= 0.5)))
 
     if pos_num == 0:
         # selected_mask = gt_text.copy() * 0 # may be not good
         selected_mask = training_mask
-        selected_mask = paddle.cast(
+        selected_mask = torch.cast(
             selected_mask.reshape(
                 (1, selected_mask.shape[0], selected_mask.shape[1])), "float32")
         return selected_mask
 
-    neg_num = int(paddle.sum((gt_text <= 0.5) & (training_mask > 0.5)))
+    neg_num = int(torch.sum((gt_text <= 0.5) & (training_mask > 0.5)))
     neg_num = int(min(pos_num * 3, neg_num))
 
     if neg_num == 0:
         selected_mask = training_mask
-        selected_mask = paddle.cast(
+        selected_mask = torch.cast(
             selected_mask.reshape(
                 (1, selected_mask.shape[0], selected_mask.shape[1])), "float32")
         return selected_mask
 
     # hard example
     neg_score = score[(gt_text <= 0.5) & (training_mask > 0.5)]
-    neg_score_sorted = paddle.sort(-neg_score)
+    neg_score_sorted = torch.sort(-neg_score)
     threshold = -neg_score_sorted[neg_num - 1]
 
     selected_mask = ((score >= threshold) |
                      (gt_text > 0.5)) & (training_mask > 0.5)
-    selected_mask = paddle.cast(
+    selected_mask = torch.cast(
         selected_mask.reshape(
             (1, selected_mask.shape[0], selected_mask.shape[1])), "float32")
     return selected_mask
@@ -70,7 +70,7 @@ def ohem_batch(scores, gt_texts, training_masks):
             ohem_single(scores[i, :, :], gt_texts[i, :, :], training_masks[
                 i, :, :]))
 
-    selected_masks = paddle.cast(paddle.concat(selected_masks, 0), "float32")
+    selected_masks = torch.cast(torch.concat(selected_masks, 0), "float32")
     return selected_masks
 
 
@@ -83,10 +83,10 @@ def iou_single(a, b, mask, n_class):
 
     # iou of each class
     for i in range(n_class):
-        inter = paddle.cast(((a == i) & (b == i)), "float32")
-        union = paddle.cast(((a == i) | (b == i)), "float32")
+        inter = torch.cast(((a == i) & (b == i)), "float32")
+        union = torch.cast(((a == i) | (b == i)), "float32")
 
-        miou.append(paddle.sum(inter) / (paddle.sum(union) + EPS))
+        miou.append(torch.sum(inter) / (torch.sum(union) + EPS))
     miou = sum(miou) / len(miou)
     return miou
 
@@ -98,12 +98,12 @@ def iou(a, b, mask, n_class=2, reduce=True):
     b = b.reshape((batch_size, -1))
     mask = mask.reshape((batch_size, -1))
 
-    iou = paddle.zeros((batch_size, ), dtype="float32")
+    iou = torch.zeros((batch_size, ), dtype="float32")
     for i in range(batch_size):
         iou[i] = iou_single(a[i], b[i], mask[i], n_class)
 
     if reduce:
-        iou = paddle.mean(iou)
+        iou = torch.mean(iou)
     return iou
 
 
@@ -117,22 +117,22 @@ class DiceLoss(nn.Layer):
         input = F.sigmoid(input)  # scale to 0-1
 
         input = input.reshape((batch_size, -1))
-        target = paddle.cast(target.reshape((batch_size, -1)), "float32")
-        mask = paddle.cast(mask.reshape((batch_size, -1)), "float32")
+        target = torch.cast(target.reshape((batch_size, -1)), "float32")
+        mask = torch.cast(mask.reshape((batch_size, -1)), "float32")
 
         input = input * mask
         target = target * mask
 
-        a = paddle.sum(input * target, axis=1)
-        b = paddle.sum(input * input, axis=1) + 0.001
-        c = paddle.sum(target * target, axis=1) + 0.001
+        a = torch.sum(input * target, axis=1)
+        b = torch.sum(input * input, axis=1) + 0.001
+        c = torch.sum(target * target, axis=1) + 0.001
         d = (2 * a) / (b + c)
         loss = 1 - d
 
         loss = self.loss_weight * loss
 
         if reduce:
-            loss = paddle.mean(loss)
+            loss = torch.mean(loss)
 
         return loss
 
@@ -159,12 +159,12 @@ class SmoothL1Loss(nn.Layer):
     def forward_single(self, input, target, mask, beta=1.0, eps=1e-6):
         batch_size = input.shape[0]
 
-        diff = paddle.abs(input - target) * mask.unsqueeze(1)
-        loss = paddle.where(diff < beta, 0.5 * diff * diff / beta,
+        diff = torch.abs(input - target) * mask.unsqueeze(1)
+        loss = torch.where(diff < beta, 0.5 * diff * diff / beta,
                             diff - 0.5 * beta)
-        loss = paddle.cast(loss.reshape((batch_size, -1)), "float32")
-        mask = paddle.cast(mask.reshape((batch_size, -1)), "float32")
-        loss = paddle.sum(loss, axis=-1)
+        loss = torch.cast(loss.reshape((batch_size, -1)), "float32")
+        mask = torch.cast(mask.reshape((batch_size, -1)), "float32")
+        loss = torch.sum(loss, axis=-1)
         loss = loss / (mask.sum(axis=-1) + eps)
 
         return loss
@@ -172,7 +172,7 @@ class SmoothL1Loss(nn.Layer):
     def select_single(self, distance, gt_instance, gt_kernel_instance,
                       training_mask):
 
-        with paddle.no_grad():
+        with torch.no_grad():
             # paddle 2.3.1, paddle.slice not support:
             # distance[:, self.coord[:, 1], self.coord[:, 0]]
             select_distance_list = []
@@ -180,18 +180,18 @@ class SmoothL1Loss(nn.Layer):
                 tmp1 = distance[i, :]
                 tmp2 = tmp1[self.coord[:, 1], self.coord[:, 0]]
                 select_distance_list.append(tmp2.unsqueeze(0))
-            select_distance = paddle.concat(select_distance_list, axis=0)
+            select_distance = torch.concat(select_distance_list, axis=0)
 
-            off_points = paddle.cast(
+            off_points = torch.cast(
                 self.coord, "float32") + 10 * select_distance.transpose((1, 0))
 
-            off_points = paddle.cast(off_points, "int64")
-            off_points = paddle.clip(off_points, 0, distance.shape[-1] - 1)
+            off_points = torch.cast(off_points, "int64")
+            off_points = torch.clip(off_points, 0, distance.shape[-1] - 1)
 
             selected_mask = (
                 gt_instance[self.coord[:, 1], self.coord[:, 0]] !=
                 gt_kernel_instance[off_points[:, 1], off_points[:, 0]])
-            selected_mask = paddle.cast(
+            selected_mask = torch.cast(
                 selected_mask.reshape((1, -1, distance.shape[-1])), "int64")
             selected_training_mask = selected_mask * training_mask
 
@@ -211,24 +211,24 @@ class SmoothL1Loss(nn.Layer):
                 self.select_single(distances[i, :, :, :], gt_instances[i, :, :],
                                    gt_kernel_instances[i, :, :], training_masks[
                                        i, :, :]))
-        selected_training_masks = paddle.cast(
-            paddle.concat(selected_training_masks, 0), "float32")
+        selected_training_masks = torch.cast(
+            torch.concat(selected_training_masks, 0), "float32")
 
         loss = self.forward_single(distances, gt_distances,
                                    selected_training_masks, self.beta)
         loss = self.loss_weight * loss
 
-        with paddle.no_grad():
+        with torch.no_grad():
             batch_size = distances.shape[0]
             false_num = selected_training_masks.reshape((batch_size, -1))
             false_num = false_num.sum(axis=-1)
-            total_num = paddle.cast(
+            total_num = torch.cast(
                 training_masks.reshape((batch_size, -1)), "float32")
             total_num = total_num.sum(axis=-1)
             iou_text = (total_num - false_num) / (total_num + 1e-6)
 
         if reduce:
-            loss = paddle.mean(loss)
+            loss = torch.mean(loss)
 
         return loss, iou_text
 
@@ -254,7 +254,7 @@ class CTLoss(nn.Layer):
         loss_kernel = self.kernel_loss(
             kernels, gt_kernels, selected_masks, reduce=False)
 
-        iou_kernel = iou(paddle.cast((kernels > 0), "int64"),
+        iou_kernel = iou(torch.cast((kernels > 0), "int64"),
                          gt_kernels,
                          training_masks,
                          reduce=False)

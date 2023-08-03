@@ -20,7 +20,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from paddle import nn
+from torch import nn
 
 from .det_basic_loss import BalanceLoss, MaskL1Loss, DiceLoss
 

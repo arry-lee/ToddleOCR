@@ -23,10 +23,10 @@ from __future__ import division
 from __future__ import print_function
 
 import math
-import paddle
-from paddle import ParamAttr
-import paddle.nn as nn
-import paddle.nn.functional as F
+import torch
+from torch import ParamAttr
+import torch.nn as nn
+import torch.nn.functional as F
 
 class BaseDecoder(nn.Layer):
     def __init__(self, **kwargs):
@@ -81,8 +81,8 @@ class ChannelReductionEncoder(nn.Layer):
 
 
 def masked_fill(x, mask, value):
-    y = paddle.full(x.shape, value, x.dtype)
-    return paddle.where(mask, y, x)
+    y = torch.full(x.shape, value, x.dtype)
+    return torch.where(mask, y, x)
 
 class DotProductAttentionLayer(nn.Layer):
 
@@ -92,11 +92,11 @@ class DotProductAttentionLayer(nn.Layer):
         self.scale = dim_model**-0.5 if dim_model is not None else 1.
 
     def forward(self, query, key, value, h, w, valid_ratios=None):
-        query = paddle.transpose(query, (0, 2, 1))
-        logits = paddle.matmul(query, key) * self.scale
+        query = torch.transpose(query, (0, 2, 1))
+        logits = torch.matmul(query, key) * self.scale
         n, c, t = logits.shape
         # reshape to (n, c, h, w)
-        logits = paddle.reshape(logits, [n, c, h, w])
+        logits = torch.reshape(logits, [n, c, h, w])
         if valid_ratios is not None:
             # cal mask of attention weight
             for i, valid_ratio in enumerate(valid_ratios):
@@ -105,11 +105,11 @@ class DotProductAttentionLayer(nn.Layer):
                     logits[i, :, :, valid_width:] = float('-inf')
 
         # reshape to (n, c, h, w)
-        logits = paddle.reshape(logits, [n, c, t])
+        logits = torch.reshape(logits, [n, c, t])
         weights = F.softmax(logits, axis=2)
-        value = paddle.transpose(value, (0, 2, 1))
-        glimpse = paddle.matmul(weights, value)
-        glimpse = paddle.transpose(glimpse, (0, 2, 1))
+        value = torch.transpose(value, (0, 2, 1))
+        glimpse = torch.matmul(weights, value)
+        glimpse = torch.transpose(glimpse, (0, 2, 1))
         return glimpse
 
 class SequenceAttentionDecoder(BaseDecoder):
@@ -210,15 +210,15 @@ class SequenceAttentionDecoder(BaseDecoder):
         assert len_q <= self.max_seq_len
 
         query, _ = self.sequence_layer(tgt_embedding)
-        query = paddle.transpose(query, (0, 2, 1))
-        key = paddle.reshape(out_enc, [n, c_enc, h * w])
+        query = torch.transpose(query, (0, 2, 1))
+        key = torch.reshape(out_enc, [n, c_enc, h * w])
         if self.encode_value:
             value = key
         else:
-            value = paddle.reshape(feat, [n, c_feat, h * w])
+            value = torch.reshape(feat, [n, c_feat, h * w])
 
         attn_out = self.attention_layer(query, key, value, h, w, valid_ratios)
-        attn_out = paddle.transpose(attn_out, (0, 2, 1))
+        attn_out = torch.transpose(attn_out, (0, 2, 1))
 
         if self.return_feature:
             return attn_out
@@ -242,18 +242,18 @@ class SequenceAttentionDecoder(BaseDecoder):
         seq_len = self.max_seq_len
         batch_size = feat.shape[0]
 
-        decode_sequence = (paddle.ones((batch_size, seq_len), dtype='int64') * self.start_idx)
+        decode_sequence = (torch.ones((batch_size, seq_len), dtype='int64') * self.start_idx)
 
         outputs = []
         for i in range(seq_len):
             step_out = self.forward_test_step(feat, out_enc, decode_sequence,
                                               i, valid_ratios)
             outputs.append(step_out)
-            max_idx = paddle.argmax(step_out, axis=1, keepdim=False)
+            max_idx = torch.argmax(step_out, axis=1, keepdim=False)
             if i < seq_len - 1:
                 decode_sequence[:, i + 1] = max_idx
 
-        outputs = paddle.stack(outputs, 1)
+        outputs = torch.stack(outputs, 1)
 
         return outputs
 
@@ -284,12 +284,12 @@ class SequenceAttentionDecoder(BaseDecoder):
         assert c_q == self.dim_model
 
         query, _ = self.sequence_layer(embed)
-        query = paddle.transpose(query, (0, 2, 1))
-        key = paddle.reshape(out_enc, [n, c_enc, h * w])
+        query = torch.transpose(query, (0, 2, 1))
+        key = torch.reshape(out_enc, [n, c_enc, h * w])
         if self.encode_value:
             value = key
         else:
-            value = paddle.reshape(feat, [n, c_feat, h * w])
+            value = torch.reshape(feat, [n, c_feat, h * w])
 
         # [n, c, l]
         attn_out = self.attention_layer(query, key, value, h, w, valid_ratios)
@@ -326,11 +326,11 @@ class PositionAwareLayer(nn.Layer):
 
     def forward(self, img_feature):
         n, c, h, w = img_feature.shape
-        rnn_input = paddle.transpose(img_feature, (0, 2, 3, 1))
-        rnn_input = paddle.reshape(rnn_input, (n * h, w, c))
+        rnn_input = torch.transpose(img_feature, (0, 2, 3, 1))
+        rnn_input = torch.reshape(rnn_input, (n * h, w, c))
         rnn_output, _ = self.rnn(rnn_input)
-        rnn_output = paddle.reshape(rnn_output, (n, h, w, c))
-        rnn_output = paddle.transpose(rnn_output, (0, 3, 1, 2))
+        rnn_output = torch.reshape(rnn_output, (n, h, w, c))
+        rnn_output = torch.transpose(rnn_output, (0, 3, 1, 2))
         out = self.mixer(rnn_output)
         return out
 
@@ -397,9 +397,9 @@ class PositionAttentionDecoder(BaseDecoder):
     def _get_position_index(self, length, batch_size):
         position_index_list = []
         for i in range(batch_size):
-            position_index = paddle.arange(0, end=length, step=1, dtype='int64')
+            position_index = torch.arange(0, end=length, step=1, dtype='int64')
             position_index_list.append(position_index)
-        batch_position_index = paddle.stack(position_index_list, axis=0)
+        batch_position_index = torch.stack(position_index_list, axis=0)
         return batch_position_index
 
     def forward_train(self, feat, out_enc, targets, valid_ratios, position_index):
@@ -430,15 +430,15 @@ class PositionAttentionDecoder(BaseDecoder):
         position_out_enc = self.position_aware_module(out_enc)
 
         query = self.embedding(position_index)
-        query = paddle.transpose(query, (0, 2, 1))
-        key = paddle.reshape(position_out_enc, (n, c_enc, h * w))
+        query = torch.transpose(query, (0, 2, 1))
+        key = torch.reshape(position_out_enc, (n, c_enc, h * w))
         if self.encode_value:
-            value = paddle.reshape(out_enc,(n, c_enc, h * w))
+            value = torch.reshape(out_enc,(n, c_enc, h * w))
         else:
-            value = paddle.reshape(feat,(n, c_feat, h * w))
+            value = torch.reshape(feat,(n, c_feat, h * w))
 
         attn_out = self.attention_layer(query, key, value, h, w, valid_ratios)
-        attn_out = paddle.transpose(attn_out, (0, 2, 1))  # [n, len_q, dim_v]
+        attn_out = torch.transpose(attn_out, (0, 2, 1))  # [n, len_q, dim_v]
 
         if self.return_feature:
             return attn_out
@@ -468,15 +468,15 @@ class PositionAttentionDecoder(BaseDecoder):
         position_out_enc = self.position_aware_module(out_enc)
         
         query = self.embedding(position_index)
-        query = paddle.transpose(query, (0, 2, 1))
-        key = paddle.reshape(position_out_enc, (n, c_enc, h * w))
+        query = torch.transpose(query, (0, 2, 1))
+        key = torch.reshape(position_out_enc, (n, c_enc, h * w))
         if self.encode_value:
-            value = paddle.reshape(out_enc,(n, c_enc, h * w))
+            value = torch.reshape(out_enc,(n, c_enc, h * w))
         else:
-            value = paddle.reshape(feat,(n, c_feat, h * w))
+            value = torch.reshape(feat,(n, c_feat, h * w))
 
         attn_out = self.attention_layer(query, key, value, h, w, valid_ratios)
-        attn_out = paddle.transpose(attn_out, (0, 2, 1))  # [n, len_q, dim_v]
+        attn_out = torch.transpose(attn_out, (0, 2, 1))  # [n, len_q, dim_v]
 
         if self.return_feature:
             return attn_out
@@ -494,7 +494,7 @@ class RobustScannerFusionLayer(nn.Layer):
 
     def forward(self, x0, x1):
         assert x0.shape == x1.shape
-        fusion_input = paddle.concat([x0, x1], self.dim)
+        fusion_input = torch.concat([x0, x1], self.dim)
         output = self.linear_layer(fusion_input)
         output = F.glu(output, self.dim)
         return output
@@ -624,7 +624,7 @@ class RobustScannerDecoder(BaseDecoder):
         seq_len = self.max_seq_len
         batch_size = feat.shape[0]
 
-        decode_sequence = (paddle.ones((batch_size, seq_len), dtype='int64') * self.start_idx)
+        decode_sequence = (torch.ones((batch_size, seq_len), dtype='int64') * self.start_idx)
 
         position_glimpse = self.position_decoder.forward_test(
             feat, out_enc, valid_ratios, word_positions)
@@ -640,11 +640,11 @@ class RobustScannerDecoder(BaseDecoder):
             char_out = self.prediction(fusion_out)
             char_out = F.softmax(char_out, -1)
             outputs.append(char_out)
-            max_idx = paddle.argmax(char_out, axis=1, keepdim=False)
+            max_idx = torch.argmax(char_out, axis=1, keepdim=False)
             if i < seq_len - 1:
                 decode_sequence[:, i + 1] = max_idx
 
-        outputs = paddle.stack(outputs, 1)
+        outputs = torch.stack(outputs, 1)
 
         return outputs
 
@@ -695,7 +695,7 @@ class RobustScannerHead(nn.Layer):
                 
         if self.training:
             label = targets[0]  # label
-            label = paddle.to_tensor(label, dtype='int64')
+            label = torch.to_tensor(label, dtype='int64')
             final_out = self.decoder(
                 inputs, out_enc, label, valid_ratios, word_positions)
         if not self.training:

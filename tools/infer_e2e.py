@@ -29,7 +29,7 @@ os.environ["FLAGS_allocator_strategy"] = 'auto_growth'
 
 import cv2
 import json
-import paddle
+import torch
 
 from ppocr.data import create_operators, transform
 from ppocr.modeling.architectures import build_model
@@ -140,7 +140,7 @@ def main():
             batch = transform(data, ops)
             images = np.expand_dims(batch[0], axis=0)
             shape_list = np.expand_dims(batch[1], axis=0)
-            images = paddle.to_tensor(images)
+            images = torch.to_tensor(images)
             preds = model(images)
             post_result = post_process_class(preds, shape_list)
             points, strs = post_result['points'], post_result['texts']

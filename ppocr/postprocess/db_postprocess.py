@@ -21,7 +21,7 @@ from __future__ import print_function
 
 import numpy as np
 import cv2
-import paddle
+import torch
 from shapely.geometry import Polygon
 import pyclipper
 
@@ -219,7 +219,7 @@ class DBPostProcess(object):
 
     def __call__(self, outs_dict, shape_list):
         pred = outs_dict['maps']
-        if isinstance(pred, paddle.Tensor):
+        if isinstance(pred, torch.Tensor):
             pred = pred.numpy()
         pred = pred[:, 0, :, :]
         segmentation = pred > self.thresh

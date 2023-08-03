@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import numpy as np
-import paddle
+import torch
 
 from .rec_postprocess import AttnLabelDecode
 
@@ -48,9 +48,9 @@ class TableLabelDecode(AttnLabelDecode):
     def __call__(self, preds, batch=None):
         structure_probs = preds['structure_probs']
         bbox_preds = preds['loc_preds']
-        if isinstance(structure_probs, paddle.Tensor):
+        if isinstance(structure_probs, torch.Tensor):
             structure_probs = structure_probs.numpy()
-        if isinstance(bbox_preds, paddle.Tensor):
+        if isinstance(bbox_preds, torch.Tensor):
             bbox_preds = bbox_preds.numpy()
         shape_list = batch[-1]
         result = self.decode(structure_probs, bbox_preds, shape_list)

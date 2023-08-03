@@ -12,8 +12,8 @@
 #See the License for the specific language governing permissions and
 #limitations under the License.
 
-import paddle
-import paddle.nn as nn
+import torch
+import torch.nn as nn
 import numpy as np
 import cv2
 
@@ -272,7 +272,7 @@ class DistillationDilaDBLoss(DBLoss):
             for i in range(th_shrink_maps.shape[0]):
                 dilate_maps[i] = cv2.dilate(
                     th_shrink_maps[i, :, :].astype(np.uint8), dilation_w)
-            th_shrink_maps = paddle.to_tensor(dilate_maps)
+            th_shrink_maps = torch.to_tensor(dilate_maps)
 
             label_threshold_map, label_threshold_mask, label_shrink_map, label_shrink_mask = batch[
                 1:]

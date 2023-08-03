@@ -28,7 +28,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(__dir__, '..')))
 os.environ["FLAGS_allocator_strategy"] = 'auto_growth'
 import cv2
 import json
-import paddle
+import torch
 
 from ppocr.data import create_operators, transform
 from ppocr.modeling.architectures import build_model
@@ -46,12 +46,12 @@ def to_tensor(data):
     to_tensor_idxs = []
 
     for idx, v in enumerate(data):
-        if isinstance(v, (np.ndarray, paddle.Tensor, numbers.Number)):
+        if isinstance(v, (np.ndarray, torch.Tensor, numbers.Number)):
             if idx not in to_tensor_idxs:
                 to_tensor_idxs.append(idx)
         data_dict[idx].append(v)
     for idx in to_tensor_idxs:
-        data_dict[idx] = paddle.to_tensor(data_dict[idx])
+        data_dict[idx] = torch.to_tensor(data_dict[idx])
     return list(data_dict.values())
 
 

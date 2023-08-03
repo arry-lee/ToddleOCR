@@ -16,8 +16,8 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import paddle
-from paddle import nn
+import torch
+from torch import nn
 
 
 class CosineEmbeddingLoss(nn.Layer):
@@ -27,16 +27,16 @@ class CosineEmbeddingLoss(nn.Layer):
         self.epsilon = 1e-12
 
     def forward(self, x1, x2, target):
-        similarity = paddle.sum(
-            x1 * x2, axis=-1) / (paddle.norm(
-                x1, axis=-1) * paddle.norm(
+        similarity = torch.sum(
+            x1 * x2, axis=-1) / (torch.norm(
+                x1, axis=-1) * torch.norm(
                     x2, axis=-1) + self.epsilon)
-        one_list = paddle.full_like(target, fill_value=1)
-        out = paddle.mean(
-            paddle.where(
-                paddle.equal(target, one_list), 1. - similarity,
-                paddle.maximum(
-                    paddle.zeros_like(similarity), similarity - self.margin)))
+        one_list = torch.full_like(target, fill_value=1)
+        out = torch.mean(
+            torch.where(
+                torch.equal(target, one_list), 1. - similarity,
+                torch.maximum(
+                    torch.zeros_like(similarity), similarity - self.margin)))
 
         return out
 
@@ -67,31 +67,31 @@ class AsterLoss(nn.Layer):
         rec_pred = predicts['rec_pred']
 
         if not self.is_cosin_loss:
-            sem_loss = paddle.sum(self.loss_sem(embedding_vectors, sem_target))
+            sem_loss = torch.sum(self.loss_sem(embedding_vectors, sem_target))
         else:
-            label_target = paddle.ones([embedding_vectors.shape[0]])
-            sem_loss = paddle.sum(
+            label_target = torch.ones([embedding_vectors.shape[0]])
+            sem_loss = torch.sum(
                 self.loss_sem(embedding_vectors, sem_target, label_target))
 
         # rec loss
         batch_size, def_max_length = targets.shape[0], targets.shape[1]
 
-        mask = paddle.zeros([batch_size, def_max_length])
+        mask = torch.zeros([batch_size, def_max_length])
         for i in range(batch_size):
             mask[i, :label_lengths[i]] = 1
-        mask = paddle.cast(mask, "float32")
+        mask = torch.cast(mask, "float32")
         max_length = max(label_lengths)
         assert max_length == rec_pred.shape[1]
         targets = targets[:, :max_length]
         mask = mask[:, :max_length]
-        rec_pred = paddle.reshape(rec_pred, [-1, rec_pred.shape[2]])
+        rec_pred = torch.reshape(rec_pred, [-1, rec_pred.shape[2]])
         input = nn.functional.log_softmax(rec_pred, axis=1)
-        targets = paddle.reshape(targets, [-1, 1])
-        mask = paddle.reshape(mask, [-1, 1])
-        output = -paddle.index_sample(input, index=targets) * mask
-        output = paddle.sum(output)
+        targets = torch.reshape(targets, [-1, 1])
+        mask = torch.reshape(mask, [-1, 1])
+        output = -torch.index_sample(input, index=targets) * mask
+        output = torch.sum(output)
         if self.sequence_normalize:
-            output = output / paddle.sum(mask)
+            output = output / torch.sum(mask)
         if self.sample_normalize:
             output = output / batch_size
 

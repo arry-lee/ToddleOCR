@@ -17,9 +17,9 @@ from __future__ import division
 from __future__ import print_function
 
 import math
-import paddle
-from paddle import nn, ParamAttr
-from paddle.nn import functional as F
+import torch
+from torch import nn, ParamAttr
+from torch.nn import functional as F
 import numpy as np
 import functools
 from .tps import GridGenerator
@@ -84,10 +84,10 @@ class SP_TransformerNetwork(nn.Layer):
         batch_I = (batch_I + 1) * 0.5
         if offsets is not None:
             batch_I = batch_I*(1-lambda_color) + offsets*lambda_color
-        batch_weight_params = paddle.unsqueeze(paddle.unsqueeze(weights, -1), -1)
-        batch_I_power = paddle.stack([batch_I.pow(p) for p in self.power_list], axis=1)
+        batch_weight_params = torch.unsqueeze(torch.unsqueeze(weights, -1), -1)
+        batch_I_power = torch.stack([batch_I.pow(p) for p in self.power_list], axis=1)
 
-        batch_weight_sum = paddle.sum(batch_I_power * batch_weight_params, axis=1)
+        batch_weight_sum = torch.sum(batch_I_power * batch_weight_params, axis=1)
         batch_weight_sum = self.bn(batch_weight_sum)
         batch_weight_sum = self.sigmoid(batch_weight_sum)
         batch_weight_sum = batch_weight_sum * 2 - 1

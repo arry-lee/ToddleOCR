@@ -16,8 +16,8 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import paddle
-from paddle import nn
+import torch
+from torch import nn
 from .ace_loss import ACELoss
 from .center_loss import CenterLoss
 from .rec_ctc_loss import CTCLoss

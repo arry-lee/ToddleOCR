@@ -17,10 +17,10 @@ from __future__ import division
 from __future__ import print_function
 
 import math
-import paddle
-from paddle import ParamAttr
-import paddle.nn as nn
-import paddle.nn.functional as F
+import torch
+from torch import ParamAttr
+import torch.nn as nn
+import torch.nn.functional as F
 
 from ppocr.modeling.necks.rnn import Im2Seq, EncoderWithRNN, EncoderWithFC, SequenceEncoder, EncoderWithSVTR
 from .rec_ctc_head import CTCHead

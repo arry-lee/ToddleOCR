@@ -20,11 +20,11 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import paddle
-from paddle import ParamAttr
-from paddle.nn.initializer import KaimingNormal
-import paddle.nn as nn
-import paddle.nn.functional as F
+import torch
+from torch import ParamAttr
+from torch.nn.initializer import KaimingNormal
+import torch.nn as nn
+import torch.nn.functional as F
 import numpy as np
 import math
 

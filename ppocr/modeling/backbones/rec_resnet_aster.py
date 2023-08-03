@@ -15,8 +15,8 @@
 This code is refer from:
 https://github.com/ayumiymk/aster.pytorch/blob/master/lib/models/resnet_aster.py
 """
-import paddle
-import paddle.nn as nn
+import torch
+import torch.nn as nn
 
 import sys
 import math
@@ -41,17 +41,17 @@ def conv1x1(in_planes, out_planes, stride=1):
 
 def get_sinusoid_encoding(n_position, feat_dim, wave_length=10000):
     # [n_position]
-    positions = paddle.arange(0, n_position)
+    positions = torch.arange(0, n_position)
     # [feat_dim]
-    dim_range = paddle.arange(0, feat_dim)
-    dim_range = paddle.pow(wave_length, 2 * (dim_range // 2) / feat_dim)
+    dim_range = torch.arange(0, feat_dim)
+    dim_range = torch.pow(wave_length, 2 * (dim_range // 2) / feat_dim)
     # [n_position, feat_dim]
-    angles = paddle.unsqueeze(
-        positions, axis=1) / paddle.unsqueeze(
+    angles = torch.unsqueeze(
+        positions, axis=1) / torch.unsqueeze(
             dim_range, axis=0)
-    angles = paddle.cast(angles, "float32")
-    angles[:, 0::2] = paddle.sin(angles[:, 0::2])
-    angles[:, 1::2] = paddle.cos(angles[:, 1::2])
+    angles = torch.cast(angles, "float32")
+    angles[:, 0::2] = torch.sin(angles[:, 0::2])
+    angles[:, 1::2] = torch.cos(angles[:, 1::2])
     return angles
 
 
@@ -135,7 +135,7 @@ class ResNet_ASTER(nn.Layer):
         x5 = self.layer5(x4)
 
         cnn_feat = x5.squeeze(2)  # [N, c, w]
-        cnn_feat = paddle.transpose(cnn_feat, perm=[0, 2, 1])
+        cnn_feat = torch.transpose(cnn_feat, perm=[0, 2, 1])
         if self.with_lstm:
             rnn_feat, _ = self.rnn(cnn_feat)
             return rnn_feat

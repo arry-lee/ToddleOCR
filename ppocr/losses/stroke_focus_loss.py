@@ -21,8 +21,8 @@ import time
 import string
 import random
 import numpy as np
-import paddle.nn as nn
-import paddle
+import torch.nn as nn
+import torch
 
 
 class StrokeFocusLoss(nn.Layer):
@@ -56,7 +56,7 @@ class StrokeFocusLoss(nn.Layer):
         hr_pred = pred["hr_pred"]
         sr_pred = pred["sr_pred"]
 
-        attention_loss = paddle.nn.functional.l1_loss(word_attention_map_gt,
+        attention_loss = torch.nn.functional.l1_loss(word_attention_map_gt,
                                                       word_attention_map_pred)
 
         loss = (mse_loss + attention_loss * 50) * 100

@@ -11,8 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import paddle
-import paddle.nn as nn
+import torch
+import torch.nn as nn
 
 from arch.base_module import SNConv, SNConvTranspose, ResBlock
 
@@ -22,7 +22,7 @@ class Encoder(nn.Layer):
                  act, act_attr, conv_block_dropout, conv_block_num,
                  conv_block_dilation):
         super(Encoder, self).__init__()
-        self._pad2d = paddle.nn.Pad2D([3, 3, 3, 3], mode="replicate")
+        self._pad2d = torch.nn.Pad2D([3, 3, 3, 3], mode="replicate")
         self._in_conv = SNConv(
             name=name + "_in_conv",
             in_channels=in_channels,
@@ -92,7 +92,7 @@ class EncoderUnet(nn.Layer):
     def __init__(self, name, in_channels, encode_dim, use_bias, norm_layer,
                  act, act_attr):
         super(EncoderUnet, self).__init__()
-        self._pad2d = paddle.nn.Pad2D([3, 3, 3, 3], mode="replicate")
+        self._pad2d = torch.nn.Pad2D([3, 3, 3, 3], mode="replicate")
         self._in_conv = SNConv(
             name=name + "_in_conv",
             in_channels=in_channels,
@@ -179,8 +179,8 @@ class EncoderUnet(nn.Layer):
         output_dict['down4'] = self._down4.forward(output_dict['down3'])
         output_dict['up1'] = self._up1.forward(output_dict['down4'])
         output_dict['up2'] = self._up2.forward(
-            paddle.concat(
+            torch.concat(
                 (output_dict['down3'], output_dict['up1']), axis=1))
-        output_dict['concat'] = paddle.concat(
+        output_dict['concat'] = torch.concat(
             (output_dict['down2'], output_dict['up2']), axis=1)
         return output_dict

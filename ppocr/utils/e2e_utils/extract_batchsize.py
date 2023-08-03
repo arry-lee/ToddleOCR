@@ -1,4 +1,4 @@
-import paddle
+import torch
 import numpy as np
 import copy
 
@@ -78,10 +78,10 @@ def pre_process(label_list, pos_list, pos_mask, max_text_length, max_text_nums,
             else:
                 break
         label.append(k)
-    label = paddle.to_tensor(label)
-    label = paddle.cast(label, dtype='int64')
-    pos_list = paddle.to_tensor(pos_list)
-    pos_mask = paddle.to_tensor(pos_mask)
-    label_list = paddle.squeeze(paddle.to_tensor(label_list), axis=2)
-    label_list = paddle.cast(label_list, dtype='int32')
+    label = torch.to_tensor(label)
+    label = torch.cast(label, dtype='int64')
+    pos_list = torch.to_tensor(pos_list)
+    pos_mask = torch.to_tensor(pos_mask)
+    label_list = torch.squeeze(torch.to_tensor(label_list), axis=2)
+    label_list = torch.cast(label_list, dtype='int32')
     return pos_list, pos_mask, label_list, label

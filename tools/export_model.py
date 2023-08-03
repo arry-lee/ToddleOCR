@@ -21,8 +21,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(__dir__, "..")))
 
 import argparse
 
-import paddle
-from paddle.jit import to_static
+import torch
+from torch.jit import to_static
 
 from ppocr.modeling.architectures import build_model
 from ppocr.postprocess import build_post_process
@@ -40,15 +40,15 @@ def export_single_model(model,
     if arch_config["algorithm"] == "SRN":
         max_text_length = arch_config["Head"]["max_text_length"]
         other_shape = [
-            paddle.static.InputSpec(
+            torch.static.InputSpec(
                 shape=[None, 1, 64, 256], dtype="float32"), [
-                    paddle.static.InputSpec(
+                    torch.static.InputSpec(
                         shape=[None, 256, 1],
-                        dtype="int64"), paddle.static.InputSpec(
+                        dtype="int64"), torch.static.InputSpec(
                             shape=[None, max_text_length, 1], dtype="int64"),
-                    paddle.static.InputSpec(
+                    torch.static.InputSpec(
                         shape=[None, 8, max_text_length, max_text_length],
-                        dtype="int64"), paddle.static.InputSpec(
+                        dtype="int64"), torch.static.InputSpec(
                             shape=[None, 8, max_text_length, max_text_length],
                             dtype="int64")
                 ]
@@ -56,102 +56,102 @@ def export_single_model(model,
         model = to_static(model, input_spec=other_shape)
     elif arch_config["algorithm"] == "SAR":
         other_shape = [
-            paddle.static.InputSpec(
+            torch.static.InputSpec(
                 shape=[None, 3, 48, 160], dtype="float32"),
-            [paddle.static.InputSpec(
+            [torch.static.InputSpec(
                 shape=[None], dtype="float32")]
         ]
         model = to_static(model, input_spec=other_shape)
     elif arch_config["algorithm"] == "SVTR":
         if arch_config["Head"]["name"] == 'MultiHead':
             other_shape = [
-                paddle.static.InputSpec(
+                torch.static.InputSpec(
                     shape=[None, 3, 48, -1], dtype="float32"),
             ]
         else:
             other_shape = [
-                paddle.static.InputSpec(
+                torch.static.InputSpec(
                     shape=[None] + input_shape, dtype="float32"),
             ]
         model = to_static(model, input_spec=other_shape)
     elif arch_config["algorithm"] == "PREN":
         other_shape = [
-            paddle.static.InputSpec(
+            torch.static.InputSpec(
                 shape=[None, 3, 64, 256], dtype="float32"),
         ]
         model = to_static(model, input_spec=other_shape)
     elif arch_config["model_type"] == "sr":
         other_shape = [
-            paddle.static.InputSpec(
+            torch.static.InputSpec(
                 shape=[None, 3, 16, 64], dtype="float32")
         ]
         model = to_static(model, input_spec=other_shape)
     elif arch_config["algorithm"] == "ViTSTR":
         other_shape = [
-            paddle.static.InputSpec(
+            torch.static.InputSpec(
                 shape=[None, 1, 224, 224], dtype="float32"),
         ]
         model = to_static(model, input_spec=other_shape)
     elif arch_config["algorithm"] == "ABINet":
         other_shape = [
-            paddle.static.InputSpec(
+            torch.static.InputSpec(
                 shape=[None, 3, 32, 128], dtype="float32"),
         ]
         # print([None, 3, 32, 128])
         model = to_static(model, input_spec=other_shape)
     elif arch_config["algorithm"] in ["NRTR", "SPIN", 'RFL']:
         other_shape = [
-            paddle.static.InputSpec(
+            torch.static.InputSpec(
                 shape=[None, 1, 32, 100], dtype="float32"),
         ]
         model = to_static(model, input_spec=other_shape)
     elif arch_config["algorithm"] == "VisionLAN":
         other_shape = [
-            paddle.static.InputSpec(
+            torch.static.InputSpec(
                 shape=[None, 3, 64, 256], dtype="float32"),
         ]
         model = to_static(model, input_spec=other_shape)
     elif arch_config["algorithm"] == "RobustScanner":
         max_text_length = arch_config["Head"]["max_text_length"]
         other_shape = [
-            paddle.static.InputSpec(
+            torch.static.InputSpec(
                 shape=[None, 3, 48, 160], dtype="float32"), [
-                    paddle.static.InputSpec(
+                    torch.static.InputSpec(
                         shape=[None, ], dtype="float32"),
-                    paddle.static.InputSpec(
+                    torch.static.InputSpec(
                         shape=[None, max_text_length], dtype="int64")
                 ]
         ]
         model = to_static(model, input_spec=other_shape)
     elif arch_config["algorithm"] == "CAN":
         other_shape = [[
-            paddle.static.InputSpec(
+            torch.static.InputSpec(
                 shape=[None, 1, None, None],
-                dtype="float32"), paddle.static.InputSpec(
+                dtype="float32"), torch.static.InputSpec(
                     shape=[None, 1, None, None], dtype="float32"),
-            paddle.static.InputSpec(
+            torch.static.InputSpec(
                 shape=[None, arch_config['Head']['max_text_length']],
                 dtype="int64")
         ]]
         model = to_static(model, input_spec=other_shape)
     elif arch_config["algorithm"] in ["LayoutLM", "LayoutLMv2", "LayoutXLM"]:
         input_spec = [
-            paddle.static.InputSpec(
+            torch.static.InputSpec(
                 shape=[None, 512], dtype="int64"),  # input_ids
-            paddle.static.InputSpec(
+            torch.static.InputSpec(
                 shape=[None, 512, 4], dtype="int64"),  # bbox
-            paddle.static.InputSpec(
+            torch.static.InputSpec(
                 shape=[None, 512], dtype="int64"),  # attention_mask
-            paddle.static.InputSpec(
+            torch.static.InputSpec(
                 shape=[None, 512], dtype="int64"),  # token_type_ids
-            paddle.static.InputSpec(
+            torch.static.InputSpec(
                 shape=[None, 3, 224, 224], dtype="int64"),  # image
         ]
         if 'Re' in arch_config['Backbone']['name']:
             input_spec.extend([
-                paddle.static.InputSpec(
+                torch.static.InputSpec(
                     shape=[None, 512, 3], dtype="int64"),  # entities
-                paddle.static.InputSpec(
+                torch.static.InputSpec(
                     shape=[None, None, 2], dtype="int64"),  # relations
             ])
         if model.backbone.use_visual_backbone is False:
@@ -177,12 +177,12 @@ def export_single_model(model,
         model = to_static(
             model,
             input_spec=[
-                paddle.static.InputSpec(
+                torch.static.InputSpec(
                     shape=[None] + infer_shape, dtype="float32")
             ])
 
     if quanter is None:
-        paddle.jit.save(model, save_path)
+        torch.jit.save(model, save_path)
     else:
         quanter.save_quantized_model(model, save_path)
     logger.info("inference model is saved to {}".format(save_path))

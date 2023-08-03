@@ -13,7 +13,7 @@
 # limitations under the License.
 import numpy as np
 import os
-from paddle.io import Dataset
+from torch.io import Dataset
 import lmdb
 import cv2
 import string

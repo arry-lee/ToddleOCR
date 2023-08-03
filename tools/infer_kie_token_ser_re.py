@@ -28,8 +28,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(__dir__, '..')))
 os.environ["FLAGS_allocator_strategy"] = 'auto_growth'
 import cv2
 import json
-import paddle
-import paddle.distributed as dist
+import torch
+import torch.distributed as dist
 
 from ppocr.data import create_operators, transform
 from ppocr.modeling.architectures import build_model
@@ -110,9 +110,9 @@ def make_input(ser_inputs, ser_results):
     relations = np.repeat(relations, batch_size, axis=0)
 
     # remove ocr_info segment_offset_id and label in ser input
-    if isinstance(ser_inputs[0], paddle.Tensor):
-        entities = paddle.to_tensor(entities)
-        relations = paddle.to_tensor(relations)
+    if isinstance(ser_inputs[0], torch.Tensor):
+        entities = torch.to_tensor(entities)
+        relations = torch.to_tensor(relations)
     ser_inputs = ser_inputs[:5] + [entities, relations]
 
     entity_idx_dict_batch = []
@@ -170,14 +170,14 @@ def preprocess():
     use_gpu = config['Global']['use_gpu']
 
     device = 'gpu:{}'.format(dist.ParallelEnv().dev_id) if use_gpu else 'cpu'
-    device = paddle.set_device(device)
+    device = torch.set_device(device)
 
     logger.info('{} re config {}'.format('*' * 10, '*' * 10))
     print_dict(config, logger)
     logger.info('\n')
     logger.info('{} ser config {}'.format('*' * 10, '*' * 10))
     print_dict(ser_config, logger)
-    logger.info('train with paddle {} and device {}'.format(paddle.__version__,
+    logger.info('train with paddle {} and device {}'.format(torch.__version__,
                                                             device))
     return config, ser_config, device, logger
 

@@ -18,7 +18,7 @@ import importlib
 
 __dir__ = os.path.dirname(__file__)
 
-import paddle
+import torch
 
 sys.path.append(os.path.join(__dir__, ''))
 

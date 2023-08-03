@@ -22,8 +22,8 @@ from __future__ import print_function
 
 import numpy as np
 import cv2
-import paddle
-from paddle.nn import functional as F
+import torch
+from torch.nn import functional as F
 
 from ppocr.postprocess.pse_postprocess.pse import pse
 
@@ -49,8 +49,8 @@ class PSEPostProcess(object):
 
     def __call__(self, outs_dict, shape_list):
         pred = outs_dict['maps']
-        if not isinstance(pred, paddle.Tensor):
-            pred = paddle.to_tensor(pred)
+        if not isinstance(pred, torch.Tensor):
+            pred = torch.to_tensor(pred)
         pred = F.interpolate(
             pred, scale_factor=4 // self.scale, mode='bilinear')
 
@@ -58,7 +58,7 @@ class PSEPostProcess(object):
 
         kernels = (pred > self.thresh).astype('float32')
         text_mask = kernels[:, 0, :, :]
-        text_mask = paddle.unsqueeze(text_mask, axis=1)
+        text_mask = torch.unsqueeze(text_mask, axis=1)
 
         kernels[:, 0:, :, :] = kernels[:, 0:, :, :] * text_mask
 

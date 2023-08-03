@@ -20,7 +20,7 @@ import functools
 import operator
 
 import numpy as np
-import paddle
+import torch
 from numpy.linalg import norm
 import cv2
 
@@ -280,11 +280,11 @@ class DRRGPostprocess(object):
         """
         edges, scores, text_comps = preds
         if edges is not None:
-            if isinstance(edges, paddle.Tensor):
+            if isinstance(edges, torch.Tensor):
                 edges = edges.numpy()
-            if isinstance(scores, paddle.Tensor):
+            if isinstance(scores, torch.Tensor):
                 scores = scores.numpy()
-            if isinstance(text_comps, paddle.Tensor):
+            if isinstance(text_comps, torch.Tensor):
                 text_comps = text_comps.numpy()
             assert len(edges) == len(scores)
             assert text_comps.ndim == 2

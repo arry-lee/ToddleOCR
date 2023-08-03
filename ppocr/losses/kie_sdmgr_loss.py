@@ -18,8 +18,8 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from paddle import nn
-import paddle
+from torch import nn
+import torch
 
 
 class SDMGRLoss(nn.Layer):
@@ -38,7 +38,7 @@ class SDMGRLoss(nn.Layer):
         for i in range(batch):
             num, recoder_len = tag[i][0], tag[i][1]
             temp_gts.append(
-                paddle.to_tensor(
+                torch.to_tensor(
                     gts[i, :num, :num + 1], dtype='int64'))
         return temp_gts
 
@@ -72,19 +72,19 @@ class SDMGRLoss(nn.Layer):
         if pred.shape[0] == 0:
             accu = [pred.new_tensor(0.) for i in range(len(topk))]
             return accu[0] if return_single else accu
-        pred_value, pred_label = paddle.topk(pred, maxk, axis=1)
+        pred_value, pred_label = torch.topk(pred, maxk, axis=1)
         pred_label = pred_label.transpose(
             [1, 0])  # transpose to shape (maxk, N)
-        correct = paddle.equal(pred_label,
+        correct = torch.equal(pred_label,
                                (target.reshape([1, -1]).expand_as(pred_label)))
         res = []
         for k in topk:
-            correct_k = paddle.sum(correct[:k].reshape([-1]).astype('float32'),
+            correct_k = torch.sum(correct[:k].reshape([-1]).astype('float32'),
                                    axis=0,
                                    keepdim=True)
             res.append(
-                paddle.multiply(correct_k,
-                                paddle.to_tensor(100.0 / pred.shape[0])))
+                torch.multiply(correct_k,
+                                torch.to_tensor(100.0 / pred.shape[0])))
         return res[0] if return_single else res
 
     def forward(self, pred, batch):
@@ -95,11 +95,11 @@ class SDMGRLoss(nn.Layer):
         for gt in gts:
             node_gts.append(gt[:, 0])
             edge_gts.append(gt[:, 1:].reshape([-1]))
-        node_gts = paddle.concat(node_gts)
-        edge_gts = paddle.concat(edge_gts)
+        node_gts = torch.concat(node_gts)
+        edge_gts = torch.concat(edge_gts)
 
-        node_valids = paddle.nonzero(node_gts != self.ignore).reshape([-1])
-        edge_valids = paddle.nonzero(edge_gts != -1).reshape([-1])
+        node_valids = torch.nonzero(node_gts != self.ignore).reshape([-1])
+        edge_valids = torch.nonzero(edge_gts != -1).reshape([-1])
         loss_node = self.loss_node(node_preds, node_gts)
         loss_edge = self.loss_edge(edge_preds, edge_gts)
         loss = self.node_weight * loss_node + self.edge_weight * loss_edge
@@ -108,8 +108,8 @@ class SDMGRLoss(nn.Layer):
             loss_node=loss_node,
             loss_edge=loss_edge,
             acc_node=self.accuracy(
-                paddle.gather(node_preds, node_valids),
-                paddle.gather(node_gts, node_valids)),
+                torch.gather(node_preds, node_valids),
+                torch.gather(node_gts, node_valids)),
             acc_edge=self.accuracy(
-                paddle.gather(edge_preds, edge_valids),
-                paddle.gather(edge_gts, edge_valids)))
+                torch.gather(edge_preds, edge_valids),
+                torch.gather(edge_gts, edge_valids)))

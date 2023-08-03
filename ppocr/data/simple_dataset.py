@@ -16,7 +16,7 @@ import os
 import json
 import random
 import traceback
-from paddle.io import Dataset
+from torch.io import Dataset
 from .imaug import transform, create_operators
 
 

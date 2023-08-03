@@ -16,7 +16,7 @@ This code is refer from:
 https://github.com/whai362/PSENet/blob/python3/models/head/psenet_head.py
 """
 
-from paddle import nn
+from torch import nn
 
 
 class PSEHead(nn.Layer):

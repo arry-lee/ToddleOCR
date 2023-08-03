@@ -23,7 +23,7 @@ __dir__ = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, __dir__)
 sys.path.insert(0, os.path.abspath(os.path.join(__dir__, '..')))
 
-import paddle
+import torch
 from ppocr.data import build_dataloader
 from ppocr.modeling.architectures import build_model
 from ppocr.postprocess import build_post_process
@@ -103,15 +103,15 @@ def main():
             'FLAGS_cudnn_batchnorm_spatial_persistent': 1,
             'FLAGS_max_inplace_grad_add': 8,
         }
-        paddle.fluid.set_flags(AMP_RELATED_FLAGS_SETTING)
+        torch.fluid.set_flags(AMP_RELATED_FLAGS_SETTING)
         scale_loss = config["Global"].get("scale_loss", 1.0)
         use_dynamic_loss_scaling = config["Global"].get(
             "use_dynamic_loss_scaling", False)
-        scaler = paddle.amp.GradScaler(
+        scaler = torch.amp.GradScaler(
             init_loss_scaling=scale_loss,
             use_dynamic_loss_scaling=use_dynamic_loss_scaling)
         if amp_level == "O2":
-            model = paddle.amp.decorate(
+            model = torch.amp.decorate(
                 models=model, level=amp_level, master_weight=True)
     else:
         scaler = None

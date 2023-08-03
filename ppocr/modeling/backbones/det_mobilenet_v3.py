@@ -16,10 +16,10 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import paddle
-from paddle import nn
-import paddle.nn.functional as F
-from paddle import ParamAttr
+import torch
+from torch import nn
+import torch.nn.functional as F
+from torch import ParamAttr
 
 __all__ = ['MobileNetV3']
 
@@ -238,7 +238,7 @@ class ResidualUnit(nn.Layer):
             x = self.mid_se(x)
         x = self.linear_conv(x)
         if self.if_shortcut:
-            x = paddle.add(inputs, x)
+            x = torch.add(inputs, x)
         return x
 
 

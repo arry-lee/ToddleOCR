@@ -16,8 +16,8 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import paddle
-from paddle import nn
+import torch
+from torch import nn
 
 from .rec_ctc_loss import CTCLoss
 from .rec_sar_loss import SARLoss

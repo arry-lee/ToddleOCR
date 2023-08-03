@@ -2,15 +2,15 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import paddle
-from paddle import nn
+import torch
+from torch import nn
 
 
 class SARLoss(nn.Layer):
     def __init__(self, **kwargs):
         super(SARLoss, self).__init__()
         ignore_index = kwargs.get('ignore_index', 92)  # 6626
-        self.loss_func = paddle.nn.loss.CrossEntropyLoss(
+        self.loss_func = torch.nn.loss.CrossEntropyLoss(
             reduction="mean", ignore_index=ignore_index)
 
     def forward(self, predicts, batch):
@@ -23,7 +23,7 @@ class SARLoss(nn.Layer):
         assert len(label.shape) == len(list(predict.shape)) - 1, \
             "The target's shape and inputs's shape is [N, d] and [N, num_steps]"
 
-        inputs = paddle.reshape(predict, [-1, num_classes])
-        targets = paddle.reshape(label, [-1])
+        inputs = torch.reshape(predict, [-1, num_classes])
+        targets = torch.reshape(label, [-1])
         loss = self.loss_func(inputs, targets)
         return {'loss': loss}

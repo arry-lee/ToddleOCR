@@ -16,11 +16,11 @@ This code is refer from:
 https://github.com/open-mmlab/mmocr/blob/main/mmocr/models/textdet/dense_heads/fce_head.py
 """
 
-from paddle import nn
-from paddle import ParamAttr
-import paddle.nn.functional as F
-from paddle.nn.initializer import Normal
-import paddle
+from torch import nn
+from torch import ParamAttr
+import torch.nn.functional as F
+from torch.nn.initializer import Normal
+import torch
 from functools import partial
 
 
@@ -86,7 +86,7 @@ class FCEHead(nn.Layer):
             for i in range(level_num):
                 tr_pred = F.softmax(cls_res[i][:, 0:2, :, :], axis=1)
                 tcl_pred = F.softmax(cls_res[i][:, 2:, :, :], axis=1)
-                outs['level_{}'.format(i)] = paddle.concat(
+                outs['level_{}'.format(i)] = torch.concat(
                     [tr_pred, tcl_pred, reg_res[i]], axis=1)
         else:
             preds = [[cls_res[i], reg_res[i]] for i in range(level_num)]

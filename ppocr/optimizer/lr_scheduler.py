@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import math
-from paddle.optimizer.lr import LRScheduler
+from torch.optimizer.lr import LRScheduler
 
 
 class CyclicalCosineDecay(LRScheduler):

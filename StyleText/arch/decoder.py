@@ -11,8 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import paddle
-import paddle.nn as nn
+import torch
+import torch.nn as nn
 
 from arch.base_module import SNConv, SNConvTranspose, ResBlock
 
@@ -69,7 +69,7 @@ class Decoder(nn.Layer):
             norm_layer=norm_layer,
             act=act,
             act_attr=act_attr)
-        self._pad2d = paddle.nn.Pad2D([1, 1, 1, 1], mode="replicate")
+        self._pad2d = torch.nn.Pad2D([1, 1, 1, 1], mode="replicate")
         self._out_conv = SNConv(
             name=name + "_out_conv",
             in_channels=encode_dim,
@@ -82,7 +82,7 @@ class Decoder(nn.Layer):
 
     def forward(self, x):
         if isinstance(x, (list, tuple)):
-            x = paddle.concat(x, axis=1)
+            x = torch.concat(x, axis=1)
         output_dict = dict()
         output_dict["conv_blocks"] = self.conv_blocks.forward(x)
         output_dict["up1"] = self._up1.forward(output_dict["conv_blocks"])
@@ -145,7 +145,7 @@ class DecoderUnet(nn.Layer):
             norm_layer=norm_layer,
             act=act,
             act_attr=act_attr)
-        self._pad2d = paddle.nn.Pad2D([1, 1, 1, 1], mode="replicate")
+        self._pad2d = torch.nn.Pad2D([1, 1, 1, 1], mode="replicate")
         self._out_conv = SNConv(
             name=name + "_out_conv",
             in_channels=encode_dim,
@@ -159,14 +159,14 @@ class DecoderUnet(nn.Layer):
     def forward(self, x, y, feature2, feature1):
         output_dict = dict()
         output_dict["conv_blocks"] = self._conv_blocks(
-            paddle.concat(
+            torch.concat(
                 (x, y), axis=1))
         output_dict["up1"] = self._up1.forward(output_dict["conv_blocks"])
         output_dict["up2"] = self._up2.forward(
-            paddle.concat(
+            torch.concat(
                 (output_dict["up1"], feature2), axis=1))
         output_dict["up3"] = self._up3.forward(
-            paddle.concat(
+            torch.concat(
                 (output_dict["up2"], feature1), axis=1))
         output_dict["pad2d"] = self._pad2d.forward(output_dict["up3"])
         output_dict["out_conv"] = self._out_conv.forward(output_dict["pad2d"])
@@ -225,7 +225,7 @@ class SingleDecoder(nn.Layer):
             norm_layer=norm_layer,
             act=act,
             act_attr=act_attr)
-        self._pad2d = paddle.nn.Pad2D([1, 1, 1, 1], mode="replicate")
+        self._pad2d = torch.nn.Pad2D([1, 1, 1, 1], mode="replicate")
         self._out_conv = SNConv(
             name=name + "_out_conv",
             in_channels=encode_dim,
@@ -241,10 +241,10 @@ class SingleDecoder(nn.Layer):
         output_dict["conv_blocks"] = self._conv_blocks.forward(x)
         output_dict["up1"] = self._up1.forward(output_dict["conv_blocks"])
         output_dict["up2"] = self._up2.forward(
-            paddle.concat(
+            torch.concat(
                 (output_dict["up1"], feature2), axis=1))
         output_dict["up3"] = self._up3.forward(
-            paddle.concat(
+            torch.concat(
                 (output_dict["up2"], feature1), axis=1))
         output_dict["pad2d"] = self._pad2d.forward(output_dict["up3"])
         output_dict["out_conv"] = self._out_conv.forward(output_dict["pad2d"])

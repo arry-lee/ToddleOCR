@@ -21,7 +21,7 @@ import os
 import pickle
 import six
 
-import paddle
+import torch
 
 from ppocr.utils.logging import get_logger
 
@@ -78,7 +78,7 @@ def load_model(config, model, optimizer=None, model_type='det'):
                 if checkpoints[-1] in ['/', '\\']:
                     checkpoints = checkpoints[:-1]
                 if os.path.exists(checkpoints + '.pdopt'):
-                    optim_dict = paddle.load(checkpoints + '.pdopt')
+                    optim_dict = torch.load(checkpoints + '.pdopt')
                     optimizer.set_state_dict(optim_dict)
                 else:
                     logger.warning(
@@ -94,7 +94,7 @@ def load_model(config, model, optimizer=None, model_type='det'):
             "The {}.pdparams does not exists!".format(checkpoints)
 
         # load params from trained model
-        params = paddle.load(checkpoints + '.pdparams')
+        params = torch.load(checkpoints + '.pdparams')
         state_dict = model.state_dict()
         new_state_dict = {}
         for key, value in state_dict.items():
@@ -103,7 +103,7 @@ def load_model(config, model, optimizer=None, model_type='det'):
                     key, params.keys()))
                 continue
             pre_value = params[key]
-            if pre_value.dtype == paddle.float16:
+            if pre_value.dtype == torch.float16:
                 is_float16 = True
             if pre_value.dtype != value.dtype:
                 pre_value = pre_value.astype(value.dtype)
@@ -120,7 +120,7 @@ def load_model(config, model, optimizer=None, model_type='det'):
             )
         if optimizer is not None:
             if os.path.exists(checkpoints + '.pdopt'):
-                optim_dict = paddle.load(checkpoints + '.pdopt')
+                optim_dict = torch.load(checkpoints + '.pdopt')
                 optimizer.set_state_dict(optim_dict)
             else:
                 logger.warning(
@@ -150,7 +150,7 @@ def load_pretrained_params(model, path):
     assert os.path.exists(path + ".pdparams"), \
         "The {}.pdparams does not exists!".format(path)
 
-    params = paddle.load(path + '.pdparams')
+    params = torch.load(path + '.pdparams')
 
     state_dict = model.state_dict()
 
@@ -162,7 +162,7 @@ def load_pretrained_params(model, path):
         if k1 not in state_dict.keys():
             logger.warning("The pretrained params {} not in model".format(k1))
         else:
-            if params[k1].dtype == paddle.float16:
+            if params[k1].dtype == torch.float16:
                 is_float16 = True
             if params[k1].dtype != state_dict[k1].dtype:
                 params[k1] = params[k1].astype(state_dict[k1].dtype)
@@ -195,12 +195,12 @@ def save_model(model,
     """
     _mkdir_if_not_exist(model_path, logger)
     model_prefix = os.path.join(model_path, prefix)
-    paddle.save(optimizer.state_dict(), model_prefix + '.pdopt')
+    torch.save(optimizer.state_dict(), model_prefix + '.pdopt')
 
     is_nlp_model = config['Architecture']["model_type"] == 'kie' and config[
         "Architecture"]["algorithm"] not in ["SDMGR"]
     if is_nlp_model is not True:
-        paddle.save(model.state_dict(), model_prefix + '.pdparams')
+        torch.save(model.state_dict(), model_prefix + '.pdparams')
         metric_prefix = model_prefix
     else:  # for kie system, we follow the save/load rules in NLP
         if config['Global']['distributed']:

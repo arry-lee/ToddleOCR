@@ -20,9 +20,9 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import paddle
-from paddle import nn
-import paddle.nn.functional as F
+import torch
+from torch import nn
+import torch.nn.functional as F
 
 
 class PoolAggregate(nn.Layer):
@@ -63,7 +63,7 @@ class PoolAggregate(nn.Layer):
             y = agg(x)
             p = F.adaptive_avg_pool2d(y, 1)
             outs.append(p.reshape((b, 1, self.d_out)))
-        out = paddle.concat(outs, 1)
+        out = torch.concat(outs, 1)
         return out
 
 
@@ -99,7 +99,7 @@ class WeightAggregate(nn.Layer):
 
         hmaps = self.conv_n(x)
         fmaps = self.conv_d(x)
-        r = paddle.bmm(
+        r = torch.bmm(
             hmaps.reshape((b, self.n_r, h * w)),
             fmaps.reshape((b, self.d_out, h * w)).transpose((0, 2, 1)))
         return r
@@ -150,12 +150,12 @@ class PRENFPN(nn.Layer):
         rp1 = self.agg_p1(f3)
         rp2 = self.agg_p2(f5)
         rp3 = self.agg_p3(f7)
-        rp = paddle.concat([rp1, rp2, rp3], 2)  # [b,nr,d]
+        rp = torch.concat([rp1, rp2, rp3], 2)  # [b,nr,d]
 
         rw1 = self.agg_w1(f3)
         rw2 = self.agg_w2(f5)
         rw3 = self.agg_w3(f7)
-        rw = paddle.concat([rw1, rw2, rw3], 2)  # [b,nr,d]
+        rw = torch.concat([rw1, rw2, rw3], 2)  # [b,nr,d]
 
         y1 = self.gcn_pool(rp)
         y2 = self.gcn_weight(rw)

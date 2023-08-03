@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import numpy as np
-import paddle
+import torch
 from ppocr.utils.utility import load_vqa_bio_label_maps
 
 
@@ -43,7 +43,7 @@ class VQASerTokenLayoutLMPostProcess(object):
     def __call__(self, preds, batch=None, *args, **kwargs):
         if isinstance(preds, tuple):
             preds = preds[0]
-        if isinstance(preds, paddle.Tensor):
+        if isinstance(preds, torch.Tensor):
             preds = preds.numpy()
 
         if batch is not None:

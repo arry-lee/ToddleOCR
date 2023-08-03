@@ -16,10 +16,10 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import paddle
-from paddle import nn
-import paddle.nn.functional as F
-from paddle import ParamAttr
+import torch
+from torch import nn
+import torch.nn.functional as F
+from torch import ParamAttr
 
 
 class ConvBNLayer(nn.Layer):
@@ -128,7 +128,7 @@ class FPN_Up_Fusion(nn.Layer):
         )
 
     def _add_relu(self, x1, x2):
-        x = paddle.add(x=x1, y=x2)
+        x = torch.add(x=x1, y=x2)
         x = F.relu(x)
         return x
 
@@ -177,10 +177,10 @@ class FPN_Down_Fusion(nn.Layer):
         h1 = self.h1_conv(f[1])
         h2 = self.h2_conv(f[2])
         g0 = self.g0_conv(h0)
-        g1 = paddle.add(x=g0, y=h1)
+        g1 = torch.add(x=g0, y=h1)
         g1 = F.relu(g1)
         g1 = self.g1_conv(g1)
-        g2 = paddle.add(x=g1, y=h2)
+        g2 = torch.add(x=g1, y=h2)
         g2 = F.relu(g2)
         g2 = self.g2_conv(g2)
         return g2
@@ -204,25 +204,25 @@ class Cross_Attention(nn.Layer):
     def _cal_fweight(self, f, shape):
         f_theta, f_phi, f_g = f
         #flatten
-        f_theta = paddle.transpose(f_theta, [0, 2, 3, 1])
-        f_theta = paddle.reshape(f_theta, [shape[0] * shape[1], shape[2], 128])
-        f_phi = paddle.transpose(f_phi, [0, 2, 3, 1])
-        f_phi = paddle.reshape(f_phi, [shape[0] * shape[1], shape[2], 128])
-        f_g = paddle.transpose(f_g, [0, 2, 3, 1])
-        f_g = paddle.reshape(f_g, [shape[0] * shape[1], shape[2], 128])
+        f_theta = torch.transpose(f_theta, [0, 2, 3, 1])
+        f_theta = torch.reshape(f_theta, [shape[0] * shape[1], shape[2], 128])
+        f_phi = torch.transpose(f_phi, [0, 2, 3, 1])
+        f_phi = torch.reshape(f_phi, [shape[0] * shape[1], shape[2], 128])
+        f_g = torch.transpose(f_g, [0, 2, 3, 1])
+        f_g = torch.reshape(f_g, [shape[0] * shape[1], shape[2], 128])
         #correlation
-        f_attn = paddle.matmul(f_theta, paddle.transpose(f_phi, [0, 2, 1]))
+        f_attn = torch.matmul(f_theta, torch.transpose(f_phi, [0, 2, 1]))
         #scale
         f_attn = f_attn / (128**0.5)
         f_attn = F.softmax(f_attn)
         #weighted sum
-        f_weight = paddle.matmul(f_attn, f_g)
-        f_weight = paddle.reshape(
+        f_weight = torch.matmul(f_attn, f_g)
+        f_weight = torch.reshape(
             f_weight, [shape[0], shape[1], shape[2], 128])
         return f_weight
 
     def forward(self, f_common):
-        f_shape = paddle.shape(f_common)
+        f_shape = torch.shape(f_common)
         # print('f_shape: ', f_shape)
 
         f_theta = self.theta_conv(f_common)
@@ -232,26 +232,26 @@ class Cross_Attention(nn.Layer):
         ######## horizon ########
         fh_weight = self._cal_fweight([f_theta, f_phi, f_g], 
                                         [f_shape[0], f_shape[2], f_shape[3]])
-        fh_weight = paddle.transpose(fh_weight, [0, 3, 1, 2])
+        fh_weight = torch.transpose(fh_weight, [0, 3, 1, 2])
         fh_weight = self.fh_weight_conv(fh_weight)
         #short cut
         fh_sc = self.fh_sc_conv(f_common)
         f_h = F.relu(fh_weight + fh_sc)
 
         ######## vertical ########
-        fv_theta = paddle.transpose(f_theta, [0, 1, 3, 2])
-        fv_phi = paddle.transpose(f_phi, [0, 1, 3, 2])
-        fv_g = paddle.transpose(f_g, [0, 1, 3, 2])
+        fv_theta = torch.transpose(f_theta, [0, 1, 3, 2])
+        fv_phi = torch.transpose(f_phi, [0, 1, 3, 2])
+        fv_g = torch.transpose(f_g, [0, 1, 3, 2])
         fv_weight = self._cal_fweight([fv_theta, fv_phi, fv_g], 
                                         [f_shape[0], f_shape[3], f_shape[2]])
-        fv_weight = paddle.transpose(fv_weight, [0, 3, 2, 1])
+        fv_weight = torch.transpose(fv_weight, [0, 3, 2, 1])
         fv_weight = self.fv_weight_conv(fv_weight)
         #short cut
         fv_sc = self.fv_sc_conv(f_common)
         f_v = F.relu(fv_weight + fv_sc)
 
         ######## merge ########
-        f_attn = paddle.concat([f_h, f_v], axis=1)
+        f_attn = torch.concat([f_h, f_v], axis=1)
         f_attn = self.f_attn_conv(f_attn)
         return f_attn
 
@@ -274,7 +274,7 @@ class SASTFPN(nn.Layer):
         f_up = self.FPN_Up_Fusion(x)
 
         #fusion
-        f_common = paddle.add(x=f_down, y=f_up)
+        f_common = torch.add(x=f_down, y=f_up)
         f_common = F.relu(f_common)
 
         if self.with_cab:

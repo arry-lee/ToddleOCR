@@ -13,14 +13,14 @@
 # limitations under the License.
 
 import math
-import paddle
-from paddle import nn
-import paddle.nn.functional as F
-from paddle.nn import LayerList
-from paddle.nn import Dropout, Linear, LayerNorm
+import torch
+from torch import nn
+import torch.nn.functional as F
+from torch.nn import LayerList
+from torch.nn import Dropout, Linear, LayerNorm
 import numpy as np
 from ppocr.modeling.backbones.rec_svtrnet import Mlp, zeros_, ones_
-from paddle.nn.initializer import XavierNormal as xavier_normal_
+from torch.nn.initializer import XavierNormal as xavier_normal_
 
 
 class Transformer(nn.Layer):
@@ -150,7 +150,7 @@ class Transformer(nn.Layer):
 
     def forward_test(self, src):
 
-        bs = paddle.shape(src)[0]
+        bs = torch.shape(src)[0]
         if self.encoder is not None:
             src = self.positional_encoding(src)
             for encoder_layer in self.encoder:
@@ -158,30 +158,30 @@ class Transformer(nn.Layer):
             memory = src  # B N C
         else:
             memory = src
-        dec_seq = paddle.full((bs, 1), 2, dtype=paddle.int64)
-        dec_prob = paddle.full((bs, 1), 1., dtype=paddle.float32)
-        for len_dec_seq in range(1, paddle.to_tensor(self.max_len)):
+        dec_seq = torch.full((bs, 1), 2, dtype=torch.int64)
+        dec_prob = torch.full((bs, 1), 1., dtype=torch.float32)
+        for len_dec_seq in range(1, torch.to_tensor(self.max_len)):
             dec_seq_embed = self.embedding(dec_seq)
             dec_seq_embed = self.positional_encoding(dec_seq_embed)
             tgt_mask = self.generate_square_subsequent_mask(
-                paddle.shape(dec_seq_embed)[1])
+                torch.shape(dec_seq_embed)[1])
             tgt = dec_seq_embed
             for decoder_layer in self.decoder:
                 tgt = decoder_layer(tgt, memory, self_mask=tgt_mask)
             dec_output = tgt
             dec_output = dec_output[:, -1, :]
             word_prob = F.softmax(self.tgt_word_prj(dec_output), axis=-1)
-            preds_idx = paddle.argmax(word_prob, axis=-1)
-            if paddle.equal_all(
+            preds_idx = torch.argmax(word_prob, axis=-1)
+            if torch.equal_all(
                     preds_idx,
-                    paddle.full(
-                        paddle.shape(preds_idx), 3, dtype='int64')):
+                    torch.full(
+                        torch.shape(preds_idx), 3, dtype='int64')):
                 break
-            preds_prob = paddle.max(word_prob, axis=-1)
-            dec_seq = paddle.concat(
-                [dec_seq, paddle.reshape(preds_idx, [-1, 1])], axis=1)
-            dec_prob = paddle.concat(
-                [dec_prob, paddle.reshape(preds_prob, [-1, 1])], axis=1)
+            preds_prob = torch.max(word_prob, axis=-1)
+            dec_seq = torch.concat(
+                [dec_seq, torch.reshape(preds_idx, [-1, 1])], axis=1)
+            dec_prob = torch.concat(
+                [dec_prob, torch.reshape(preds_prob, [-1, 1])], axis=1)
         return [dec_seq, dec_prob]
 
     def forward_beam(self, images):
@@ -198,7 +198,7 @@ class Transformer(nn.Layer):
                                 n_prev_active_inst, n_bm):
             """ Collect tensor parts associated to active instances. """
 
-            beamed_tensor_shape = paddle.shape(beamed_tensor)
+            beamed_tensor_shape = torch.shape(beamed_tensor)
             n_curr_active_inst = len(curr_active_inst_idx)
             new_shape = (n_curr_active_inst * n_bm, beamed_tensor_shape[1],
                          beamed_tensor_shape[2])
@@ -219,7 +219,7 @@ class Transformer(nn.Layer):
             active_inst_idx = [
                 inst_idx_to_position_map[k] for k in active_inst_idx_list
             ]
-            active_inst_idx = paddle.to_tensor(active_inst_idx, dtype='int64')
+            active_inst_idx = torch.to_tensor(active_inst_idx, dtype='int64')
             active_src_enc = collect_active_part(
                 src_enc.transpose([1, 0, 2]), active_inst_idx,
                 n_prev_active_inst, n_bm).transpose([1, 0, 2])
@@ -235,7 +235,7 @@ class Transformer(nn.Layer):
                 dec_partial_seq = [
                     b.get_current_state() for b in inst_dec_beams if not b.done
                 ]
-                dec_partial_seq = paddle.stack(dec_partial_seq)
+                dec_partial_seq = torch.stack(dec_partial_seq)
                 dec_partial_seq = dec_partial_seq.reshape([-1, len_dec_seq])
                 return dec_partial_seq
 
@@ -243,7 +243,7 @@ class Transformer(nn.Layer):
                 dec_seq = self.embedding(dec_seq)
                 dec_seq = self.positional_encoding(dec_seq)
                 tgt_mask = self.generate_square_subsequent_mask(
-                    paddle.shape(dec_seq)[1])
+                    torch.shape(dec_seq)[1])
                 tgt = dec_seq
                 for decoder_layer in self.decoder:
                     tgt = decoder_layer(tgt, enc_output, self_mask=tgt_mask)
@@ -251,7 +251,7 @@ class Transformer(nn.Layer):
                 dec_output = dec_output[:,
                                         -1, :]  # Pick the last step: (bh * bm) * d_h
                 word_prob = F.softmax(self.tgt_word_prj(dec_output), axis=1)
-                word_prob = paddle.reshape(word_prob, [n_active_inst, n_bm, -1])
+                word_prob = torch.reshape(word_prob, [n_active_inst, n_bm, -1])
                 return word_prob
 
             def collect_active_inst_idx_list(inst_beams, word_prob,
@@ -285,7 +285,7 @@ class Transformer(nn.Layer):
                 all_hyp += [hyps]
             return all_hyp, all_scores
 
-        with paddle.no_grad():
+        with torch.no_grad():
             #-- Encode
             if self.encoder is not None:
                 src = self.positional_encoding(images)
@@ -294,15 +294,15 @@ class Transformer(nn.Layer):
                 src_enc = images
 
             n_bm = self.beam_size
-            src_shape = paddle.shape(src_enc)
+            src_shape = torch.shape(src_enc)
             inst_dec_beams = [Beam(n_bm) for _ in range(1)]
             active_inst_idx_list = list(range(1))
             # Repeat data for beam search
-            src_enc = paddle.tile(src_enc, [1, n_bm, 1])
+            src_enc = torch.tile(src_enc, [1, n_bm, 1])
             inst_idx_to_position_map = get_inst_idx_to_tensor_position_map(
                 active_inst_idx_list)
             # Decode
-            for len_dec_seq in range(1, paddle.to_tensor(self.max_len)):
+            for len_dec_seq in range(1, torch.to_tensor(self.max_len)):
                 src_enc_copy = src_enc.clone()
                 active_inst_idx_list = beam_decode_step(
                     inst_dec_beams, len_dec_seq, src_enc_copy,
@@ -324,18 +324,18 @@ class Transformer(nn.Layer):
             hyp_score = [score for _ in range(25)]
             hyp_scores.append(hyp_score)
         return [
-            paddle.to_tensor(
-                np.array(result_hyp), dtype=paddle.int64),
-            paddle.to_tensor(hyp_scores)
+            torch.to_tensor(
+                np.array(result_hyp), dtype=torch.int64),
+            torch.to_tensor(hyp_scores)
         ]
 
     def generate_square_subsequent_mask(self, sz):
         """Generate a square mask for the sequence. The masked positions are filled with float('-inf').
             Unmasked positions are filled with float(0.0).
         """
-        mask = paddle.zeros([sz, sz], dtype='float32')
-        mask_inf = paddle.triu(
-            paddle.full(
+        mask = torch.zeros([sz, sz], dtype='float32')
+        mask_inf = torch.triu(
+            torch.full(
                 shape=[sz, sz], dtype='float32', fill_value='-inf'),
             diagonal=1)
         mask = mask + mask_inf
@@ -475,15 +475,15 @@ class PositionalEncoding(nn.Layer):
         super(PositionalEncoding, self).__init__()
         self.dropout = nn.Dropout(p=dropout)
 
-        pe = paddle.zeros([max_len, dim])
-        position = paddle.arange(0, max_len, dtype=paddle.float32).unsqueeze(1)
-        div_term = paddle.exp(
-            paddle.arange(0, dim, 2).astype('float32') *
+        pe = torch.zeros([max_len, dim])
+        position = torch.arange(0, max_len, dtype=torch.float32).unsqueeze(1)
+        div_term = torch.exp(
+            torch.arange(0, dim, 2).astype('float32') *
             (-math.log(10000.0) / dim))
-        pe[:, 0::2] = paddle.sin(position * div_term)
-        pe[:, 1::2] = paddle.cos(position * div_term)
-        pe = paddle.unsqueeze(pe, 0)
-        pe = paddle.transpose(pe, [1, 0, 2])
+        pe[:, 0::2] = torch.sin(position * div_term)
+        pe[:, 1::2] = torch.cos(position * div_term)
+        pe = torch.unsqueeze(pe, 0)
+        pe = torch.transpose(pe, [1, 0, 2])
         self.register_buffer('pe', pe)
 
     def forward(self, x):
@@ -497,7 +497,7 @@ class PositionalEncoding(nn.Layer):
             >>> output = pos_encoder(x)
         """
         x = x.transpose([1, 0, 2])
-        x = x + self.pe[:paddle.shape(x)[0], :]
+        x = x + self.pe[:torch.shape(x)[0], :]
         return self.dropout(x).transpose([1, 0, 2])
 
 
@@ -522,14 +522,14 @@ class PositionalEncoding_2d(nn.Layer):
         super(PositionalEncoding_2d, self).__init__()
         self.dropout = nn.Dropout(p=dropout)
 
-        pe = paddle.zeros([max_len, dim])
-        position = paddle.arange(0, max_len, dtype=paddle.float32).unsqueeze(1)
-        div_term = paddle.exp(
-            paddle.arange(0, dim, 2).astype('float32') *
+        pe = torch.zeros([max_len, dim])
+        position = torch.arange(0, max_len, dtype=torch.float32).unsqueeze(1)
+        div_term = torch.exp(
+            torch.arange(0, dim, 2).astype('float32') *
             (-math.log(10000.0) / dim))
-        pe[:, 0::2] = paddle.sin(position * div_term)
-        pe[:, 1::2] = paddle.cos(position * div_term)
-        pe = paddle.transpose(paddle.unsqueeze(pe, 0), [1, 0, 2])
+        pe[:, 0::2] = torch.sin(position * div_term)
+        pe[:, 1::2] = torch.cos(position * div_term)
+        pe = torch.transpose(torch.unsqueeze(pe, 0), [1, 0, 2])
         self.register_buffer('pe', pe)
 
         self.avg_pool_1 = nn.AdaptiveAvgPool2D((1, 1))
@@ -549,21 +549,21 @@ class PositionalEncoding_2d(nn.Layer):
         Examples:
             >>> output = pos_encoder(x)
         """
-        w_pe = self.pe[:paddle.shape(x)[-1], :]
+        w_pe = self.pe[:torch.shape(x)[-1], :]
         w1 = self.linear1(self.avg_pool_1(x).squeeze()).unsqueeze(0)
         w_pe = w_pe * w1
-        w_pe = paddle.transpose(w_pe, [1, 2, 0])
-        w_pe = paddle.unsqueeze(w_pe, 2)
+        w_pe = torch.transpose(w_pe, [1, 2, 0])
+        w_pe = torch.unsqueeze(w_pe, 2)
 
-        h_pe = self.pe[:paddle.shape(x).shape[-2], :]
+        h_pe = self.pe[:torch.shape(x).shape[-2], :]
         w2 = self.linear2(self.avg_pool_2(x).squeeze()).unsqueeze(0)
         h_pe = h_pe * w2
-        h_pe = paddle.transpose(h_pe, [1, 2, 0])
-        h_pe = paddle.unsqueeze(h_pe, 3)
+        h_pe = torch.transpose(h_pe, [1, 2, 0])
+        h_pe = torch.unsqueeze(h_pe, 3)
 
         x = x + w_pe + h_pe
-        x = paddle.transpose(
-            paddle.reshape(x,
+        x = torch.transpose(
+            torch.reshape(x,
                            [x.shape[0], x.shape[1], x.shape[2] * x.shape[3]]),
             [2, 0, 1])
 
@@ -595,12 +595,12 @@ class Beam():
         self.size = size
         self._done = False
         # The score for each translation on the beam.
-        self.scores = paddle.zeros((size, ), dtype=paddle.float32)
+        self.scores = torch.zeros((size, ), dtype=torch.float32)
         self.all_scores = []
         # The backpointers at each time-step.
         self.prev_ks = []
         # The outputs at each time-step.
-        self.next_ys = [paddle.full((size, ), 0, dtype=paddle.int64)]
+        self.next_ys = [torch.full((size, ), 0, dtype=torch.int64)]
         self.next_ys[0][0] = 2
 
     def get_current_state(self):
@@ -644,7 +644,7 @@ class Beam():
 
     def sort_scores(self):
         "Sort the scores."
-        return self.scores, paddle.to_tensor(
+        return self.scores, torch.to_tensor(
             [i for i in range(int(self.scores.shape[0]))], dtype='int32')
 
     def get_the_best_score_and_idx(self):
@@ -660,7 +660,7 @@ class Beam():
             _, keys = self.sort_scores()
             hyps = [self.get_hypothesis(k) for k in keys]
             hyps = [[2] + h for h in hyps]
-            dec_seq = paddle.to_tensor(hyps, dtype='int64')
+            dec_seq = torch.to_tensor(hyps, dtype='int64')
         return dec_seq
 
     def get_hypothesis(self, k):

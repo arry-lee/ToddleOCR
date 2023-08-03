@@ -16,8 +16,8 @@ This code is refer from:
 https://github.com/LBH1024/CAN/models/can.py
 """
 
-import paddle
-import paddle.nn as nn
+import torch
+import torch.nn as nn
 import numpy as np
 
 
@@ -50,11 +50,11 @@ class CANLoss(nn.Layer):
                         + self.counting_loss(counting_preds, counting_labels)
 
         word_loss = self.cross(
-            paddle.reshape(word_probs, [-1, word_probs.shape[-1]]),
-            paddle.reshape(labels, [-1]))
-        word_average_loss = paddle.sum(
-            paddle.reshape(word_loss * labels_mask, [-1])) / (
-                paddle.sum(labels_mask) + 1e-10
+            torch.reshape(word_probs, [-1, word_probs.shape[-1]]),
+            torch.reshape(labels, [-1]))
+        word_average_loss = torch.sum(
+            torch.reshape(word_loss * labels_mask, [-1])) / (
+                torch.sum(labels_mask) + 1e-10
             ) if self.use_label_mask else word_loss
         loss = word_average_loss + counting_loss
         return {'loss': loss}
@@ -75,5 +75,5 @@ def gen_counting_label(labels, channel, tag):
                 continue
             else:
                 counting_labels[i][k] += 1
-    counting_labels = paddle.to_tensor(counting_labels, dtype='float32')
+    counting_labels = torch.to_tensor(counting_labels, dtype='float32')
     return counting_labels

@@ -14,7 +14,7 @@
 import sys
 import os
 import errno
-import paddle
+import torch
 
 
 def get_check_global_params(mode):
@@ -43,7 +43,7 @@ def check_gpu(use_gpu):
           "model on CPU"
     if use_gpu:
         try:
-            if not paddle.is_compiled_with_cuda():
+            if not torch.is_compiled_with_cuda():
                 print(err)
                 sys.exit(1)
         except:

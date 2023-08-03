@@ -22,8 +22,8 @@ import platform
 import yaml
 import time
 import datetime
-import paddle
-import paddle.distributed as dist
+import torch
+import torch.distributed as dist
 from tqdm import tqdm
 import cv2
 import numpy as np
@@ -128,25 +128,25 @@ def check_device(use_gpu, use_xpu=False, use_npu=False, use_mlu=False):
     try:
         if use_gpu and use_xpu:
             print("use_xpu and use_gpu can not both be ture.")
-        if use_gpu and not paddle.is_compiled_with_cuda():
+        if use_gpu and not torch.is_compiled_with_cuda():
             print(err.format("use_gpu", "cuda", "gpu", "use_gpu"))
             sys.exit(1)
-        if use_xpu and not paddle.device.is_compiled_with_xpu():
+        if use_xpu and not torch.device.is_compiled_with_xpu():
             print(err.format("use_xpu", "xpu", "xpu", "use_xpu"))
             sys.exit(1)
         if use_npu:
-            if int(paddle.version.major) != 0 and int(
-                    paddle.version.major) <= 2 and int(
-                        paddle.version.minor) <= 4:
-                if not paddle.device.is_compiled_with_npu():
+            if int(torch.version.major) != 0 and int(
+                    torch.version.major) <= 2 and int(
+                        torch.version.minor) <= 4:
+                if not torch.device.is_compiled_with_npu():
                     print(err.format("use_npu", "npu", "npu", "use_npu"))
                     sys.exit(1)
             # is_compiled_with_npu() has been updated after paddle-2.4
             else:
-                if not paddle.device.is_compiled_with_custom_device("npu"):
+                if not torch.device.is_compiled_with_custom_device("npu"):
                     print(err.format("use_npu", "npu", "npu", "use_npu"))
                     sys.exit(1)
-        if use_mlu and not paddle.device.is_compiled_with_mlu():
+        if use_mlu and not torch.device.is_compiled_with_mlu():
             print(err.format("use_mlu", "mlu", "mlu", "use_mlu"))
             sys.exit(1)
     except Exception as e:
@@ -158,18 +158,18 @@ def to_float32(preds):
         for k in preds:
             if isinstance(preds[k], dict) or isinstance(preds[k], list):
                 preds[k] = to_float32(preds[k])
-            elif isinstance(preds[k], paddle.Tensor):
-                preds[k] = preds[k].astype(paddle.float32)
+            elif isinstance(preds[k], torch.Tensor):
+                preds[k] = preds[k].astype(torch.float32)
     elif isinstance(preds, list):
         for k in range(len(preds)):
             if isinstance(preds[k], dict):
                 preds[k] = to_float32(preds[k])
             elif isinstance(preds[k], list):
                 preds[k] = to_float32(preds[k])
-            elif isinstance(preds[k], paddle.Tensor):
-                preds[k] = preds[k].astype(paddle.float32)
-    elif isinstance(preds, paddle.Tensor):
-        preds = preds.astype(paddle.float32)
+            elif isinstance(preds[k], torch.Tensor):
+                preds[k] = preds[k].astype(torch.float32)
+    elif isinstance(preds, torch.Tensor):
+        preds = preds.astype(torch.float32)
     return preds
 
 
@@ -275,7 +275,7 @@ def train(config,
                 model_average = True
             # use amp
             if scaler:
-                with paddle.amp.auto_cast(
+                with torch.amp.auto_cast(
                         level=amp_level,
                         custom_black_list=amp_custom_black_list):
                     if model_type == 'table' or extra_input:
@@ -376,7 +376,7 @@ def train(config,
                     (global_step - start_eval_step) % eval_batch_step == 0 \
                     and dist.get_rank() == 0:
                 if model_average:
-                    Model_Average = paddle.incubate.optimizer.ModelAverage(
+                    Model_Average = torch.incubate.optimizer.ModelAverage(
                         0.15,
                         parameters=model.parameters(),
                         min_average_window=10000,
@@ -486,7 +486,7 @@ def eval(model,
          amp_level='O2',
          amp_custom_black_list=[]):
     model.eval()
-    with paddle.no_grad():
+    with torch.no_grad():
         total_frame = 0.0
         total_time = 0.0
         pbar = tqdm(
@@ -505,7 +505,7 @@ def eval(model,
 
             # use amp
             if scaler:
-                with paddle.amp.auto_cast(
+                with torch.amp.auto_cast(
                         level=amp_level,
                         custom_black_list=amp_custom_black_list):
                     if model_type == 'table' or extra_input:
@@ -537,7 +537,7 @@ def eval(model,
 
             batch_numpy = []
             for item in batch:
-                if isinstance(item, paddle.Tensor):
+                if isinstance(item, torch.Tensor):
                     batch_numpy.append(item.numpy())
                 else:
                     batch_numpy.append(item)
@@ -573,7 +573,7 @@ def eval(model,
 def update_center(char_center, post_result, preds):
     result, label = post_result
     feats, logits = preds
-    logits = paddle.argmax(logits, axis=-1)
+    logits = torch.argmax(logits, axis=-1)
     feats = feats.numpy()
     logits = logits.numpy()
 
@@ -666,7 +666,7 @@ def preprocess(is_train=False):
                                  .dev_id) if use_gpu else 'cpu'
     check_device(use_gpu, use_xpu, use_npu, use_mlu)
 
-    device = paddle.set_device(device)
+    device = torch.set_device(device)
 
     config['Global']['distributed'] = dist.get_world_size() != 1
 
@@ -697,6 +697,6 @@ def preprocess(is_train=False):
     else:
         log_writer = None
 
-    logger.info('train with paddle {} and device {}'.format(paddle.__version__,
+    logger.info('train with paddle {} and device {}'.format(torch.__version__,
                                                             device))
     return config, device, logger, log_writer

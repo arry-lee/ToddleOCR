@@ -11,8 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import paddle
-import paddle.nn as nn
+import torch
+import torch.nn as nn
 
 from arch.spectral_norm import spectral_norm
 
@@ -33,10 +33,10 @@ class CBN(nn.Layer):
                  act_attr=None):
         super(CBN, self).__init__()
         if use_bias:
-            bias_attr = paddle.ParamAttr(name=name + "_bias")
+            bias_attr = torch.ParamAttr(name=name + "_bias")
         else:
             bias_attr = None
-        self._conv = paddle.nn.Conv2D(
+        self._conv = torch.nn.Conv2D(
             in_channels=in_channels,
             out_channels=out_channels,
             kernel_size=kernel_size,
@@ -44,19 +44,19 @@ class CBN(nn.Layer):
             padding=padding,
             dilation=dilation,
             groups=groups,
-            weight_attr=paddle.ParamAttr(name=name + "_weights"),
+            weight_attr=torch.ParamAttr(name=name + "_weights"),
             bias_attr=bias_attr)
         if norm_layer:
-            self._norm_layer = getattr(paddle.nn, norm_layer)(
+            self._norm_layer = getattr(torch.nn, norm_layer)(
                 num_features=out_channels, name=name + "_bn")
         else:
             self._norm_layer = None
         if act:
             if act_attr:
-                self._act = getattr(paddle.nn, act)(**act_attr,
+                self._act = getattr(torch.nn, act)(**act_attr,
                                                     name=name + "_" + act)
             else:
-                self._act = getattr(paddle.nn, act)(name=name + "_" + act)
+                self._act = getattr(torch.nn, act)(name=name + "_" + act)
         else:
             self._act = None
 
@@ -85,11 +85,11 @@ class SNConv(nn.Layer):
                  act_attr=None):
         super(SNConv, self).__init__()
         if use_bias:
-            bias_attr = paddle.ParamAttr(name=name + "_bias")
+            bias_attr = torch.ParamAttr(name=name + "_bias")
         else:
             bias_attr = None
         self._sn_conv = spectral_norm(
-            paddle.nn.Conv2D(
+            torch.nn.Conv2D(
                 in_channels=in_channels,
                 out_channels=out_channels,
                 kernel_size=kernel_size,
@@ -97,19 +97,19 @@ class SNConv(nn.Layer):
                 padding=padding,
                 dilation=dilation,
                 groups=groups,
-                weight_attr=paddle.ParamAttr(name=name + "_weights"),
+                weight_attr=torch.ParamAttr(name=name + "_weights"),
                 bias_attr=bias_attr))
         if norm_layer:
-            self._norm_layer = getattr(paddle.nn, norm_layer)(
+            self._norm_layer = getattr(torch.nn, norm_layer)(
                 num_features=out_channels, name=name + "_bn")
         else:
             self._norm_layer = None
         if act:
             if act_attr:
-                self._act = getattr(paddle.nn, act)(**act_attr,
+                self._act = getattr(torch.nn, act)(**act_attr,
                                                     name=name + "_" + act)
             else:
-                self._act = getattr(paddle.nn, act)(name=name + "_" + act)
+                self._act = getattr(torch.nn, act)(name=name + "_" + act)
         else:
             self._act = None
 
@@ -139,11 +139,11 @@ class SNConvTranspose(nn.Layer):
                  act_attr=None):
         super(SNConvTranspose, self).__init__()
         if use_bias:
-            bias_attr = paddle.ParamAttr(name=name + "_bias")
+            bias_attr = torch.ParamAttr(name=name + "_bias")
         else:
             bias_attr = None
         self._sn_conv_transpose = spectral_norm(
-            paddle.nn.Conv2DTranspose(
+            torch.nn.Conv2DTranspose(
                 in_channels=in_channels,
                 out_channels=out_channels,
                 kernel_size=kernel_size,
@@ -152,19 +152,19 @@ class SNConvTranspose(nn.Layer):
                 output_padding=output_padding,
                 dilation=dilation,
                 groups=groups,
-                weight_attr=paddle.ParamAttr(name=name + "_weights"),
+                weight_attr=torch.ParamAttr(name=name + "_weights"),
                 bias_attr=bias_attr))
         if norm_layer:
-            self._norm_layer = getattr(paddle.nn, norm_layer)(
+            self._norm_layer = getattr(torch.nn, norm_layer)(
                 num_features=out_channels, name=name + "_bn")
         else:
             self._norm_layer = None
         if act:
             if act_attr:
-                self._act = getattr(paddle.nn, act)(**act_attr,
+                self._act = getattr(torch.nn, act)(**act_attr,
                                                     name=name + "_" + act)
             else:
-                self._act = getattr(paddle.nn, act)(name=name + "_" + act)
+                self._act = getattr(torch.nn, act)(name=name + "_" + act)
         else:
             self._act = None
 

@@ -18,10 +18,10 @@ from __future__ import print_function
 
 import math
 
-import paddle
-from paddle import ParamAttr, nn
-from paddle import nn, ParamAttr
-from paddle.nn import functional as F
+import torch
+from torch import ParamAttr, nn
+from torch import nn, ParamAttr
+from torch.nn import functional as F
 import numpy as np
 gradient_clip = 10
 
@@ -197,13 +197,13 @@ class MultiHeadAttention(nn.Layer):
         self.d_value = d_value
         self.d_model = d_model
         self.dropout_rate = dropout_rate
-        self.q_fc = paddle.nn.Linear(
+        self.q_fc = torch.nn.Linear(
             in_features=d_model, out_features=d_key * n_head, bias_attr=False)
-        self.k_fc = paddle.nn.Linear(
+        self.k_fc = torch.nn.Linear(
             in_features=d_model, out_features=d_key * n_head, bias_attr=False)
-        self.v_fc = paddle.nn.Linear(
+        self.v_fc = torch.nn.Linear(
             in_features=d_model, out_features=d_value * n_head, bias_attr=False)
-        self.proj_fc = paddle.nn.Linear(
+        self.proj_fc = torch.nn.Linear(
             in_features=d_value * n_head, out_features=d_model, bias_attr=False)
 
     def _prepare_qkv(self, queries, keys, values, cache=None):
@@ -214,8 +214,8 @@ class MultiHeadAttention(nn.Layer):
             static_kv = True
 
         q = self.q_fc(queries)
-        q = paddle.reshape(x=q, shape=[0, 0, self.n_head, self.d_key])
-        q = paddle.transpose(x=q, perm=[0, 2, 1, 3])
+        q = torch.reshape(x=q, shape=[0, 0, self.n_head, self.d_key])
+        q = torch.transpose(x=q, perm=[0, 2, 1, 3])
 
         if cache is not None and static_kv and "static_k" in cache:
             # for encoder-decoder attention in inference and has cached
@@ -224,10 +224,10 @@ class MultiHeadAttention(nn.Layer):
         else:
             k = self.k_fc(keys)
             v = self.v_fc(values)
-            k = paddle.reshape(x=k, shape=[0, 0, self.n_head, self.d_key])
-            k = paddle.transpose(x=k, perm=[0, 2, 1, 3])
-            v = paddle.reshape(x=v, shape=[0, 0, self.n_head, self.d_value])
-            v = paddle.transpose(x=v, perm=[0, 2, 1, 3])
+            k = torch.reshape(x=k, shape=[0, 0, self.n_head, self.d_key])
+            k = torch.transpose(x=k, perm=[0, 2, 1, 3])
+            v = torch.reshape(x=v, shape=[0, 0, self.n_head, self.d_value])
+            v = torch.transpose(x=v, perm=[0, 2, 1, 3])
 
         if cache is not None:
             if static_kv and not "static_k" in cache:
@@ -236,8 +236,8 @@ class MultiHeadAttention(nn.Layer):
             elif not static_kv:
                 # for decoder self-attention in inference
                 cache_k, cache_v = cache["k"], cache["v"]
-                k = paddle.concat([cache_k, k], axis=2)
-                v = paddle.concat([cache_v, v], axis=2)
+                k = torch.concat([cache_k, k], axis=2)
+                v = torch.concat([cache_v, v], axis=2)
                 cache["k"], cache["v"] = k, v
 
         return q, k, v
@@ -249,7 +249,7 @@ class MultiHeadAttention(nn.Layer):
         q, k, v = self._prepare_qkv(queries, keys, values, cache)
 
         # scale dot product attention
-        product = paddle.matmul(x=q, y=k, transpose_y=True)
+        product = torch.matmul(x=q, y=k, transpose_y=True)
         product = product * self.d_model**-0.5
         if attn_bias is not None:
             product += attn_bias
@@ -257,11 +257,11 @@ class MultiHeadAttention(nn.Layer):
         if self.dropout_rate:
             weights = F.dropout(
                 weights, p=self.dropout_rate, mode="downscale_in_infer")
-        out = paddle.matmul(weights, v)
+        out = torch.matmul(weights, v)
 
         # combine heads
-        out = paddle.transpose(out, perm=[0, 2, 1, 3])
-        out = paddle.reshape(x=out, shape=[0, 0, out.shape[2] * out.shape[3]])
+        out = torch.transpose(out, perm=[0, 2, 1, 3])
+        out = torch.reshape(x=out, shape=[0, 0, out.shape[2] * out.shape[3]])
 
         # project to output
         out = self.proj_fc(out)
@@ -285,12 +285,12 @@ class PrePostProcessLayer(nn.Layer):
                 self.functors.append(
                     self.add_sublayer(
                         "layer_norm_%d" % len(self.sublayers()),
-                        paddle.nn.LayerNorm(
+                        torch.nn.LayerNorm(
                             normalized_shape=d_model,
-                            weight_attr=paddle.ParamAttr(
-                                initializer=paddle.nn.initializer.Constant(1.)),
-                            bias_attr=paddle.ParamAttr(
-                                initializer=paddle.nn.initializer.Constant(0.)))))
+                            weight_attr=torch.ParamAttr(
+                                initializer=torch.nn.initializer.Constant(1.)),
+                            bias_attr=torch.ParamAttr(
+                                initializer=torch.nn.initializer.Constant(0.)))))
             elif cmd == "d":  # add dropout
                 self.functors.append(lambda x: F.dropout(
                     x, p=dropout_rate, mode="downscale_in_infer")
@@ -317,15 +317,15 @@ class PrepareEncoder(nn.Layer):
         super(PrepareEncoder, self).__init__()
         self.src_emb_dim = src_emb_dim
         self.src_max_len = src_max_len
-        self.emb = paddle.nn.Embedding(
+        self.emb = torch.nn.Embedding(
             num_embeddings=self.src_max_len, embedding_dim=self.src_emb_dim)
         self.dropout_rate = dropout_rate
 
     def forward(self, src_word, src_pos):
         src_word_emb = src_word
-        src_word_emb = paddle.cast(src_word_emb, 'float32')
-        src_word_emb = paddle.scale(x=src_word_emb, scale=self.src_emb_dim**0.5)
-        src_pos = paddle.squeeze(src_pos, axis=-1)
+        src_word_emb = torch.cast(src_word_emb, 'float32')
+        src_word_emb = torch.scale(x=src_word_emb, scale=self.src_emb_dim**0.5)
+        src_pos = torch.squeeze(src_pos, axis=-1)
         src_pos_enc = self.emb(src_pos)
         src_pos_enc.stop_gradient = True
         enc_input = src_word_emb + src_pos_enc
@@ -352,25 +352,25 @@ class PrepareDecoder(nn.Layer):
         self.emb0 = Embedding(num_embeddings=src_vocab_size,
                               embedding_dim=src_emb_dim)
         """
-        self.emb0 = paddle.nn.Embedding(
+        self.emb0 = torch.nn.Embedding(
             num_embeddings=src_vocab_size,
             embedding_dim=self.src_emb_dim,
             padding_idx=bos_idx,
-            weight_attr=paddle.ParamAttr(
+            weight_attr=torch.ParamAttr(
                 name=word_emb_param_name,
                 initializer=nn.initializer.Normal(0., src_emb_dim**-0.5)))
-        self.emb1 = paddle.nn.Embedding(
+        self.emb1 = torch.nn.Embedding(
             num_embeddings=src_max_len,
             embedding_dim=self.src_emb_dim,
-            weight_attr=paddle.ParamAttr(name=pos_enc_param_name))
+            weight_attr=torch.ParamAttr(name=pos_enc_param_name))
         self.dropout_rate = dropout_rate
 
     def forward(self, src_word, src_pos):
-        src_word = paddle.cast(src_word, 'int64')
-        src_word = paddle.squeeze(src_word, axis=-1)
+        src_word = torch.cast(src_word, 'int64')
+        src_word = torch.squeeze(src_word, axis=-1)
         src_word_emb = self.emb0(src_word)
-        src_word_emb = paddle.scale(x=src_word_emb, scale=self.src_emb_dim**0.5)
-        src_pos = paddle.squeeze(src_pos, axis=-1)
+        src_word_emb = torch.scale(x=src_word_emb, scale=self.src_emb_dim**0.5)
+        src_pos = torch.squeeze(src_pos, axis=-1)
         src_pos_enc = self.emb1(src_pos)
         src_pos_enc.stop_gradient = True
         enc_input = src_word_emb + src_pos_enc
@@ -390,9 +390,9 @@ class FFN(nn.Layer):
     def __init__(self, d_inner_hid, d_model, dropout_rate):
         super(FFN, self).__init__()
         self.dropout_rate = dropout_rate
-        self.fc1 = paddle.nn.Linear(
+        self.fc1 = torch.nn.Linear(
             in_features=d_model, out_features=d_inner_hid)
-        self.fc2 = paddle.nn.Linear(
+        self.fc2 = torch.nn.Linear(
             in_features=d_inner_hid, out_features=d_model)
 
     def forward(self, x):

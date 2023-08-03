@@ -14,7 +14,7 @@
 import numpy as np
 import cv2
 import math
-import paddle
+import torch
 
 from arch import style_text_rec
 from utils.sys_funcs import check_gpu
@@ -28,7 +28,7 @@ class StyleTextRecPredictor(object):
                              ], "Generator {} not supported.".format(algorithm)
         use_gpu = config["Global"]['use_gpu']
         check_gpu(use_gpu)
-        paddle.set_device('gpu' if use_gpu else 'cpu')
+        torch.set_device('gpu' if use_gpu else 'cpu')
         self.logger = get_logger()
         self.generator = getattr(style_text_rec, algorithm)(config)
         self.height = config["Global"]["image_height"]
@@ -102,7 +102,7 @@ class StyleTextRecPredictor(object):
         new_img[:, 0:resized_w, :] = img
         img = new_img.transpose((2, 0, 1))
         img = img[np.newaxis, :, :, :]
-        return paddle.to_tensor(img)
+        return torch.to_tensor(img)
 
     def postprocess(self, tensor):
         img = tensor.numpy()[0]

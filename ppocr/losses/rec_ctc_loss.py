@@ -16,8 +16,8 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import paddle
-from paddle import nn
+import torch
+from torch import nn
 
 
 class CTCLoss(nn.Layer):
@@ -31,15 +31,15 @@ class CTCLoss(nn.Layer):
             predicts = predicts[-1]
         predicts = predicts.transpose((1, 0, 2))
         N, B, _ = predicts.shape
-        preds_lengths = paddle.to_tensor(
-            [N] * B, dtype='int64', place=paddle.CPUPlace())
+        preds_lengths = torch.to_tensor(
+            [N] * B, dtype='int64', place=torch.CPUPlace())
         labels = batch[1].astype("int32")
         label_lengths = batch[2].astype('int64')
         loss = self.loss_func(predicts, labels, preds_lengths, label_lengths)
         if self.use_focal_loss:
-            weight = paddle.exp(-loss)
-            weight = paddle.subtract(paddle.to_tensor([1.0]), weight)
-            weight = paddle.square(weight)
-            loss = paddle.multiply(loss, weight)
+            weight = torch.exp(-loss)
+            weight = torch.subtract(torch.to_tensor([1.0]), weight)
+            weight = torch.square(weight)
+            loss = torch.multiply(loss, weight)
         loss = loss.mean()
         return {'loss': loss}

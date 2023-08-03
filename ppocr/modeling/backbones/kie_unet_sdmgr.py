@@ -16,8 +16,8 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import paddle
-from paddle import nn
+import torch
+from torch import nn
 import numpy as np
 import cv2
 
@@ -90,9 +90,9 @@ class Decoder(nn.Layer):
     def forward(self, inputs_prev, inputs):
         x = self.conv0(inputs)
         x = self.bn0(x)
-        x = paddle.nn.functional.interpolate(
+        x = torch.nn.functional.interpolate(
             x, scale_factor=2, mode='bilinear', align_corners=False)
-        x = paddle.concat([inputs_prev, x], axis=1)
+        x = torch.concat([inputs_prev, x], axis=1)
         x = self.conv1(x)
         x = self.bn1(x)
         x = self.conv2(x)
@@ -142,8 +142,8 @@ class Kie_backbone(nn.Layer):
         for img_id, bboxes in enumerate(bbox_list):
             rois_num.append(bboxes.shape[0])
             rois_list.append(bboxes)
-        rois = paddle.concat(rois_list, 0)
-        rois_num = paddle.to_tensor(rois_num, dtype='int32')
+        rois = torch.concat(rois_list, 0)
+        rois_num = torch.to_tensor(rois_num, dtype='int32')
         return rois, rois_num
 
     def pre_process(self, img, relations, texts, gt_bboxes, tag, img_size):
@@ -152,18 +152,18 @@ class Kie_backbone(nn.Layer):
         ).tolist(), img_size.numpy()
         temp_relations, temp_texts, temp_gt_bboxes = [], [], []
         h, w = int(np.max(img_size[:, 0])), int(np.max(img_size[:, 1]))
-        img = paddle.to_tensor(img[:, :, :h, :w])
+        img = torch.to_tensor(img[:, :, :h, :w])
         batch = len(tag)
         for i in range(batch):
             num, recoder_len = tag[i][0], tag[i][1]
             temp_relations.append(
-                paddle.to_tensor(
+                torch.to_tensor(
                     relations[i, :num, :num, :], dtype='float32'))
             temp_texts.append(
-                paddle.to_tensor(
+                torch.to_tensor(
                     texts[i, :num, :recoder_len], dtype='float32'))
             temp_gt_bboxes.append(
-                paddle.to_tensor(
+                torch.to_tensor(
                     gt_bboxes[i, :num, ...], dtype='float32'))
         return img, temp_relations, temp_texts, temp_gt_bboxes
 
@@ -175,7 +175,7 @@ class Kie_backbone(nn.Layer):
             img, relations, texts, gt_bboxes, tag, img_size)
         x = self.img_feat(img)
         boxes, rois_num = self.bbox2roi(gt_bboxes)
-        feats = paddle.vision.ops.roi_align(
+        feats = torch.vision.ops.roi_align(
             x, boxes, spatial_scale=1.0, output_size=7, boxes_num=rois_num)
         feats = self.maxpool(feats).squeeze(-1).squeeze(-1)
         return [relations, texts, feats]

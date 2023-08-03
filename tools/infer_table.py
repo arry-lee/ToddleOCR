@@ -28,8 +28,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(__dir__, '..')))
 
 os.environ["FLAGS_allocator_strategy"] = 'auto_growth'
 
-import paddle
-from paddle.jit import to_static
+import torch
+from torch.jit import to_static
 
 from ppocr.data import create_operators, transform
 from ppocr.modeling.architectures import build_model
@@ -42,7 +42,7 @@ import tools.program as program
 import cv2
 
 
-@paddle.no_grad()
+@torch.no_grad()
 def main(config, device, logger, vdl_writer):
     global_config = config['Global']
 
@@ -89,7 +89,7 @@ def main(config, device, logger, vdl_writer):
             images = np.expand_dims(batch[0], axis=0)
             shape_list = np.expand_dims(batch[1], axis=0)
 
-            images = paddle.to_tensor(images)
+            images = torch.to_tensor(images)
             preds = model(images)
             post_result = post_process_class(preds, [shape_list])
 

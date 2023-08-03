@@ -16,9 +16,9 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import paddle
-import paddle.nn as nn
-import paddle.nn.functional as F
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
 import numpy as np
 
 
@@ -38,10 +38,10 @@ class AttentionHead(nn.Layer):
         return input_ont_hot
 
     def forward(self, inputs, targets=None, batch_max_length=25):
-        batch_size = paddle.shape(inputs)[0]
+        batch_size = torch.shape(inputs)[0]
         num_steps = batch_max_length
 
-        hidden = paddle.zeros((batch_size, self.hidden_size))
+        hidden = torch.zeros((batch_size, self.hidden_size))
         output_hiddens = []
 
         if targets is not None:
@@ -50,11 +50,11 @@ class AttentionHead(nn.Layer):
                     targets[:, i], onehot_dim=self.num_classes)
                 (outputs, hidden), alpha = self.attention_cell(hidden, inputs,
                                                                char_onehots)
-                output_hiddens.append(paddle.unsqueeze(outputs, axis=1))
-            output = paddle.concat(output_hiddens, axis=1)
+                output_hiddens.append(torch.unsqueeze(outputs, axis=1))
+            output = torch.concat(output_hiddens, axis=1)
             probs = self.generator(output)
         else:
-            targets = paddle.zeros(shape=[batch_size], dtype="int32")
+            targets = torch.zeros(shape=[batch_size], dtype="int32")
             probs = None
             char_onehots = None
             outputs = None
@@ -67,15 +67,15 @@ class AttentionHead(nn.Layer):
                                                                char_onehots)
                 probs_step = self.generator(outputs)
                 if probs is None:
-                    probs = paddle.unsqueeze(probs_step, axis=1)
+                    probs = torch.unsqueeze(probs_step, axis=1)
                 else:
-                    probs = paddle.concat(
-                        [probs, paddle.unsqueeze(
+                    probs = torch.concat(
+                        [probs, torch.unsqueeze(
                             probs_step, axis=1)], axis=1)
                 next_input = probs_step.argmax(axis=1)
                 targets = next_input
         if not self.training:
-            probs = paddle.nn.functional.softmax(probs, axis=2)
+            probs = torch.nn.functional.softmax(probs, axis=2)
         return probs
 
 
@@ -94,16 +94,16 @@ class AttentionGRUCell(nn.Layer):
     def forward(self, prev_hidden, batch_H, char_onehots):
 
         batch_H_proj = self.i2h(batch_H)
-        prev_hidden_proj = paddle.unsqueeze(self.h2h(prev_hidden), axis=1)
+        prev_hidden_proj = torch.unsqueeze(self.h2h(prev_hidden), axis=1)
 
-        res = paddle.add(batch_H_proj, prev_hidden_proj)
-        res = paddle.tanh(res)
+        res = torch.add(batch_H_proj, prev_hidden_proj)
+        res = torch.tanh(res)
         e = self.score(res)
 
         alpha = F.softmax(e, axis=1)
-        alpha = paddle.transpose(alpha, [0, 2, 1])
-        context = paddle.squeeze(paddle.mm(alpha, batch_H), axis=1)
-        concat_context = paddle.concat([context, char_onehots], 1)
+        alpha = torch.transpose(alpha, [0, 2, 1])
+        context = torch.squeeze(torch.mm(alpha, batch_H), axis=1)
+        concat_context = torch.concat([context, char_onehots], 1)
 
         cur_hidden = self.rnn(concat_context, prev_hidden)
 
@@ -129,7 +129,7 @@ class AttentionLSTM(nn.Layer):
         batch_size = inputs.shape[0]
         num_steps = batch_max_length
 
-        hidden = (paddle.zeros((batch_size, self.hidden_size)), paddle.zeros(
+        hidden = (torch.zeros((batch_size, self.hidden_size)), torch.zeros(
             (batch_size, self.hidden_size)))
         output_hiddens = []
 
@@ -142,12 +142,12 @@ class AttentionLSTM(nn.Layer):
                                                     char_onehots)
 
                 hidden = (hidden[1][0], hidden[1][1])
-                output_hiddens.append(paddle.unsqueeze(hidden[0], axis=1))
-            output = paddle.concat(output_hiddens, axis=1)
+                output_hiddens.append(torch.unsqueeze(hidden[0], axis=1))
+            output = torch.concat(output_hiddens, axis=1)
             probs = self.generator(output)
 
         else:
-            targets = paddle.zeros(shape=[batch_size], dtype="int32")
+            targets = torch.zeros(shape=[batch_size], dtype="int32")
             probs = None
             char_onehots = None
             alpha = None
@@ -160,17 +160,17 @@ class AttentionLSTM(nn.Layer):
                 probs_step = self.generator(hidden[0])
                 hidden = (hidden[1][0], hidden[1][1])
                 if probs is None:
-                    probs = paddle.unsqueeze(probs_step, axis=1)
+                    probs = torch.unsqueeze(probs_step, axis=1)
                 else:
-                    probs = paddle.concat(
-                        [probs, paddle.unsqueeze(
+                    probs = torch.concat(
+                        [probs, torch.unsqueeze(
                             probs_step, axis=1)], axis=1)
 
                 next_input = probs_step.argmax(axis=1)
 
                 targets = next_input
         if not self.training:
-            probs = paddle.nn.functional.softmax(probs, axis=2)
+            probs = torch.nn.functional.softmax(probs, axis=2)
         return probs
 
 
@@ -191,15 +191,15 @@ class AttentionLSTMCell(nn.Layer):
 
     def forward(self, prev_hidden, batch_H, char_onehots):
         batch_H_proj = self.i2h(batch_H)
-        prev_hidden_proj = paddle.unsqueeze(self.h2h(prev_hidden[0]), axis=1)
-        res = paddle.add(batch_H_proj, prev_hidden_proj)
-        res = paddle.tanh(res)
+        prev_hidden_proj = torch.unsqueeze(self.h2h(prev_hidden[0]), axis=1)
+        res = torch.add(batch_H_proj, prev_hidden_proj)
+        res = torch.tanh(res)
         e = self.score(res)
 
         alpha = F.softmax(e, axis=1)
-        alpha = paddle.transpose(alpha, [0, 2, 1])
-        context = paddle.squeeze(paddle.mm(alpha, batch_H), axis=1)
-        concat_context = paddle.concat([context, char_onehots], 1)
+        alpha = torch.transpose(alpha, [0, 2, 1])
+        context = torch.squeeze(torch.mm(alpha, batch_H), axis=1)
+        concat_context = torch.concat([context, char_onehots], 1)
         cur_hidden = self.rnn(concat_context, prev_hidden)
 
         return cur_hidden, alpha

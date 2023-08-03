@@ -28,7 +28,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(__dir__, '..')))
 
 os.environ["FLAGS_allocator_strategy"] = 'auto_growth'
 
-import paddle
+import torch
 
 from ppocr.data import create_operators, transform
 from ppocr.modeling.architectures import build_model
@@ -126,28 +126,28 @@ def main():
                 gsrm_slf_attn_bias2_list = np.expand_dims(batch[4], axis=0)
 
                 others = [
-                    paddle.to_tensor(encoder_word_pos_list),
-                    paddle.to_tensor(gsrm_word_pos_list),
-                    paddle.to_tensor(gsrm_slf_attn_bias1_list),
-                    paddle.to_tensor(gsrm_slf_attn_bias2_list)
+                    torch.to_tensor(encoder_word_pos_list),
+                    torch.to_tensor(gsrm_word_pos_list),
+                    torch.to_tensor(gsrm_slf_attn_bias1_list),
+                    torch.to_tensor(gsrm_slf_attn_bias2_list)
                 ]
             if config['Architecture']['algorithm'] == "SAR":
                 valid_ratio = np.expand_dims(batch[-1], axis=0)
-                img_metas = [paddle.to_tensor(valid_ratio)]
+                img_metas = [torch.to_tensor(valid_ratio)]
             if config['Architecture']['algorithm'] == "RobustScanner":
                 valid_ratio = np.expand_dims(batch[1], axis=0)
                 word_positons = np.expand_dims(batch[2], axis=0)
                 img_metas = [
-                    paddle.to_tensor(valid_ratio),
-                    paddle.to_tensor(word_positons),
+                    torch.to_tensor(valid_ratio),
+                    torch.to_tensor(word_positons),
                 ]
             if config['Architecture']['algorithm'] == "CAN":
-                image_mask = paddle.ones(
+                image_mask = torch.ones(
                     (np.expand_dims(
                         batch[0], axis=0).shape), dtype='float32')
-                label = paddle.ones((1, 36), dtype='int64')
+                label = torch.ones((1, 36), dtype='int64')
             images = np.expand_dims(batch[0], axis=0)
-            images = paddle.to_tensor(images)
+            images = torch.to_tensor(images)
             if config['Architecture']['algorithm'] == "SRN":
                 preds = model(images, others)
             elif config['Architecture']['algorithm'] == "SAR":

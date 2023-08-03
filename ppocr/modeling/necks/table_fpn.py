@@ -16,17 +16,17 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import paddle
-from paddle import nn
-import paddle.nn.functional as F
-from paddle import ParamAttr
+import torch
+from torch import nn
+import torch.nn.functional as F
+from torch import ParamAttr
 
 
 class TableFPN(nn.Layer):
     def __init__(self, in_channels, out_channels, **kwargs):
         super(TableFPN, self).__init__()
         self.out_channels = 512
-        weight_attr = paddle.nn.initializer.KaimingUniform()
+        weight_attr = torch.nn.initializer.KaimingUniform()
         self.in2_conv = nn.Conv2D(
             in_channels=in_channels[0],
             out_channels=self.out_channels,
@@ -105,6 +105,6 @@ class TableFPN(nn.Layer):
         p4 = F.upsample(out4, size=in5.shape[2:4], mode="nearest", align_mode=1)
         p3 = F.upsample(out3, size=in5.shape[2:4], mode="nearest", align_mode=1)
         p2 = F.upsample(out2, size=in5.shape[2:4], mode="nearest", align_mode=1)
-        fuse = paddle.concat([in5, p4, p3, p2], axis=1)
+        fuse = torch.concat([in5, p4, p3, p2], axis=1)
         fuse_conv = self.fuse_conv(fuse) * 0.005
         return [c5 + fuse_conv]

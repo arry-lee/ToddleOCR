@@ -19,8 +19,8 @@ https://github.com/FudanVI/FudanOCR/blob/main/scene-text-telescope/model/tbsrn.p
 import math
 import warnings
 import numpy as np
-import paddle
-from paddle import nn
+import torch
+from torch import nn
 import string
 
 warnings.filterwarnings("ignore")
@@ -42,18 +42,18 @@ def positionalencoding2d(d_model, height, width):
     if d_model % 4 != 0:
         raise ValueError("Cannot use sin/cos positional encoding with "
                          "odd dimension (got dim={:d})".format(d_model))
-    pe = paddle.zeros([d_model, height, width])
+    pe = torch.zeros([d_model, height, width])
     # Each dimension use half of d_model
     d_model = int(d_model / 2)
-    div_term = paddle.exp(paddle.arange(0., d_model, 2) *
+    div_term = torch.exp(torch.arange(0., d_model, 2) *
                           -(math.log(10000.0) / d_model))
-    pos_w = paddle.arange(0., width, dtype='float32').unsqueeze(1)
-    pos_h = paddle.arange(0., height, dtype='float32').unsqueeze(1)
+    pos_w = torch.arange(0., width, dtype='float32').unsqueeze(1)
+    pos_h = torch.arange(0., height, dtype='float32').unsqueeze(1)
 
-    pe[0:d_model:2, :, :] = paddle.sin(pos_w * div_term).transpose([1, 0]).unsqueeze(1).tile([1, height, 1])
-    pe[1:d_model:2, :, :] = paddle.cos(pos_w * div_term).transpose([1, 0]).unsqueeze(1).tile([1, height, 1])
-    pe[d_model::2, :, :] = paddle.sin(pos_h * div_term).transpose([1, 0]).unsqueeze(2).tile([1, 1, width])
-    pe[d_model + 1::2, :, :] = paddle.cos(pos_h * div_term).transpose([1, 0]).unsqueeze(2).tile([1, 1, width])
+    pe[0:d_model:2, :, :] = torch.sin(pos_w * div_term).transpose([1, 0]).unsqueeze(1).tile([1, height, 1])
+    pe[1:d_model:2, :, :] = torch.cos(pos_w * div_term).transpose([1, 0]).unsqueeze(1).tile([1, height, 1])
+    pe[d_model::2, :, :] = torch.sin(pos_h * div_term).transpose([1, 0]).unsqueeze(2).tile([1, 1, width])
+    pe[d_model + 1::2, :, :] = torch.cos(pos_h * div_term).transpose([1, 0]).unsqueeze(2).tile([1, 1, width])
 
     return pe
 
@@ -80,7 +80,7 @@ class FeatureEnhancer(nn.Layer):
         batch = conv_feature.shape[0]
         position2d = positionalencoding2d(64, 16, 64).cast('float32').unsqueeze(0).reshape([1, 64, 1024])
         position2d = position2d.tile([batch, 1, 1])
-        conv_feature = paddle.concat([conv_feature, position2d], 1)  # batch, 128(64+64), 32, 128
+        conv_feature = torch.concat([conv_feature, position2d], 1)  # batch, 128(64+64), 32, 128
         result = conv_feature.transpose([0, 2, 1])
         origin_result = result
         result = self.mul_layernorm1(origin_result + self.multihead(result, result, result, mask=None)[0])
@@ -173,7 +173,7 @@ class TBSRN(nn.Layer):
         batch = len(label)
 
         length = [len(i) for i in label]
-        length_tensor = paddle.to_tensor(length, dtype='int64')
+        length_tensor = torch.to_tensor(length, dtype='int64')
 
         max_length = max(length)
         input_tensor = np.zeros((batch, max_length))
@@ -185,9 +185,9 @@ class TBSRN(nn.Layer):
         for i in label:
             for j in i:
                 text_gt.append(self.english_dict[j])
-        text_gt = paddle.to_tensor(text_gt, dtype='int64')
+        text_gt = torch.to_tensor(text_gt, dtype='int64')
 
-        input_tensor = paddle.to_tensor(input_tensor, dtype='int64')
+        input_tensor = torch.to_tensor(input_tensor, dtype='int64')
         return length_tensor, input_tensor, text_gt
 
     def forward(self, x):
@@ -210,7 +210,7 @@ class TBSRN(nn.Layer):
         block[str(self.srb_nums + 3)] = getattr(self, 'block%d' % (self.srb_nums + 3)) \
             ((block['1'] + block[str(self.srb_nums + 2)]))
 
-        sr_img = paddle.tanh(block[str(self.srb_nums + 3)])
+        sr_img = torch.tanh(block[str(self.srb_nums + 3)])
         output["sr_img"] = sr_img
 
         if self.training:
@@ -248,7 +248,7 @@ class RecurrentResidualBlock(nn.Layer):
 
         for p in self.parameters():
             if p.dim() > 1:
-                paddle.nn.initializer.XavierUniform(p)
+                torch.nn.initializer.XavierUniform(p)
 
     def forward(self, x):
         residual = self.conv1(x)

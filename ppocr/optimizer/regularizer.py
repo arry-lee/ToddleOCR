@@ -17,7 +17,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import paddle
+import torch
 
 
 class L1Decay(object):
@@ -32,7 +32,7 @@ class L1Decay(object):
         self.coeff = factor
 
     def __call__(self):
-        reg = paddle.regularizer.L1Decay(self.coeff)
+        reg = torch.regularizer.L1Decay(self.coeff)
         return reg
 
 

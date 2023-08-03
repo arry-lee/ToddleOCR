@@ -17,7 +17,7 @@ from __future__ import division
 from __future__ import print_function
 
 import os
-from paddle import nn
+from torch import nn
 
 from paddlenlp.transformers import LayoutXLMModel, LayoutXLMForTokenClassification, LayoutXLMForRelationExtraction
 from paddlenlp.transformers import LayoutLMModel, LayoutLMForTokenClassification

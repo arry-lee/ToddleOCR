@@ -16,14 +16,14 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import paddle
-from paddle import ParamAttr
-import paddle.nn as nn
-import paddle.nn.functional as F
+import torch
+from torch import ParamAttr
+import torch.nn as nn
+import torch.nn.functional as F
 
-from paddle.vision.ops import DeformConv2D
-from paddle.regularizer import L2Decay
-from paddle.nn.initializer import Normal, Constant, XavierUniform
+from torch.vision.ops import DeformConv2D
+from torch.regularizer import L2Decay
+from torch.nn.initializer import Normal, Constant, XavierUniform
 
 __all__ = ["ResNet_vd", "ConvBNLayer", "DeformableConvV2"]
 
@@ -88,7 +88,7 @@ class DeformableConvV2(nn.Layer):
 
     def forward(self, x):
         offset_mask = self.conv_offset(x)
-        offset, mask = paddle.split(
+        offset, mask = torch.split(
             offset_mask,
             num_or_sections=[self.offset_channel, self.mask_channel],
             axis=1)
@@ -190,7 +190,7 @@ class BottleneckBlock(nn.Layer):
             short = inputs
         else:
             short = self.short(inputs)
-        y = paddle.add(x=short, y=conv2)
+        y = torch.add(x=short, y=conv2)
         y = F.relu(y)
         return y
 
@@ -235,7 +235,7 @@ class BasicBlock(nn.Layer):
             short = inputs
         else:
             short = self.short(inputs)
-        y = paddle.add(x=short, y=conv1)
+        y = torch.add(x=short, y=conv1)
         y = F.relu(y)
         return y
 

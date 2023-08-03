@@ -17,10 +17,10 @@ https://github.com/FangShancheng/ABINet/tree/main/modules
 """
 
 import math
-import paddle
-from paddle import nn
-import paddle.nn.functional as F
-from paddle.nn import LayerList
+import torch
+from torch import nn
+import torch.nn.functional as F
+from torch.nn import LayerList
 from ppocr.modeling.heads.rec_nrtr_head import TransformerBlock, PositionalEncoding
 
 
@@ -68,7 +68,7 @@ class BCNLanguage(nn.Layer):
         embed = self.proj(tokens)  # (B, N, C)
         embed = self.token_encoder(embed)  # (B, N, C)
         padding_mask = _get_mask(lengths, self.max_length)
-        zeros = paddle.zeros_like(embed)  # (B, N, C)
+        zeros = torch.zeros_like(embed)  # (B, N, C)
         qeury = self.pos_encoder(zeros)
         for decoder_layer in self.decoder:
             qeury = decoder_layer(qeury, embed, cross_mask=padding_mask)
@@ -155,7 +155,7 @@ class PositionAttention(nn.Layer):
 
         # calculate query vector
         # TODO q=f(q,k)
-        zeros = paddle.zeros(
+        zeros = torch.zeros(
             (B, self.max_length, C), dtype=x.dtype)  # (T, N, C)
         q = self.pos_encoder(zeros)  # (B, N, C)
         q = self.project(q)  # (B, N, C)
@@ -237,13 +237,13 @@ class ABINetHead(nn.Layer):
             for i in range(self.iter_size):
                 tokens = F.softmax(align_logits, axis=-1)
                 lengths = align_lengths
-                lengths = paddle.clip(
+                lengths = torch.clip(
                     lengths, 2, self.max_length)  # TODO:move to langauge model
                 l_feature, l_logits = self.language(tokens, lengths)
 
                 # alignment
                 all_l_res.append(l_logits)
-                fuse = paddle.concat((l_feature, v_feature), -1)
+                fuse = torch.concat((l_feature, v_feature), -1)
                 f_att = F.sigmoid(self.w_att_align(fuse))
                 output = f_att * v_feature + (1 - f_att) * l_feature
                 align_logits = self.cls_align(output)  # (B, N, C)
@@ -273,8 +273,8 @@ def _get_length(logit):
     out = out.cast('int32')
     out = out.argmax(-1)
     out = out + 1
-    len_seq = paddle.zeros_like(out) + logit.shape[1]
-    out = paddle.where(abn, out, len_seq)
+    len_seq = torch.zeros_like(out) + logit.shape[1]
+    out = torch.where(abn, out, len_seq)
     return out
 
 
@@ -283,15 +283,15 @@ def _get_mask(length, max_length):
         Unmasked positions are filled with float(0.0).
     """
     length = length.unsqueeze(-1)
-    B = paddle.shape(length)[0]
-    grid = paddle.arange(0, max_length).unsqueeze(0).tile([B, 1])
-    zero_mask = paddle.zeros([B, max_length], dtype='float32')
-    inf_mask = paddle.full([B, max_length], '-inf', dtype='float32')
-    diag_mask = paddle.diag(
-        paddle.full(
-            [max_length], '-inf', dtype=paddle.float32),
+    B = torch.shape(length)[0]
+    grid = torch.arange(0, max_length).unsqueeze(0).tile([B, 1])
+    zero_mask = torch.zeros([B, max_length], dtype='float32')
+    inf_mask = torch.full([B, max_length], '-inf', dtype='float32')
+    diag_mask = torch.diag(
+        torch.full(
+            [max_length], '-inf', dtype=torch.float32),
         offset=0,
         name=None)
-    mask = paddle.where(grid >= length, inf_mask, zero_mask)
+    mask = torch.where(grid >= length, inf_mask, zero_mask)
     mask = mask.unsqueeze(1) + diag_mask
     return mask.unsqueeze(1)

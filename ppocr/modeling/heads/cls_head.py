@@ -17,9 +17,9 @@ from __future__ import division
 from __future__ import print_function
 
 import math
-import paddle
-from paddle import nn, ParamAttr
-import paddle.nn.functional as F
+import torch
+from torch import nn, ParamAttr
+import torch.nn.functional as F
 
 
 class ClsHead(nn.Layer):
@@ -45,7 +45,7 @@ class ClsHead(nn.Layer):
 
     def forward(self, x, targets=None):
         x = self.pool(x)
-        x = paddle.reshape(x, shape=[x.shape[0], x.shape[1]])
+        x = torch.reshape(x, shape=[x.shape[0], x.shape[1]])
         x = self.fc(x)
         if not self.training:
             x = F.softmax(x, axis=1)

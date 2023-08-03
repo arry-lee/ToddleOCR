@@ -16,8 +16,8 @@ This code is refer from:
 https://github.com/FudanVI/FudanOCR/blob/main/scene-text-telescope/loss/text_focus_loss.py
 """
 
-import paddle.nn as nn
-import paddle
+import torch.nn as nn
+import torch
 import numpy as np
 import pickle as pkl
 
@@ -40,7 +40,7 @@ def load_confuse_matrix(confuse_dict_path):
     rearrange_data = np.concatenate((pad, rearrange_data), axis=1)
     rearrange_data = 1 / rearrange_data
     rearrange_data[rearrange_data == np.inf] = 1
-    rearrange_data = paddle.to_tensor(rearrange_data)
+    rearrange_data = torch.to_tensor(rearrange_data)
 
     lower_alpha = 'abcdefghijklmnopqrstuvwxyz'
     # upper_alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
@@ -56,11 +56,11 @@ def load_confuse_matrix(confuse_dict_path):
 def weight_cross_entropy(pred, gt, weight_table):
     batch = gt.shape[0]
     weight = weight_table[gt]
-    pred_exp = paddle.exp(pred)
+    pred_exp = torch.exp(pred)
     pred_exp_weight = weight * pred_exp
     loss = 0
     for i in range(len(gt)):
-        loss -= paddle.log(pred_exp_weight[i][gt[i]] / paddle.sum(pred_exp_weight, 1)[i])
+        loss -= torch.log(pred_exp_weight[i][gt[i]] / torch.sum(pred_exp_weight, 1)[i])
     return loss / batch
 
 

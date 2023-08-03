@@ -22,9 +22,9 @@ from __future__ import division
 from __future__ import print_function
 
 import math
-import paddle
-import paddle.nn as nn
-import paddle.nn.functional as F
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
 
 
 class Bottleneck(nn.Layer):
@@ -49,7 +49,7 @@ class Bottleneck(nn.Layer):
         out = F.relu(self.bn2(self.conv2(out)))
         if self.use_dropout:
             out = self.dropout(out)
-        out = paddle.concat([x, out], 1)
+        out = torch.concat([x, out], 1)
         return out
 
 
@@ -68,7 +68,7 @@ class SingleLayer(nn.Layer):
         if self.use_dropout:
             out = self.dropout(out)
 
-        out = paddle.concat([x, out], 1)
+        out = torch.concat([x, out], 1)
         return out
 
 

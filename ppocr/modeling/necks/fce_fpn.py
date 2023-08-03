@@ -16,12 +16,12 @@ This code is refer from:
 https://github.com/PaddlePaddle/PaddleDetection/blob/release/2.3/ppdet/modeling/necks/fpn.py
 """
 
-import paddle.nn as nn
-import paddle.nn.functional as F
-from paddle import ParamAttr
-from paddle.nn.initializer import XavierUniform
-from paddle.nn.initializer import Normal
-from paddle.regularizer import L2Decay
+import torch.nn as nn
+import torch.nn.functional as F
+from torch import ParamAttr
+from torch.nn.initializer import XavierUniform
+from torch.nn.initializer import Normal
+from torch.regularizer import L2Decay
 
 __all__ = ['FCEFPN']
 

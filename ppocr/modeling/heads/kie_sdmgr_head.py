@@ -18,10 +18,10 @@ from __future__ import division
 from __future__ import print_function
 
 import math
-import paddle
-from paddle import nn
-import paddle.nn.functional as F
-from paddle import ParamAttr
+import torch
+from torch import nn
+import torch.nn.functional as F
+from torch import ParamAttr
 
 
 class SDMGRHead(nn.Layer):
@@ -55,41 +55,41 @@ class SDMGRHead(nn.Layer):
         node_nums, char_nums = [], []
         for text in texts:
             node_nums.append(text.shape[0])
-            char_nums.append(paddle.sum((text > -1).astype(int), axis=-1))
+            char_nums.append(torch.sum((text > -1).astype(int), axis=-1))
 
         max_num = max([char_num.max() for char_num in char_nums])
-        all_nodes = paddle.concat([
-            paddle.concat(
-                [text, paddle.zeros(
+        all_nodes = torch.concat([
+            torch.concat(
+                [text, torch.zeros(
                     (text.shape[0], max_num - text.shape[1]))], -1)
             for text in texts
         ])
-        temp = paddle.clip(all_nodes, min=0).astype(int)
+        temp = torch.clip(all_nodes, min=0).astype(int)
         embed_nodes = self.node_embed(temp)
         rnn_nodes, _ = self.rnn(embed_nodes)
 
         b, h, w = rnn_nodes.shape
-        nodes = paddle.zeros([b, w])
-        all_nums = paddle.concat(char_nums)
-        valid = paddle.nonzero((all_nums > 0).astype(int))
+        nodes = torch.zeros([b, w])
+        all_nums = torch.concat(char_nums)
+        valid = torch.nonzero((all_nums > 0).astype(int))
         temp_all_nums = (
-            paddle.gather(all_nums, valid) - 1).unsqueeze(-1).unsqueeze(-1)
-        temp_all_nums = paddle.expand(temp_all_nums, [
+            torch.gather(all_nums, valid) - 1).unsqueeze(-1).unsqueeze(-1)
+        temp_all_nums = torch.expand(temp_all_nums, [
             temp_all_nums.shape[0], temp_all_nums.shape[1], rnn_nodes.shape[-1]
         ])
-        temp_all_nodes = paddle.gather(rnn_nodes, valid)
+        temp_all_nodes = torch.gather(rnn_nodes, valid)
         N, C, A = temp_all_nodes.shape
         one_hot = F.one_hot(
             temp_all_nums[:, 0, :], num_classes=C).transpose([0, 2, 1])
-        one_hot = paddle.multiply(
+        one_hot = torch.multiply(
             temp_all_nodes, one_hot.astype("float32")).sum(axis=1, keepdim=True)
         t = one_hot.expand([N, 1, A]).squeeze(1)
-        nodes = paddle.scatter(nodes, valid.squeeze(1), t)
+        nodes = torch.scatter(nodes, valid.squeeze(1), t)
 
         if x is not None:
             nodes = self.fusion([x, nodes])
 
-        all_edges = paddle.concat(
+        all_edges = torch.concat(
             [rel.reshape([-1, rel.shape[-1]]) for rel in relations])
         embed_edges = self.edge_embed(all_edges.astype('float32'))
         embed_edges = F.normalize(embed_edges)
@@ -114,25 +114,25 @@ class GNNLayer(nn.Layer):
         for num in nums:
             sample_nodes = nodes[start:start + num]
             cat_nodes.append(
-                paddle.concat([
-                    paddle.expand(sample_nodes.unsqueeze(1), [-1, num, -1]),
-                    paddle.expand(sample_nodes.unsqueeze(0), [num, -1, -1])
+                torch.concat([
+                    torch.expand(sample_nodes.unsqueeze(1), [-1, num, -1]),
+                    torch.expand(sample_nodes.unsqueeze(0), [num, -1, -1])
                 ], -1).reshape([num**2, -1]))
             start += num
-        cat_nodes = paddle.concat([paddle.concat(cat_nodes), edges], -1)
+        cat_nodes = torch.concat([torch.concat(cat_nodes), edges], -1)
         cat_nodes = self.relu(self.in_fc(cat_nodes))
         coefs = self.coef_fc(cat_nodes)
 
         start, residuals = 0, []
         for num in nums:
             residual = F.softmax(
-                -paddle.eye(num).unsqueeze(-1) * 1e9 +
+                -torch.eye(num).unsqueeze(-1) * 1e9 +
                 coefs[start:start + num**2].reshape([num, num, -1]), 1)
             residuals.append((residual * cat_nodes[start:start + num**2]
                               .reshape([num, num, -1])).sum(1))
             start += num**2
 
-        nodes += self.relu(self.out_fc(paddle.concat(residuals)))
+        nodes += self.relu(self.out_fc(torch.concat(residuals)))
         return [nodes, cat_nodes]
 
 
@@ -176,21 +176,21 @@ class Block(nn.Layer):
         if self.dropout_input > 0:
             x0 = F.dropout(x0, p=self.dropout_input, training=self.training)
             x1 = F.dropout(x1, p=self.dropout_input, training=self.training)
-        x0_chunks = paddle.split(x0, self.chunks, -1)
-        x1_chunks = paddle.split(x1, self.chunks, -1)
+        x0_chunks = torch.split(x0, self.chunks, -1)
+        x1_chunks = torch.split(x1, self.chunks, -1)
         zs = []
         for x0_c, x1_c, m0, m1 in zip(x0_chunks, x1_chunks, self.merge_linears0,
                                       self.merge_linears1):
             m = m0(x0_c) * m1(x1_c)  # bs x split_size*rank
             m = m.reshape([bs, self.rank, -1])
-            z = paddle.sum(m, 1)
+            z = torch.sum(m, 1)
             if self.pos_norm == 'before_cat':
-                z = paddle.sqrt(F.relu(z)) - paddle.sqrt(F.relu(-z))
+                z = torch.sqrt(F.relu(z)) - torch.sqrt(F.relu(-z))
                 z = F.normalize(z)
             zs.append(z)
-        z = paddle.concat(zs, 1)
+        z = torch.concat(zs, 1)
         if self.pos_norm == 'after_cat':
-            z = paddle.sqrt(F.relu(z)) - paddle.sqrt(F.relu(-z))
+            z = torch.sqrt(F.relu(z)) - torch.sqrt(F.relu(-z))
             z = F.normalize(z)
 
         if self.dropout_pre_lin > 0:

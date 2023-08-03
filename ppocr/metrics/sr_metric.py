@@ -17,9 +17,9 @@ https://github.com/FudanVI/FudanOCR/blob/main/text-gestalt/utils/ssim_psnr.py
 
 from math import exp
 
-import paddle
-import paddle.nn.functional as F
-import paddle.nn as nn
+import torch
+import torch.nn.functional as F
+import torch.nn as nn
 import string
 
 
@@ -32,7 +32,7 @@ class SSIM(nn.Layer):
         self.window = self.create_window(window_size, self.channel)
 
     def gaussian(self, window_size, sigma):
-        gauss = paddle.to_tensor([
+        gauss = torch.to_tensor([
             exp(-(x - window_size // 2)**2 / float(2 * sigma**2))
             for x in range(window_size)
         ])
@@ -117,7 +117,7 @@ class SRMetric(object):
         mse = ((img1 * 255 - img2 * 255)**2).mean()
         if mse == 0:
             return float('inf')
-        return 20 * paddle.log10(255.0 / paddle.sqrt(mse))
+        return 20 * torch.log10(255.0 / torch.sqrt(mse))
 
     def _normalize_text(self, text):
         text = ''.join(

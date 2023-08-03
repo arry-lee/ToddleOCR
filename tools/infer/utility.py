@@ -18,10 +18,10 @@ import sys
 import platform
 import cv2
 import numpy as np
-import paddle
+import torch
 from PIL import Image, ImageDraw, ImageFont
 import math
-from paddle import inference
+from torch import inference
 import time
 import random
 from ppocr.utils.logging import get_logger
@@ -318,7 +318,7 @@ def get_infer_gpuid():
     if sysstr == "Windows":
         return 0
 
-    if not paddle.fluid.core.is_compiled_with_rocm():
+    if not torch.fluid.core.is_compiled_with_rocm():
         cmd = "env | grep CUDA_VISIBLE_DEVICES"
     else:
         cmd = "env | grep HIP_VISIBLE_DEVICES"
@@ -661,7 +661,7 @@ def get_minarea_rect_crop(img, points):
 
 
 def check_gpu(use_gpu):
-    if use_gpu and not paddle.is_compiled_with_cuda():
+    if use_gpu and not torch.is_compiled_with_cuda():
         use_gpu = False
     return use_gpu
 

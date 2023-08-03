@@ -13,8 +13,8 @@
 # limitations under the License.
 
 import numpy as np
-import paddle
-from paddle.nn import functional as F
+import torch
+from torch.nn import functional as F
 import re
 
 
@@ -114,7 +114,7 @@ class CTCLabelDecode(BaseRecLabelDecode):
     def __call__(self, preds, label=None, *args, **kwargs):
         if isinstance(preds, tuple) or isinstance(preds, list):
             preds = preds[-1]
-        if isinstance(preds, paddle.Tensor):
+        if isinstance(preds, torch.Tensor):
             preds = preds.numpy()
         preds_idx = preds.argmax(axis=2)
         preds_prob = preds.max(axis=2)
@@ -216,7 +216,7 @@ class AttnLabelDecode(BaseRecLabelDecode):
             label = self.decode(label, is_remove_duplicate=False)
             return text, label
         """
-        if isinstance(preds, paddle.Tensor):
+        if isinstance(preds, torch.Tensor):
             preds = preds.numpy()
 
         preds_idx = preds.argmax(axis=2)
@@ -291,7 +291,7 @@ class RFLLabelDecode(BaseRecLabelDecode):
         # if seq_outputs is not None:
         if isinstance(preds, tuple) or isinstance(preds, list):
             cnt_outputs, seq_outputs = preds
-            if isinstance(seq_outputs, paddle.Tensor):
+            if isinstance(seq_outputs, torch.Tensor):
                 seq_outputs = seq_outputs.numpy()
             preds_idx = seq_outputs.argmax(axis=2)
             preds_prob = seq_outputs.max(axis=2)
@@ -304,7 +304,7 @@ class RFLLabelDecode(BaseRecLabelDecode):
 
         else:
             cnt_outputs = preds
-            if isinstance(cnt_outputs, paddle.Tensor):
+            if isinstance(cnt_outputs, torch.Tensor):
                 cnt_outputs = cnt_outputs.numpy()
             cnt_length = []
             for lens in cnt_outputs:
@@ -398,7 +398,7 @@ class SEEDLabelDecode(BaseRecLabelDecode):
             return text, label
         """
         preds_idx = preds["rec_pred"]
-        if isinstance(preds_idx, paddle.Tensor):
+        if isinstance(preds_idx, torch.Tensor):
             preds_idx = preds_idx.numpy()
         if "rec_pred_scores" in preds:
             preds_idx = preds["rec_pred"]
@@ -425,7 +425,7 @@ class SRNLabelDecode(BaseRecLabelDecode):
     def __call__(self, preds, label=None, *args, **kwargs):
         pred = preds['predict']
         char_num = len(self.character_str) + 2
-        if isinstance(pred, paddle.Tensor):
+        if isinstance(pred, torch.Tensor):
             pred = pred.numpy()
         pred = np.reshape(pred, [-1, char_num])
 
@@ -552,7 +552,7 @@ class SARLabelDecode(BaseRecLabelDecode):
         return result_list
 
     def __call__(self, preds, label=None, *args, **kwargs):
-        if isinstance(preds, paddle.Tensor):
+        if isinstance(preds, torch.Tensor):
             preds = preds.numpy()
         preds_idx = preds.argmax(axis=2)
         preds_prob = preds.max(axis=2)
@@ -652,7 +652,7 @@ class PRENLabelDecode(BaseRecLabelDecode):
         return result_list
 
     def __call__(self, preds, label=None, *args, **kwargs):
-        if isinstance(preds, paddle.Tensor):
+        if isinstance(preds, torch.Tensor):
             preds = preds.numpy()
         preds_idx = preds.argmax(axis=2)
         preds_prob = preds.max(axis=2)
@@ -675,9 +675,9 @@ class NRTRLabelDecode(BaseRecLabelDecode):
         if len(preds) == 2:
             preds_id = preds[0]
             preds_prob = preds[1]
-            if isinstance(preds_id, paddle.Tensor):
+            if isinstance(preds_id, torch.Tensor):
                 preds_id = preds_id.numpy()
-            if isinstance(preds_prob, paddle.Tensor):
+            if isinstance(preds_prob, torch.Tensor):
                 preds_prob = preds_prob.numpy()
             if preds_id[0][0] == 2:
                 preds_idx = preds_id[:, 1:]
@@ -689,7 +689,7 @@ class NRTRLabelDecode(BaseRecLabelDecode):
                 return text
             label = self.decode(label[:, 1:])
         else:
-            if isinstance(preds, paddle.Tensor):
+            if isinstance(preds, torch.Tensor):
                 preds = preds.numpy()
             preds_idx = preds.argmax(axis=2)
             preds_prob = preds.max(axis=2)
@@ -736,7 +736,7 @@ class ViTSTRLabelDecode(NRTRLabelDecode):
                                                 use_space_char)
 
     def __call__(self, preds, label=None, *args, **kwargs):
-        if isinstance(preds, paddle.Tensor):
+        if isinstance(preds, torch.Tensor):
             preds = preds[:, 1:].numpy()
         else:
             preds = preds[:, 1:]
@@ -764,7 +764,7 @@ class ABINetLabelDecode(NRTRLabelDecode):
     def __call__(self, preds, label=None, *args, **kwargs):
         if isinstance(preds, dict):
             preds = preds['align'][-1].numpy()
-        elif isinstance(preds, paddle.Tensor):
+        elif isinstance(preds, torch.Tensor):
             preds = preds.numpy()
         else:
             preds = preds
@@ -842,12 +842,12 @@ class VLLabelDecode(BaseRecLabelDecode):
             lenText = self.max_text_length
             nsteps = self.max_text_length
 
-            if not isinstance(text_pre, paddle.Tensor):
-                text_pre = paddle.to_tensor(text_pre, dtype='float32')
+            if not isinstance(text_pre, torch.Tensor):
+                text_pre = torch.to_tensor(text_pre, dtype='float32')
 
-            out_res = paddle.zeros(
+            out_res = torch.zeros(
                 shape=[lenText, b, self.nclass], dtype=x.dtype)
-            out_length = paddle.zeros(shape=[b], dtype=x.dtype)
+            out_length = torch.zeros(shape=[b], dtype=x.dtype)
             now_step = 0
             for _ in range(nsteps):
                 if 0 in out_length and now_step < nsteps:
@@ -862,7 +862,7 @@ class VLLabelDecode(BaseRecLabelDecode):
                 if int(out_length[j]) == 0:
                     out_length[j] = nsteps
             start = 0
-            output = paddle.zeros(
+            output = torch.zeros(
                 shape=[int(out_length.sum()), self.nclass], dtype=x.dtype)
             for i in range(0, b):
                 cur_length = int(out_length[i])
@@ -874,10 +874,10 @@ class VLLabelDecode(BaseRecLabelDecode):
         else:  # train mode
             net_out = preds[0]
             length = length
-            net_out = paddle.concat([t[:l] for t, l in zip(net_out, length)])
+            net_out = torch.concat([t[:l] for t, l in zip(net_out, length)])
         text = []
-        if not isinstance(net_out, paddle.Tensor):
-            net_out = paddle.to_tensor(net_out, dtype='float32')
+        if not isinstance(net_out, torch.Tensor):
+            net_out = torch.to_tensor(net_out, dtype='float32')
         net_out = F.softmax(net_out, axis=1)
         for i in range(0, length.shape[0]):
             preds_idx = net_out[int(length[:i].sum()):int(length[:i].sum(
@@ -889,8 +889,8 @@ class VLLabelDecode(BaseRecLabelDecode):
             ])
             preds_prob = net_out[int(length[:i].sum()):int(length[:i].sum(
             ) + length[i])].topk(1)[0][:, 0]
-            preds_prob = paddle.exp(
-                paddle.log(preds_prob).sum() / (preds_prob.shape[0] + 1e-6))
+            preds_prob = torch.exp(
+                torch.log(preds_prob).sum() / (preds_prob.shape[0] + 1e-6))
             text.append((preds_text, preds_prob.numpy()[0]))
         if label is None:
             return text

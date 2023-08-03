@@ -16,9 +16,9 @@ This code is refer from:
 https://github.com/open-mmlab/mmocr/blob/main/mmocr/models/textdet/losses/drrg_loss.py
 """
 
-import paddle
-import paddle.nn.functional as F
-from paddle import nn
+import torch
+import torch.nn.functional as F
+from torch import nn
 
 
 class DRRGLoss(nn.Layer):
@@ -39,27 +39,27 @@ class DRRGLoss(nn.Layer):
             Tensor: Balanced bce loss.
         """
         assert pred.shape == gt.shape == mask.shape
-        assert paddle.all(pred >= 0) and paddle.all(pred <= 1)
-        assert paddle.all(gt >= 0) and paddle.all(gt <= 1)
+        assert torch.all(pred >= 0) and torch.all(pred <= 1)
+        assert torch.all(gt >= 0) and torch.all(gt <= 1)
         positive = gt * mask
         negative = (1 - gt) * mask
         positive_count = int(positive.sum())
 
         if positive_count > 0:
             loss = F.binary_cross_entropy(pred, gt, reduction='none')
-            positive_loss = paddle.sum(loss * positive)
+            positive_loss = torch.sum(loss * positive)
             negative_loss = loss * negative
             negative_count = min(
                 int(negative.sum()), int(positive_count * self.ohem_ratio))
         else:
-            positive_loss = paddle.to_tensor(0.0)
+            positive_loss = torch.to_tensor(0.0)
             loss = F.binary_cross_entropy(pred, gt, reduction='none')
             negative_loss = loss * negative
             negative_count = 100
-        negative_loss, _ = paddle.topk(
+        negative_loss, _ = torch.topk(
             negative_loss.reshape([-1]), negative_count)
 
-        balance_loss = (positive_loss + paddle.sum(negative_loss)) / (
+        balance_loss = (positive_loss + torch.sum(negative_loss)) / (
             float(positive_count + negative_count) + 1e-5)
 
         return balance_loss
@@ -107,7 +107,7 @@ class DRRGLoss(nn.Layer):
             pad = [0, target_sz[1] - mask_sz[1], 0, target_sz[0] - mask_sz[0]]
             mask = F.pad(mask, pad, mode='constant', value=0)
             kernel.append(mask)
-        kernel = paddle.stack(kernel)
+        kernel = torch.stack(kernel)
         results.append(kernel)
 
         return results
@@ -133,14 +133,14 @@ class DRRGLoss(nn.Layer):
 
         # bitmask 2 tensor
         mapping = {
-            'gt_text_mask': paddle.cast(gt_text_mask, 'float32'),
+            'gt_text_mask': torch.cast(gt_text_mask, 'float32'),
             'gt_center_region_mask':
-            paddle.cast(gt_center_region_mask, 'float32'),
-            'gt_mask': paddle.cast(gt_mask, 'float32'),
-            'gt_top_height_map': paddle.cast(gt_top_height_map, 'float32'),
-            'gt_bot_height_map': paddle.cast(gt_bot_height_map, 'float32'),
-            'gt_sin_map': paddle.cast(gt_sin_map, 'float32'),
-            'gt_cos_map': paddle.cast(gt_cos_map, 'float32')
+            torch.cast(gt_center_region_mask, 'float32'),
+            'gt_mask': torch.cast(gt_mask, 'float32'),
+            'gt_top_height_map': torch.cast(gt_top_height_map, 'float32'),
+            'gt_bot_height_map': torch.cast(gt_bot_height_map, 'float32'),
+            'gt_sin_map': torch.cast(gt_sin_map, 'float32'),
+            'gt_cos_map': torch.cast(gt_cos_map, 'float32')
         }
         gt = {}
         for key, value in mapping.items():
@@ -154,7 +154,7 @@ class DRRGLoss(nn.Layer):
                     gt[key] = [item * downsample_ratio for item in gt[key]]
             gt[key] = [item for item in gt[key]]
 
-        scale = paddle.sqrt(1.0 / (pred_sin_map**2 + pred_cos_map**2 + 1e-8))
+        scale = torch.sqrt(1.0 / (pred_sin_map**2 + pred_cos_map**2 + 1e-8))
         pred_sin_map = pred_sin_map * scale
         pred_cos_map = pred_cos_map * scale
 
@@ -169,19 +169,19 @@ class DRRGLoss(nn.Layer):
             gt['gt_center_region_mask'][0],
             reduction='none')
         if int(text_mask.sum()) > 0:
-            loss_center_positive = paddle.sum(loss_center_map *
-                                              text_mask) / paddle.sum(text_mask)
+            loss_center_positive = torch.sum(loss_center_map *
+                                              text_mask) / torch.sum(text_mask)
         else:
-            loss_center_positive = paddle.to_tensor(0.0)
-        loss_center_negative = paddle.sum(
+            loss_center_positive = torch.to_tensor(0.0)
+        loss_center_negative = torch.sum(
             loss_center_map *
-            negative_text_mask) / paddle.sum(negative_text_mask)
+            negative_text_mask) / torch.sum(negative_text_mask)
         loss_center = loss_center_positive + 0.5 * loss_center_negative
 
         center_mask = (gt['gt_center_region_mask'][0] * gt['gt_mask'][0])
         if int(center_mask.sum()) > 0:
             map_sz = pred_top_height_map.shape
-            ones = paddle.ones(map_sz, dtype='float32')
+            ones = torch.ones(map_sz, dtype='float32')
             loss_top = F.smooth_l1_loss(
                 pred_top_height_map / (gt['gt_top_height_map'][0] + 1e-2),
                 ones,
@@ -192,22 +192,22 @@ class DRRGLoss(nn.Layer):
                 reduction='none')
             gt_height = (
                 gt['gt_top_height_map'][0] + gt['gt_bot_height_map'][0])
-            loss_height = paddle.sum(
-                (paddle.log(gt_height + 1) *
-                 (loss_top + loss_bot)) * center_mask) / paddle.sum(center_mask)
+            loss_height = torch.sum(
+                (torch.log(gt_height + 1) *
+                 (loss_top + loss_bot)) * center_mask) / torch.sum(center_mask)
 
-            loss_sin = paddle.sum(
+            loss_sin = torch.sum(
                 F.smooth_l1_loss(
                     pred_sin_map, gt['gt_sin_map'][0],
-                    reduction='none') * center_mask) / paddle.sum(center_mask)
-            loss_cos = paddle.sum(
+                    reduction='none') * center_mask) / torch.sum(center_mask)
+            loss_cos = torch.sum(
                 F.smooth_l1_loss(
                     pred_cos_map, gt['gt_cos_map'][0],
-                    reduction='none') * center_mask) / paddle.sum(center_mask)
+                    reduction='none') * center_mask) / torch.sum(center_mask)
         else:
-            loss_height = paddle.to_tensor(0.0)
-            loss_sin = paddle.to_tensor(0.0)
-            loss_cos = paddle.to_tensor(0.0)
+            loss_height = torch.to_tensor(0.0)
+            loss_sin = torch.to_tensor(0.0)
+            loss_cos = torch.to_tensor(0.0)
 
         loss_gcn = self.gcn_loss(gcn_data)
 
