@@ -17,9 +17,9 @@ https://github.com/open-mmlab/mmocr/blob/main/mmocr/models/textrecog/encoders/sa
 https://github.com/open-mmlab/mmocr/blob/main/mmocr/models/textrecog/decoders/sar_decoder.py
 """
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+
+
+
 
 import math
 import torch

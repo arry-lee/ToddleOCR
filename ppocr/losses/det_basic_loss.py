@@ -15,9 +15,9 @@
 This code is refer from:
 https://github.com/WenmuZhou/DBNet.pytorch/blob/master/models/losses/basic_loss.py
 """
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+
+
+
 
 import torch
 import torch.nn.functional as F

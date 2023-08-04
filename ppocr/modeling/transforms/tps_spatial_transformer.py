@@ -15,9 +15,9 @@
 This code is refer from:
 https://github.com/ayumiymk/aster.pytorch/blob/master/lib/models/tps_spatial_transformer.py
 """
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+
+
+
 
 import math
 import torch

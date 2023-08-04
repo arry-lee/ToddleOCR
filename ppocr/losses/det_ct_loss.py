@@ -16,9 +16,9 @@ This code is refer from:
 https://github.com/shengtao96/CentripetalText/tree/main/models/loss
 """
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+
+
+
 
 import numpy as np
 import torch

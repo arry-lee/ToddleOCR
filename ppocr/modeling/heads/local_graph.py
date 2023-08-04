@@ -16,9 +16,9 @@ This code is refer from:
 https://github.com/open-mmlab/mmocr/blob/main/mmocr/models/textdet/modules/local_graph.py
 """
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+
+
+
 
 import numpy as np
 import torch

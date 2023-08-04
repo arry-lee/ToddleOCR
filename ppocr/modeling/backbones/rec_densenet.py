@@ -17,9 +17,9 @@ https://github.com/LBH1024/CAN/models/densenet.py
 
 """
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+
+
+
 
 import math
 import torch
