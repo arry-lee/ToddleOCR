@@ -17,12 +17,9 @@ from __future__ import division
 from __future__ import print_function
 
 import torch
-
 import torch.nn as nn
 import torch.nn.functional as F
-
-from torch.vision.ops import DeformConv2D
-from torch.regularizer import L2Decay
+from torchvision.ops import DeformConv2d
 
 __all__ = ["ResNet_vd", "ConvBNLayer", "DeformableConvV2"]
 
@@ -34,16 +31,12 @@ class DeformableConvV2(nn.Module):
         out_channels,
         kernel_size,
         stride=1,
-        padding=0,
         dilation=1,
         groups=1,
-        weight_attr=None,
         bias=None,
         lr_scale=1,
         regularizer=None,
         skip_quant=False,
-        dcn_bias_regularizer=L2Decay(0.0),
-        dcn_bias_lr_scale=2.0,
     ):
         super(DeformableConvV2, self).__init__()
         self.offset_channel = 2 * kernel_size**2 * groups
@@ -55,7 +48,7 @@ class DeformableConvV2(nn.Module):
         else:
             # in ResNet backbone, do not need bias
             dcn_bias_attr = False
-        self.conv_dcn = DeformConv2D(
+        self.conv_dcn = DeformConv2d(
             in_channels, out_channels, kernel_size, stride=stride, padding=(kernel_size - 1) // 2 * dilation, dilation=dilation, deformable_groups=groups, bias=dcn_bias_attr
         )
 
