@@ -23,7 +23,6 @@ import torch.nn.functional as F
 
 from torch.vision.ops import DeformConv2D
 from torch.regularizer import L2Decay
-from torch.nn.initializer import Normal, Constant, XavierUniform
 
 __all__ = ["ResNet_vd", "ConvBNLayer", "DeformableConvV2"]
 

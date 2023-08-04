@@ -16,15 +16,11 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import numpy as np
 import torch
-
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.nn import MaxPool2d, AvgPool2d
-from torch.nn.initializer import Uniform
+from torch.nn import MaxPool2d
 
-from torch.vision.ops import DeformConv2D
 from .det_resnet_vd import ConvBNLayer
 
 

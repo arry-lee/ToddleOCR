@@ -24,7 +24,7 @@ import torch.nn as nn
 
 __all__ = ["ResNet32"]
 
-conv_weight_attr = nn.initializer.KaimingNormal()
+conv_weight_attr = nn.init.KaimingNormal()
 
 
 class ResNet32(nn.Module):

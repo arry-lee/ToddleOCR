@@ -17,13 +17,10 @@ from __future__ import division
 from __future__ import print_function
 
 import math
-import torch
-from torch import nn
+
 import torch.nn.functional as F
-
-
-import math
-from torch.nn.initializer import TruncatedNormal, Constant, Normal
+from torch import nn
+from torch.nn.init import Constant, Normal
 
 ones_ = Constant(value=1.0)
 zeros_ = Constant(value=0.0)

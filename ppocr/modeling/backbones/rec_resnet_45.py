@@ -20,13 +20,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import torch
-
-from torch.nn.initializer import KaimingNormal
 import torch.nn as nn
-import torch.nn.functional as F
-import numpy as np
-import math
 
 __all__ = ["ResNet45"]
 

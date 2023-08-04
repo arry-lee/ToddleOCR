@@ -20,10 +20,8 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import torch
 import torch.nn as nn
-
-from torch.nn.initializer import TruncatedNormal, Constant, Normal, KaimingNormal
+from torch.nn.init import Constant, KaimingNormal
 
 kaiming_init_ = KaimingNormal()
 zeros_ = Constant(value=0.0)

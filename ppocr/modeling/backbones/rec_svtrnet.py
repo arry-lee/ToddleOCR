@@ -13,11 +13,10 @@
 # limitations under the License.
 
 
-from torch.nn.initializer import KaimingNormal
 import numpy as np
 import torch
 import torch.nn as nn
-from torch.nn.initializer import TruncatedNormal, Constant, Normal
+from torch.nn.init import Constant, Normal, TruncatedNormal
 
 trunc_normal_ = TruncatedNormal(std=0.02)
 normal_ = Normal

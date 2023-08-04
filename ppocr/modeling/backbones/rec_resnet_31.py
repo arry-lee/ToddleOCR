@@ -21,11 +21,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import torch
-
 import torch.nn as nn
-import torch.nn.functional as F
-import numpy as np
 
 __all__ = ["ResNet31"]
 
@@ -106,7 +102,7 @@ class ResNet31(nn.Module):
         if init_type is not None:
             support_dict = ["KaimingNormal"]
             assert init_type in support_dict, Exception("resnet31 only support {}".format(support_dict))
-            conv_weight_attr = nn.initializer.KaimingNormal()
+            conv_weight_attr = nn.init.KaimingNormal()
 
         # conv 1 (Conv Conv)
         self.conv1_1 = nn.Conv2d(in_channels, channels[0], kernel_size=3, stride=1, padding=1)
