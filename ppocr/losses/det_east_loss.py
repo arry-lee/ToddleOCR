@@ -37,8 +37,8 @@ class EASTLoss(nn.Module):
 
         # smoooth_l1_loss
         channels = 8
-        l_geo_split = torch.split(l_geo, channels + 1, dim=1)
-        f_geo_split = torch.split(f_geo, channels, dim=1)
+        l_geo_split = torch.split(l_geo, 1, dim=1)
+        f_geo_split = torch.split(f_geo, 1, dim=1)
         smooth_l1 = 0
         for i in range(0, channels):
             geo_diff = l_geo_split[i] - f_geo_split[i]
@@ -54,3 +54,33 @@ class EASTLoss(nn.Module):
         total_loss = dice_loss + smooth_l1_loss
         losses = {"loss": total_loss, "dice_loss": dice_loss, "smooth_l1_loss": smooth_l1_loss}
         return losses
+
+
+# class EASTLoss(nn.Module):
+#     def __init__(self, eps=1e-6):
+#         super().__init__()
+#         self.eps = eps
+#
+#     def forward(self, preds, labels):
+#         f_score = preds['f_score']
+#         f_geo = preds['f_geo']
+#         g_score, g_geo, g_mask = labels[1:]
+#
+#         # Dice loss
+#         intersection = torch.sum(f_score * g_score * g_mask)
+#         union = torch.sum(f_score * g_mask) + torch.sum(g_score * g_mask) + self.eps
+#         dice_loss = 1 - (2 * intersection / union)
+#
+#         # Smooth L1 loss
+#         smooth_l1_loss = torch.sum(torch.abs(f_geo - g_geo) * g_score * g_mask) / (
+#                     torch.sum(g_score * g_mask) + self.eps)
+#
+#         total_loss = dice_loss + smooth_l1_loss
+#
+#         losses = {
+#             'loss': total_loss,
+#             'dice_loss': dice_loss,
+#             'smooth_l1_loss': smooth_l1_loss
+#         }
+#
+#         return losses
