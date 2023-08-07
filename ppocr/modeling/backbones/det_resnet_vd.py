@@ -42,22 +42,22 @@ class DeformableConvV2(nn.Module):
         self.offset_channel = 2 * kernel_size**2 * groups
         self.mask_channel = kernel_size**2 * groups
 
-        if bias:
-            # in FCOS-DCN head, specifically need learning_rate and regularizer
-
-        else:
-            # in ResNet backbone, do not need bias
-            dcn_bias_attr = False
+        # if bias:
+        #     # in FCOS-DCN head, specifically need learning_rate and regularizer
+        #
+        # else:
+        #     # in ResNet backbone, do not need bias
+        #     dcn_bias_attr = False
         self.conv_dcn = DeformConv2d(
-            in_channels, out_channels, kernel_size, stride=stride, padding=(kernel_size - 1) // 2 * dilation, dilation=dilation, deformable_groups=groups, bias=dcn_bias_attr
+            in_channels, out_channels, kernel_size, stride=stride, padding=(kernel_size - 1) // 2 * dilation, dilation=dilation, deformable_groups=groups, bias=bias
         )
 
-        if lr_scale == 1 and regularizer is None:
-
-        else:
-
+        # if lr_scale == 1 and regularizer is None:
+        #
+        # else:
+        # todo:存疑
         self.conv_offset = nn.Conv2d(
-            in_channels, groups * 3 * kernel_size**2, kernel_size, stride=stride, padding=(kernel_size - 1) // 2,  bias=offset_bias_attr
+            in_channels, groups * 3 * kernel_size**2, kernel_size, stride=stride, padding=(kernel_size - 1) // 2,  bias=bias
         )
         if skip_quant:
             self.conv_offset.skip_quant = True
