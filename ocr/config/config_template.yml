@@ -1,0 +1,145 @@
+Base:
+  use_gpu: true
+  epoch_num: 10000
+  log_smooth_window: 20
+  print_batch_step: 2
+  save_model_dir: ./output/east_mv3/
+  save_epoch_step: 1000
+  eval_batch_step: [4000, 5000] # evaluation is run every 5000 iterations after the 4000th iteration
+  cal_metric_during_train: false
+  pretrained_model: ./pretrain_models/MobileNetV3_large_x0_5_pretrained
+  checkpoints:
+  save_inference_dir:
+  use_visualdl: false
+  infer_img:
+  save_res_path: ./output/det_east/predicts_east.txt
+  distributed: false
+
+Model:
+  model_type: det
+  algorithm: EAST
+
+  Backbone:
+    class: ocr.models.det.east.MobileNetV3 # 从相对于运行的脚本的导入路径
+    scale: 0.5
+    model_name: large
+  Neck:
+    class: ocr.models.det.east.EASTFPN
+    model_name: small
+  Head:
+    class: ocr.models.det.east.EASTHead
+    model_name: small
+
+Loss:
+  class: ocr.models.det.east.EASTLoss
+
+Optimizer:
+  class: torch.optim.Adam
+  lr: 0.001
+  betas: [0.9, 0.999]
+
+  lr_scheduler:
+    class: torch.optim.lr_scheduler.ConstantLR
+
+
+PostProcessor:
+  class: ocr.models.det.east.EASTPostProcess
+  score_thresh: 0.8
+  cover_thresh: 0.1
+  nms_thresh: 0.2
+
+Metric:
+  class: ocr.metric.det_metric.DetMetric
+  main_indicator: hmean
+
+Train:
+  Dataset:
+    class: torchvision.datasets.CocoCaptions
+    root: 'path/to/dataset'  # COCO-Text 数据集的根目录
+    annFile: 'path/to/annotations.json'  # COCO-Text 数据集的注释文件路径
+    transform:
+      class: torchvision.transforms.ToTensor  # 转换为张量格式
+    download: true
+
+  DataLoader:
+    batch_size: 16
+    shuffle: false
+    batch_sampler: true
+    num_workers: 8
+    collate_fn: null
+    pin_memory: false
+    drop_last: false
+
+Eval:
+  Dataset:
+    class: torchvision.datasets.CocoCaptions
+    root: 'path/to/dataset'  # COCO-Text 数据集的根目录
+    annFile: 'path/to/annotations.json'  # COCO-Text 数据集的注释文件路径
+    transform:
+      class: torchvision.transforms.ToTensor  # 转换为张量格式
+
+  DataLoader:
+    batch_size: 1
+    shuffle: false
+    batch_sampler: true
+    num_workers: 2
+    collate_fn: null
+    pin_memory: false
+    drop_last: false
+
+#Train:
+#  Dataset:
+#    class: torchvision.datasets.MNIST # DatasetFolder
+#    root: D:/dev/.data
+#    transform:
+#      class: torchvision.transforms.ToTensor # 和 transforms 二选一
+#
+#    target_transform: null
+##    transforms:
+##      - class: torchvision.transforms.ToTensor # 任何一个可调用的
+#    download: true
+#
+#  DataLoader:
+#    batch_size: 16  # 每张卡上的批次
+#    shuffle: false # torchvision.datasets.SequentialSampler
+#    # torch.utils.data.distributed.DistributedSampler 一样
+#    # torchvision.datasets.samplers.DistributedSampler
+#    # torchvision.datasets.samplers.UniformClipSampler 视频
+#    # torchvision.datasets.samplers.RandomClipSampler
+##    sampler: 靠逻辑
+##      class: torchvision.datasets.RandomSampler
+#    batch_sampler: true # always true
+#    num_workers: 8
+#    collate_fn: null
+#    pin_memory: false
+#    drop_last: false
+#
+#Eval:
+#  Dataset:
+#    class: torchvision.datasets.MNIST # DatasetFolder
+#    root: D:/dev/.data
+#    transform:
+#      class: torchvision.transforms.ToTensor # 和 transforms 二选一
+#
+#    target_transform: null # 和 transforms 二选一
+#    download: true
+#
+##    transforms:
+##      - class: torchvision.transforms.ToTensor # 任何一个可调用的
+##      - class: torchvision.transforms.CenterCrop
+##        size: [50,50]
+#
+#  DataLoader:
+#    batch_size: 1  # always1
+#    shuffle: false # torchvision.datasets.SequentialSampler
+#    # torch.utils.data.distributed.DistributedSampler 一样
+#    # torchvision.datasets.samplers.DistributedSampler
+#    # torchvision.datasets.samplers.UniformClipSampler 视频
+#    # torchvision.datasets.samplers.RandomClipSampler
+##    sampler: 靠逻辑
+##      class: torchvision.datasets.RandomSampler
+#    batch_sampler: true # always true
+#    num_workers: 2
+#    collate_fn: null
+#    pin_memory: false
+#    drop_last: false

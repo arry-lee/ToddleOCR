@@ -1,0 +1,107 @@
+Base:
+  use_gpu: true
+  epoch_num: 100
+  log_smooth_window: 20
+  print_batch_step: 2
+  save_model_dir: ./output/east_mv3/
+  save_epoch_step: 10
+  eval_batch_step: [10, 10] # evaluation is run every 5000 iterations after the 4000th iteration
+  cal_metric_during_train: false
+  pretrained_model: ./pretrain_models/MobileNetV3_large_x0_5_pretrained
+  checkpoints:
+  save_inference_dir:
+  use_visualdl: false
+  infer_img:
+  save_res_path: ./output/det_east/predicts_east.txt
+  distributed: false
+
+Model:
+  model_type: det
+  algorithm: EAST
+
+  Backbone:
+    class: ocr.models.det.east.MobileNetV3 # 从相对于运行的脚本的导入路径
+    scale: 0.5
+    model_name: large
+  Neck:
+    class: ocr.models.det.east.EASTFPN
+    model_name: small
+  Head:
+    class: ocr.models.det.east.EASTHead
+    model_name: small
+
+Loss:
+  class: ppocr.losses.det_east_loss.EASTLoss
+
+
+Optimizer:
+  class: torch.optim.Adam
+  lr: 0.001
+  betas: [0.9, 0.999]
+
+  lr_scheduler:
+    class: torch.optim.lr_scheduler.ConstantLR
+
+
+PostProcessor:
+  class: ppocr.postprocess.east_postprocess.EASTPostProcess
+  score_thresh: 0.8
+  cover_thresh: 0.1
+  nms_thresh: 0.2
+
+Metric:
+  class: ppocr.metrics.det_metric.DetMetric
+  main_indicator: hmean
+
+Train:
+  Dataset:
+    class: ocr.datasets.ocr_dataset.FolderDataset
+    root: 'E:/00IT/P/uniform/data/bank'  # COCO-Text 数据集的根目录
+    transforms:
+
+      - class: ppocr.data.imaug.east_process.EASTProcessTrain
+        image_shape: [ 512, 512 ]
+        background_ratio: 0.
+        min_crop_side_ratio: 0.
+        min_text_size: 10
+
+      - class: ppocr.data.imaug.operators.KeepKeys
+        keep_keys: [ 'image', 'score_map', 'geo_map', 'training_mask' ]
+#    download: true
+
+  DataLoader:
+    batch_size: 16
+    shuffle: false
+    batch_sampler: true
+    num_workers: 2
+    pin_memory: false
+    drop_last: false
+
+Eval:
+  Dataset:
+    class: ocr.datasets.ocr_dataset.FolderDataset
+    root: 'E:/00IT/P/uniform/data/banktest'
+    transforms:
+      - class: ppocr.data.imaug.operators.DetResizeForTest
+        limit_side_len: 2400
+        limit_type: max
+
+      - class: ppocr.data.imaug.operators.NormalizeImage
+        scale: 1./255.
+        mean: [ 0.485, 0.456, 0.406 ]
+        std: [ 0.229, 0.224, 0.225 ]
+        order: hwc
+
+      - class: ppocr.data.imaug.operators.ToCHWImage
+
+      - class: ppocr.data.imaug.operators.KeepKeys
+        keep_keys: [ 'image', 'shape', 'polys', 'ignore_tags' ]
+
+  DataLoader:
+    batch_size: 1
+    shuffle: false
+    batch_sampler: true
+    num_workers: 2
+    collate_fn: null
+    pin_memory: false
+    drop_last: false
