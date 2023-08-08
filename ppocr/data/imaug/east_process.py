@@ -338,7 +338,8 @@ class EASTProcessTrain(object):
     def crop_background_infor(self, im, text_polys, text_tags):
         im, text_polys, text_tags = self.crop_area(im, text_polys, text_tags, crop_background=True)
 
-        if len(text_polys) > 0:
+        #???
+        if len(text_polys) == 0:
             return None
         # pad and resize image
         input_size = self.input_size
