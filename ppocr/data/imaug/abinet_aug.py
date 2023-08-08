@@ -21,7 +21,7 @@ import random
 
 import cv2
 import numpy as np
-from torch.vision.transforms import ColorJitter, Compose
+from torchvision.transforms import ColorJitter, Compose
 
 
 def sample_asym(magnitude, size=None):

@@ -18,6 +18,7 @@
 
 import numpy as np
 import torch
+import torchvision
 from torch import nn
 
 __all__ = ["Kie_backbone"]
@@ -140,6 +141,6 @@ class Kie_backbone(nn.Module):
         img, relations, texts, gt_bboxes = self.pre_process(img, relations, texts, gt_bboxes, tag, img_size)
         x = self.img_feat(img)
         boxes, rois_num = self.bbox2roi(gt_bboxes)
-        feats = torch.vision.ops.roi_align(x, boxes, spatial_scale=1.0, output_size=7, boxes_num=rois_num)
+        feats = torchvision.ops.roi_align(x, boxes, spatial_scale=1.0, output_size=7, boxes_num=rois_num)
         feats = self.maxpool(feats).squeeze(-1).squeeze(-1)
         return [relations, texts, feats]
