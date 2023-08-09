@@ -74,7 +74,7 @@ def load_model(config, model, optimizer=None, model_type="det"):
                     checkpoints = checkpoints[:-1]
                 if os.path.exists(checkpoints + ".pdopt"):
                     optim_dict = torch.load(checkpoints + ".pdopt")
-                    optimizer.set_state_dict(optim_dict)
+                    optimizer.load_state_dict(optim_dict)
                 else:
                     logger.warning("{}.pdopt is not exists, params of optimizer is not loaded".format(checkpoints))
 
@@ -106,13 +106,13 @@ def load_model(config, model, optimizer=None, model_type="det"):
                         key, value.shape, pre_value.shape
                     )
                 )
-        model.set_state_dict(new_state_dict)
+        model.load_state_dict(new_state_dict)
         if is_float16:
             logger.info("The parameter type is float16, which is converted to float32 when loading")
         if optimizer is not None:
             if os.path.exists(checkpoints + ".pdopt"):
                 optim_dict = torch.load(checkpoints + ".pdopt")
-                optimizer.set_state_dict(optim_dict)
+                optimizer.load_state_dict(optim_dict)
             else:
                 logger.warning("{}.pdopt is not exists, params of optimizer is not loaded".format(checkpoints))
 
@@ -161,7 +161,7 @@ def load_pretrained_params(model, path):
                     )
                 )
 
-    model.set_state_dict(new_state_dict)
+    model.load_state_dict(new_state_dict)
     if is_float16:
         logger.info("The parameter type is float16, which is converted to float32 when loading")
     logger.info("load pretrain successful from {}".format(path))

@@ -18,7 +18,7 @@ from torch.utils.data import BatchSampler, DataLoader, DistributedSampler, Rando
 from tqdm import tqdm
 
 import torchvision.transforms
-from ocr.save_load import load_model
+from ocr.save_load import load_model, save_model
 from ppocr.utils.stats import SmoothedValue
 
 from loguru import logger
@@ -132,58 +132,6 @@ class TrainingStats(object):
         return strs
 
 
-def _mkdir_if_not_exist(path, logger):
-    """
-    mkdir if not exists, ignore the exception when multiprocess mkdir together
-    """
-    if not os.path.exists(path):
-        try:
-            os.makedirs(path)
-        except OSError as e:
-            if e.errno == errno.EEXIST and os.path.isdir(path):
-                logger.warning(
-                    'be happy if some process has already created {}'.format(
-                        path))
-            else:
-                raise OSError('Failed to mkdir {}'.format(path))
-
-
-def save_model(model,
-               optimizer,
-               model_path,
-               logger,
-               config,
-               is_best=False,
-               prefix='ppocr',
-               **kwargs):
-    """
-    save model to the target path
-    """
-    _mkdir_if_not_exist(model_path, logger)
-    model_prefix = os.path.join(model_path, prefix)
-    torch.save(optimizer.state_dict(), model_prefix + '.pdopt')
-
-    is_nlp_model = config['Model']["model_type"] == 'kie' and config[
-        "Model"]["algorithm"] not in ["SDMGR"]
-    if is_nlp_model is not True:
-        torch.save(model.state_dict(), model_prefix + '.pdparams')
-        metric_prefix = model_prefix
-    else:  # for kie system, we follow the save/load rules in NLP
-        if config['Base']['distributed']:
-            arch = model._layers
-        else:
-            arch = model
-        if config["Model"]["algorithm"] in ["Distillation"]:
-            arch = arch.Student
-        arch.backbone.model.save_pretrained(model_prefix)
-        metric_prefix = os.path.join(model_prefix, 'metric')
-    # save metric and config
-    with open(metric_prefix + '.states', 'wb') as f:
-        pickle.dump(kwargs, f, protocol=2)
-    if is_best:
-        logger.info('save best model is to {}'.format(model_prefix))
-    else:
-        logger.info("save model in {}".format(model_prefix))
 
 
 def valid(model,
@@ -366,7 +314,7 @@ class Pipeline:
         return batch_sampler
 
     def build_dataloader(self, mode, seed=None):
-        # num_workers = self.config[mode]['loader']['num_workers']
+        """Build dataloader for training and validation."""
         dataset = self.get_dataset(mode, seed)
         batch_sampler = self.get_batch_sampler(mode, dataset, seed)
 
@@ -377,7 +325,7 @@ class Pipeline:
             num_workers = 0
             pin_memory = False
 
-        collate_fn = self.config[mode]['DataLoader'].get('collate_fn',None)
+        collate_fn = self.config[mode]['DataLoader'].get('collate_fn', None)
         if collate_fn:
             collate_fn = copy.deepcopy(collate_fn)
             collate_fn_class = dynamic_import(collate_fn.pop('class'))
@@ -390,12 +338,6 @@ class Pipeline:
             pin_memory=pin_memory,
             collate_fn=collate_fn)
         return data_loader
-
-    # @cached_property
-    # def post_processor_class(self):
-    #     self.build_class('PostProcessor')
-    #
-    #     return module_class
 
     def update_config(self):
         config = self.config
@@ -451,13 +393,8 @@ class Pipeline:
         if self.use_dist:
             _model = DDP(_model)
 
-        # _model.to(device)
+        _model.to(self.device)
         return _model
-
-    # def loss(self):
-    @property
-    def loss_class(self):
-        return self.build_class('Loss')[0]
 
     def build_optimizer(self, model):
         # example = Optimizer
@@ -468,39 +405,15 @@ class Pipeline:
         lr_scheduler_name = lr_config.pop('class')
         # torch.optim.Adam
         optimizer = dynamic_import(optim_name)(model.parameters(), **optim_config)
-
-        # epochs = self.global_config['epoch_num']
-        # step_each_epoch = len(self.train_dataloader)
-        # lr_config.update({'epochs': epochs, 'step_each_epoch': step_each_epoch})
-        # torch.optim.lr_scheduler.StepLR
         lr_scheduler = dynamic_import(lr_scheduler_name)(optimizer, **lr_config)
         return optimizer, lr_scheduler
 
-    @property
-    def eval_class(self):
-        return self.build_class('Metric')[0]
-
     def is_rank0(self):
         if self.use_dist:
-            return dist.get_rank()==0
+            return dist.get_rank() == 0
         return True
 
     def train(self, log_writer=None):
-        """
-        config：训练配置，包含了训练过程中所需的各种参数和选项。
-        train_dataloader：训练数据集的数据加载器，用于迭代获取训练数据。
-        valid_dataloader：验证数据集的数据加载器，用于在训练过程中进行评估。
-        device：设备（CPU或GPU）用于训练模型。
-        model：待训练的模型。
-        loss_class：损失函数的类别，用于计算训练过程中的损失。
-        optimizer：优化器，用于更新模型的参数。
-        lr_scheduler：学习率调度器，用于调整优化器的学习率。
-        post_process_class：后处理的类别，用于处理模型输出并得到最终的预测结果。
-        eval_class：评估指标的类别，用于评估模型在验证集上的性能。
-        pre_best_model_dict：之前最佳模型的字典，包含了最佳模型的相关信息。
-        logger：日志记录器，用于打印训练过程中的日志信息。
-        log_writer：日志写入器，将日志信息写入文件。
-        """
         self.init_distributed()
         config = self.config
         train_dataloader = self.train_dataloader
@@ -518,7 +431,6 @@ class Pipeline:
         if valid_dataloader is not None:
             logger.info('valid dataloader has {} iters'.format(len(valid_dataloader)))
 
-        # device = self.device
         model = self.model
         loss_ = self.build_object('Loss')
         optimizer, lr_scheduler = self.build_optimizer(model)
@@ -528,21 +440,19 @@ class Pipeline:
         try:
             pre_best_model_dict = load_model(config, model, logger, optimizer, config['Model']["model_type"])
         except AssertionError:
-            pre_best_model_dict = dict()
+            pre_best_model_dict = {}
         # 下面开始训练
         cal_metric_during_train = self.global_config.get('cal_metric_during_train', False)
         calc_epoch_interval = self.global_config.get('calc_epoch_interval', 1)
         log_smooth_window = self.global_config['log_smooth_window']
         epoch_num = self.global_config['epoch_num']
         print_batch_step = self.global_config['print_batch_step']
-        # profiler_options = config['profiler_options']
         global_step = pre_best_model_dict.get('global_step', 0)
 
         eval_batch_step = self.global_config['eval_batch_step']
         start_eval_step = 0
         if isinstance(eval_batch_step, list) and len(eval_batch_step) == 2:
-            start_eval_step = eval_batch_step[0]
-            eval_batch_step = eval_batch_step[1]
+            start_eval_step,eval_batch_step = eval_batch_step
             if len(valid_dataloader) == 0:
                 logger.info(
                     'No Images in eval dataset, evaluation during training ' \
@@ -556,9 +466,7 @@ class Pipeline:
 
         save_epoch_step = self.global_config['save_epoch_step']
         save_model_dir = self.global_config['save_model_dir']
-
-        if not os.path.exists(save_model_dir):
-            os.makedirs(save_model_dir)
+        os.makedirs(save_model_dir,exist_ok=True)
 
         main_indicator = metric_.main_indicator  # 主要评估指标
         best_model_dict = {main_indicator: 0}
@@ -584,7 +492,7 @@ class Pipeline:
         algorithm = self.config['Model']['algorithm']
 
         # 开始批次
-        start_epoch = best_model_dict['start_epoch'] if 'start_epoch' in best_model_dict else 1
+        start_epoch = best_model_dict.get('start_epoch',1)
 
         total_samples = 0
         train_reader_cost = 0.0
@@ -606,9 +514,7 @@ class Pipeline:
                 max_iter = len(train_dataloader) - 1 if platform.system() == "Windows" else len(train_dataloader)
 
             for idx, batch in enumerate(train_dataloader):
-                # profiler.add_profiler_step(profiler_options)  # 加性能
-                # logger.info('batch',batch)
-                train_reader_cost += time.time() - reader_start  # 训练时间
+                train_reader_cost += time.time() - reader_start  # 训练数据读取时间
                 if idx >= max_iter:
                     break
                 lr = lr_scheduler.get_lr()  # 获取学习率
@@ -616,41 +522,40 @@ class Pipeline:
                 images = batch[0]
 
                 if model_type == 'table' or extra_input:
-                    preds = model(images, data=batch[1:])
+                    predict = model(images, data=batch[1:])
                 elif model_type in ["kie", 'sr']:
-                    preds = model(batch)
+                    predict = model(batch)
                 elif algorithm in ['CAN']:
-                    preds = model(batch[:3])
+                    predict = model(batch[:3])
                 else:
-                    preds = model(images)
-                loss = loss_(preds, batch)
-                avg_loss = loss['loss']
-                avg_loss.backward()
-                optimizer.step()
+                    predict = model(images)
 
+                loss = loss_(predict, batch) # {'loss':...,'other':...}
+                loss['loss'].backward()
+
+                optimizer.step()
                 optimizer.zero_grad()
 
                 # 每多少批次计算精度
                 if cal_metric_during_train and epoch % calc_epoch_interval == 0:  # only rec and cls need
                     batch = [item.numpy() for item in batch]
                     if model_type in ['kie', 'sr']:
-                        metric_(preds, batch)
+                        metric_(predict, batch)
                     elif model_type in ['table']:
-                        post_result = post_processor(preds, batch)
+                        post_result = post_processor(predict, batch)
                         metric_(post_result, batch)
                     elif algorithm in ['CAN']:
                         model_type = 'can'
-                        metric_(preds[0], batch[2:], epoch_reset=(idx == 0))
+                        metric_(predict[0], batch[2:], epoch_reset=(idx == 0))
                     else:
-                        if self.config['Loss']['class'] in ['MultiLoss', 'MultiLoss_v2']:  # for multi head loss
-                            post_result = post_processor(
-                                preds['ctc'], batch[1])  # for CTC head out
+                        if self.config['Loss']['class'] in ['MultiLoss']:  # for multi head loss
+                            post_result = post_processor(predict['ctc'], batch[1])  # for CTC head out
                         elif self.config['Loss']['class'] in ['VLLoss']:
-                            post_result = post_processor(preds, batch[1],
-                                                         batch[-1])
+                            post_result = post_processor(predict, batch[1],batch[-1])
                         else:
-                            post_result = post_processor(preds, batch[1])
+                            post_result = post_processor(predict, batch[1]) ## todo 后处理是Metric之前的必要步骤，应该合入metric中
                         metric_(post_result, batch)
+
                     metric = metric_.get_metric()
                     train_stats.update(metric)
 
@@ -660,11 +565,8 @@ class Pipeline:
                 global_step += 1
                 # 总样本数
                 total_samples += len(images)
-                # 不是浮点数而是类
-                # if not isinstance(lr_scheduler, float):
-                #     lr_scheduler.step()
+
                 lr_scheduler.step()
-                # logger and visualdl
                 stats = {k: v.detach().numpy().mean() for k, v in loss.items()}  # 每一类的平均损失
                 stats['lr'] = lr
                 train_stats.update(stats)
@@ -673,7 +575,7 @@ class Pipeline:
                 # 在分布式训练中，多个进程同时进行模型的训练，每个进程负责处理数据集的一个子集。
                 # 每个进程都有一个唯一的排名，用于标识该进程在整个分布式环境中的位置。dist.get_rank()函数的作用就是获取当前进程的排名。
                 # 通过使用排名，可以根据需要对分布式训练进行不同的配置和调整，例如在不同排名的进程之间进行通信、同步、梯度聚合等操作
-                if log_writer is not None and self.is_rank0():
+                if log_writer and self.is_rank0():
                     log_writer.log_metrics(metrics=train_stats.get(), prefix="TRAIN", step=global_step)
 
                 if self.is_rank0() and (
@@ -700,8 +602,7 @@ class Pipeline:
                     train_batch_cost = 0.0
                 # eval
                 # 超过开始评估的步数且固定长度且是主进程
-                if global_step > start_eval_step and (
-                        global_step - start_eval_step) % eval_batch_step == 0 and self.is_rank0():
+                if global_step > start_eval_step and (global_step - start_eval_step) % eval_batch_step == 0 and self.is_rank0():
                     cur_metric = valid(
                         model,
                         valid_dataloader,
@@ -765,24 +666,25 @@ class Pipeline:
                 if log_writer is not None:
                     log_writer.log_model(is_best=False, prefix="latest")
             # 固定间隔保存模型
-            if self.is_rank0() and epoch > 0 and epoch % save_epoch_step == 0:
-                save_model(
-                    model,
-                    optimizer,
-                    save_model_dir,
-                    logger,
-                    self.config,
-                    is_best=False,
-                    prefix='iter_epoch_{}'.format(epoch),
-                    best_model_dict=best_model_dict,
-                    epoch=epoch,
-                    global_step=global_step)
-                if log_writer is not None:
-                    log_writer.log_model(is_best=False, prefix='iter_epoch_{}'.format(epoch))
+                if epoch > 0 and epoch % save_epoch_step == 0:
+                    save_model(
+                        model,
+                        optimizer,
+                        save_model_dir,
+                        logger,
+                        self.config,
+                        is_best=False,
+                        prefix='iter_epoch_{}'.format(epoch),
+                        best_model_dict=best_model_dict,
+                        epoch=epoch,
+                        global_step=global_step)
+                    if log_writer is not None:
+                        log_writer.log_model(is_best=False, prefix='iter_epoch_{}'.format(epoch))
 
-        best_str = 'best metric, {}'.format(', '.join(['{}: {}'.format(k, v) for k, v in best_model_dict.items()]))
+        best_str = f"best metric, {', '.join(f'{k}: {v}' for k, v in best_model_dict.items())}"
         logger.info(best_str)
-        if self.is_rank0() and log_writer is not None:
+        if log_writer and self.is_rank0():
             log_writer.close()
-        dist.destroy_process_group()
+        if self.use_dist:
+            dist.destroy_process_group()
         return

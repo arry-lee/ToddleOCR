@@ -13,14 +13,7 @@
 # limitations under the License.
 
 
-
-
-
-import torch
 from torch import nn
-
-from .rec_ctc_loss import CTCLoss
-from .rec_sar_loss import SARLoss
 
 
 class MultiLoss(nn.Module):
