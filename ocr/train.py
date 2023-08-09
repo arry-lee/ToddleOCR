@@ -1,30 +1,25 @@
 # 一个通用的训练脚本
 # 角色:
-import collections
 import copy
 import datetime
-import errno
 import importlib
-import logging
 import os
-import pickle
 import platform
 import sys
 import time
 
 import torch
+import torch.distributed as dist
 import torch.nn as nn
+import torchvision.transforms
+from loguru import logger
+from torch.nn.parallel import DistributedDataParallel
 from torch.utils.data import BatchSampler, DataLoader, DistributedSampler, RandomSampler, SequentialSampler
 from tqdm import tqdm
 
-import torchvision.transforms
 from ocr.save_load import load_model, save_model
-from ppocr.utils.stats import SmoothedValue
-
-from loguru import logger
-
-import torch.distributed as dist
-from torch.nn.parallel import DistributedDataParallel as DDP
+from ppocr.utils.stats import TrainingStats
+from ppocr.utils.utility import AverageMeter
 
 
 def dynamic_import(module_path):
@@ -73,7 +68,6 @@ class BaseModel(nn.Module):
         component_params = config.copy()
         del component_params['class']
         component_class = dynamic_import(component_class_name)
-        # Create an instance of the component class with the provided parameters
         component = component_class(**component_params)
         return component
 
@@ -98,46 +92,10 @@ class BaseModel(nn.Module):
             return x
 
 
-class TrainingStats(object):
-    def __init__(self, window_size, stats_keys):
-        self.window_size = window_size
-        self.smoothed_losses_and_metrics = {
-            key: SmoothedValue(window_size)
-            for key in stats_keys
-        }
-
-    def update(self, stats):
-        for k, v in stats.items():
-            if k not in self.smoothed_losses_and_metrics:
-                self.smoothed_losses_and_metrics[k] = SmoothedValue(
-                    self.window_size)
-            self.smoothed_losses_and_metrics[k].add_value(v)
-
-    def get(self, extras=None):
-        stats = collections.OrderedDict()
-        if extras:
-            for k, v in extras.items():
-                stats[k] = v
-        for k, v in self.smoothed_losses_and_metrics.items():
-            stats[k] = round(v.get_median_value(), 6)
-
-        return stats
-
-    def log(self, extras=None):
-        d = self.get(extras)
-        strs = []
-        for k, v in d.items():
-            strs.append('{}: {:x<6f}'.format(k, v))
-        strs = ', '.join(strs)
-        return strs
-
-
-
-
 def valid(model,
           valid_dataloader,
-          post_process_class,
-          eval_class,
+          post_processor,
+          evaluator,
           model_type=None,
           extra_input=False,
           ):
@@ -148,8 +106,7 @@ def valid(model,
         pbar = tqdm(
             total=len(valid_dataloader),
             desc='eval model:',
-            position=0,
-            leave=True)
+            position=0)
         max_iter = len(valid_dataloader) - 1 if platform.system(
         ) == "Windows" else len(valid_dataloader)
         sum_images = 0
@@ -167,8 +124,6 @@ def valid(model,
                 preds = model(batch[:3])
             elif model_type in ['sr']:
                 preds = model(batch)
-                sr_img = preds["sr_img"]
-                lr_img = preds["lr_img"]
             else:
                 preds = model(images)
 
@@ -182,24 +137,24 @@ def valid(model,
             total_time += time.time() - start
             # Evaluate the results of the current batch
             if model_type in ['table', 'kie']:
-                if post_process_class is None:
-                    eval_class(preds, batch_numpy)
+                if post_processor:
+                    post_result = post_processor(preds, batch_numpy)
+                    evaluator(post_result, batch_numpy)
                 else:
-                    post_result = post_process_class(preds, batch_numpy)
-                    eval_class(post_result, batch_numpy)
+                    evaluator(preds, batch_numpy)
             elif model_type in ['sr']:
-                eval_class(preds, batch_numpy)
+                evaluator(preds, batch_numpy)
             elif model_type in ['can']:
-                eval_class(preds[0], batch_numpy[2:], epoch_reset=(idx == 0))
+                evaluator(preds[0], batch_numpy[2:], epoch_reset=(idx == 0))
             else:
-                post_result = post_process_class(preds, batch_numpy[1])
-                eval_class(post_result, batch_numpy)
+                post_result = post_processor(preds, batch_numpy[1])
+                evaluator(post_result, batch_numpy)
 
             pbar.update(1)
             total_frame += len(images)
             sum_images += 1
         # Get final metric，eg. acc or hmean
-        metric = eval_class.get_metric()
+        metric = evaluator.get_metric()
 
     pbar.close()
     model.train()
@@ -207,31 +162,7 @@ def valid(model,
     return metric
 
 
-# dist.get_world_size()
-
-
-class AverageMeter:
-
-    def __init__(self):
-        self.reset()
-
-    def reset(self):
-        self.val = 0
-        self.avg = 0
-        self.sum = 0
-        self.count = 0
-
-    def update(self, val, n=1):
-        self.val = val
-        self.sum += val * n
-        self.count += n
-        self.avg = self.sum / self.count
-
-
 class Pipeline:
-    """
-    Pipeline for training and validation.
-    """
 
     def __init__(self, config):
         self.config = config
@@ -275,7 +206,7 @@ class Pipeline:
             return self.build_dataloader('Eval')
         return None
 
-    def get_dataset(self, mode, seed):
+    def get_dataset(self, mode):
         # torchvision.datasets.DatasetFolder
         dataset_config = copy.deepcopy(self.config[mode]['Dataset'])
         if dataset_config.get('transform'):
@@ -315,7 +246,7 @@ class Pipeline:
 
     def build_dataloader(self, mode, seed=None):
         """Build dataloader for training and validation."""
-        dataset = self.get_dataset(mode, seed)
+        dataset = self.get_dataset(mode)
         batch_sampler = self.get_batch_sampler(mode, dataset, seed)
 
         if self.use_gpu:
@@ -341,10 +272,10 @@ class Pipeline:
 
     def update_config(self):
         config = self.config
-        post_process_class = self.build_object('PostProcessor')
+        post_processor = self.build_object('PostProcessor')
 
-        if hasattr(post_process_class, 'character'):
-            char_num = len(getattr(post_process_class, 'character'))
+        if hasattr(post_processor, 'character'):
+            char_num = len(getattr(post_processor, 'character'))
             if config['Model']["algorithm"] in ["Distillation", ]:  # distillation model
                 for key in config['Model']["Models"]:
                     if config['Model']['Models'][key]['Head']['class'] == 'MultiHead':  # for multi head
@@ -391,7 +322,7 @@ class Pipeline:
             logger.info('convert_sync_batchnorm')
 
         if self.use_dist:
-            _model = DDP(_model)
+            _model = DistributedDataParallel(_model)
 
         _model.to(self.device)
         return _model
@@ -452,7 +383,7 @@ class Pipeline:
         eval_batch_step = self.global_config['eval_batch_step']
         start_eval_step = 0
         if isinstance(eval_batch_step, list) and len(eval_batch_step) == 2:
-            start_eval_step,eval_batch_step = eval_batch_step
+            start_eval_step, eval_batch_step = eval_batch_step
             if len(valid_dataloader) == 0:
                 logger.info(
                     'No Images in eval dataset, evaluation during training ' \
@@ -466,7 +397,7 @@ class Pipeline:
 
         save_epoch_step = self.global_config['save_epoch_step']
         save_model_dir = self.global_config['save_model_dir']
-        os.makedirs(save_model_dir,exist_ok=True)
+        os.makedirs(save_model_dir, exist_ok=True)
 
         main_indicator = metric_.main_indicator  # 主要评估指标
         best_model_dict = {main_indicator: 0}
@@ -492,7 +423,7 @@ class Pipeline:
         algorithm = self.config['Model']['algorithm']
 
         # 开始批次
-        start_epoch = best_model_dict.get('start_epoch',1)
+        start_epoch = best_model_dict.get('start_epoch', 1)
 
         total_samples = 0
         train_reader_cost = 0.0
@@ -530,7 +461,7 @@ class Pipeline:
                 else:
                     predict = model(images)
 
-                loss = loss_(predict, batch) # {'loss':...,'other':...}
+                loss = loss_(predict, batch)  # {'loss':...,'other':...}
                 loss['loss'].backward()
 
                 optimizer.step()
@@ -551,9 +482,9 @@ class Pipeline:
                         if self.config['Loss']['class'] in ['MultiLoss']:  # for multi head loss
                             post_result = post_processor(predict['ctc'], batch[1])  # for CTC head out
                         elif self.config['Loss']['class'] in ['VLLoss']:
-                            post_result = post_processor(predict, batch[1],batch[-1])
+                            post_result = post_processor(predict, batch[1], batch[-1])
                         else:
-                            post_result = post_processor(predict, batch[1]) ## todo 后处理是Metric之前的必要步骤，应该合入metric中
+                            post_result = post_processor(predict, batch[1])  ## todo 后处理是Metric之前的必要步骤，应该合入metric中
                         metric_(post_result, batch)
 
                     metric = metric_.get_metric()
@@ -602,7 +533,8 @@ class Pipeline:
                     train_batch_cost = 0.0
                 # eval
                 # 超过开始评估的步数且固定长度且是主进程
-                if global_step > start_eval_step and (global_step - start_eval_step) % eval_batch_step == 0 and self.is_rank0():
+                if global_step > start_eval_step and (
+                        global_step - start_eval_step) % eval_batch_step == 0 and self.is_rank0():
                     cur_metric = valid(
                         model,
                         valid_dataloader,
@@ -665,7 +597,7 @@ class Pipeline:
 
                 if log_writer is not None:
                     log_writer.log_model(is_best=False, prefix="latest")
-            # 固定间隔保存模型
+                # 固定间隔保存模型
                 if epoch > 0 and epoch % save_epoch_step == 0:
                     save_model(
                         model,

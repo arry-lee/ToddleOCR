@@ -32,3 +32,5 @@ paddleocr.egg-info/
 /deploy/android_demo/app/cache/
 test_tipc/web/models/
 test_tipc/web/node_modules/
+/train_data/
+*.pdparams
