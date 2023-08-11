@@ -1,51 +1,32 @@
-# copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+"""
+criterion = paddle.nn.CrossEntropyLoss()
+l1_decay = L1Decay(weight_decay=0.01)
+l2_decay = L2Decay(weight_decay=0.01)
+parameters = model.parameters()
 
-
-
-
-
-
+loss = criterion(outputs, labels) + l1_decay(parameters) + l2_decay(parameters)
+"""
 import torch
+import torch.nn as nn
 
-
-class L1Decay(object):
-    """
-    L1 Weight Decay Regularization, which encourages the weights to be sparse.
-    Args:
-        factor(float): regularization coeff. Default:0.0.
-    """
-
-    def __init__(self, factor=0.0):
+class L1Decay(nn.Module):
+    def __init__(self, weight_decay=0.01):
         super(L1Decay, self).__init__()
-        self.coeff = factor
+        self.weight_decay = weight_decay
 
-    def __call__(self):
-        reg = torch.regularizer.L1Decay(self.coeff)
-        return reg
+    def forward(self, parameters):
+        decay = torch.tensor(0., dtype=torch.float32)
+        for param in parameters:
+            decay += torch.norm(param, p=1)
+        return self.weight_decay * decay
 
-
-class L2Decay(object):
-    """
-    L2 Weight Decay Regularization, which helps to prevent the model over-fitting.
-    Args:
-        factor(float): regularization coeff. Default:0.0.
-    """
-
-    def __init__(self, factor=0.0):
+class L2Decay(nn.Module):
+    def __init__(self, weight_decay=0.01):
         super(L2Decay, self).__init__()
-        self.coeff = float(factor)
+        self.weight_decay = weight_decay
 
-    def __call__(self):
-        return self.coeff
+    def forward(self, parameters):
+        decay = torch.tensor(0., dtype=torch.float32)
+        for param in parameters:
+            decay += torch.norm(param, p=2)
+        return 0.5 * self.weight_decay * decay * decay
