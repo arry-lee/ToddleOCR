@@ -43,7 +43,7 @@ class BaseModel(nn.Module):
     def __init__(self, config):
         super().__init__()
 
-        self.model_components = nn.ModuleDict()
+        model_components = {}
 
         in_channels = config.get('in_channels', 3)
         self.model_type = config['model_type']
@@ -58,10 +58,14 @@ class BaseModel(nn.Module):
                 if component_config is None:
                     continue
                 component_config['in_channels'] = prev_component_out_channels
-                self.model_components[component_name] = self.build_component(component_config)
-                prev_component_out_channels = getattr(self.model_components[component_name], "out_channels", None)
+                model_components[component_name] = self.build_component(component_config)
+                self.add_module(component_name.lower(), model_components[component_name])
+                prev_component_out_channels = getattr(model_components[component_name], "out_channels", None)
 
         self.return_all_feats = config.get("return_all_feats", False)
+
+        # for k,v in model_components.items():
+        #     setattr(self, k.lower(), v)
 
     def build_component(self, config):
         component_class_name = config['class']
@@ -74,7 +78,7 @@ class BaseModel(nn.Module):
     def forward(self, x):
         out_dict = {}
 
-        for module_name, module in self.model_components.items():
+        for module_name, module in self.named_children():
             x = module(x)
             if isinstance(x, dict):
                 out_dict.update(x)
@@ -583,6 +587,7 @@ class Pipeline:
 
             # 每个轮次都保存模型
             if self.is_rank0():
+                logger.info("Save model checkpoint to {}".format(save_model_dir))
                 save_model(
                     model,
                     optimizer,
