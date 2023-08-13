@@ -61,8 +61,8 @@ Train:
     ratio_list: [ 1.0 ]
     transforms:
       - name: DecodeImage
-          img_mode: RGB
-          channel_first: False
+        img_mode: RGB
+        channel_first: False
       - name: CTLabelEncode # Class handling label
       - name: RandomScale
       - name: MakeShrink
@@ -71,12 +71,12 @@ Train:
       - name: GroupRandomCropPadding
       - name: MakeCentripetalShift
       - name: ColorJitter
-          brightness: 0.125
-          saturation: 0.5
+        brightness: 0.125
+        saturation: 0.5
       - name: ToCHWImage
       - name: NormalizeImage
       - name: KeepKeys
-          keep_keys: [ 'image', 'gt_kernel', 'training_mask', 'gt_instance', 'gt_kernel_instance', 'training_mask_distance', 'gt_distance' ] # the order of the dataloader list
+        keep_keys: [ 'image', 'gt_kernel', 'training_mask', 'gt_instance', 'gt_kernel_instance', 'training_mask_distance', 'gt_distance' ] # the order of the dataloader list
   DataLoader:
     shuffle: True
     drop_last: True
@@ -92,15 +92,15 @@ Eval:
     ratio_list: [ 1.0 ]
     transforms:
       - name: DecodeImage
-          img_mode: RGB
-          channel_first: False
+        img_mode: RGB
+        channel_first: False
       - name: CTLabelEncode # Class handling label
       - name: ScaleAlignedShort
       - name: NormalizeImage
-          order: 'hwc'
+        order: 'hwc'
       - name: ToCHWImage
       - name: KeepKeys
-          keep_keys: [ 'image', 'shape', 'polys', 'texts' ] # the order of the dataloader list
+        keep_keys: [ 'image', 'shape', 'polys', 'texts' ] # the order of the dataloader list
   DataLoader:
     shuffle: False
     drop_last: False

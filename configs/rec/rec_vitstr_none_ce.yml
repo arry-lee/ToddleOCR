@@ -62,17 +62,17 @@ Train:
     data_dir: ./train_data/data_lmdb_release/training/
     transforms:
       - name: DecodeImage # load image
-          img_mode: BGR
-          channel_first: False
+        img_mode: BGR
+        channel_first: False
       - name: ViTSTRLabelEncode # Class handling label
-          ignore_index: *ignore_index
+        ignore_index: *ignore_index
       - name: GrayRecResizeImg
-          image_shape: [ 224, 224 ] # W H
-          resize_type: PIL # PIL or OpenCV
-          inter_type: 'Image.BICUBIC'
-          scale: false
+        image_shape: [ 224, 224 ] # W H
+        resize_type: PIL # PIL or OpenCV
+        inter_type: 'Image.BICUBIC'
+        scale: false
       - name: KeepKeys
-          keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
+        keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
     batch_size: 48
@@ -85,17 +85,17 @@ Eval:
     data_dir: ./train_data/data_lmdb_release/evaluation/
     transforms:
       - name: DecodeImage # load image
-          img_mode: BGR
-          channel_first: False
+        img_mode: BGR
+        channel_first: False
       - name: ViTSTRLabelEncode # Class handling label
-          ignore_index: *ignore_index
+        ignore_index: *ignore_index
       - name: GrayRecResizeImg
-          image_shape: [ 224, 224 ] # W H
-          resize_type: PIL # PIL or OpenCV
-          inter_type: 'Image.BICUBIC'
-          scale: false
+        image_shape: [ 224, 224 ] # W H
+        resize_type: PIL # PIL or OpenCV
+        inter_type: 'Image.BICUBIC'
+        scale: false
       - name: KeepKeys
-          keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
+        keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False
     drop_last: False

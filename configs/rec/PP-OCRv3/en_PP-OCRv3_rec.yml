@@ -46,17 +46,17 @@ Model:
     name: MultiHead
     head_list:
       - name: CTCHead
-          Neck:
-            name: svtr
-            dims: 64
-            depth: 2
-            hidden_dims: 120
-            use_guide: True
-          Head:
-            fc_decay: 0.00001
+        Neck:
+          name: svtr
+          dims: 64
+          depth: 2
+          hidden_dims: 120
+          use_guide: True
+        Head:
+          fc_decay: 0.00001
       - name: SARHead
-          enc_dim: 512
-          max_text_length: *max_text_length
+        enc_dim: 512
+        max_text_length: *max_text_length
 
 Loss:
   name: MultiLoss
@@ -81,19 +81,19 @@ Train:
       - ./train_data/train_list.txt
     transforms:
       - name: DecodeImage
-          img_mode: BGR
-          channel_first: false
+        img_mode: BGR
+        channel_first: false
       - name: RecConAug
-          prob: 0.5
-          ext_data_num: 2
-          image_shape: [ 48, 320, 3 ]
-          max_text_length: *max_text_length
+        prob: 0.5
+        ext_data_num: 2
+        image_shape: [ 48, 320, 3 ]
+        max_text_length: *max_text_length
       - name: RecAug
       - name: MultiLabelEncode
       - name: RecResizeImg
-          image_shape: [ 3, 48, 320 ]
+        image_shape: [ 3, 48, 320 ]
       - name: KeepKeys
-          keep_keys:
+        keep_keys:
             - image
             - label_ctc
             - label_sar
@@ -112,13 +112,13 @@ Eval:
       - ./train_data/val_list.txt
     transforms:
       - name: DecodeImage
-          img_mode: BGR
-          channel_first: false
+        img_mode: BGR
+        channel_first: false
       - name: MultiLabelEncode
       - name: RecResizeImg
-          image_shape: [ 3, 48, 320 ]
+        image_shape: [ 3, 48, 320 ]
       - name: KeepKeys
-          keep_keys:
+        keep_keys:
             - image
             - label_ctc
             - label_sar

@@ -64,14 +64,14 @@ Train:
     data_dir: ./train_data/data_lmdb_release/training/
     transforms:
       - name: DecodeImage # load image
-          img_mode: BGR
-          channel_first: False
+        img_mode: BGR
+        channel_first: False
       - name: NRTRLabelEncode # Class handling label
       - name: GrayRecResizeImg
-          image_shape: [ 100, 32 ] # W H
-          resize_type: PIL # PIL or OpenCV
+        image_shape: [ 100, 32 ] # W H
+        resize_type: PIL # PIL or OpenCV
       - name: KeepKeys
-          keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
+        keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
     batch_size: 512
@@ -84,14 +84,14 @@ Eval:
     data_dir: ./train_data/data_lmdb_release/evaluation/
     transforms:
       - name: DecodeImage # load image
-          img_mode: BGR
-          channel_first: False
+        img_mode: BGR
+        channel_first: False
       - name: NRTRLabelEncode # Class handling label
       - name: GrayRecResizeImg
-          image_shape: [ 100, 32 ] # W H
-          resize_type: PIL # PIL or OpenCV
+        image_shape: [ 100, 32 ] # W H
+        resize_type: PIL # PIL or OpenCV
       - name: KeepKeys
-          keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
+        keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False
     drop_last: False

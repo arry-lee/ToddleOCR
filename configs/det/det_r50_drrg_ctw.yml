@@ -63,38 +63,38 @@ Train:
       - ./train_data/ctw1500/imgs/training.txt
     transforms:
       - name: DecodeImage # load image
-          img_mode: BGR
-          channel_first: False
-          ignore_orientation: True
+        img_mode: BGR
+        channel_first: False
+        ignore_orientation: True
       - name: DetLabelEncode # Class handling label
       - name: ColorJitter
-          brightness: 0.12549019607843137
-          saturation: 0.5
+        brightness: 0.12549019607843137
+        saturation: 0.5
       - name: RandomScaling
       - name: RandomCropFlip
-          crop_ratio: 0.5
+        crop_ratio: 0.5
       - name: RandomCropPolyInstances
-          crop_ratio: 0.8
-          min_side_ratio: 0.3
+        crop_ratio: 0.8
+        min_side_ratio: 0.3
       - name: RandomRotatePolyInstances
-          rotate_ratio: 0.5
-          max_angle: 60
-          pad_with_fixed_color: False
+        rotate_ratio: 0.5
+        max_angle: 60
+        pad_with_fixed_color: False
       - name: SquareResizePad
-          target_size: 800
-          pad_ratio: 0.6
+        target_size: 800
+        pad_ratio: 0.6
       - name: IaaAugment
-          augmenter_args:
+        augmenter_args:
             - { 'type': Fliplr, 'args': { 'p': 0.5 } }
       - name: DRRGTargets
       - name: NormalizeImage
-          scale: 1./255.
-          mean: [ 0.485, 0.456, 0.406 ]
-          std: [ 0.229, 0.224, 0.225 ]
-          order: 'hwc'
+        scale: 1./255.
+        mean: [ 0.485, 0.456, 0.406 ]
+        std: [ 0.229, 0.224, 0.225 ]
+        order: 'hwc'
       - name: ToCHWImage
       - name: KeepKeys
-          keep_keys: [ 'image', 'gt_text_mask', 'gt_center_region_mask', 'gt_mask',
+        keep_keys: [ 'image', 'gt_text_mask', 'gt_center_region_mask', 'gt_mask',
                        'gt_top_height_map', 'gt_bot_height_map', 'gt_sin_map',
                        'gt_cos_map', 'gt_comp_attribs' ] # dataloader will return list in this order
   DataLoader:
@@ -111,22 +111,22 @@ Eval:
       - ./train_data/ctw1500/imgs/test.txt
     transforms:
       - name: DecodeImage # load image
-          img_mode: BGR
-          channel_first: False
-          ignore_orientation: True
+        img_mode: BGR
+        channel_first: False
+        ignore_orientation: True
       - name: DetLabelEncode # Class handling label
       - name: DetResizeForTest
-          limit_type: 'min'
-          limit_side_len: 640
+        limit_type: 'min'
+        limit_side_len: 640
       - name: NormalizeImage
-          scale: 1./255.
-          mean: [ 0.485, 0.456, 0.406 ]
-          std: [ 0.229, 0.224, 0.225 ]
-          order: 'hwc'
+        scale: 1./255.
+        mean: [ 0.485, 0.456, 0.406 ]
+        std: [ 0.229, 0.224, 0.225 ]
+        order: 'hwc'
       - name: Pad
       - name: ToCHWImage
       - name: KeepKeys
-          keep_keys: [ 'image', 'shape', 'polys', 'ignore_tags' ]
+        keep_keys: [ 'image', 'shape', 'polys', 'ignore_tags' ]
   DataLoader:
     shuffle: False
     drop_last: False

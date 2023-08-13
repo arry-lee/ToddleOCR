@@ -75,15 +75,15 @@ Train:
     data_dir: ./train_data/data_lmdb_release/training
     transforms:
       - name: DecodeImage # load image
-          img_mode: BGR
-          channel_first: False
+        img_mode: BGR
+        channel_first: False
       - name: RFLLabelEncode # Class handling label
       - name: RFLRecResizeImg
-          image_shape: [ 1, 32, 100 ]
-          padding: false
-          interpolation: 2
+        image_shape: [ 1, 32, 100 ]
+        padding: false
+        interpolation: 2
       - name: KeepKeys
-          keep_keys: [ 'image', 'label', 'length', 'cnt_label' ] # dataloader will return list in this order
+        keep_keys: [ 'image', 'label', 'length', 'cnt_label' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
     batch_size: 64
@@ -96,15 +96,15 @@ Eval:
     data_dir: ./train_data/data_lmdb_release/validation/
     transforms:
       - name: DecodeImage # load image
-          img_mode: BGR
-          channel_first: False
+        img_mode: BGR
+        channel_first: False
       - name: RFLLabelEncode # Class handling label
       - name: RFLRecResizeImg
-          image_shape: [ 1, 32, 100 ]
-          padding: false
-          interpolation: 2
+        image_shape: [ 1, 32, 100 ]
+        padding: false
+        interpolation: 2
       - name: KeepKeys
-          keep_keys: [ 'image', 'label', 'length', 'cnt_label' ] # dataloader will return list in this order
+        keep_keys: [ 'image', 'label', 'length', 'cnt_label' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False
     drop_last: False

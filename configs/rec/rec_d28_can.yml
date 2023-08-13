@@ -79,17 +79,17 @@ Train:
     label_file_list: [ "./train_data/CROHME/training/labels.txt" ]
     transforms:
       - name: DecodeImage
-          channel_first: False
+        channel_first: False
       - name: NormalizeImage
-          mean: [ 0,0,0 ]
-          std: [ 1,1,1 ]
-          order: 'hwc'
+        mean: [ 0,0,0 ]
+        std: [ 1,1,1 ]
+        order: 'hwc'
       - name: GrayImageChannelFormat
-          inverse: True
+        inverse: True
       - name: CANLabelEncode
-          lower: False
+        lower: False
       - name: KeepKeys
-          keep_keys: [ 'image', 'label' ]
+        keep_keys: [ 'image', 'label' ]
   DataLoader:
     shuffle: True
     batch_size: 8
@@ -104,17 +104,17 @@ Eval:
     label_file_list: [ "./train_data/CROHME/evaluation/labels.txt" ]
     transforms:
       - name: DecodeImage
-          channel_first: False
+        channel_first: False
       - name: NormalizeImage
-          mean: [ 0,0,0 ]
-          std: [ 1,1,1 ]
-          order: 'hwc'
+        mean: [ 0,0,0 ]
+        std: [ 1,1,1 ]
+        order: 'hwc'
       - name: GrayImageChannelFormat
-          inverse: True
+        inverse: True
       - name: CANLabelEncode
-          lower: False
+        lower: False
       - name: KeepKeys
-          keep_keys: [ 'image', 'label' ]
+        keep_keys: [ 'image', 'label' ]
   DataLoader:
     shuffle: False
     drop_last: False

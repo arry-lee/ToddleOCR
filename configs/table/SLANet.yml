@@ -76,29 +76,29 @@ Train:
     label_file_list: [ train_data/table/pubtabnet/PubTabNet_2.0.0_train.jsonl ]
     transforms:
       - name: DecodeImage # load image
-          img_mode: BGR
-          channel_first: False
+        img_mode: BGR
+        channel_first: False
       - name: TableLabelEncode
-          learn_empty_box: False
-          merge_no_span_structure: *merge_no_span_structure
-          replace_empty_cell_token: False
-          loc_reg_num: *loc_reg_num
-          max_text_length: *max_text_length
+        learn_empty_box: False
+        merge_no_span_structure: *merge_no_span_structure
+        replace_empty_cell_token: False
+        loc_reg_num: *loc_reg_num
+        max_text_length: *max_text_length
       - name: TableBoxEncode
-          in_box_format: *box_format
-          out_box_format: *box_format
+        in_box_format: *box_format
+        out_box_format: *box_format
       - name: ResizeTableImage
-          max_len: 488
+        max_len: 488
       - name: NormalizeImage
-          scale: 1./255.
-          mean: [ 0.485, 0.456, 0.406 ]
-          std: [ 0.229, 0.224, 0.225 ]
-          order: 'hwc'
+        scale: 1./255.
+        mean: [ 0.485, 0.456, 0.406 ]
+        std: [ 0.229, 0.224, 0.225 ]
+        order: 'hwc'
       - name: PaddingTableImage
-          size: [ 488, 488 ]
+        size: [ 488, 488 ]
       - name: ToCHWImage
       - name: KeepKeys
-          keep_keys: [ 'image', 'structure', 'bboxes', 'bbox_masks', 'shape' ]
+        keep_keys: [ 'image', 'structure', 'bboxes', 'bbox_masks', 'shape' ]
   DataLoader:
     shuffle: True
     batch_size: 48
@@ -112,29 +112,29 @@ Eval:
     label_file_list: [ train_data/table/pubtabnet/PubTabNet_2.0.0_val.jsonl ]
     transforms:
       - name: DecodeImage # load image
-          img_mode: BGR
-          channel_first: False
+        img_mode: BGR
+        channel_first: False
       - name: TableLabelEncode
-          learn_empty_box: False
-          merge_no_span_structure: *merge_no_span_structure
-          replace_empty_cell_token: False
-          loc_reg_num: *loc_reg_num
-          max_text_length: *max_text_length
+        learn_empty_box: False
+        merge_no_span_structure: *merge_no_span_structure
+        replace_empty_cell_token: False
+        loc_reg_num: *loc_reg_num
+        max_text_length: *max_text_length
       - name: TableBoxEncode
-          in_box_format: *box_format
-          out_box_format: *box_format
+        in_box_format: *box_format
+        out_box_format: *box_format
       - name: ResizeTableImage
-          max_len: 488
+        max_len: 488
       - name: NormalizeImage
-          scale: 1./255.
-          mean: [ 0.485, 0.456, 0.406 ]
-          std: [ 0.229, 0.224, 0.225 ]
-          order: 'hwc'
+        scale: 1./255.
+        mean: [ 0.485, 0.456, 0.406 ]
+        std: [ 0.229, 0.224, 0.225 ]
+        order: 'hwc'
       - name: PaddingTableImage
-          size: [ 488, 488 ]
+        size: [ 488, 488 ]
       - name: ToCHWImage
       - name: KeepKeys
-          keep_keys: [ 'image', 'structure', 'bboxes', 'bbox_masks', 'shape' ]
+        keep_keys: [ 'image', 'structure', 'bboxes', 'bbox_masks', 'shape' ]
   DataLoader:
     shuffle: False
     drop_last: False

@@ -81,16 +81,16 @@ Train:
     data_dir: ./train_data/data_lmdb_release/training/
     transforms:
       - name: DecodeImage # load image
-          img_mode: BGR
-          channel_first: False
+        img_mode: BGR
+        channel_first: False
       - name: SVTRRecAug
-          aug_type: 0 # or 1
+        aug_type: 0 # or 1
       - name: CTCLabelEncode # Class handling label
       - name: SVTRRecResizeImg
-          image_shape: [ 3, 64, 256 ]
-          padding: False
+        image_shape: [ 3, 64, 256 ]
+        padding: False
       - name: KeepKeys
-          keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
+        keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
     batch_size: 512
@@ -103,14 +103,14 @@ Eval:
     data_dir: ./train_data/data_lmdb_release/evaluation/
     transforms:
       - name: DecodeImage # load image
-          img_mode: BGR
-          channel_first: False
+        img_mode: BGR
+        channel_first: False
       - name: CTCLabelEncode # Class handling label
       - name: SVTRRecResizeImg
-          image_shape: [ 3, 64, 256 ]
-          padding: False
+        image_shape: [ 3, 64, 256 ]
+        padding: False
       - name: KeepKeys
-          keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
+        keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False
     drop_last: False

@@ -62,17 +62,17 @@ Train:
       - train_data/devanagari_train.txt
     transforms:
       - name: DecodeImage
-          img_mode: BGR
-          channel_first: false
+        img_mode: BGR
+        channel_first: false
       - name: RecAug null
       - name: CTCLabelEncode null
       - name: RecResizeImg
-          image_shape:
+        image_shape:
             - 3
             - 32
             - 320
       - name: KeepKeys
-          keep_keys:
+        keep_keys:
             - image
             - label
             - length
@@ -89,16 +89,16 @@ Eval:
       - train_data/devanagari_val.txt
     transforms:
       - name: DecodeImage
-          img_mode: BGR
-          channel_first: false
+        img_mode: BGR
+        channel_first: false
       - name: CTCLabelEncode null
       - name: RecResizeImg
-          image_shape:
+        image_shape:
             - 3
             - 32
             - 320
       - name: KeepKeys
-          keep_keys:
+        keep_keys:
             - image
             - label
             - length

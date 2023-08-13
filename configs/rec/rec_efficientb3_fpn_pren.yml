@@ -58,14 +58,14 @@ Train:
     data_dir: ./train_data/data_lmdb_release/training/
     transforms:
       - name: DecodeImage
-          img_mode: BGR
-          channel_first: False
+        img_mode: BGR
+        channel_first: False
       - name: PRENLabelEncode
       - name: RecAug
       - name: PRENResizeImg
-          image_shape: [ 64, 256 ]  # h,w
+        image_shape: [ 64, 256 ]  # h,w
       - name: KeepKeys
-          keep_keys: [ 'image', 'label' ]
+        keep_keys: [ 'image', 'label' ]
   DataLoader:
     shuffle: True
     batch_size: 128
@@ -78,13 +78,13 @@ Eval:
     data_dir: ./train_data/data_lmdb_release/validation/
     transforms:
       - name: DecodeImage
-          img_mode: BGR
-          channel_first: False
+        img_mode: BGR
+        channel_first: False
       - name: PRENLabelEncode
       - name: PRENResizeImg
-          image_shape: [ 64, 256 ]  # h,w
+        image_shape: [ 64, 256 ]  # h,w
       - name: KeepKeys
-          keep_keys: [ 'image', 'label' ]
+        keep_keys: [ 'image', 'label' ]
   DataLoader:
     shuffle: False
     drop_last: False

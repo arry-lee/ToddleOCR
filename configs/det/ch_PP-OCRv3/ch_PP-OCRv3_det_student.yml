@@ -70,51 +70,51 @@ Train:
     ratio_list: [ 1.0 ]
     transforms:
       - name: DecodeImage
-          img_mode: BGR
-          channel_first: false
+        img_mode: BGR
+        channel_first: false
       - name: DetLabelEncode null
       - name: IaaAugment
-          augmenter_args:
+        augmenter_args:
             - type: Fliplr
-              args:
-                p: 0.5
+            args:
+              p: 0.5
             - type: Affine
-              args:
-                rotate:
+            args:
+              rotate:
                   - -10
                   - 10
             - type: Resize
-              args:
-                size:
+            args:
+              size:
                   - 0.5
                   - 3
       - name: EastRandomCropData
-          size:
+        size:
             - 960
             - 960
-          max_tries: 50
-          keep_ratio: true
+        max_tries: 50
+        keep_ratio: true
       - name: MakeBorderMap
-          shrink_ratio: 0.4
-          thresh_min: 0.3
-          thresh_max: 0.7
+        shrink_ratio: 0.4
+        thresh_min: 0.3
+        thresh_max: 0.7
       - name: MakeShrinkMap
-          shrink_ratio: 0.4
-          min_text_size: 8
+        shrink_ratio: 0.4
+        min_text_size: 8
       - name: NormalizeImage
-          scale: 1./255.
-          mean:
+        scale: 1./255.
+        mean:
             - 0.485
             - 0.456
             - 0.406
-          std:
+        std:
             - 0.229
             - 0.224
             - 0.225
-          order: hwc
+        order: hwc
       - name: ToCHWImage null
       - name: KeepKeys
-          keep_keys:
+        keep_keys:
             - image
             - threshold_map
             - threshold_mask
@@ -133,24 +133,24 @@ Eval:
       - ./train_data/icdar2015/text_localization/test_icdar2015_label.txt
     transforms:
       - name: DecodeImage
-          img_mode: BGR
-          channel_first: false
+        img_mode: BGR
+        channel_first: false
       - name: DetLabelEncode null
       - name: DetResizeForTest null
       - name: NormalizeImage
-          scale: 1./255.
-          mean:
+        scale: 1./255.
+        mean:
             - 0.485
             - 0.456
             - 0.406
-          std:
+        std:
             - 0.229
             - 0.224
             - 0.225
-          order: hwc
+        order: hwc
       - name: ToCHWImage null
       - name: KeepKeys
-          keep_keys:
+        keep_keys:
             - image
             - shape
             - polys

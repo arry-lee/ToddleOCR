@@ -62,14 +62,14 @@ Train:
       - ./train_data/train_list.txt
     transforms:
       - name: DecodeImage
-          img_mode: BGR
-          channel_first: false
+        img_mode: BGR
+        channel_first: false
       - name: BaseDataAugmentation
       - name: RandAugment
       - name: SSLRotateResize
-          image_shape: [ 3, 48, 320 ]
+        image_shape: [ 3, 48, 320 ]
       - name: KeepKeys
-          keep_keys: [ "image", "label" ]
+        keep_keys: [ "image", "label" ]
   DataLoader:
     collate_fn: "SSLRotateCollate"
     shuffle: true
@@ -84,12 +84,12 @@ Eval:
       - ./train_data/val_list.txt
     transforms:
       - name: DecodeImage
-          img_mode: BGR
-          channel_first: false
+        img_mode: BGR
+        channel_first: false
       - name: SSLRotateResize
-          image_shape: [ 3, 48, 320 ]
+        image_shape: [ 3, 48, 320 ]
       - name: KeepKeys
-          keep_keys: [ "image", "label" ]
+        keep_keys: [ "image", "label" ]
   DataLoader:
     collate_fn: "SSLRotateCollate"
     shuffle: false

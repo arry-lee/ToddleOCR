@@ -56,15 +56,15 @@ Train:
       - ./train_data/cls/train.txt
     transforms:
       - name: DecodeImage # load image
-          img_mode: BGR
-          channel_first: False
+        img_mode: BGR
+        channel_first: False
       - name: ClsLabelEncode # Class handling label
       - name: BaseDataAugmentation
       - name: RandAugment
       - name: ClsResizeImg
-          image_shape: [ 3, 48, 192 ]
+        image_shape: [ 3, 48, 192 ]
       - name: KeepKeys
-          keep_keys: [ 'image', 'label' ] # dataloader will return list in this order
+        keep_keys: [ 'image', 'label' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
     batch_size: 512
@@ -79,13 +79,13 @@ Eval:
       - ./train_data/cls/test.txt
     transforms:
       - name: DecodeImage # load image
-          img_mode: BGR
-          channel_first: False
+        img_mode: BGR
+        channel_first: False
       - name: ClsLabelEncode # Class handling label
       - name: ClsResizeImg
-          image_shape: [ 3, 48, 192 ]
+        image_shape: [ 3, 48, 192 ]
       - name: KeepKeys
-          keep_keys: [ 'image', 'label' ] # dataloader will return list in this order
+        keep_keys: [ 'image', 'label' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False
     drop_last: False

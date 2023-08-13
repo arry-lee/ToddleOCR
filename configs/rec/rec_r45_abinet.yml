@@ -62,15 +62,15 @@ Train:
     data_dir: ./train_data/data_lmdb_release/training/
     transforms:
       - name: DecodeImage # load image
-          img_mode: RGB
-          channel_first: False
+        img_mode: RGB
+        channel_first: False
       - name: ABINetRecAug
       - name: ABINetLabelEncode # Class handling label
-          ignore_index: *ignore_index
+        ignore_index: *ignore_index
       - name: ABINetRecResizeImg
-          image_shape: [ 3, 32, 128 ]
+        image_shape: [ 3, 32, 128 ]
       - name: KeepKeys
-          keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
+        keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
     batch_size: 96
@@ -83,14 +83,14 @@ Eval:
     data_dir: ./train_data/data_lmdb_release/evaluation/
     transforms:
       - name: DecodeImage # load image
-          img_mode: RGB
-          channel_first: False
+        img_mode: RGB
+        channel_first: False
       - name: ABINetLabelEncode # Class handling label
-          ignore_index: *ignore_index
+        ignore_index: *ignore_index
       - name: ABINetRecResizeImg
-          image_shape: [ 3, 32, 128 ]
+        image_shape: [ 3, 32, 128 ]
       - name: KeepKeys
-          keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
+        keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False
     drop_last: False
