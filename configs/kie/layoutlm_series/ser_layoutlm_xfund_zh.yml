@@ -38,8 +38,8 @@ LRScheduler:
   
   epochs: *epoch_num
   warmup_epoch: 2
-  
-    
+
+
 PostProcessor:
   name: VQASerTokenLayoutLMPostProcess
   class_path: &class_path train_data/XFUND/class_list_xfun.txt
@@ -52,7 +52,7 @@ Train:
   Dataset:
     name: SimpleDataSet
     data_dir: train_data/XFUND/zh_train/image
-    label_file_list: 
+    label_file_list:
       - train_data/XFUND/zh_train/train.json
     ratio_list: [ 1.0 ]
     transforms:
@@ -69,7 +69,7 @@ Train:
       - VQASerTokenChunk:
           max_seq_len: *max_seq_len
       - Resize:
-          size: [224,224]
+          size: [ 224,224 ]
       - NormalizeImage:
           scale: 1
           mean: [ 123.675, 116.28, 103.53 ]
@@ -77,7 +77,7 @@ Train:
           order: 'hwc'
       - ToCHWImage:
       - KeepKeys:
-          keep_keys: [ 'input_ids', 'bbox', 'attention_mask', 'token_type_ids', 'image', 'labels'] # dataloader will return list in this order
+          keep_keys: [ 'input_ids', 'bbox', 'attention_mask', 'token_type_ids', 'image', 'labels' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
     drop_last: False
@@ -104,7 +104,7 @@ Eval:
       - VQASerTokenChunk:
           max_seq_len: *max_seq_len
       - Resize:
-          size: [224,224]
+          size: [ 224,224 ]
       - NormalizeImage:
           scale: 1
           mean: [ 123.675, 116.28, 103.53 ]
@@ -112,7 +112,7 @@ Eval:
           order: 'hwc'
       - ToCHWImage:
       - KeepKeys:
-          keep_keys: [ 'input_ids', 'bbox', 'attention_mask', 'token_type_ids', 'image', 'labels'] # dataloader will return list in this order
+          keep_keys: [ 'input_ids', 'bbox', 'attention_mask', 'token_type_ids', 'image', 'labels' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False
     drop_last: False

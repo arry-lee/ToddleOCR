@@ -6,11 +6,11 @@ Global:
   save_model_dir: ./output/sr/sr_telescope/
   save_epoch_step: 3
   # evaluation is run every 2000 iterations
-  eval_batch_step: [0, 1000]
+  eval_batch_step: [ 0, 1000 ]
   cal_metric_during_train: False
   pretrained_model:
   checkpoints:
-  save_inference_dir:  ./output/sr/sr_telescope/infer
+  save_inference_dir: ./output/sr/sr_telescope/infer
   use_visualdl: False
   infer_img: doc/imgs_words_en/word_52.png
   # for data or label process
@@ -27,7 +27,7 @@ Optimizer:
   clip_norm: 0.25
   lr: 0.0001
 LRScheduler:
-  
+
 
 Model:
   model_type: sr
@@ -59,7 +59,7 @@ Train:
           imgW: 128
           down_sample_scale: 2
       - KeepKeys:
-          keep_keys: ['img_lr', 'img_hr', 'label'] # dataloader will return list in this order
+          keep_keys: [ 'img_lr', 'img_hr', 'label' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False
     batch_size: 16
@@ -76,7 +76,7 @@ Eval:
           imgW: 128
           down_sample_scale: 2
       - KeepKeys:
-          keep_keys: ['img_lr', 'img_hr', 'label'] # dataloader will return list in this order
+          keep_keys: [ 'img_lr', 'img_hr', 'label' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False
     drop_last: False

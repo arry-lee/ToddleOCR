@@ -6,7 +6,7 @@ Global:
   save_model_dir: ./output/ch_db_mv3/
   save_epoch_step: 1200
   # evaluation is run every 5000 iterations after the 4000th iteration
-  eval_batch_step: [3000, 2000]
+  eval_batch_step: [ 3000, 2000 ]
   cal_metric_during_train: False
   pretrained_model: ./pretrain_models/MobileNetV3_large_x0_5_pretrained
   checkpoints:
@@ -33,7 +33,7 @@ Model:
         out_channels: 256
       Head:
         name: DBHead
-        kernel_list: [7,2,2]
+        kernel_list: [ 7,2,2 ]
         k: 50
     Student2:
       return_all_feats: false
@@ -48,31 +48,31 @@ Model:
         out_channels: 256
       Head:
         name: DBHead
-        kernel_list: [7,2,2]
+        kernel_list: [ 7,2,2 ]
         k: 50
 
 
 Loss:
   name: CombinedLoss
   loss_config_list:
-  - DistillationDMLLoss:
-      model_name_pairs:
-      - ["Student", "Student2"]
-      maps_name: "thrink_maps"
-      weight: 1.0
-      # act: None
-      model_name_pairs: ["Student", "Student2"]
-      key: maps
-  - DistillationDBLoss:
-      weight: 1.0
-      model_name_list: ["Student", "Student2"]
-      # key: maps
-      name: DBLoss
-      balance_loss: true
-      main_loss_type: DiceLoss
-      alpha: 5
-      beta: 10
-      ohem_ratio: 3
+    - DistillationDMLLoss:
+        model_name_pairs:
+          - [ "Student", "Student2" ]
+        maps_name: "thrink_maps"
+        weight: 1.0
+        # act: None
+        model_name_pairs: [ "Student", "Student2" ]
+        key: maps
+    - DistillationDBLoss:
+        weight: 1.0
+        model_name_list: [ "Student", "Student2" ]
+        # key: maps
+        name: DBLoss
+        balance_loss: true
+        main_loss_type: DiceLoss
+        alpha: 5
+        beta: 10
+        ohem_ratio: 3
 
 
 Optimizer:
@@ -84,11 +84,11 @@ LRScheduler:
   name: Cosine
   
   warmup_epoch: 2
-  
+
 
 PostProcessor:
   name: DistillationDBPostProcess
-  model_name: ["Student", "Student2"]
+  model_name: [ "Student", "Student2" ]
   key: head_out
   thresh: 0.3
   box_thresh: 0.6
@@ -107,7 +107,7 @@ Train:
     data_dir: ./train_data/icdar2015/text_localization/
     label_file_list:
       - ./train_data/icdar2015/text_localization/train_icdar2015_label.txt
-    ratio_list: [1.0]
+    ratio_list: [ 1.0 ]
     transforms:
       - DecodeImage: # load image
           img_mode: BGR
@@ -117,10 +117,10 @@ Train:
       - IaaAugment:
           augmenter_args:
             - { 'type': Fliplr, 'args': { 'p': 0.5 } }
-            - { 'type': Affine, 'args': { 'rotate': [-10, 10] } }
-            - { 'type': Resize, 'args': { 'size': [0.5, 3] } }
+            - { 'type': Affine, 'args': { 'rotate': [ -10, 10 ] } }
+            - { 'type': Resize, 'args': { 'size': [ 0.5, 3 ] } }
       - EastRandomCropData:
-          size: [960, 960]
+          size: [ 960, 960 ]
           max_tries: 50
           keep_ratio: true
       - MakeBorderMap:
@@ -132,12 +132,12 @@ Train:
           min_text_size: 8
       - NormalizeImage:
           scale: 1./255.
-          mean: [0.485, 0.456, 0.406]
-          std: [0.229, 0.224, 0.225]
+          mean: [ 0.485, 0.456, 0.406 ]
+          std: [ 0.229, 0.224, 0.225 ]
           order: 'hwc'
       - ToCHWImage:
       - KeepKeys:
-          keep_keys: ['image', 'threshold_map', 'threshold_mask', 'shrink_map', 'shrink_mask'] # the order of the dataloader list
+          keep_keys: [ 'image', 'threshold_map', 'threshold_mask', 'shrink_map', 'shrink_mask' ] # the order of the dataloader list
   DataLoader:
     shuffle: True
     drop_last: False
@@ -156,15 +156,15 @@ Eval:
           channel_first: False
       - DetLabelEncode: # Class handling label
       - DetResizeForTest:
-#           image_shape: [736, 1280]
+      #           image_shape: [736, 1280]
       - NormalizeImage:
           scale: 1./255.
-          mean: [0.485, 0.456, 0.406]
-          std: [0.229, 0.224, 0.225]
+          mean: [ 0.485, 0.456, 0.406 ]
+          std: [ 0.229, 0.224, 0.225 ]
           order: 'hwc'
       - ToCHWImage:
       - KeepKeys:
-          keep_keys: ['image', 'shape', 'polys', 'ignore_tags']
+          keep_keys: [ 'image', 'shape', 'polys', 'ignore_tags' ]
   DataLoader:
     shuffle: False
     drop_last: False

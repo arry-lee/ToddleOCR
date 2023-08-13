@@ -6,7 +6,7 @@ Global:
   save_model_dir: ./output/rec/r45_abinet/
   save_epoch_step: 1
   # evaluation is run every 2000 iterations
-  eval_batch_step: [0, 2000]
+  eval_batch_step: [ 0, 2000 ]
   cal_metric_during_train: True
   pretrained_model: ./pretrain_models/abinet_vl_pretrained
   checkpoints:
@@ -28,9 +28,9 @@ Optimizer:
   clip_norm: 20.0
 LRScheduler:
   name: Piecewise
-  decay_epochs: [6]
-  values: [0.0001, 0.00001] 
-  
+  decay_epochs: [ 6 ]
+  values: [ 0.0001, 0.00001 ]
+
 
 Model:
   model_type: rec
@@ -43,7 +43,7 @@ Model:
     name: ABINetHead
     use_lang: True
     iter_size: 3
-    
+
 
 Loss:
   name: CELoss
@@ -68,9 +68,9 @@ Train:
       - ABINetLabelEncode: # Class handling label
           ignore_index: *ignore_index
       - ABINetRecResizeImg:
-          image_shape: [3, 32, 128]
+          image_shape: [ 3, 32, 128 ]
       - KeepKeys:
-          keep_keys: ['image', 'label', 'length'] # dataloader will return list in this order
+          keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
     batch_size: 96
@@ -88,9 +88,9 @@ Eval:
       - ABINetLabelEncode: # Class handling label
           ignore_index: *ignore_index
       - ABINetRecResizeImg:
-          image_shape: [3, 32, 128]
+          image_shape: [ 3, 32, 128 ]
       - KeepKeys:
-          keep_keys: ['image', 'label', 'length'] # dataloader will return list in this order
+          keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False
     drop_last: False

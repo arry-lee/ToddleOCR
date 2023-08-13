@@ -6,7 +6,7 @@ Global:
   print_batch_step: 10
   save_model_dir: ./output/rec_mobile_pp-OCRv2_enhanced_ctc_loss
   save_epoch_step: 3
-  eval_batch_step: [0, 2000]
+  eval_batch_step: [ 0, 2000 ]
   cal_metric_during_train: true
   pretrained_model:
   checkpoints:
@@ -27,10 +27,10 @@ Optimizer:
   beta2: 0.999
 LRScheduler:
   name: Piecewise
-  decay_epochs: [700]
-  values : [0.001, 0.0001]
+  decay_epochs: [ 700 ]
+  values: [ 0.001, 0.0001 ]
   warmup_epoch: 5
-  
+
 
 
 Model:
@@ -53,14 +53,14 @@ Model:
 Loss:
   name: CombinedLoss
   loss_config_list:
-  - CTCLoss:
-      use_focal_loss: false
-      weight: 1.0
-  - CenterLoss:
-      weight: 0.05
-      num_classes: 6625
-      feat_dim: 96
-      center_file_path:
+    - CTCLoss:
+        use_focal_loss: false
+        weight: 1.0
+    - CenterLoss:
+        weight: 0.05
+        num_classes: 6625
+        feat_dim: 96
+        center_file_path:
   # you can also try to add ace loss on your own Dataset
   # - ACELoss:
   #     weight: 0.1
@@ -77,21 +77,21 @@ Train:
     name: SimpleDataSet
     data_dir: ./train_data/
     label_file_list:
-    - ./train_data/train_list.txt
+      - ./train_data/train_list.txt
     transforms:
-    - DecodeImage:
-        img_mode: BGR
-        channel_first: false
-    - RecAug:
-    - CTCLabelEncode:
-    - RecResizeImg:
-        image_shape: [3, 32, 320]
-    - KeepKeys:
-        keep_keys:
-        - image
-        - label
-        - length
-        - label_ace
+      - DecodeImage:
+          img_mode: BGR
+          channel_first: false
+      - RecAug:
+      - CTCLabelEncode:
+      - RecResizeImg:
+          image_shape: [ 3, 32, 320 ]
+      - KeepKeys:
+          keep_keys:
+            - image
+            - label
+            - length
+            - label_ace
   DataLoader:
     shuffle: true
     batch_size: 128
@@ -102,19 +102,19 @@ Eval:
     name: SimpleDataSet
     data_dir: ./train_data
     label_file_list:
-    - ./train_data/val_list.txt
+      - ./train_data/val_list.txt
     transforms:
-    - DecodeImage:
-        img_mode: BGR
-        channel_first: false
-    - CTCLabelEncode:
-    - RecResizeImg:
-        image_shape: [3, 32, 320]
-    - KeepKeys:
-        keep_keys:
-        - image
-        - label
-        - length
+      - DecodeImage:
+          img_mode: BGR
+          channel_first: false
+      - CTCLabelEncode:
+      - RecResizeImg:
+          image_shape: [ 3, 32, 320 ]
+      - KeepKeys:
+          keep_keys:
+            - image
+            - label
+            - length
   DataLoader:
     shuffle: false
     drop_last: false

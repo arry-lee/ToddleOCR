@@ -6,7 +6,7 @@ Global:
   save_model_dir: ./output/sr/sr_tsrn_transformer_strock/
   save_epoch_step: 3
   # evaluation is run every 2000 iterations
-  eval_batch_step: [0, 1000]
+  eval_batch_step: [ 0, 1000 ]
   cal_metric_during_train: False
   pretrained_model:
   checkpoints:
@@ -58,7 +58,7 @@ Train:
           down_sample_scale: 2
       - SRLabelEncode: # Class handling label
       - KeepKeys:
-          keep_keys: ['img_lr', 'img_hr', 'length', 'input_tensor', 'label'] # dataloader will return list in this order
+          keep_keys: [ 'img_lr', 'img_hr', 'length', 'input_tensor', 'label' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False
     batch_size: 16
@@ -76,7 +76,7 @@ Eval:
           down_sample_scale: 2
       - SRLabelEncode: # Class handling label
       - KeepKeys:
-          keep_keys: ['img_lr', 'img_hr','length', 'input_tensor', 'label'] # dataloader will return list in this order
+          keep_keys: [ 'img_lr', 'img_hr','length', 'input_tensor', 'label' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False
     drop_last: False

@@ -6,7 +6,7 @@ Global:
   print_batch_step: 10
   save_model_dir: ./output/rec_ppocr_v3_rotnet
   save_epoch_step: 3
-  eval_batch_step: [0, 2000]
+  eval_batch_step: [ 0, 2000 ]
   cal_metric_during_train: true
   pretrained_model: null
   checkpoints: null
@@ -18,7 +18,7 @@ Global:
   infer_mode: false
   use_space_char: true
   save_res_path: ./output/rec/predicts_chinese_lite_v2.0.txt
-  
+
 Optimizer:
   name: Adam
   beta1: 0.9
@@ -26,9 +26,9 @@ Optimizer:
   lr: 0.001
 LRScheduler:
   name: Cosine
-  
-  
-    
+
+
+
 Model:
   model_type: cls
   algorithm: CLS
@@ -36,7 +36,7 @@ Model:
   Backbone:
     name: MobileNetV1Enhance
     scale: 0.5
-    last_conv_stride: [1, 2]
+    last_conv_stride: [ 1, 2 ]
     last_pool_type: avg
   Neck:
   Head:
@@ -59,17 +59,17 @@ Train:
     name: SimpleDataSet
     data_dir: ./train_data
     label_file_list:
-    - ./train_data/train_list.txt
+      - ./train_data/train_list.txt
     transforms:
-    - DecodeImage:
-        img_mode: BGR
-        channel_first: false
-    - BaseDataAugmentation:
-    - RandAugment:
-    - SSLRotateResize:
-        image_shape: [3, 48, 320]
-    - KeepKeys:
-        keep_keys: ["image", "label"]
+      - DecodeImage:
+          img_mode: BGR
+          channel_first: false
+      - BaseDataAugmentation:
+      - RandAugment:
+      - SSLRotateResize:
+          image_shape: [ 3, 48, 320 ]
+      - KeepKeys:
+          keep_keys: [ "image", "label" ]
   DataLoader:
     collate_fn: "SSLRotateCollate"
     shuffle: true
@@ -81,15 +81,15 @@ Eval:
     name: SimpleDataSet
     data_dir: ./train_data
     label_file_list:
-    - ./train_data/val_list.txt
+      - ./train_data/val_list.txt
     transforms:
-    - DecodeImage:
-        img_mode: BGR
-        channel_first: false
-    - SSLRotateResize:
-        image_shape: [3, 48, 320]
-    - KeepKeys:
-        keep_keys: ["image", "label"]
+      - DecodeImage:
+          img_mode: BGR
+          channel_first: false
+      - SSLRotateResize:
+          image_shape: [ 3, 48, 320 ]
+      - KeepKeys:
+          keep_keys: [ "image", "label" ]
   DataLoader:
     collate_fn: "SSLRotateCollate"
     shuffle: false

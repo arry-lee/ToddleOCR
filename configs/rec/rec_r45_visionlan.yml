@@ -6,10 +6,10 @@ Global:
   save_model_dir: ./output/rec/r45_visionlan
   save_epoch_step: 1
   # evaluation is run every 2000 iterations
-  eval_batch_step: [0, 2000]
+  eval_batch_step: [ 0, 2000 ]
   cal_metric_during_train: True
   pretrained_model:
-  checkpoints: 
+  checkpoints:
   save_inference_dir:
   use_visualdl: True
   infer_img: doc/imgs_words/en/word_2.png
@@ -30,9 +30,9 @@ Optimizer:
   training_step: *training_step
 LRScheduler:
   name: Piecewise
-  decay_epochs: [6]
-  values: [0.0001, 0.00001] 
-  
+  decay_epochs: [ 6 ]
+  values: [ 0.0001, 0.00001 ]
+
 
 Model:
   model_type: rec
@@ -40,7 +40,7 @@ Model:
   Transform:
   Backbone:
     name: ResNet45
-    strides: [2, 2, 2, 1, 1]
+    strides: [ 2, 2, 2, 1, 1 ]
   Head:
     name: VLHead
     n_layers: 3
@@ -74,9 +74,9 @@ Train:
       - ABINetRecAug:
       - VLLabelEncode: # Class handling label
       - VLRecResizeImg:
-          image_shape: [3, 64, 256]
+          image_shape: [ 3, 64, 256 ]
       - KeepKeys:
-          keep_keys: ['image', 'label', 'label_res', 'label_sub', 'label_id', 'length'] # dataloader will return list in this order
+          keep_keys: [ 'image', 'label', 'label_res', 'label_sub', 'label_id', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
     batch_size: 220
@@ -93,9 +93,9 @@ Eval:
           channel_first: False
       - VLLabelEncode: # Class handling label
       - VLRecResizeImg:
-          image_shape: [3, 64, 256]
+          image_shape: [ 3, 64, 256 ]
       - KeepKeys:
-          keep_keys: ['image', 'label', 'label_res', 'label_sub', 'label_id', 'length'] # dataloader will return list in this order
+          keep_keys: [ 'image', 'label', 'label_res', 'label_sub', 'label_id', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False
     drop_last: False

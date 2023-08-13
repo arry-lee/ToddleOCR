@@ -6,8 +6,8 @@ Global:
   save_model_dir: ./output/rec_devanagari_lite
   save_epoch_step: 3
   eval_batch_step:
-  - 0
-  - 2000
+    - 0
+    - 2000
   cal_metric_during_train: true
   pretrained_model: null
   checkpoints: null
@@ -25,8 +25,8 @@ Optimizer:
   lr: 0.001
 LRScheduler:
   name: Cosine
-  
-  
+
+
 Model:
   model_type: rec
   algorithm: CRNN
@@ -36,10 +36,10 @@ Model:
     scale: 0.5
     model_name: small
     small_stride:
-    - 1
-    - 2
-    - 2
-    - 2
+      - 1
+      - 2
+      - 2
+      - 2
   Neck:
     name: SequenceEncoder
     encoder_type: rnn
@@ -59,23 +59,23 @@ Train:
     name: SimpleDataSet
     data_dir: train_data/
     label_file_list:
-    - train_data/devanagari_train.txt
+      - train_data/devanagari_train.txt
     transforms:
-    - DecodeImage:
-        img_mode: BGR
-        channel_first: false
-    - RecAug: null
-    - CTCLabelEncode: null
-    - RecResizeImg:
-        image_shape:
-        - 3
-        - 32
-        - 320
-    - KeepKeys:
-        keep_keys:
-        - image
-        - label
-        - length
+      - DecodeImage:
+          img_mode: BGR
+          channel_first: false
+      - RecAug: null
+      - CTCLabelEncode: null
+      - RecResizeImg:
+          image_shape:
+            - 3
+            - 32
+            - 320
+      - KeepKeys:
+          keep_keys:
+            - image
+            - label
+            - length
   DataLoader:
     shuffle: true
     batch_size: 256
@@ -86,22 +86,22 @@ Eval:
     name: SimpleDataSet
     data_dir: train_data/
     label_file_list:
-    - train_data/devanagari_val.txt
+      - train_data/devanagari_val.txt
     transforms:
-    - DecodeImage:
-        img_mode: BGR
-        channel_first: false
-    - CTCLabelEncode: null
-    - RecResizeImg:
-        image_shape:
-        - 3
-        - 32
-        - 320
-    - KeepKeys:
-        keep_keys:
-        - image
-        - label
-        - length
+      - DecodeImage:
+          img_mode: BGR
+          channel_first: false
+      - CTCLabelEncode: null
+      - RecResizeImg:
+          image_shape:
+            - 3
+            - 32
+            - 320
+      - KeepKeys:
+          keep_keys:
+            - image
+            - label
+            - length
   DataLoader:
     shuffle: false
     drop_last: false

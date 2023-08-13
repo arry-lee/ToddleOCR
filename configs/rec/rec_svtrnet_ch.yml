@@ -6,8 +6,8 @@ Global:
   save_model_dir: ./output/rec/svtr_ch_all/
   save_epoch_step: 10
   eval_batch_step:
-  - 0
-  - 2000
+    - 0
+    - 2000
   cal_metric_during_train: true
   pretrained_model: null
   checkpoints: null
@@ -39,43 +39,43 @@ Model:
   Backbone:
     name: SVTRNet
     img_size:
-    - 32
-    - 320
+      - 32
+      - 320
     out_char_num: 40 # W//4 or W//8 or W/12
     out_channels: 96
     patch_merging: Conv
     embed_dim:
-    - 64
-    - 128
-    - 256
+      - 64
+      - 128
+      - 256
     depth:
-    - 3
-    - 6
-    - 3
+      - 3
+      - 6
+      - 3
     num_heads:
-    - 2
-    - 4
-    - 8
+      - 2
+      - 4
+      - 8
     mixer:
-    - Local
-    - Local
-    - Local
-    - Local
-    - Local
-    - Local
-    - Global
-    - Global
-    - Global
-    - Global
-    - Global
-    - Global
+      - Local
+      - Local
+      - Local
+      - Local
+      - Local
+      - Local
+      - Global
+      - Global
+      - Global
+      - Global
+      - Global
+      - Global
     local_mixer:
-    - - 7
-      - 11
-    - - 7
-      - 11
-    - - 7
-      - 11
+      - - 7
+        - 11
+      - - 7
+        - 11
+      - - 7
+        - 11
     last_stage: true
     prenorm: false
   Neck:
@@ -95,32 +95,32 @@ Train:
     name: SimpleDataSet
     data_dir: ./train_data
     label_file_list:
-    - ./train_data/train_list.txt
+      - ./train_data/train_list.txt
     ext_op_transform_idx: 1
     transforms:
-    - DecodeImage:
-        img_mode: BGR
-        channel_first: false
-    - RecConAug:
-        prob: 0.5
-        ext_data_num: 2
-        image_shape:
-        - 32
-        - 320
-        - 3
-    - RecAug: null
-    - CTCLabelEncode: null
-    - SVTRRecResizeImg:
-        image_shape:
-        - 3
-        - 32
-        - 320
-        padding: true
-    - KeepKeys:
-        keep_keys:
-        - image
-        - label
-        - length
+      - DecodeImage:
+          img_mode: BGR
+          channel_first: false
+      - RecConAug:
+          prob: 0.5
+          ext_data_num: 2
+          image_shape:
+            - 32
+            - 320
+            - 3
+      - RecAug: null
+      - CTCLabelEncode: null
+      - SVTRRecResizeImg:
+          image_shape:
+            - 3
+            - 32
+            - 320
+          padding: true
+      - KeepKeys:
+          keep_keys:
+            - image
+            - label
+            - length
   DataLoader:
     shuffle: true
     batch_size: 256
@@ -131,23 +131,23 @@ Eval:
     name: SimpleDataSet
     data_dir: ./train_data
     label_file_list:
-    - ./train_data/val_list.txt
+      - ./train_data/val_list.txt
     transforms:
-    - DecodeImage:
-        img_mode: BGR
-        channel_first: false
-    - CTCLabelEncode: null
-    - SVTRRecResizeImg:
-        image_shape:
-        - 3
-        - 32
-        - 320
-        padding: true
-    - KeepKeys:
-        keep_keys:
-        - image
-        - label
-        - length
+      - DecodeImage:
+          img_mode: BGR
+          channel_first: false
+      - CTCLabelEncode: null
+      - SVTRRecResizeImg:
+          image_shape:
+            - 3
+            - 32
+            - 320
+          padding: true
+      - KeepKeys:
+          keep_keys:
+            - image
+            - label
+            - length
   DataLoader:
     shuffle: false
     drop_last: false

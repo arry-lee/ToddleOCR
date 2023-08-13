@@ -6,9 +6,9 @@ Global:
   save_model_dir: ./output/rec/srn_new
   save_epoch_step: 3
   # evaluation is run every 5000 iterations after the 4000th iteration
-  eval_batch_step: [0, 5000]
+  eval_batch_step: [ 0, 5000 ]
   cal_metric_during_train: True
-  pretrained_model: 
+  pretrained_model:
   checkpoints:
   save_inference_dir:
   use_visualdl: False
@@ -29,7 +29,7 @@ Optimizer:
   clip_norm: 10.0
   lr: 0.0001
 LRScheduler:
-  
+
 
 Model:
   model_type: rec
@@ -66,15 +66,15 @@ Train:
           channel_first: False
       - SRNLabelEncode: # Class handling label
       - SRNRecResizeImg:
-          image_shape: [1, 64, 256]
+          image_shape: [ 1, 64, 256 ]
       - KeepKeys:
-          keep_keys: ['image',
-                      'label',
-                      'length',
-                      'encoder_word_pos',
-                      'gsrm_word_pos',
-                      'gsrm_slf_attn_bias1',
-                      'gsrm_slf_attn_bias2'] # dataloader will return list in this order
+          keep_keys: [ 'image',
+                       'label',
+                       'length',
+                       'encoder_word_pos',
+                       'gsrm_word_pos',
+                       'gsrm_slf_attn_bias1',
+                       'gsrm_slf_attn_bias2' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False
     batch_size: 64
@@ -91,15 +91,15 @@ Eval:
           channel_first: False
       - SRNLabelEncode: # Class handling label
       - SRNRecResizeImg:
-          image_shape: [1, 64, 256]
+          image_shape: [ 1, 64, 256 ]
       - KeepKeys:
-          keep_keys: ['image',
-                      'label',
-                      'length',
-                      'encoder_word_pos',
-                      'gsrm_word_pos',
-                      'gsrm_slf_attn_bias1',
-                      'gsrm_slf_attn_bias2'] 
+          keep_keys: [ 'image',
+                       'label',
+                       'length',
+                       'encoder_word_pos',
+                       'gsrm_word_pos',
+                       'gsrm_slf_attn_bias1',
+                       'gsrm_slf_attn_bias2' ]
   DataLoader:
     shuffle: False
     drop_last: False

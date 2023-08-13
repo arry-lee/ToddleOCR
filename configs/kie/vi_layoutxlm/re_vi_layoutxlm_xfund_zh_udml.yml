@@ -47,27 +47,27 @@ Model:
 Loss:
   name: CombinedLoss
   loss_config_list:
-  - DistillationLossFromOutput:
-      weight: 1.0
-      model_name_list: ["Student", "Teacher"]
-      key: loss
-      reduction: mean
-  - DistillationVQADistanceLoss:
-      weight: 0.5
-      mode: "l2"
-      model_name_pairs:
-        - ["Student", "Teacher"]
-      key: hidden_states
-      index: 5
-      name: "loss_5"
-  - DistillationVQADistanceLoss:
-      weight: 0.5
-      mode: "l2"
-      model_name_pairs:
-        - ["Student", "Teacher"]
-      key: hidden_states
-      index: 8
-      name: "loss_8"
+    - DistillationLossFromOutput:
+        weight: 1.0
+        model_name_list: [ "Student", "Teacher" ]
+        key: loss
+        reduction: mean
+    - DistillationVQADistanceLoss:
+        weight: 0.5
+        mode: "l2"
+        model_name_pairs:
+          - [ "Student", "Teacher" ]
+        key: hidden_states
+        index: 5
+        name: "loss_5"
+    - DistillationVQADistanceLoss:
+        weight: 0.5
+        mode: "l2"
+        model_name_pairs:
+          - [ "Student", "Teacher" ]
+        key: hidden_states
+        index: 8
+        name: "loss_8"
 
 
 Optimizer:
@@ -79,11 +79,11 @@ Optimizer:
 LRScheduler:
   
   warmup_epoch: 10
-  
-    
+
+
 PostProcessor:
   name: DistillationRePostProcess
-  model_name: ["Student", "Teacher"]
+  model_name: [ "Student", "Teacher" ]
   key: null
 
 
@@ -97,7 +97,7 @@ Train:
   Dataset:
     name: SimpleDataSet
     data_dir: train_data/XFUND/zh_train/image
-    label_file_list: 
+    label_file_list:
       - train_data/XFUND/zh_train/train.json
     ratio_list: [ 1.0 ]
     transforms:
@@ -119,7 +119,7 @@ Train:
           max_seq_len: *max_seq_len
       - TensorizeEntitiesRelations:
       - Resize:
-          size: [224,224]
+          size: [ 224,224 ]
       - NormalizeImage:
           scale: 1
           mean: [ 123.675, 116.28, 103.53 ]
@@ -127,7 +127,7 @@ Train:
           order: 'hwc'
       - ToCHWImage:
       - KeepKeys:
-          keep_keys: [ 'input_ids', 'bbox','attention_mask', 'token_type_ids', 'entities', 'relations'] # dataloader will return list in this order
+          keep_keys: [ 'input_ids', 'bbox','attention_mask', 'token_type_ids', 'entities', 'relations' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
     drop_last: False
@@ -158,7 +158,7 @@ Eval:
           max_seq_len: *max_seq_len
       - TensorizeEntitiesRelations:
       - Resize:
-          size: [224,224]
+          size: [ 224,224 ]
       - NormalizeImage:
           scale: 1
           mean: [ 123.675, 116.28, 103.53 ]
@@ -166,7 +166,7 @@ Eval:
           order: 'hwc'
       - ToCHWImage:
       - KeepKeys:
-          keep_keys: [ 'input_ids', 'bbox', 'attention_mask', 'token_type_ids', 'entities', 'relations'] # dataloader will return list in this order
+          keep_keys: [ 'input_ids', 'bbox', 'attention_mask', 'token_type_ids', 'entities', 'relations' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False
     drop_last: False

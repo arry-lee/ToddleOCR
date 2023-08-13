@@ -6,7 +6,7 @@ Global:
   save_model_dir: ./output/rec/vitstr_none_ce/
   save_epoch_step: 1
   # evaluation is run every 2000 iterations after the 0th iteration#
-  eval_batch_step: [0, 2000]
+  eval_batch_step: [ 0, 2000 ]
   cal_metric_during_train: True
   pretrained_model:
   checkpoints:
@@ -28,7 +28,7 @@ Optimizer:
   clip_norm: 5.0
   lr: 1.0
 LRScheduler:
-  
+
 
 Model:
   model_type: rec
@@ -67,12 +67,12 @@ Train:
       - ViTSTRLabelEncode: # Class handling label
           ignore_index: *ignore_index
       - GrayRecResizeImg:
-          image_shape: [224, 224] # W H
+          image_shape: [ 224, 224 ] # W H
           resize_type: PIL # PIL or OpenCV
           inter_type: 'Image.BICUBIC'
           scale: false
       - KeepKeys:
-          keep_keys: ['image', 'label', 'length'] # dataloader will return list in this order
+          keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
     batch_size: 48
@@ -90,12 +90,12 @@ Eval:
       - ViTSTRLabelEncode: # Class handling label
           ignore_index: *ignore_index
       - GrayRecResizeImg:
-          image_shape: [224, 224] # W H
+          image_shape: [ 224, 224 ] # W H
           resize_type: PIL # PIL or OpenCV
           inter_type: 'Image.BICUBIC'
           scale: false
       - KeepKeys:
-          keep_keys: ['image', 'label', 'length'] # dataloader will return list in this order
+          keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False
     drop_last: False

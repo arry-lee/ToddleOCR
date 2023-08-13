@@ -6,7 +6,7 @@ Global:
   print_batch_step: 10
   save_model_dir: ./output/v3_ta_mobile
   save_epoch_step: 3
-  eval_batch_step: [0, 2000]
+  eval_batch_step: [ 0, 2000 ]
   cal_metric_during_train: true
   pretrained_model:
   checkpoints:
@@ -30,7 +30,7 @@ LRScheduler:
   name: Cosine
   
   warmup_epoch: 5
-  
+
 
 
 Model:
@@ -40,7 +40,7 @@ Model:
   Backbone:
     name: MobileNetV1Enhance
     scale: 0.5
-    last_conv_stride: [1, 2]
+    last_conv_stride: [ 1, 2 ]
     last_pool_type: avg
   Head:
     name: MultiHead
@@ -64,7 +64,7 @@ Loss:
     - CTCLoss:
     - SARLoss:
 
-PostProcessor:  
+PostProcessor:
   name: CTCLabelDecode
 
 Metric:
@@ -78,26 +78,26 @@ Train:
     data_dir: ./train_data/
     ext_op_transform_idx: 1
     label_file_list:
-    - ./train_data/train_list.txt
+      - ./train_data/train_list.txt
     transforms:
-    - DecodeImage:
-        img_mode: BGR
-        channel_first: false
-    - RecConAug:
-        prob: 0.5
-        ext_data_num: 2
-        image_shape: [48, 320, 3]
-    - RecAug:
-    - MultiLabelEncode:
-    - RecResizeImg:
-        image_shape: [3, 48, 320]
-    - KeepKeys:
-        keep_keys:
-        - image
-        - label_ctc
-        - label_sar
-        - length
-        - valid_ratio
+      - DecodeImage:
+          img_mode: BGR
+          channel_first: false
+      - RecConAug:
+          prob: 0.5
+          ext_data_num: 2
+          image_shape: [ 48, 320, 3 ]
+      - RecAug:
+      - MultiLabelEncode:
+      - RecResizeImg:
+          image_shape: [ 3, 48, 320 ]
+      - KeepKeys:
+          keep_keys:
+            - image
+            - label_ctc
+            - label_sar
+            - length
+            - valid_ratio
   DataLoader:
     shuffle: true
     batch_size: 128
@@ -108,21 +108,21 @@ Eval:
     name: SimpleDataSet
     data_dir: ./train_data
     label_file_list:
-    - ./train_data/val_list.txt
+      - ./train_data/val_list.txt
     transforms:
-    - DecodeImage:
-        img_mode: BGR
-        channel_first: false
-    - MultiLabelEncode:
-    - RecResizeImg:
-        image_shape: [3, 48, 320]
-    - KeepKeys:
-        keep_keys:
-        - image
-        - label_ctc
-        - label_sar
-        - length
-        - valid_ratio
+      - DecodeImage:
+          img_mode: BGR
+          channel_first: false
+      - MultiLabelEncode:
+      - RecResizeImg:
+          image_shape: [ 3, 48, 320 ]
+      - KeepKeys:
+          keep_keys:
+            - image
+            - label_ctc
+            - label_sar
+            - length
+            - valid_ratio
   DataLoader:
     shuffle: false
     drop_last: false

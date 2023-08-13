@@ -6,9 +6,9 @@ Global:
   save_model_dir: ./output/rec/rec_resnet_rfl_att/
   save_epoch_step: 1
   # evaluation is run every 5000 iterations after the 4000th iteration
-  eval_batch_step: [0, 5000]
+  eval_batch_step: [ 0, 5000 ]
   cal_metric_during_train: True
-  pretrained_model: ./pretrain_models/rec_resnet_rfl_visual/best_accuracy.pdparams 
+  pretrained_model: ./pretrain_models/rec_resnet_rfl_visual/best_accuracy.pdparams
   checkpoints:
   save_inference_dir:
   use_visualdl: False
@@ -29,8 +29,8 @@ Optimizer:
   clip_norm_global: 5.0
 LRScheduler:
   name: Piecewise
-  decay_epochs: [3, 4, 5]
-  values : [0.001, 0.0003, 0.00009, 0.000027]
+  decay_epochs: [ 3, 4, 5 ]
+  values: [ 0.001, 0.0003, 0.00009, 0.000027 ]
 
 Model:
   model_type: rec
@@ -50,7 +50,7 @@ Model:
     use_v2s: True
     use_s2v: True
   Head:
-    name: RFLHead  
+    name: RFLHead
     in_channels: 512
     hidden_size: 256
     batch_max_legnth: 25
@@ -79,11 +79,11 @@ Train:
           channel_first: False
       - RFLLabelEncode: # Class handling label
       - RFLRecResizeImg:
-          image_shape: [1, 32, 100]
+          image_shape: [ 1, 32, 100 ]
           padding: false
           interpolation: 2
       - KeepKeys:
-          keep_keys: ['image', 'label', 'length', 'cnt_label'] # dataloader will return list in this order
+          keep_keys: [ 'image', 'label', 'length', 'cnt_label' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
     batch_size: 64
@@ -100,11 +100,11 @@ Eval:
           channel_first: False
       - RFLLabelEncode: # Class handling label
       - RFLRecResizeImg:
-          image_shape: [1, 32, 100]
+          image_shape: [ 1, 32, 100 ]
           padding: false
           interpolation: 2
       - KeepKeys:
-          keep_keys: ['image', 'label', 'length', 'cnt_label'] # dataloader will return list in this order
+          keep_keys: [ 'image', 'label', 'length', 'cnt_label' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False
     drop_last: False

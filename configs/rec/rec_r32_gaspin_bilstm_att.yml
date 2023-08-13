@@ -6,7 +6,7 @@ Global:
   save_model_dir: ./output/rec/rec_r32_gaspin_bilstm_att/
   save_epoch_step: 3
   # evaluation is run every 2000 iterations after the 4000th iteration
-  eval_batch_step: [0, 2000]
+  eval_batch_step: [ 0, 2000 ]
   cal_metric_during_train: True
   pretrained_model:
   checkpoints:
@@ -27,8 +27,8 @@ Optimizer:
   beta2: 0.999
 LRScheduler:
   name: Piecewise
-  decay_epochs: [3, 4, 5]
-  values: [0.001, 0.0003, 0.00009, 0.000027] 
+  decay_epochs: [ 3, 4, 5 ]
+  values: [ 0.001, 0.0003, 0.00009, 0.000027 ]
   clip_norm: 5
 
 Model:
@@ -46,14 +46,14 @@ Model:
     out_channels: 512
   Neck:
     name: SequenceEncoder
-    encoder_type: cascadernn 
+    encoder_type: cascadernn
     hidden_size: 256
-    out_channels: [256, 512]
+    out_channels: [ 256, 512 ]
     with_linear: True
   Head:
-    name: SPINAttentionHead  
+    name: SPINAttentionHead
     hidden_size: 256
-    
+
 
 Loss:
   name: SPINAttentionLoss
@@ -73,19 +73,19 @@ Train:
   Dataset:
     name: SimpleDataSet
     data_dir: ./train_data/ic15_data/
-    label_file_list: ["./train_data/ic15_data/rec_gt_train.txt"]
+    label_file_list: [ "./train_data/ic15_data/rec_gt_train.txt" ]
     transforms:
       - DecodeImage: # load image
           img_mode: BGR
           channel_first: False
       - SPINLabelEncode: # Class handling label
       - SPINRecResizeImg:
-          image_shape: [100, 32]
-          interpolation : 2
-          mean: [127.5]
-          std: [127.5]
+          image_shape: [ 100, 32 ]
+          interpolation: 2
+          mean: [ 127.5 ]
+          std: [ 127.5 ]
       - KeepKeys:
-          keep_keys: ['image', 'label', 'length'] # dataloader will return list in this order
+          keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
     batch_size: 8
@@ -96,19 +96,19 @@ Eval:
   Dataset:
     name: SimpleDataSet
     data_dir: ./train_data/ic15_data
-    label_file_list: ["./train_data/ic15_data/rec_gt_test.txt"]
+    label_file_list: [ "./train_data/ic15_data/rec_gt_test.txt" ]
     transforms:
       - DecodeImage: # load image
           img_mode: BGR
           channel_first: False
       - SPINLabelEncode: # Class handling label
       - SPINRecResizeImg:
-          image_shape: [100, 32]
-          interpolation : 2
-          mean: [127.5]
-          std: [127.5]
+          image_shape: [ 100, 32 ]
+          interpolation: 2
+          mean: [ 127.5 ]
+          std: [ 127.5 ]
       - KeepKeys:
-          keep_keys: ['image', 'label', 'length'] # dataloader will return list in this order
+          keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False
     drop_last: False

@@ -6,7 +6,7 @@ Global:
   save_model_dir: ./output/rec/nrtr/
   save_epoch_step: 1
   # evaluation is run every 2000 iterations
-  eval_batch_step: [0, 2000]
+  eval_batch_step: [ 0, 2000 ]
   cal_metric_during_train: True
   pretrained_model:
   checkpoints:
@@ -30,7 +30,7 @@ LRScheduler:
   name: Cosine
   
   warmup_epoch: 2
-  
+
 
 Model:
   model_type: rec
@@ -45,7 +45,7 @@ Model:
     d_model: 512
     num_encoder_layers: 6
     beam_size: -1 # When Beam size is greater than 0, it means to use beam search when evaluation.
-    
+
 
 Loss:
   name: CELoss
@@ -68,10 +68,10 @@ Train:
           channel_first: False
       - NRTRLabelEncode: # Class handling label
       - GrayRecResizeImg:
-          image_shape: [100, 32] # W H
+          image_shape: [ 100, 32 ] # W H
           resize_type: PIL # PIL or OpenCV
       - KeepKeys:
-          keep_keys: ['image', 'label', 'length'] # dataloader will return list in this order
+          keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
     batch_size: 512
@@ -88,10 +88,10 @@ Eval:
           channel_first: False
       - NRTRLabelEncode: # Class handling label
       - GrayRecResizeImg:
-          image_shape: [100, 32] # W H
+          image_shape: [ 100, 32 ] # W H
           resize_type: PIL # PIL or OpenCV
       - KeepKeys:
-          keep_keys: ['image', 'label', 'length'] # dataloader will return list in this order
+          keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False
     drop_last: False

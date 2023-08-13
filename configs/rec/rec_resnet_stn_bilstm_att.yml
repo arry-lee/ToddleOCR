@@ -6,7 +6,7 @@ Global:
   save_model_dir: ./output/rec/seed
   save_epoch_step: 3
   # evaluation is run every 5000 iterations after the 4000th iteration
-  eval_batch_step: [0, 2000]
+  eval_batch_step: [ 0, 2000 ]
   cal_metric_during_train: True
   pretrained_model:
   checkpoints:
@@ -27,9 +27,9 @@ Optimizer:
   momentum: 0.9
 LRScheduler:
   name: Piecewise
-  decay_epochs: [4, 5]
-  values: [1.0, 0.1, 0.01]
-  
+  decay_epochs: [ 4, 5 ]
+  values: [ 1.0, 0.1, 0.01 ]
+
 
 
 Model:
@@ -37,10 +37,10 @@ Model:
   algorithm: SEED
   Transform:
     name: STN_ON
-    tps_inputsize: [32, 64]
-    tps_outputsize: [32, 100]
+    tps_inputsize: [ 32, 64 ]
+    tps_outputsize: [ 32, 100 ]
     num_control_points: 20
-    tps_margins: [0.05,0.05]
+    tps_margins: [ 0.05,0.05 ]
     stn_activation: none
   Backbone:
     name: ResNet_ASTER
@@ -74,10 +74,10 @@ Train:
       - SEEDLabelEncode: # Class handling label
       - RecResizeImg:
           character_dict_path:
-          image_shape: [3, 64, 256]
+          image_shape: [ 3, 64, 256 ]
           padding: False
       - KeepKeys:
-          keep_keys: ['image', 'label', 'length', 'fast_label'] # dataloader will return list in this order
+          keep_keys: [ 'image', 'label', 'length', 'fast_label' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
     batch_size: 256
@@ -95,10 +95,10 @@ Eval:
       - SEEDLabelEncode: # Class handling label
       - RecResizeImg:
           character_dict_path:
-          image_shape: [3, 64, 256]
+          image_shape: [ 3, 64, 256 ]
           padding: False
       - KeepKeys:
-          keep_keys: ['image', 'label', 'length'] # dataloader will return list in this order
+          keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False
     drop_last: True

@@ -51,7 +51,7 @@ LRScheduler:
   name: Cosine
   
   warmup_epoch: 50
-  
+
 
 PostProcessor:
   name: PGPostProcess
@@ -62,7 +62,7 @@ PostProcessor:
 Metric:
   name: E2EMetric
   mode: A   # two ways for eval, A: label from txt,  B: label from gt_mat
-  gt_mat_dir:  ./train_data/total_text/gt  # the dir of gt_mat
+  gt_mat_dir: ./train_data/total_text/gt  # the dir of gt_mat
   character_dict_path: ppocr/utils/ic15_dict.txt
   main_indicator: f_score_e2e
 
@@ -70,8 +70,8 @@ Train:
   Dataset:
     name: PGDataSet
     data_dir: ./train_data/total_text/train
-    label_file_list: [./train_data/total_text/train/train.txt]
-    ratio_list: [1.0]
+    label_file_list: [ ./train_data/total_text/train/train.txt ]
+    ratio_list: [ 1.0 ]
     transforms:
       - DecodeImage: # load image
           img_mode: BGR
@@ -97,7 +97,7 @@ Eval:
   Dataset:
     name: PGDataSet
     data_dir: ./train_data/total_text/test
-    label_file_list: [./train_data/total_text/test/test.txt]
+    label_file_list: [ ./train_data/total_text/test/test.txt ]
     transforms:
       - DecodeImage: # load image
           img_mode: BGR
@@ -112,7 +112,7 @@ Eval:
           order: 'hwc'
       - ToCHWImage:
       - KeepKeys:
-          keep_keys: [ 'image', 'shape', 'polys', 'texts', 'ignore_tags', 'img_id']
+          keep_keys: [ 'image', 'shape', 'polys', 'texts', 'ignore_tags', 'img_id' ]
   DataLoader:
     shuffle: False
     drop_last: False

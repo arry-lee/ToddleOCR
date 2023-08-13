@@ -6,7 +6,7 @@ Global:
   print_batch_step: 10
   save_model_dir: ./output/rec_pp-OCRv2_distillation
   save_epoch_step: 3
-  eval_batch_step: [0, 2000]
+  eval_batch_step: [ 0, 2000 ]
   cal_metric_during_train: true
   pretrained_model:
   checkpoints:
@@ -27,10 +27,10 @@ Optimizer:
   beta2: 0.999
 LRScheduler:
   name: Piecewise
-  decay_epochs: [700]
-  values : [0.001, 0.0001]
+  decay_epochs: [ 700 ]
+  values: [ 0.001, 0.0001 ]
   warmup_epoch: 5
-  
+
 
 Model:
   model_type: &model_type "rec"
@@ -73,32 +73,32 @@ Model:
         name: CTCHead
         mid_channels: 96
         fc_decay: 0.00002
-  
+
 
 Loss:
   name: CombinedLoss
   loss_config_list:
-  - DistillationCTCLoss:
-      weight: 1.0
-      model_name_list: ["Student", "Teacher"]
-      key: head_out
-  - DistillationDMLLoss:
-      weight: 1.0
-      act: "softmax"
-      use_log: true
-      model_name_pairs:
-      - ["Student", "Teacher"]
-      key: head_out
-  - DistillationDistanceLoss:
-      weight: 1.0
-      mode: "l2"
-      model_name_pairs:
-      - ["Student", "Teacher"]
-      key: backbone_out
+    - DistillationCTCLoss:
+        weight: 1.0
+        model_name_list: [ "Student", "Teacher" ]
+        key: head_out
+    - DistillationDMLLoss:
+        weight: 1.0
+        act: "softmax"
+        use_log: true
+        model_name_pairs:
+          - [ "Student", "Teacher" ]
+        key: head_out
+    - DistillationDistanceLoss:
+        weight: 1.0
+        mode: "l2"
+        model_name_pairs:
+          - [ "Student", "Teacher" ]
+        key: backbone_out
 
 PostProcessor:
   name: DistillationCTCLabelDecode
-  model_name: ["Student", "Teacher"]
+  model_name: [ "Student", "Teacher" ]
   key: head_out
 
 Metric:
@@ -112,20 +112,20 @@ Train:
     name: SimpleDataSet
     data_dir: ./train_data/
     label_file_list:
-    - ./train_data/train_list.txt
+      - ./train_data/train_list.txt
     transforms:
-    - DecodeImage:
-        img_mode: BGR
-        channel_first: false
-    - RecAug:
-    - CTCLabelEncode:
-    - RecResizeImg:
-        image_shape: [3, 32, 320]
-    - KeepKeys:
-        keep_keys:
-        - image
-        - label
-        - length
+      - DecodeImage:
+          img_mode: BGR
+          channel_first: false
+      - RecAug:
+      - CTCLabelEncode:
+      - RecResizeImg:
+          image_shape: [ 3, 32, 320 ]
+      - KeepKeys:
+          keep_keys:
+            - image
+            - label
+            - length
   DataLoader:
     shuffle: true
     batch_size: 128
@@ -137,19 +137,19 @@ Eval:
     name: SimpleDataSet
     data_dir: ./train_data
     label_file_list:
-    - ./train_data/val_list.txt
+      - ./train_data/val_list.txt
     transforms:
-    - DecodeImage:
-        img_mode: BGR
-        channel_first: false
-    - CTCLabelEncode:
-    - RecResizeImg:
-        image_shape: [3, 32, 320]
-    - KeepKeys:
-        keep_keys:
-        - image
-        - label
-        - length
+      - DecodeImage:
+          img_mode: BGR
+          channel_first: false
+      - CTCLabelEncode:
+      - RecResizeImg:
+          image_shape: [ 3, 32, 320 ]
+      - KeepKeys:
+          keep_keys:
+            - image
+            - label
+            - length
   DataLoader:
     shuffle: false
     drop_last: false

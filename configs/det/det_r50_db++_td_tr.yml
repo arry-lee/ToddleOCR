@@ -7,8 +7,8 @@ Global:
   save_model_dir: ./output/det_r50_td_tr/
   save_epoch_step: 200
   eval_batch_step:
-  - 0
-  - 2000
+    - 0
+    - 2000
   cal_metric_during_train: false
   pretrained_model: ./pretrain_models/ResNet50_dcn_asf_synthtext_pretrained
   checkpoints: null
@@ -23,7 +23,7 @@ Model:
   Backbone:
     name: ResNet
     layers: 50
-    dcn_stage: [False, True, True, True]
+    dcn_stage: [ False, True, True, True ]
   Neck:
     name: DBFPN
     out_channels: 256
@@ -62,65 +62,65 @@ Metric:
 Train:
   Dataset:
     name: SimpleDataSet
-    data_dir: ./train_data/                                                                                 
-    label_file_list:                                                                                            
-    - ./train_data/TD_TR/TD500/train_gt_labels.txt                                                           
-    - ./train_data/TD_TR/TR400/gt_labels.txt                                                                 
-    ratio_list:                                                                                                 
-    - 1.0                                                                                                       
-    - 1.0 
+    data_dir: ./train_data/
+    label_file_list:
+      - ./train_data/TD_TR/TD500/train_gt_labels.txt
+      - ./train_data/TD_TR/TR400/gt_labels.txt
+    ratio_list:
+      - 1.0
+      - 1.0
     transforms:
-    - DecodeImage:
-        img_mode: BGR
-        channel_first: false
-    - DetLabelEncode: null
-    - IaaAugment:
-        augmenter_args:
-        - type: Fliplr
-          args:
-            p: 0.5
-        - type: Affine
-          args:
-            rotate:
-            - -10
-            - 10
-        - type: Resize
-          args:
-            size:
-            - 0.5
-            - 3
-    - EastRandomCropData:
-        size:
-        - 640
-        - 640
-        max_tries: 10
-        keep_ratio: true
-    - MakeShrinkMap:
-        shrink_ratio: 0.4
-        min_text_size: 8
-    - MakeBorderMap:
-        shrink_ratio: 0.4
-        thresh_min: 0.3
-        thresh_max: 0.7
-    - NormalizeImage:
-        scale: 1./255.
-        mean:
-        - 0.48109378172549
-        - 0.45752457890196
-        - 0.40787054090196
-        std:
-        - 1.0
-        - 1.0
-        - 1.0
-        order: hwc
-    - ToCHWImage: null
-    - KeepKeys:
-        keep_keys:
-        - image
-        - threshold_map
-        - threshold_mask
-        - shrink_map
-        - shrink_mask
+      - DecodeImage:
+          img_mode: BGR
+          channel_first: false
+      - DetLabelEncode: null
+      - IaaAugment:
+          augmenter_args:
+            - type: Fliplr
+              args:
+                p: 0.5
+            - type: Affine
+              args:
+                rotate:
+                  - -10
+                  - 10
+            - type: Resize
+              args:
+                size:
+                  - 0.5
+                  - 3
+      - EastRandomCropData:
+          size:
+            - 640
+            - 640
+          max_tries: 10
+          keep_ratio: true
+      - MakeShrinkMap:
+          shrink_ratio: 0.4
+          min_text_size: 8
+      - MakeBorderMap:
+          shrink_ratio: 0.4
+          thresh_min: 0.3
+          thresh_max: 0.7
+      - NormalizeImage:
+          scale: 1./255.
+          mean:
+            - 0.48109378172549
+            - 0.45752457890196
+            - 0.40787054090196
+          std:
+            - 1.0
+            - 1.0
+            - 1.0
+          order: hwc
+      - ToCHWImage: null
+      - KeepKeys:
+          keep_keys:
+            - image
+            - threshold_map
+            - threshold_mask
+            - shrink_map
+            - shrink_mask
   DataLoader:
     shuffle: true
     drop_last: false
@@ -129,37 +129,37 @@ Train:
 Eval:
   Dataset:
     name: SimpleDataSet
-    data_dir: ./train_data/                                                                          
-    label_file_list:                                                                                            
-    - ./train_data/TD_TR/TD500/test_gt_labels.txt
+    data_dir: ./train_data/
+    label_file_list:
+      - ./train_data/TD_TR/TD500/test_gt_labels.txt
     transforms:
-    - DecodeImage:
-        img_mode: BGR
-        channel_first: false
-    - DetLabelEncode: null
-    - DetResizeForTest:
-        image_shape:
-        - 736
-        - 736
-        keep_ratio: True
-    - NormalizeImage:
-        scale: 1./255.
-        mean:
-        - 0.48109378172549
-        - 0.45752457890196
-        - 0.40787054090196
-        std:
-        - 1.0
-        - 1.0
-        - 1.0
-        order: hwc
-    - ToCHWImage: null
-    - KeepKeys:
-        keep_keys:
-        - image
-        - shape
-        - polys
-        - ignore_tags
+      - DecodeImage:
+          img_mode: BGR
+          channel_first: false
+      - DetLabelEncode: null
+      - DetResizeForTest:
+          image_shape:
+            - 736
+            - 736
+          keep_ratio: True
+      - NormalizeImage:
+          scale: 1./255.
+          mean:
+            - 0.48109378172549
+            - 0.45752457890196
+            - 0.40787054090196
+          std:
+            - 1.0
+            - 1.0
+            - 1.0
+          order: hwc
+      - ToCHWImage: null
+      - KeepKeys:
+          keep_keys:
+            - image
+            - shape
+            - polys
+            - ignore_tags
   DataLoader:
     shuffle: false
     drop_last: false

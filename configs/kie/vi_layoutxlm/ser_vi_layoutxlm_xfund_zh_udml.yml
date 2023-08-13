@@ -53,34 +53,34 @@ Model:
 Loss:
   name: CombinedLoss
   loss_config_list:
-  - DistillationVQASerTokenLayoutLMLoss:
-      weight: 1.0
-      model_name_list: ["Student", "Teacher"]
-      key: backbone_out
-      num_classes: *num_classes
-  - DistillationSERDMLLoss:
-      weight: 1.0
-      act: "softmax"
-      use_log: true
-      model_name_pairs:
-      - ["Student", "Teacher"]
-      key: backbone_out
-  - DistillationVQADistanceLoss:
-      weight: 0.5
-      mode: "l2"
-      model_name_pairs:
-        - ["Student", "Teacher"]
-      key: hidden_states_5
-      name: "loss_5"
-  - DistillationVQADistanceLoss:
-      weight: 0.5
-      mode: "l2"
-      model_name_pairs:
-        - ["Student", "Teacher"]
-      key: hidden_states_8
-      name: "loss_8"
-  
-  
+    - DistillationVQASerTokenLayoutLMLoss:
+        weight: 1.0
+        model_name_list: [ "Student", "Teacher" ]
+        key: backbone_out
+        num_classes: *num_classes
+    - DistillationSERDMLLoss:
+        weight: 1.0
+        act: "softmax"
+        use_log: true
+        model_name_pairs:
+          - [ "Student", "Teacher" ]
+        key: backbone_out
+    - DistillationVQADistanceLoss:
+        weight: 0.5
+        mode: "l2"
+        model_name_pairs:
+          - [ "Student", "Teacher" ]
+        key: hidden_states_5
+        name: "loss_5"
+    - DistillationVQADistanceLoss:
+        weight: 0.5
+        mode: "l2"
+        model_name_pairs:
+          - [ "Student", "Teacher" ]
+        key: hidden_states_8
+        name: "loss_8"
+
+
 
 Optimizer:
   name: AdamW
@@ -92,11 +92,11 @@ LRScheduler:
   
   epochs: *epoch_num
   warmup_epoch: 10
-  
-    
+
+
 PostProcessor:
   name: DistillationSerPostProcess
-  model_name: ["Student", "Teacher"]
+  model_name: [ "Student", "Teacher" ]
   key: backbone_out
   class_path: &class_path train_data/XFUND/class_list_xfun.txt
 
@@ -110,7 +110,7 @@ Train:
   Dataset:
     name: SimpleDataSet
     data_dir: train_data/XFUND/zh_train/image
-    label_file_list: 
+    label_file_list:
       - train_data/XFUND/zh_train/train.json
     ratio_list: [ 1.0 ]
     transforms:
@@ -129,7 +129,7 @@ Train:
       - VQASerTokenChunk:
           max_seq_len: *max_seq_len
       - Resize:
-          size: [224,224]
+          size: [ 224,224 ]
       - NormalizeImage:
           scale: 1
           mean: [ 123.675, 116.28, 103.53 ]
@@ -137,7 +137,7 @@ Train:
           order: 'hwc'
       - ToCHWImage:
       - KeepKeys:
-          keep_keys: [ 'input_ids', 'bbox', 'attention_mask', 'token_type_ids', 'image', 'labels'] # dataloader will return list in this order
+          keep_keys: [ 'input_ids', 'bbox', 'attention_mask', 'token_type_ids', 'image', 'labels' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
     drop_last: False
@@ -165,7 +165,7 @@ Eval:
       - VQASerTokenChunk:
           max_seq_len: *max_seq_len
       - Resize:
-          size: [224,224]
+          size: [ 224,224 ]
       - NormalizeImage:
           scale: 1
           mean: [ 123.675, 116.28, 103.53 ]
@@ -173,7 +173,7 @@ Eval:
           order: 'hwc'
       - ToCHWImage:
       - KeepKeys:
-          keep_keys: [ 'input_ids', 'bbox', 'attention_mask', 'token_type_ids', 'image', 'labels'] # dataloader will return list in this order
+          keep_keys: [ 'input_ids', 'bbox', 'attention_mask', 'token_type_ids', 'image', 'labels' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False
     drop_last: False

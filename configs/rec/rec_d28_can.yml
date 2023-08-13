@@ -6,7 +6,7 @@ Global:
   save_model_dir: ./output/rec/can/
   save_epoch_step: 1
   # evaluation is run every 1105 iterations (1 epoch)(batch_size = 8)
-  eval_batch_step: [0, 1105]
+  eval_batch_step: [ 0, 1105 ]
   cal_metric_during_train: True
   pretrained_model:
   checkpoints:
@@ -37,12 +37,12 @@ Model:
   in_channels: 1
   Transform:
   Backbone:
-    name: DenseNet 
+    name: DenseNet
     growthRate: 24
     reduction: 0.5
     bottleneck: True
     use_dropout: True
-    input_channel: 1 
+    input_channel: 1
   Head:
     name: CANHead
     in_channel: 684
@@ -61,7 +61,7 @@ Model:
       attention:
         attention_dim: 512
         word_conv_kernel: 1
-   
+
 Loss:
   name: CANLoss
 
@@ -76,20 +76,20 @@ Train:
   Dataset:
     name: SimpleDataSet
     data_dir: ./train_data/CROHME/training/images/
-    label_file_list: ["./train_data/CROHME/training/labels.txt"]
+    label_file_list: [ "./train_data/CROHME/training/labels.txt" ]
     transforms:
       - DecodeImage:
           channel_first: False
       - NormalizeImage:
-          mean: [0,0,0]
-          std: [1,1,1]
+          mean: [ 0,0,0 ]
+          std: [ 1,1,1 ]
           order: 'hwc'
-      - GrayImageChannelFormat: 
+      - GrayImageChannelFormat:
           inverse: True
       - CANLabelEncode:
           lower: False
       - KeepKeys:
-          keep_keys: ['image', 'label']
+          keep_keys: [ 'image', 'label' ]
   DataLoader:
     shuffle: True
     batch_size: 8
@@ -101,20 +101,20 @@ Eval:
   Dataset:
     name: SimpleDataSet
     data_dir: ./train_data/CROHME/evaluation/images/
-    label_file_list: ["./train_data/CROHME/evaluation/labels.txt"]
-    transforms: 
+    label_file_list: [ "./train_data/CROHME/evaluation/labels.txt" ]
+    transforms:
       - DecodeImage:
           channel_first: False
       - NormalizeImage:
-          mean: [0,0,0]
-          std: [1,1,1]
+          mean: [ 0,0,0 ]
+          std: [ 1,1,1 ]
           order: 'hwc'
       - GrayImageChannelFormat:
           inverse: True
       - CANLabelEncode:
           lower: False
       - KeepKeys:
-          keep_keys: ['image', 'label']
+          keep_keys: [ 'image', 'label' ]
   DataLoader:
     shuffle: False
     drop_last: False

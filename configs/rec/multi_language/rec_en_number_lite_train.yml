@@ -6,11 +6,11 @@ Global:
   save_model_dir: ./output/rec_en_number_lite
   save_epoch_step: 3
   # evaluation is run every 5000 iterations after the 4000th iteration
-  eval_batch_step: [0, 2000]
+  eval_batch_step: [ 0, 2000 ]
   # if pretrained_model is saved in static mode, load_static_weights must set to True
   cal_metric_during_train: True
   pretrained_model:
-  checkpoints: 
+  checkpoints:
   save_inference_dir:
   use_visualdl: False
   infer_img:
@@ -28,8 +28,8 @@ Optimizer:
   lr: 0.001
 LRScheduler:
   name: Cosine
-  
-  
+
+
 
 Model:
   model_type: rec
@@ -39,7 +39,7 @@ Model:
     name: MobileNetV3
     scale: 0.5
     model_name: small
-    small_stride: [1, 2, 2, 2]
+    small_stride: [ 1, 2, 2, 2 ]
   Neck:
     name: SequenceEncoder
     encoder_type: rnn
@@ -62,17 +62,17 @@ Train:
   Dataset:
     name: SimpleDataSet
     data_dir: ./train_data/
-    label_file_list: ["./train_data/train_list.txt"]
+    label_file_list: [ "./train_data/train_list.txt" ]
     transforms:
       - DecodeImage: # load image
           img_mode: BGR
           channel_first: False
-      - RecAug: 
+      - RecAug:
       - CTCLabelEncode: # Class handling label
       - RecResizeImg:
-          image_shape: [3, 32, 320]
+          image_shape: [ 3, 32, 320 ]
       - KeepKeys:
-          keep_keys: ['image', 'label', 'length'] # dataloader will return list in this order
+          keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
     batch_size: 256
@@ -83,16 +83,16 @@ Eval:
   Dataset:
     name: SimpleDataSet
     data_dir: ./train_data/
-    label_file_list: ["./train_data/eval_list.txt"]
+    label_file_list: [ "./train_data/eval_list.txt" ]
     transforms:
       - DecodeImage: # load image
           img_mode: BGR
           channel_first: False
       - CTCLabelEncode: # Class handling label
       - RecResizeImg:
-          image_shape: [3, 32, 320]
+          image_shape: [ 3, 32, 320 ]
       - KeepKeys:
-          keep_keys: ['image', 'label', 'length'] # dataloader will return list in this order
+          keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False
     drop_last: False

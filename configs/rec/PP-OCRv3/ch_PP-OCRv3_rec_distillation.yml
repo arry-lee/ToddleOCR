@@ -6,7 +6,7 @@ Global:
   print_batch_step: 10
   save_model_dir: ./output/rec_ppocr_v3_distillation
   save_epoch_step: 3
-  eval_batch_step: [0, 2000]
+  eval_batch_step: [ 0, 2000 ]
   cal_metric_during_train: true
   pretrained_model:
   checkpoints:
@@ -27,10 +27,10 @@ Optimizer:
   beta2: 0.999
 LRScheduler:
   name: Piecewise
-  decay_epochs : [700]
-  values : [0.0005, 0.00005]
+  decay_epochs: [ 700 ]
+  values: [ 0.0005, 0.00005 ]
   warmup_epoch: 5
-  
+
 
 
 Model:
@@ -48,7 +48,7 @@ Model:
       Backbone:
         name: MobileNetV1Enhance
         scale: 0.5
-        last_conv_stride: [1, 2]
+        last_conv_stride: [ 1, 2 ]
         last_pool_type: avg
       Head:
         name: MultiHead
@@ -75,7 +75,7 @@ Model:
       Backbone:
         name: MobileNetV1Enhance
         scale: 0.5
-        last_conv_stride: [1, 2]
+        last_conv_stride: [ 1, 2 ]
         last_pool_type: avg
       Head:
         name: MultiHead
@@ -95,46 +95,46 @@ Model:
 Loss:
   name: CombinedLoss
   loss_config_list:
-  - DistillationDMLLoss:
-      weight: 1.0
-      act: "softmax"
-      use_log: true
-      model_name_pairs:
-      - ["Student", "Teacher"]
-      key: head_out
-      multi_head: True
-      dis_head: ctc
-      name: dml_ctc
-  - DistillationDMLLoss:
-      weight: 0.5
-      act: "softmax"
-      use_log: true
-      model_name_pairs:
-      - ["Student", "Teacher"]
-      key: head_out
-      multi_head: True
-      dis_head: sar
-      name: dml_sar
-  - DistillationDistanceLoss:
-      weight: 1.0
-      mode: "l2"
-      model_name_pairs:
-      - ["Student", "Teacher"]
-      key: backbone_out
-  - DistillationCTCLoss:
-      weight: 1.0
-      model_name_list: ["Student", "Teacher"]
-      key: head_out
-      multi_head: True
-  - DistillationSARLoss:
-      weight: 1.0
-      model_name_list: ["Student", "Teacher"]
-      key: head_out
-      multi_head: True
+    - DistillationDMLLoss:
+        weight: 1.0
+        act: "softmax"
+        use_log: true
+        model_name_pairs:
+          - [ "Student", "Teacher" ]
+        key: head_out
+        multi_head: True
+        dis_head: ctc
+        name: dml_ctc
+    - DistillationDMLLoss:
+        weight: 0.5
+        act: "softmax"
+        use_log: true
+        model_name_pairs:
+          - [ "Student", "Teacher" ]
+        key: head_out
+        multi_head: True
+        dis_head: sar
+        name: dml_sar
+    - DistillationDistanceLoss:
+        weight: 1.0
+        mode: "l2"
+        model_name_pairs:
+          - [ "Student", "Teacher" ]
+        key: backbone_out
+    - DistillationCTCLoss:
+        weight: 1.0
+        model_name_list: [ "Student", "Teacher" ]
+        key: head_out
+        multi_head: True
+    - DistillationSARLoss:
+        weight: 1.0
+        model_name_list: [ "Student", "Teacher" ]
+        key: head_out
+        multi_head: True
 
 PostProcessor:
   name: DistillationCTCLabelDecode
-  model_name: ["Student", "Teacher"]
+  model_name: [ "Student", "Teacher" ]
   key: head_out
   multi_head: True
 
@@ -151,27 +151,27 @@ Train:
     data_dir: ./train_data/
     ext_op_transform_idx: 1
     label_file_list:
-    - ./train_data/train_list.txt
+      - ./train_data/train_list.txt
     transforms:
-    - DecodeImage:
-        img_mode: BGR
-        channel_first: false
-    - RecConAug:
-        prob: 0.5
-        ext_data_num: 2
-        image_shape: [48, 320, 3]
-        max_text_length: *max_text_length
-    - RecAug:
-    - MultiLabelEncode:
-    - RecResizeImg:
-        image_shape: [3, 48, 320]
-    - KeepKeys:
-        keep_keys:
-        - image
-        - label_ctc
-        - label_sar
-        - length
-        - valid_ratio
+      - DecodeImage:
+          img_mode: BGR
+          channel_first: false
+      - RecConAug:
+          prob: 0.5
+          ext_data_num: 2
+          image_shape: [ 48, 320, 3 ]
+          max_text_length: *max_text_length
+      - RecAug:
+      - MultiLabelEncode:
+      - RecResizeImg:
+          image_shape: [ 3, 48, 320 ]
+      - KeepKeys:
+          keep_keys:
+            - image
+            - label_ctc
+            - label_sar
+            - length
+            - valid_ratio
   DataLoader:
     shuffle: true
     batch_size: 128
@@ -182,21 +182,21 @@ Eval:
     name: SimpleDataSet
     data_dir: ./train_data
     label_file_list:
-    - ./train_data/val_list.txt
+      - ./train_data/val_list.txt
     transforms:
-    - DecodeImage:
-        img_mode: BGR
-        channel_first: false
-    - MultiLabelEncode:
-    - RecResizeImg:
-        image_shape: [3, 48, 320]
-    - KeepKeys:
-        keep_keys:
-        - image
-        - label_ctc
-        - label_sar
-        - length
-        - valid_ratio
+      - DecodeImage:
+          img_mode: BGR
+          channel_first: false
+      - MultiLabelEncode:
+      - RecResizeImg:
+          image_shape: [ 3, 48, 320 ]
+      - KeepKeys:
+          keep_keys:
+            - image
+            - label_ctc
+            - label_sar
+            - length
+            - valid_ratio
   DataLoader:
     shuffle: false
     drop_last: false

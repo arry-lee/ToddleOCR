@@ -13,7 +13,7 @@ Global:
   seed: 2022
   infer_img: ppstructure/docs/kie/input/zh_val_21.jpg
   save_res_path: ./output/re/xfund_zh/with_gt
-  kie_rec_model_dir: 
+  kie_rec_model_dir:
   kie_det_model_dir:
 
 Model:
@@ -40,8 +40,8 @@ Optimizer:
 LRScheduler:
   
   warmup_epoch: 10
-  
-    
+
+
 PostProcessor:
   name: VQAReTokenLayoutLMPostProcess
 
@@ -53,7 +53,7 @@ Train:
   Dataset:
     name: SimpleDataSet
     data_dir: train_data/XFUND/zh_train/image
-    label_file_list: 
+    label_file_list:
       - train_data/XFUND/zh_train/train.json
     ratio_list: [ 1.0 ]
     transforms:
@@ -74,7 +74,7 @@ Train:
           max_seq_len: *max_seq_len
       - TensorizeEntitiesRelations:
       - Resize:
-          size: [224,224]
+          size: [ 224,224 ]
       - NormalizeImage:
           scale: 1
           mean: [ 123.675, 116.28, 103.53 ]
@@ -82,7 +82,7 @@ Train:
           order: 'hwc'
       - ToCHWImage:
       - KeepKeys:
-          keep_keys: [ 'input_ids', 'bbox','attention_mask', 'token_type_ids', 'entities', 'relations'] # dataloader will return list in this order
+          keep_keys: [ 'input_ids', 'bbox','attention_mask', 'token_type_ids', 'entities', 'relations' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
     drop_last: False
@@ -113,7 +113,7 @@ Eval:
           max_seq_len: *max_seq_len
       - TensorizeEntitiesRelations:
       - Resize:
-          size: [224,224]
+          size: [ 224,224 ]
       - NormalizeImage:
           scale: 1
           mean: [ 123.675, 116.28, 103.53 ]
@@ -121,7 +121,7 @@ Eval:
           order: 'hwc'
       - ToCHWImage:
       - KeepKeys:
-          keep_keys: [ 'input_ids', 'bbox', 'attention_mask', 'token_type_ids', 'entities', 'relations'] # dataloader will return list in this order
+          keep_keys: [ 'input_ids', 'bbox', 'attention_mask', 'token_type_ids', 'entities', 'relations' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False
     drop_last: False

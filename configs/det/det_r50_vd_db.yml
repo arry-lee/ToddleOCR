@@ -6,7 +6,7 @@ Global:
   save_model_dir: ./output/det_r50_vd/
   save_epoch_step: 1200
   # evaluation is run every 2000 iterations
-  eval_batch_step: [0,2000]
+  eval_batch_step: [ 0,2000 ]
   cal_metric_during_train: False
   pretrained_model: ./pretrain_models/ResNet50_vd_ssld_pretrained
   checkpoints:
@@ -43,8 +43,8 @@ Optimizer:
   beta2: 0.999
   lr: 0.001
 LRScheduler:
-  
-  
+
+
 
 PostProcessor:
   name: DBPostProcess
@@ -63,7 +63,7 @@ Train:
     data_dir: ./train_data/icdar2015/text_localization/
     label_file_list:
       - ./train_data/icdar2015/text_localization/train_icdar2015_label.txt
-    ratio_list: [1.0]
+    ratio_list: [ 1.0 ]
     transforms:
       - DecodeImage: # load image
           img_mode: BGR
@@ -72,10 +72,10 @@ Train:
       - IaaAugment:
           augmenter_args:
             - { 'type': Fliplr, 'args': { 'p': 0.5 } }
-            - { 'type': Affine, 'args': { 'rotate': [-10, 10] } }
-            - { 'type': Resize, 'args': { 'size': [0.5, 3] } }
+            - { 'type': Affine, 'args': { 'rotate': [ -10, 10 ] } }
+            - { 'type': Resize, 'args': { 'size': [ 0.5, 3 ] } }
       - EastRandomCropData:
-          size: [640, 640]
+          size: [ 640, 640 ]
           max_tries: 50
           keep_ratio: true
       - MakeBorderMap:
@@ -87,12 +87,12 @@ Train:
           min_text_size: 8
       - NormalizeImage:
           scale: 1./255.
-          mean: [0.485, 0.456, 0.406]
-          std: [0.229, 0.224, 0.225]
+          mean: [ 0.485, 0.456, 0.406 ]
+          std: [ 0.229, 0.224, 0.225 ]
           order: 'hwc'
       - ToCHWImage:
       - KeepKeys:
-          keep_keys: ['image', 'threshold_map', 'threshold_mask', 'shrink_map', 'shrink_mask'] # the order of the dataloader list
+          keep_keys: [ 'image', 'threshold_map', 'threshold_mask', 'shrink_map', 'shrink_mask' ] # the order of the dataloader list
   DataLoader:
     shuffle: True
     drop_last: False
@@ -111,15 +111,15 @@ Eval:
           channel_first: False
       - DetLabelEncode: # Class handling label
       - DetResizeForTest:
-          image_shape: [736, 1280]
+          image_shape: [ 736, 1280 ]
       - NormalizeImage:
           scale: 1./255.
-          mean: [0.485, 0.456, 0.406]
-          std: [0.229, 0.224, 0.225]
+          mean: [ 0.485, 0.456, 0.406 ]
+          std: [ 0.229, 0.224, 0.225 ]
           order: 'hwc'
       - ToCHWImage:
       - KeepKeys:
-          keep_keys: ['image', 'shape', 'polys', 'ignore_tags']
+          keep_keys: [ 'image', 'shape', 'polys', 'ignore_tags' ]
   DataLoader:
     shuffle: False
     drop_last: False

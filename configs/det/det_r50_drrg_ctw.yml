@@ -6,11 +6,11 @@ Global:
   save_model_dir: ./output/det_r50_drrg_ctw/
   save_epoch_step: 100
   # evaluation is run every 1260 iterations
-  eval_batch_step: [37800, 1260]
+  eval_batch_step: [ 37800, 1260 ]
   cal_metric_during_train: False
-  pretrained_model: ./pretrain_models/ResNet50_vd_ssld_pretrained.pdparams 
-  checkpoints: 
-  save_inference_dir: 
+  pretrained_model: ./pretrain_models/ResNet50_vd_ssld_pretrained.pdparams
+  checkpoints:
+  save_inference_dir:
   use_visualdl: False
   infer_img: doc/imgs_en/img_10.jpg
   save_res_path: ./output/det_drrg/predicts_drrg.txt
@@ -25,7 +25,7 @@ Model:
     layers: 50
   Neck:
     name: FPN_UNet
-    in_channels: [256, 512, 1024, 2048]
+    in_channels: [ 256, 512, 1024, 2048 ]
     out_channels: 32
   Head:
     name: DRRGHead
@@ -34,7 +34,7 @@ Model:
     center_region_thr: 0.4
 Loss:
   name: DRRGLoss
-  
+
 Optimizer:
   name: Momentum
   momentum: 0.9
@@ -59,7 +59,7 @@ Train:
   Dataset:
     name: SimpleDataSet
     data_dir: ./train_data/ctw1500/imgs/
-    label_file_list: 
+    label_file_list:
       - ./train_data/ctw1500/imgs/training.txt
     transforms:
       - DecodeImage: # load image
@@ -67,10 +67,10 @@ Train:
           channel_first: False
           ignore_orientation: True
       - DetLabelEncode: # Class handling label
-      - ColorJitter: 
+      - ColorJitter:
           brightness: 0.12549019607843137
           saturation: 0.5
-      - RandomScaling: 
+      - RandomScaling:
       - RandomCropFlip:
           crop_ratio: 0.5
       - RandomCropPolyInstances:
@@ -89,14 +89,14 @@ Train:
       - DRRGTargets:
       - NormalizeImage:
           scale: 1./255.
-          mean: [0.485, 0.456, 0.406]
-          std: [0.229, 0.224, 0.225]
+          mean: [ 0.485, 0.456, 0.406 ]
+          std: [ 0.229, 0.224, 0.225 ]
           order: 'hwc'
       - ToCHWImage:
       - KeepKeys:
-          keep_keys: ['image', 'gt_text_mask', 'gt_center_region_mask', 'gt_mask',
-            'gt_top_height_map', 'gt_bot_height_map', 'gt_sin_map',
-            'gt_cos_map', 'gt_comp_attribs'] # dataloader will return list in this order
+          keep_keys: [ 'image', 'gt_text_mask', 'gt_center_region_mask', 'gt_mask',
+                       'gt_top_height_map', 'gt_bot_height_map', 'gt_sin_map',
+                       'gt_cos_map', 'gt_comp_attribs' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
     drop_last: False
@@ -120,13 +120,13 @@ Eval:
           limit_side_len: 640
       - NormalizeImage:
           scale: 1./255.
-          mean: [0.485, 0.456, 0.406]
-          std: [0.229, 0.224, 0.225]
+          mean: [ 0.485, 0.456, 0.406 ]
+          std: [ 0.229, 0.224, 0.225 ]
           order: 'hwc'
-      - Pad: 
+      - Pad:
       - ToCHWImage:
       - KeepKeys:
-          keep_keys: ['image', 'shape', 'polys', 'ignore_tags']
+          keep_keys: [ 'image', 'shape', 'polys', 'ignore_tags' ]
   DataLoader:
     shuffle: False
     drop_last: False
