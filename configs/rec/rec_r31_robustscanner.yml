@@ -80,7 +80,7 @@ Train:
           keep_keys: ['image', 'label', 'valid_ratio', 'word_positons'] # dataloader will return list in this order
   DataLoader:
     shuffle: True
-    batch_size_per_card: 64
+    batch_size: 64
     drop_last: True
     num_workers: 8
     use_shared_memory: False
@@ -103,6 +103,6 @@ Eval:
   DataLoader:
     shuffle: False
     drop_last: False
-    batch_size_per_card: 64
+    batch_size: 64
     num_workers: 4
     use_shared_memory: False

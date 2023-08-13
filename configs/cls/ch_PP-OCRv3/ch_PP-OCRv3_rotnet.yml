@@ -72,7 +72,7 @@ Train:
   DataLoader:
     collate_fn: "SSLRotateCollate"
     shuffle: true
-    batch_size_per_card: 32
+    batch_size: 32
     drop_last: true
     num_workers: 8
 Eval:
@@ -93,6 +93,6 @@ Eval:
     collate_fn: "SSLRotateCollate"
     shuffle: false
     drop_last: false
-    batch_size_per_card: 64
+    batch_size: 64
     num_workers: 8
 profiler_options: null

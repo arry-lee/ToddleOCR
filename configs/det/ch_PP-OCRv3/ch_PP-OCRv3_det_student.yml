@@ -124,7 +124,7 @@ Train:
   DataLoader:
     shuffle: true
     drop_last: false
-    batch_size_per_card: 8
+    batch_size: 8
     num_workers: 4
 Eval:
   Dataset:
@@ -159,5 +159,5 @@ Eval:
   DataLoader:
     shuffle: false
     drop_last: false
-    batch_size_per_card: 1
+    batch_size: 1
     num_workers: 2

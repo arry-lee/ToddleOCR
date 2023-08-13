@@ -100,7 +100,7 @@ Train:
   DataLoader:
     shuffle: True
     drop_last: False
-    batch_size_per_card: 16
+    batch_size: 16
     num_workers: 8
     use_shared_memory: True
 
@@ -128,6 +128,6 @@ Eval:
   DataLoader:
     shuffle: False
     drop_last: False
-    batch_size_per_card: 1 # must be 1
+    batch_size: 1 # must be 1
     num_workers: 8
     use_shared_memory: True

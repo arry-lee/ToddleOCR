@@ -61,7 +61,7 @@ Train:
           keep_keys: ['img_lr', 'img_hr', 'label'] # dataloader will return list in this order
   DataLoader:
     shuffle: False
-    batch_size_per_card: 16
+    batch_size: 16
     drop_last: True
     num_workers: 4
 
@@ -79,5 +79,5 @@ Eval:
   DataLoader:
     shuffle: False
     drop_last: False
-    batch_size_per_card: 16
+    batch_size: 16
     num_workers: 4

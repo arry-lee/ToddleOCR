@@ -102,7 +102,7 @@ Train:
           keep_keys: [ 'image', 'structure', 'bboxes', 'bbox_masks', 'shape' ]
   DataLoader:
     shuffle: True
-    batch_size_per_card: 48
+    batch_size: 48
     drop_last: True
     num_workers: 1
 
@@ -139,5 +139,5 @@ Eval:
   DataLoader:
     shuffle: False
     drop_last: False
-    batch_size_per_card: 48
+    batch_size: 48
     num_workers: 1

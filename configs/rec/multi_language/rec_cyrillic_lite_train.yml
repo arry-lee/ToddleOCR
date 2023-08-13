@@ -79,7 +79,7 @@ Train:
         - length
   DataLoader:
     shuffle: true
-    batch_size_per_card: 256
+    batch_size: 256
     drop_last: true
     num_workers: 8
 Eval:
@@ -106,5 +106,5 @@ Eval:
   DataLoader:
     shuffle: false
     drop_last: false
-    batch_size_per_card: 256
+    batch_size: 256
     num_workers: 8

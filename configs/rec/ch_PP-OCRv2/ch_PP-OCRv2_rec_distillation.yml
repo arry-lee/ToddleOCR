@@ -130,7 +130,7 @@ Train:
         - length
   DataLoader:
     shuffle: true
-    batch_size_per_card: 128
+    batch_size: 128
     drop_last: true
     num_sections: 1
     num_workers: 8
@@ -155,5 +155,5 @@ Eval:
   DataLoader:
     shuffle: false
     drop_last: false
-    batch_size_per_card: 128
+    batch_size: 128
     num_workers: 8
