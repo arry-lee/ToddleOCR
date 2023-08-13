@@ -27,8 +27,8 @@ Optimizer:
   clip_norm: 5.0
   lr: 0.0005
 LRScheduler:
-  class: Cosine
-  warmup_epoch: 2
+  class: CosineAnnealingWarmRestarts
+  T_0: 2
 Model:
   model_type: rec
   algorithm: NRTR

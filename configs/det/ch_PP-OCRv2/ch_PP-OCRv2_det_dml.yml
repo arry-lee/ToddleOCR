@@ -83,8 +83,8 @@ Optimizer:
     - 0.999
   lr: 0.001
 LRScheduler:
-  class: Cosine
-  warmup_epoch: 2
+  class: CosineAnnealingWarmRestarts
+  T_0: 2
 PostProcessor:
   class: DistillationDBPostProcess
   model_name:

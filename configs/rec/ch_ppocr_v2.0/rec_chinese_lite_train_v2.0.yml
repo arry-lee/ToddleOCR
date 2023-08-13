@@ -26,8 +26,8 @@ Optimizer:
     - 0.999
   lr: 0.001
 LRScheduler:
-  class: Cosine
-  warmup_epoch: 5
+  class: CosineAnnealingWarmRestarts
+  T_0: 5
 Model:
   model_type: rec
   algorithm: CRNN
