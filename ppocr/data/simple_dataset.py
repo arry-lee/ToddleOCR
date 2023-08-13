@@ -1,35 +1,17 @@
-# copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-import numpy as np
-import os
 import json
+import os
 import random
 import traceback
-from torch.utils.data import Dataset
-from .imaug import transform, create_operators
+
+import numpy as np
+from torchvision.datasets import VisionDataset
 
 
-class SimpleDataSet(Dataset):
-    def __init__(self, config, mode, logger, seed=None):
-        super(SimpleDataSet, self).__init__()
-        self.logger = logger
-        self.mode = mode.lower()
-
-        global_config = config["Global"]
-        dataset_config = config[mode]["Dataset"]
-        loader_config = config[mode]["DataLoader"]
-
+class SimpleDataSet(VisionDataset):
+    def __init__(self,root,transforms=None,**dataset_config):
+        super(SimpleDataSet, self).__init__(root,transforms)
+        # self.logger = logger
+        self.mode = dataset_config.get('mode','train').lower()
         self.delimiter = dataset_config.get("delimiter", "\t")
         label_file_list = dataset_config.pop("label_file_list")
         data_source_num = len(label_file_list)
@@ -38,16 +20,14 @@ class SimpleDataSet(Dataset):
             ratio_list = [float(ratio_list)] * int(data_source_num)
 
         assert len(ratio_list) == data_source_num, "The length of ratio_list should be the same as the file_list."
-        self.data_dir = dataset_config["data_dir"]
-        self.do_shuffle = loader_config["shuffle"]
-        self.seed = seed
-        logger.info("Initialize indexs of datasets:%s" % label_file_list)
+
+        self.seed = dataset_config.get('seed',None)
+        if self.seed is not None:
+            random.seed(self.seed)
+            np.random.seed(self.seed)
+
         self.data_lines = self.get_image_info_list(label_file_list, ratio_list)
         self.data_idx_order_list = list(range(len(self.data_lines)))
-        if self.mode == "train" and self.do_shuffle:
-            self.shuffle_data_random()
-        self.ops = create_operators(dataset_config["transforms"], global_config)
-        self.ext_op_transform_idx = dataset_config.get("ext_op_transform_idx", 2)
         self.need_reset = True in [x < 1 for x in ratio_list]
 
     def get_image_info_list(self, file_list, ratio_list):
@@ -57,17 +37,10 @@ class SimpleDataSet(Dataset):
         for idx, file in enumerate(file_list):
             with open(file, "rb") as f:
                 lines = f.readlines()
-                if self.mode == "train" or ratio_list[idx] < 1.0:
-                    random.seed(self.seed)
+                if ratio_list[idx] < 1.0:
                     lines = random.sample(lines, round(len(lines) * ratio_list[idx]))
                 data_lines.extend(lines)
         return data_lines
-
-    def shuffle_data_random(self):
-        random.seed(self.seed)
-        random.shuffle(self.data_lines)
-        return
-
     def _try_parse_filename_list(self, file_name):
         # multiple images -> one gt label
         if len(file_name) > 0 and file_name[0] == "[":
@@ -78,39 +51,6 @@ class SimpleDataSet(Dataset):
                 pass
         return file_name
 
-    def get_ext_data(self):
-        ext_data_num = 0
-        for op in self.ops:
-            if hasattr(op, "ext_data_num"):
-                ext_data_num = getattr(op, "ext_data_num")
-                break
-        load_data_ops = self.ops[: self.ext_op_transform_idx]
-        ext_data = []
-
-        while len(ext_data) < ext_data_num:
-            file_idx = self.data_idx_order_list[np.random.randint(self.__len__())]
-            data_line = self.data_lines[file_idx]
-            data_line = data_line.decode("utf-8")
-            substr = data_line.strip("\n").split(self.delimiter)
-            file_name = substr[0]
-            file_name = self._try_parse_filename_list(file_name)
-            label = substr[1]
-            img_path = os.path.join(self.data_dir, file_name)
-            data = {"img_path": img_path, "label": label}
-            if not os.path.exists(img_path):
-                continue
-            with open(data["img_path"], "rb") as f:
-                img = f.read()
-                data["image"] = img
-            data = transform(data, load_data_ops)
-
-            if data is None:
-                continue
-            if "polys" in data.keys():
-                if data["polys"].shape[1] != 4:
-                    continue
-            ext_data.append(data)
-        return ext_data
 
     def __getitem__(self, idx):
         file_idx = self.data_idx_order_list[idx]
@@ -121,17 +61,16 @@ class SimpleDataSet(Dataset):
             file_name = substr[0]
             file_name = self._try_parse_filename_list(file_name)
             label = substr[1]
-            img_path = os.path.join(self.data_dir, file_name)
+            img_path = os.path.join(self.root, file_name)
             data = {"img_path": img_path, "label": label}
             if not os.path.exists(img_path):
                 raise Exception("{} does not exist!".format(img_path))
             with open(data["img_path"], "rb") as f:
                 img = f.read()
                 data["image"] = img
-            data["ext_data"] = self.get_ext_data()
-            outs = transform(data, self.ops)
+            outs = self.transforms(data)
         except:
-            self.logger.error(
+            print(
                 "When parsing line {}, error happened with msg: {}".format(data_line, traceback.format_exc())
             )
             outs = None
