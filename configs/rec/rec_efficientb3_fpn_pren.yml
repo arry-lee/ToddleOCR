@@ -45,7 +45,7 @@ Model:
 Loss:
   name: PRENLoss
 
-PostProcess:
+PostProcessor:
   name: PRENLabelDecode
 
 Metric:

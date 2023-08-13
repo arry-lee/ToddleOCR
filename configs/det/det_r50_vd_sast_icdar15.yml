@@ -44,7 +44,7 @@ Optimizer:
     name: 'L2'
     factor: 0
 
-PostProcess:
+PostProcessor:
   name: SASTPostProcess
   score_thresh: 0.5
   sample_pts_num: 2

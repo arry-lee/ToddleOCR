@@ -63,7 +63,7 @@ def main():
 
     load_model(config, model)
     # build post process
-    post_process_class = build_post_process(config["PostProcess"])
+    post_process_class = build_post_process(config["PostProcessor"])
 
     # create data ops
     transforms = []

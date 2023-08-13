@@ -65,7 +65,7 @@ Loss:
     - CTCLoss:
     - SARLoss:
 
-PostProcess:  
+PostProcessor:  
   name: CTCLabelDecode
 
 Metric:

@@ -45,7 +45,7 @@ Optimizer:
     name: 'L2'
     factor: 0
 
-PostProcess:
+PostProcessor:
   name: EASTPostProcess
   score_thresh: 0.8
   cover_thresh: 0.1

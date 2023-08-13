@@ -48,7 +48,7 @@ Optimizer:
     name: 'L2'
     factor: 0
 
-PostProcess:
+PostProcessor:
   name: FCEPostProcess
   scales: [8, 16, 32]
   alpha: 1.0

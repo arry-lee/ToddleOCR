@@ -116,7 +116,7 @@ Optimizer:
     name: L2
     factor: 5.0e-05
 
-PostProcess:
+PostProcessor:
   name: DistillationDBPostProcess
   model_name: ["Student"]
   key: head_out

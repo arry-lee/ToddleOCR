@@ -48,7 +48,7 @@ Optimizer:
     factor: 0.9
     end_lr: 0
   weight_decay: 0.0001
-PostProcess:
+PostProcessor:
   name: DBPostProcess
   thresh: 0.3
   box_thresh: 0.5

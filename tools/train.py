@@ -64,7 +64,7 @@ def main(config, device, logger, vdl_writer):
         valid_dataloader = None
 
     # build post process
-    post_process_class = build_post_process(config["PostProcess"], global_config)
+    post_process_class = build_post_process(config["PostProcessor"], global_config)
 
     # build model
     # for rec algorithm
@@ -75,7 +75,7 @@ def main(config, device, logger, vdl_writer):
         ]:  # distillation model
             for key in config["Model"]["Models"]:
                 if config["Model"]["Models"][key]["Head"]["name"] == "MultiHead":  # for multi head
-                    if config["PostProcess"]["name"] == "DistillationSARLabelDecode":
+                    if config["PostProcessor"]["name"] == "DistillationSARLabelDecode":
                         char_num = char_num - 2
                     # update SARLoss params
                     assert list(config["Loss"]["loss_config_list"][-1].keys())[0] == "DistillationSARLoss"
@@ -87,7 +87,7 @@ def main(config, device, logger, vdl_writer):
                 else:
                     config["Model"]["Models"][key]["Head"]["out_channels"] = char_num
         elif config["Model"]["Head"]["name"] == "MultiHead":  # for multi head
-            if config["PostProcess"]["name"] == "SARLabelDecode":
+            if config["PostProcessor"]["name"] == "SARLabelDecode":
                 char_num = char_num - 2
             # update SARLoss params
             assert list(config["Loss"]["loss_config_list"][1].keys())[0] == "SARLoss"
@@ -102,7 +102,7 @@ def main(config, device, logger, vdl_writer):
         else:  # base rec model
             config["Model"]["Head"]["out_channels"] = char_num
 
-        if config["PostProcess"]["name"] == "SARLabelDecode":  # for SAR model
+        if config["PostProcessor"]["name"] == "SARLabelDecode":  # for SAR model
             config["Loss"]["ignore_index"] = char_num - 1
 
     model = build_model(config["Model"])

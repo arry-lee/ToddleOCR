@@ -62,7 +62,7 @@ class SerPredictor(object):
         self.algorithm = config["Model"]["algorithm"]
 
         # build post process
-        self.post_process_class = build_post_process(config["PostProcess"], global_config)
+        self.post_process_class = build_post_process(config["PostProcessor"], global_config)
 
         # build model
         self.model = build_model(config["Model"])

@@ -55,7 +55,7 @@ Model:
 Loss:
   name: AsterLoss
 
-PostProcess:
+PostProcessor:
   name: SEEDLabelDecode
 
 Metric:

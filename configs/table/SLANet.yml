@@ -59,7 +59,7 @@ Loss:
   loc_weight: 2.0
   loc_loss: smooth_l1
 
-PostProcess:
+PostProcessor:
   name: TableLabelDecode
   merge_no_span_structure: &merge_no_span_structure True
 

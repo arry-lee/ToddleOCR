@@ -58,7 +58,7 @@ Loss:
   name: TableMasterLoss
   ignore_index: 42 # set to len of dict + 3
 
-PostProcess:
+PostProcessor:
   name: TableMasterLabelDecode
   box_shape: pad
   merge_no_span_structure: &merge_no_span_structure True

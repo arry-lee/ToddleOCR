@@ -64,7 +64,7 @@ Model:
 Loss:
   name: CANLoss
 
-PostProcess:
+PostProcessor:
   name: CANLabelDecode
 
 Metric:

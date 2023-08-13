@@ -57,7 +57,7 @@ Loss:
   weight_res: 0.5
   weight_mas: 0.5
 
-PostProcess:
+PostProcessor:
   name: VLLabelDecode
 
 Metric:

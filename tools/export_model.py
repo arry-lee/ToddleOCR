@@ -165,7 +165,7 @@ def main():
     logger = get_logger()
     # build post process
 
-    post_process_class = build_post_process(config["PostProcess"], config["Global"])
+    post_process_class = build_post_process(config["PostProcessor"], config["Global"])
 
     # build model
     # for rec algorithm
@@ -177,7 +177,7 @@ def main():
             for key in config["Model"]["Models"]:
                 if config["Model"]["Models"][key]["Head"]["name"] == "MultiHead":  # multi head
                     out_channels_list = {}
-                    if config["PostProcess"]["name"] == "DistillationSARLabelDecode":
+                    if config["PostProcessor"]["name"] == "DistillationSARLabelDecode":
                         char_num = char_num - 2
                     out_channels_list["CTCLabelDecode"] = char_num
                     out_channels_list["SARLabelDecode"] = char_num + 2
@@ -189,7 +189,7 @@ def main():
         elif config["Model"]["Head"]["name"] == "MultiHead":  # multi head
             out_channels_list = {}
             char_num = len(getattr(post_process_class, "character"))
-            if config["PostProcess"]["name"] == "SARLabelDecode":
+            if config["PostProcessor"]["name"] == "SARLabelDecode":
                 char_num = char_num - 2
             out_channels_list["CTCLabelDecode"] = char_num
             out_channels_list["SARLabelDecode"] = char_num + 2

@@ -51,7 +51,7 @@ Loss:
   structure_weight: 100.0
   loc_weight: 10000.0
 
-PostProcess:
+PostProcessor:
   name: TableLabelDecode
 
 Metric:

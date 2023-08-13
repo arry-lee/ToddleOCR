@@ -38,7 +38,7 @@ def main():
     valid_dataloader = build_dataloader(config, "Eval", device, logger)
 
     # build post process
-    post_process_class = build_post_process(config["PostProcess"], global_config)
+    post_process_class = build_post_process(config["PostProcessor"], global_config)
 
     # build model
     # for rec algorithm
@@ -50,7 +50,7 @@ def main():
             for key in config["Model"]["Models"]:
                 if config["Model"]["Models"][key]["Head"]["name"] == "MultiHead":  # for multi head
                     out_channels_list = {}
-                    if config["PostProcess"]["name"] == "DistillationSARLabelDecode":
+                    if config["PostProcessor"]["name"] == "DistillationSARLabelDecode":
                         char_num = char_num - 2
                     out_channels_list["CTCLabelDecode"] = char_num
                     out_channels_list["SARLabelDecode"] = char_num + 2
@@ -59,7 +59,7 @@ def main():
                     config["Model"]["Models"][key]["Head"]["out_channels"] = char_num
         elif config["Model"]["Head"]["name"] == "MultiHead":  # for multi head
             out_channels_list = {}
-            if config["PostProcess"]["name"] == "SARLabelDecode":
+            if config["PostProcessor"]["name"] == "SARLabelDecode":
                 char_num = char_num - 2
             out_channels_list["CTCLabelDecode"] = char_num
             out_channels_list["SARLabelDecode"] = char_num + 2

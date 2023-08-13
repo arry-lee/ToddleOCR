@@ -43,7 +43,7 @@ Optimizer:
     step_each_epoch: 1254
     power: 0.9
 
-PostProcess:
+PostProcessor:
   name: CTPostProcess
   box_type: poly
 

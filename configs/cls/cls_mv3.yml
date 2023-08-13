@@ -42,7 +42,7 @@ Optimizer:
     name: 'L2'
     factor: 0
 
-PostProcess:
+PostProcessor:
   name: ClsPostProcess
 
 Metric:

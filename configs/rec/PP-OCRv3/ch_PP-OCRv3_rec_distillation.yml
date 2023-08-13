@@ -134,7 +134,7 @@ Loss:
       key: head_out
       multi_head: True
 
-PostProcess:
+PostProcessor:
   name: DistillationCTCLabelDecode
   model_name: ["Student", "Teacher"]
   key: head_out

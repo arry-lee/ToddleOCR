@@ -41,7 +41,7 @@ def main():
     eval_dataloader = build_dataloader(config, "Eval", device, logger)
 
     # build post process
-    post_process_class = build_post_process(config["PostProcess"], global_config)
+    post_process_class = build_post_process(config["PostProcessor"], global_config)
 
     # build model
     # for rec algorithm

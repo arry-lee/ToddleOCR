@@ -95,7 +95,7 @@ Optimizer:
     name: L2
     factor: 0.00000
     
-PostProcess:
+PostProcessor:
   name: DistillationSerPostProcess
   model_name: ["Student", "Teacher"]
   key: backbone_out

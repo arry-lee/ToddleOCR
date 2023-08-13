@@ -50,7 +50,7 @@ Model:
     fc_decay: 1.0e-05
 Loss:
   name: CTCLoss
-PostProcess:
+PostProcessor:
   name: CTCLabelDecode
 Metric:
   name: RecMetric

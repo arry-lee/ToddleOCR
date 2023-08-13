@@ -98,7 +98,7 @@ Loss:
       - ["Student", "Teacher"]
       key: backbone_out
 
-PostProcess:
+PostProcessor:
   name: DistillationCTCLabelDecode
   model_name: ["Student", "Teacher"]
   key: head_out

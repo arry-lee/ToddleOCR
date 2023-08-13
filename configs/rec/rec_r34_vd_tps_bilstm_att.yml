@@ -54,7 +54,7 @@ Model:
 Loss:
   name: AttentionLoss
 
-PostProcess:
+PostProcessor:
   name: AttnLabelDecode
 
 Metric:

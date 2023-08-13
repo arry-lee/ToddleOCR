@@ -52,7 +52,7 @@ Loss:
   name: CELoss
   smoothing: True
 
-PostProcess:
+PostProcessor:
   name: NRTRLabelDecode
 
 Metric:

@@ -50,7 +50,7 @@ Optimizer:
     name: 'L2'
     factor: 0.0005
 
-PostProcess:
+PostProcessor:
   name: PSEPostProcess
   thresh: 0
   box_thresh: 0.85

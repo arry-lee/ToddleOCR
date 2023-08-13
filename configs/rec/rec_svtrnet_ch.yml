@@ -84,7 +84,7 @@ Model:
     name: CTCHead
 Loss:
   name: CTCLoss
-PostProcess:
+PostProcessor:
   name: CTCLabelDecode
 Metric:
   name: RecMetric

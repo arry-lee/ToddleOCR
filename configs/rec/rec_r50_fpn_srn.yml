@@ -48,7 +48,7 @@ Model:
 Loss:
   name: SRNLoss
 
-PostProcess:
+PostProcessor:
   name: SRNLabelDecode
 
 Metric:

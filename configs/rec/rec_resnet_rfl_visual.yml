@@ -60,7 +60,7 @@ Model:
 Loss:
   name: RFLLoss
 
-PostProcess:
+PostProcessor:
   name: RFLLabelDecode
 
 Metric:

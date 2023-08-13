@@ -51,7 +51,7 @@ Model:
 Loss:
   name: CTCLoss
 
-PostProcess:
+PostProcessor:
   name: CTCLabelDecode
 
 Metric:

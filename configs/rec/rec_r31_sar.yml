@@ -45,7 +45,7 @@ Model:
 Loss:
   name: SARLoss
 
-PostProcess:
+PostProcessor:
   name: SARLabelDecode
 
 Metric:

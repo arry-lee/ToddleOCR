@@ -67,7 +67,7 @@ Loss:
   # - ACELoss:
   #     weight: 0.1
 
-PostProcess:
+PostProcessor:
   name: CTCLabelDecode
 
 Metric:

@@ -121,7 +121,7 @@ Optimizer:
     name: 'L2'
     factor: 0
 
-PostProcess:
+PostProcessor:
   name: DistillationDBPostProcess
   model_name: ["Student", "Student2", "Teacher"]
   # key: maps

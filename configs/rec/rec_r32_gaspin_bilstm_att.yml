@@ -59,7 +59,7 @@ Loss:
   name: SPINAttentionLoss
   ignore_index: 0
 
-PostProcess:
+PostProcessor:
   name: SPINLabelDecode
   use_space_char: False
 

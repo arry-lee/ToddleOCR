@@ -62,7 +62,7 @@ Loss:
   name: RFLLoss
   # ignore_index: 0
 
-PostProcess:
+PostProcessor:
   name: RFLLabelDecode
 
 Metric:

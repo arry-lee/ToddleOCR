@@ -283,7 +283,7 @@ class Pipeline:
             if config['Model']["algorithm"] in ["Distillation", ]:  # distillation model
                 for key in config['Model']["Models"]:
                     if config['Model']['Models'][key]['Head']['class'] == 'MultiHead':  # for multi head
-                        if config['PostProcess']['class'] == 'DistillationSARLabelDecode':
+                        if config['PostProcessor']['class'] == 'DistillationSARLabelDecode':
                             char_num = char_num - 2
                         # update SARLoss params
                         assert list(config['Loss']['loss_config_list'][-1].keys())[0] == 'DistillationSARLoss'
@@ -296,7 +296,7 @@ class Pipeline:
                         config['Model']["Models"][key]["Head"]['out_channels'] = char_num
 
             elif config['Model']['Head']['class'] == 'MultiHead':  # for multi head
-                if config['PostProcess']['class'] == 'SARLabelDecode':
+                if config['PostProcessor']['class'] == 'SARLabelDecode':
                     char_num = char_num - 2
                 # update SARLoss params
                 assert list(config['Loss']['loss_config_list'][1].keys())[0] == 'SARLoss'
@@ -311,7 +311,7 @@ class Pipeline:
             else:  # base rec model
                 config['Model']["Head"]['out_channels'] = char_num
 
-            if config['PostProcess']['class'] == 'SARLabelDecode':  # for SAR model
+            if config['PostProcessor']['class'] == 'SARLabelDecode':  # for SAR model
                 config['Loss']['ignore_index'] = char_num - 1
 
     @property

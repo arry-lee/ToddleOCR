@@ -51,7 +51,7 @@ Loss:
   name: CELoss
   ignore_index: &ignore_index 100 # Must be greater than the number of character classes
 
-PostProcess:
+PostProcessor:
   name: ABINetLabelDecode
 
 Metric:

@@ -48,7 +48,7 @@ Loss:
   with_all: True
   ignore_index: &ignore_index 0 # Must be zero or greater than the number of character classes
 
-PostProcess:
+PostProcessor:
   name: ViTSTRLabelDecode
 
 Metric:

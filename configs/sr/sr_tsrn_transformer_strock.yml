@@ -40,7 +40,7 @@ Loss:
   name: StrokeFocusLoss
   character_dict_path: ./train_data/srdata/english_decomposition.txt
 
-PostProcess:
+PostProcessor:
   name: None
 
 Metric:

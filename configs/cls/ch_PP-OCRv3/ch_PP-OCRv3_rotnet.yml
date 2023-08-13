@@ -46,7 +46,7 @@ Loss:
   name: ClsLoss
   main_indicator: acc
 
-PostProcess:
+PostProcessor:
   name: ClsPostProcess
 
 Metric:

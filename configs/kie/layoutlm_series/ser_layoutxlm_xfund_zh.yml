@@ -42,7 +42,7 @@ Optimizer:
     name: L2
     factor: 0.00000
     
-PostProcess:
+PostProcessor:
   name: VQASerTokenLayoutLMPostProcess
   class_path: &class_path train_data/XFUND/class_list_xfun.txt
 

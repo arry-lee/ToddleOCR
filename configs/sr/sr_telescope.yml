@@ -41,7 +41,7 @@ Loss:
   confuse_dict_path: ./ppocr/utils/dict/confuse.pkl
 
 
-PostProcess:
+PostProcessor:
   name: None
 
 Metric:

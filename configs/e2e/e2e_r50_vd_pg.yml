@@ -54,7 +54,7 @@ Optimizer:
     name: 'L2'
     factor: 0.0001
 
-PostProcess:
+PostProcessor:
   name: PGPostProcess
   score_thresh: 0.5
   mode: fast   # fast or slow two ways

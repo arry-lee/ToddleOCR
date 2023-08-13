@@ -49,7 +49,7 @@ Optimizer:
     name: 'L2'
     factor: 0
 
-PostProcess:
+PostProcessor:
   name: DBPostProcess
   thresh: 0.3
   box_thresh: 0.6

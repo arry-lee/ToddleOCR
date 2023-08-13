@@ -46,7 +46,7 @@ def main(config, device, logger, vdl_writer):
     global_config = config["Global"]
 
     # build post process
-    post_process_class = build_post_process(config["PostProcess"], global_config)
+    post_process_class = build_post_process(config["PostProcessor"], global_config)
 
     # build model
     if hasattr(post_process_class, "character"):
