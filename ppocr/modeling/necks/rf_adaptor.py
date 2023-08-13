@@ -20,7 +20,7 @@ import torch
 import torch.nn as nn
 from torch.nn.init import TruncatedNormal, Constant, Normal, KaimingNormal
 
-kaiming_init_ = KaimingNormal()
+kaiming_normal_ = KaimingNormal()
 zeros_ = Constant(value=0.0)
 ones_ = Constant(value=1.0)
 
@@ -41,7 +41,7 @@ class S2VAdaptor(nn.Module):
 
     def init_weights(self, m):
         if isinstance(m, nn.Conv2d):
-            kaiming_init_(m.weight)
+            kaiming_normal_(m.weight)
             if isinstance(m, nn.Conv2d) and m.bias is not None:
                 zeros_(m.bias)
         elif isinstance(m, (nn.BatchNorm2d, nn.BatchNorm2d, nn.BatchNorm1d)):

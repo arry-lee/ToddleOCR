@@ -17,11 +17,11 @@ https://github.com/hikopensource/DAVAR-Lab-OCR/blob/main/davarocr/davar_rcg/mode
 """
 import torch
 import torch.nn as nn
-from torch.nn.init import TruncatedNormal, Constant, Normal, KaimingNormal
+from torch.nn.init import trunc_normal_, constant_, normal_, kaiming_normal_
 
 from .rec_att_head import AttentionLSTM
 
-kaiming_init_ = KaimingNormal()
+kaiming_normal_ = KaimingNormal()
 zeros_ = Constant(value=0.0)
 ones_ = Constant(value=1.0)
 
@@ -76,7 +76,7 @@ class RFLHead(nn.Module):
 
     def init_weights(self, m):
         if isinstance(m, nn.Linear):
-            kaiming_init_(m.weight)
+            kaiming_normal_(m.weight)
             if isinstance(m, nn.Linear) and m.bias is not None:
                 zeros_(m.bias)
 

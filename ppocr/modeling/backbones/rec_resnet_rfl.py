@@ -21,11 +21,11 @@ https://github.com/hikopensource/DAVAR-Lab-OCR/blob/main/davarocr/davar_rcg/mode
 
 
 import torch.nn as nn
-from torch.nn.init import Constant, KaimingNormal
+from torch.nn.init import zeros_, ones_, kaiming_normal_
 
-kaiming_init_ = KaimingNormal()
-zeros_ = Constant(value=0.0)
-ones_ = Constant(value=1.0)
+# kaiming_normal_ = KaimingNormal()
+# zeros_ = Constant(value=0.0)
+# ones_ = Constant(value=1.0)
 
 
 class BasicBlock(nn.Module):
