@@ -97,17 +97,17 @@ class DBFPN(nn.Module):
         in3 = self.in3_conv(c3)
         in2 = self.in2_conv(c2)
 
-        out4 = in4 + F.upsample(in5, scale_factor=2, mode="nearest", align_mode=1)  # 1/16
-        out3 = in3 + F.upsample(out4, scale_factor=2, mode="nearest", align_mode=1)  # 1/8
-        out2 = in2 + F.upsample(out3, scale_factor=2, mode="nearest", align_mode=1)  # 1/4
+        out4 = in4 + F.upsample(in5, scale_factor=2, mode="nearest")  # 1/16
+        out3 = in3 + F.upsample(out4, scale_factor=2, mode="nearest")  # 1/8
+        out2 = in2 + F.upsample(out3, scale_factor=2, mode="nearest")  # 1/4
 
         p5 = self.p5_conv(in5)
         p4 = self.p4_conv(out4)
         p3 = self.p3_conv(out3)
         p2 = self.p2_conv(out2)
-        p5 = F.upsample(p5, scale_factor=8, mode="nearest", align_mode=1)
-        p4 = F.upsample(p4, scale_factor=4, mode="nearest", align_mode=1)
-        p3 = F.upsample(p3, scale_factor=2, mode="nearest", align_mode=1)
+        p5 = F.upsample(p5, scale_factor=8, mode="nearest")
+        p4 = F.upsample(p4, scale_factor=4, mode="nearest")
+        p3 = F.upsample(p3, scale_factor=2, mode="nearest")
 
         fuse = torch.concat([p5, p4, p3, p2], dim=1)
 
@@ -155,18 +155,18 @@ class RSEFPN(nn.Module):
         in3 = self.ins_conv[1](c3)
         in2 = self.ins_conv[0](c2)
 
-        out4 = in4 + F.upsample(in5, scale_factor=2, mode="nearest", align_mode=1)  # 1/16
-        out3 = in3 + F.upsample(out4, scale_factor=2, mode="nearest", align_mode=1)  # 1/8
-        out2 = in2 + F.upsample(out3, scale_factor=2, mode="nearest", align_mode=1)  # 1/4
+        out4 = in4 + F.upsample(in5, scale_factor=2, mode="nearest", )  # 1/16
+        out3 = in3 + F.upsample(out4, scale_factor=2, mode="nearest", )  # 1/8
+        out2 = in2 + F.upsample(out3, scale_factor=2, mode="nearest", )  # 1/4
 
         p5 = self.inp_conv[3](in5)
         p4 = self.inp_conv[2](out4)
         p3 = self.inp_conv[1](out3)
         p2 = self.inp_conv[0](out2)
 
-        p5 = F.upsample(p5, scale_factor=8, mode="nearest", align_mode=1)
-        p4 = F.upsample(p4, scale_factor=4, mode="nearest", align_mode=1)
-        p3 = F.upsample(p3, scale_factor=2, mode="nearest", align_mode=1)
+        p5 = F.upsample(p5, scale_factor=8, mode="nearest", )
+        p4 = F.upsample(p4, scale_factor=4, mode="nearest", )
+        p3 = F.upsample(p3, scale_factor=2, mode="nearest", )
 
         fuse = torch.concat([p5, p4, p3, p2], dim=1)
         return fuse
@@ -211,9 +211,9 @@ class LKPAN(nn.Module):
         in3 = self.ins_conv[1](c3)
         in2 = self.ins_conv[0](c2)
 
-        out4 = in4 + F.upsample(in5, scale_factor=2, mode="nearest", align_mode=1)  # 1/16
-        out3 = in3 + F.upsample(out4, scale_factor=2, mode="nearest", align_mode=1)  # 1/8
-        out2 = in2 + F.upsample(out3, scale_factor=2, mode="nearest", align_mode=1)  # 1/4
+        out4 = in4 + F.upsample(in5, scale_factor=2, mode="nearest", )  # 1/16
+        out3 = in3 + F.upsample(out4, scale_factor=2, mode="nearest", )  # 1/8
+        out2 = in2 + F.upsample(out3, scale_factor=2, mode="nearest", )  # 1/4
 
         f5 = self.inp_conv[3](in5)
         f4 = self.inp_conv[2](out4)
@@ -229,9 +229,9 @@ class LKPAN(nn.Module):
         p4 = self.pan_lat_conv[2](pan4)
         p5 = self.pan_lat_conv[3](pan5)
 
-        p5 = F.upsample(p5, scale_factor=8, mode="nearest", align_mode=1)
-        p4 = F.upsample(p4, scale_factor=4, mode="nearest", align_mode=1)
-        p3 = F.upsample(p3, scale_factor=2, mode="nearest", align_mode=1)
+        p5 = F.upsample(p5, scale_factor=8, mode="nearest", )
+        p4 = F.upsample(p4, scale_factor=4, mode="nearest", )
+        p3 = F.upsample(p3, scale_factor=2, mode="nearest", )
 
         fuse = torch.concat([p5, p4, p3, p2], dim=1)
         return fuse
