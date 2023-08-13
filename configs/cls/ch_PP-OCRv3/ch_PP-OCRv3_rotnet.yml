@@ -27,7 +27,8 @@ Optimizer:
     - 0.999
   lr: 0.001
 LRScheduler:
-  class: Cosine
+  class: CosineAnnealing
+  T_max: null
 Model:
   model_type: cls
   algorithm: CLS

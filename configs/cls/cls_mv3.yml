@@ -38,7 +38,8 @@ Optimizer:
     - 0.999
   lr: 0.001
 LRScheduler:
-  class: Cosine
+  class: CosineAnnealing
+  T_max: null
 PostProcessor:
   class: ClsPostProcess
 Metric:
