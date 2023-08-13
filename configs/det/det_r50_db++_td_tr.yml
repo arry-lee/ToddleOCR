@@ -41,12 +41,13 @@ Loss:
 Optimizer:
   name: Momentum
   momentum: 0.9
+  lr: 0.007
 LRScheduler:
-    name: DecayLearningRate
-    learning_rate: 0.007
-    epochs: 1000
-    factor: 0.9
-    end_lr: 0
+  name: DecayLearningRate
+  
+  epochs: 1000
+  factor: 0.9
+  end_lr: 0
   weight_decay: 0.0001
 PostProcessor:
   name: DBPostProcess

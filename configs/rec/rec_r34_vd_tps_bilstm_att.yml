@@ -25,8 +25,9 @@ Optimizer:
   name: Adam
   beta1: 0.9
   beta2: 0.999
+  lr: 0.0005
 LRScheduler:
-    learning_rate: 0.0005
+  
   
 
 Model:

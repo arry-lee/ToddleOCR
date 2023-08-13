@@ -27,9 +27,10 @@ Optimizer:
   name: Adam
   beta1: 0.9
   beta2: 0.999
+  lr: 0.001
 LRScheduler:
-    name: Cosine
-    learning_rate: 0.001
+  name: Cosine
+  
   
 
 Model:

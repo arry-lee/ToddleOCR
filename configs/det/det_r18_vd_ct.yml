@@ -35,13 +35,14 @@ Loss:
 
 Optimizer:
   name: Adam
+  lr: 0.001
 LRScheduler:  #PolynomialDecay
-    name: Linear 
-    learning_rate: 0.001
-    end_lr: 0.
-    epochs: 600
-    step_each_epoch: 1254
-    power: 0.9
+  name: Linear
+  
+  end_lr: 0.
+  epochs: 600
+  step_each_epoch: 1254
+  power: 0.9
 
 PostProcessor:
   name: CTPostProcess

@@ -28,9 +28,9 @@ Optimizer:
   weight_decay: 0.0
   clip_norm_global: 5.0
 LRScheduler:
-    name: Piecewise
-    decay_epochs : [3, 4, 5]
-    values : [0.001, 0.0003, 0.00009, 0.000027]
+  name: Piecewise
+  decay_epochs: [3, 4, 5]
+  values : [0.001, 0.0003, 0.00009, 0.000027]
 
 Model:
   model_type: rec

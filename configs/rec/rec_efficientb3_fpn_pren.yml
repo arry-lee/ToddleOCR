@@ -23,9 +23,9 @@ Global:
 Optimizer:
   name: Adadelta
 LRScheduler:
-    name: Piecewise
-    decay_epochs: [2, 5, 7]
-    values: [0.5, 0.1, 0.01, 0.001]
+  name: Piecewise
+  decay_epochs: [2, 5, 7]
+  values: [0.5, 0.1, 0.01, 0.001]
 
 Model:
   model_type: rec

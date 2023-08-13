@@ -41,11 +41,12 @@ Optimizer:
   name: Adam
   beta1: 0.9
   beta2: 0.999
+  lr: 0.0001
 LRScheduler:
-    name: Step
-    learning_rate: 0.0001
-    step_size: 200
-    gamma: 0.1
+  name: Step
+  
+  step_size: 200
+  gamma: 0.1
   
 
 PostProcessor:

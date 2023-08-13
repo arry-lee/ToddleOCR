@@ -38,12 +38,13 @@ Optimizer:
   name: Adam
   beta1: 0.9
   beta2: 0.999
+  lr: 0.001
 LRScheduler:
-    name: Piecewise
-    learning_rate: 0.001
-    decay_epochs: [ 60, 80, 100]
-    values: [ 0.001, 0.0001, 0.00001]
-    warmup_epoch: 2
+  name: Piecewise
+  
+  decay_epochs: [ 60, 80, 100]
+  values: [ 0.001, 0.0001, 0.00001]
+  warmup_epoch: 2
   
 
 PostProcessor:

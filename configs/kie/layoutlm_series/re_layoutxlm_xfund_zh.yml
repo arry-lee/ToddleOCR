@@ -33,9 +33,10 @@ Optimizer:
   beta1: 0.9
   beta2: 0.999
   clip_norm: 10
+  lr: 0.00005
 LRScheduler:
-    learning_rate: 0.00005
-    warmup_epoch: 10
+  
+  warmup_epoch: 10
   
     
 PostProcessor:

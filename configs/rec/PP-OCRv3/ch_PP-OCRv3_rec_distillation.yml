@@ -26,10 +26,10 @@ Optimizer:
   beta1: 0.9
   beta2: 0.999
 LRScheduler:
-    name: Piecewise
-    decay_epochs : [700]
-    values : [0.0005, 0.00005]
-    warmup_epoch: 5
+  name: Piecewise
+  decay_epochs : [700]
+  values : [0.0005, 0.00005]
+  warmup_epoch: 5
   
 
 

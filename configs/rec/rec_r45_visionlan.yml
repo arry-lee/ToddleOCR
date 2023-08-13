@@ -29,9 +29,9 @@ Optimizer:
   group_lr: true
   training_step: *training_step
 LRScheduler:
-    name: Piecewise
-    decay_epochs: [6]
-    values: [0.0001, 0.00001] 
+  name: Piecewise
+  decay_epochs: [6]
+  values: [0.0001, 0.00001] 
   
 
 Model:
