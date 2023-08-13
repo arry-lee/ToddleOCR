@@ -128,7 +128,7 @@ def gen_config():
             "vgg_pretrain": "./pretrained/VGG19_pretrained",
             "vgg_load_static_pretrain": True,
         },
-        "Architecture": {
+        "Model": {
             "model_type": "data_aug",
             "algorithm": "SRNet",
             "net_g": {

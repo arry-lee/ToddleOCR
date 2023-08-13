@@ -218,20 +218,20 @@ def train(
     model_average = False
     model.train()
 
-    use_srn = config["Architecture"]["algorithm"] == "SRN"
+    use_srn = config["Model"]["algorithm"] == "SRN"
     extra_input_models = ["SRN", "NRTR", "SAR", "SEED", "SVTR", "SPIN", "VisionLAN", "RobustScanner", "RFL", "DRRG"]
     extra_input = False
-    if config["Architecture"]["algorithm"] == "Distillation":
-        for key in config["Architecture"]["Models"]:
-            extra_input = extra_input or config["Architecture"]["Models"][key]["algorithm"] in extra_input_models
+    if config["Model"]["algorithm"] == "Distillation":
+        for key in config["Model"]["Models"]:
+            extra_input = extra_input or config["Model"]["Models"][key]["algorithm"] in extra_input_models
     else:
-        extra_input = config["Architecture"]["algorithm"] in extra_input_models
+        extra_input = config["Model"]["algorithm"] in extra_input_models
     try:
-        model_type = config["Architecture"]["model_type"]
+        model_type = config["Model"]["model_type"]
     except:
         model_type = None
 
-    algorithm = config["Architecture"]["algorithm"]
+    algorithm = config["Model"]["algorithm"]
 
     start_epoch = best_model_dict["start_epoch"] if "start_epoch" in best_model_dict else 1
 
@@ -618,7 +618,7 @@ def preprocess(is_train=False):
     use_npu = config["Global"].get("use_npu", False)
     use_mlu = config["Global"].get("use_mlu", False)
 
-    alg = config["Architecture"]["algorithm"]
+    alg = config["Model"]["algorithm"]
     assert alg in [
         "EAST",
         "DB",

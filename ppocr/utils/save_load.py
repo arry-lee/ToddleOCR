@@ -52,13 +52,13 @@ def load_model(config, model, optimizer=None, model_type="det"):
     pretrained_model = global_config.get("pretrained_model")
     best_model_dict = {}
     is_float16 = False
-    is_nlp_model = model_type == "kie" and config["Architecture"]["algorithm"] not in ["SDMGR"]
+    is_nlp_model = model_type == "kie" and config["Model"]["algorithm"] not in ["SDMGR"]
 
     if is_nlp_model is True:
         # NOTE: for kie model dsitillation, resume training is not supported now
-        if config["Architecture"]["algorithm"] in ["Distillation"]:
+        if config["Model"]["algorithm"] in ["Distillation"]:
             return best_model_dict
-        checkpoints = config["Architecture"]["Backbone"]["checkpoints"]
+        checkpoints = config["Model"]["Backbone"]["checkpoints"]
         # load kie method metric
         if checkpoints:
             if os.path.exists(os.path.join(checkpoints, "metric.states")):
@@ -176,7 +176,7 @@ def save_model(model, optimizer, model_path, logger, config, is_best=False, pref
     model_prefix = os.path.join(model_path, prefix)
     torch.save(optimizer.state_dict(), model_prefix + ".pdopt")
 
-    is_nlp_model = config["Architecture"]["model_type"] == "kie" and config["Architecture"]["algorithm"] not in [
+    is_nlp_model = config["Model"]["model_type"] == "kie" and config["Model"]["algorithm"] not in [
         "SDMGR"
     ]
     if is_nlp_model is not True:
@@ -187,7 +187,7 @@ def save_model(model, optimizer, model_path, logger, config, is_best=False, pref
             arch = model._layers
         else:
             arch = model
-        if config["Architecture"]["algorithm"] in ["Distillation"]:
+        if config["Model"]["algorithm"] in ["Distillation"]:
             arch = arch.Student
         arch.backbone.model.save_pretrained(model_prefix)
         metric_prefix = os.path.join(model_prefix, "metric")

@@ -59,15 +59,15 @@ def to_tensor(data):
 class SerPredictor(object):
     def __init__(self, config):
         global_config = config["Global"]
-        self.algorithm = config["Architecture"]["algorithm"]
+        self.algorithm = config["Model"]["algorithm"]
 
         # build post process
         self.post_process_class = build_post_process(config["PostProcess"], global_config)
 
         # build model
-        self.model = build_model(config["Architecture"])
+        self.model = build_model(config["Model"])
 
-        load_model(config, self.model, model_type=config["Architecture"]["model_type"])
+        load_model(config, self.model, model_type=config["Model"]["model_type"])
 
         from paddleocr import PaddleOCR
 

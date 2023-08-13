@@ -47,30 +47,30 @@ def main():
     # build model
     if hasattr(post_process_class, "character"):
         char_num = len(getattr(post_process_class, "character"))
-        if config["Architecture"]["algorithm"] in [
+        if config["Model"]["algorithm"] in [
             "Distillation",
         ]:  # distillation model
-            for key in config["Architecture"]["Models"]:
-                if config["Architecture"]["Models"][key]["Head"]["name"] == "MultiHead":  # for multi head
+            for key in config["Model"]["Models"]:
+                if config["Model"]["Models"][key]["Head"]["name"] == "MultiHead":  # for multi head
                     out_channels_list = {}
                     if config["PostProcess"]["name"] == "DistillationSARLabelDecode":
                         char_num = char_num - 2
                     out_channels_list["CTCLabelDecode"] = char_num
                     out_channels_list["SARLabelDecode"] = char_num + 2
-                    config["Architecture"]["Models"][key]["Head"]["out_channels_list"] = out_channels_list
+                    config["Model"]["Models"][key]["Head"]["out_channels_list"] = out_channels_list
                 else:
-                    config["Architecture"]["Models"][key]["Head"]["out_channels"] = char_num
-        elif config["Architecture"]["Head"]["name"] == "MultiHead":  # for multi head loss
+                    config["Model"]["Models"][key]["Head"]["out_channels"] = char_num
+        elif config["Model"]["Head"]["name"] == "MultiHead":  # for multi head loss
             out_channels_list = {}
             if config["PostProcess"]["name"] == "SARLabelDecode":
                 char_num = char_num - 2
             out_channels_list["CTCLabelDecode"] = char_num
             out_channels_list["SARLabelDecode"] = char_num + 2
-            config["Architecture"]["Head"]["out_channels_list"] = out_channels_list
+            config["Model"]["Head"]["out_channels_list"] = out_channels_list
         else:  # base rec model
-            config["Architecture"]["Head"]["out_channels"] = char_num
+            config["Model"]["Head"]["out_channels"] = char_num
 
-    model = build_model(config["Architecture"])
+    model = build_model(config["Model"])
 
     load_model(config, model)
 
@@ -83,7 +83,7 @@ def main():
         elif op_name in ["RecResizeImg"]:
             op[op_name]["infer_mode"] = True
         elif op_name == "KeepKeys":
-            if config["Architecture"]["algorithm"] == "SRN":
+            if config["Model"]["algorithm"] == "SRN":
                 op[op_name]["keep_keys"] = [
                     "image",
                     "encoder_word_pos",
@@ -91,9 +91,9 @@ def main():
                     "gsrm_slf_attn_bias1",
                     "gsrm_slf_attn_bias2",
                 ]
-            elif config["Architecture"]["algorithm"] == "SAR":
+            elif config["Model"]["algorithm"] == "SAR":
                 op[op_name]["keep_keys"] = ["image", "valid_ratio"]
-            elif config["Architecture"]["algorithm"] == "RobustScanner":
+            elif config["Model"]["algorithm"] == "RobustScanner":
                 op[op_name]["keep_keys"] = ["image", "valid_ratio", "word_positons"]
             else:
                 op[op_name]["keep_keys"] = ["image"]
@@ -114,7 +114,7 @@ def main():
                 img = f.read()
                 data = {"image": img}
             batch = transform(data, ops)
-            if config["Architecture"]["algorithm"] == "SRN":
+            if config["Model"]["algorithm"] == "SRN":
                 encoder_word_pos_list = np.expand_dims(batch[1], axis=0)
                 gsrm_word_pos_list = np.expand_dims(batch[2], axis=0)
                 gsrm_slf_attn_bias1_list = np.expand_dims(batch[3], axis=0)
@@ -126,28 +126,28 @@ def main():
                     torch.Tensor(gsrm_slf_attn_bias1_list),
                     torch.Tensor(gsrm_slf_attn_bias2_list),
                 ]
-            if config["Architecture"]["algorithm"] == "SAR":
+            if config["Model"]["algorithm"] == "SAR":
                 valid_ratio = np.expand_dims(batch[-1], axis=0)
                 img_metas = [torch.Tensor(valid_ratio)]
-            if config["Architecture"]["algorithm"] == "RobustScanner":
+            if config["Model"]["algorithm"] == "RobustScanner":
                 valid_ratio = np.expand_dims(batch[1], axis=0)
                 word_positons = np.expand_dims(batch[2], axis=0)
                 img_metas = [
                     torch.Tensor(valid_ratio),
                     torch.Tensor(word_positons),
                 ]
-            if config["Architecture"]["algorithm"] == "CAN":
+            if config["Model"]["algorithm"] == "CAN":
                 image_mask = torch.ones((np.expand_dims(batch[0], dim=0).shape), dtype="float32")
                 label = torch.ones((1, 36), dtype="int64")
             images = np.expand_dims(batch[0], axis=0)
             images = torch.Tensor(images)
-            if config["Architecture"]["algorithm"] == "SRN":
+            if config["Model"]["algorithm"] == "SRN":
                 preds = model(images, others)
-            elif config["Architecture"]["algorithm"] == "SAR":
+            elif config["Model"]["algorithm"] == "SAR":
                 preds = model(images, img_metas)
-            elif config["Architecture"]["algorithm"] == "RobustScanner":
+            elif config["Model"]["algorithm"] == "RobustScanner":
                 preds = model(images, img_metas)
-            elif config["Architecture"]["algorithm"] == "CAN":
+            elif config["Model"]["algorithm"] == "CAN":
                 preds = model([images, image_mask, label])
             else:
                 preds = model(images)

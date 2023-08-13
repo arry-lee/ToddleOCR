@@ -70,11 +70,11 @@ def main(config, device, logger, vdl_writer):
     # for rec algorithm
     if hasattr(post_process_class, "character"):
         char_num = len(getattr(post_process_class, "character"))
-        if config["Architecture"]["algorithm"] in [
+        if config["Model"]["algorithm"] in [
             "Distillation",
         ]:  # distillation model
-            for key in config["Architecture"]["Models"]:
-                if config["Architecture"]["Models"][key]["Head"]["name"] == "MultiHead":  # for multi head
+            for key in config["Model"]["Models"]:
+                if config["Model"]["Models"][key]["Head"]["name"] == "MultiHead":  # for multi head
                     if config["PostProcess"]["name"] == "DistillationSARLabelDecode":
                         char_num = char_num - 2
                     # update SARLoss params
@@ -83,10 +83,10 @@ def main(config, device, logger, vdl_writer):
                     out_channels_list = {}
                     out_channels_list["CTCLabelDecode"] = char_num
                     out_channels_list["SARLabelDecode"] = char_num + 2
-                    config["Architecture"]["Models"][key]["Head"]["out_channels_list"] = out_channels_list
+                    config["Model"]["Models"][key]["Head"]["out_channels_list"] = out_channels_list
                 else:
-                    config["Architecture"]["Models"][key]["Head"]["out_channels"] = char_num
-        elif config["Architecture"]["Head"]["name"] == "MultiHead":  # for multi head
+                    config["Model"]["Models"][key]["Head"]["out_channels"] = char_num
+        elif config["Model"]["Head"]["name"] == "MultiHead":  # for multi head
             if config["PostProcess"]["name"] == "SARLabelDecode":
                 char_num = char_num - 2
             # update SARLoss params
@@ -98,14 +98,14 @@ def main(config, device, logger, vdl_writer):
             out_channels_list = {}
             out_channels_list["CTCLabelDecode"] = char_num
             out_channels_list["SARLabelDecode"] = char_num + 2
-            config["Architecture"]["Head"]["out_channels_list"] = out_channels_list
+            config["Model"]["Head"]["out_channels_list"] = out_channels_list
         else:  # base rec model
-            config["Architecture"]["Head"]["out_channels"] = char_num
+            config["Model"]["Head"]["out_channels"] = char_num
 
         if config["PostProcess"]["name"] == "SARLabelDecode":  # for SAR model
             config["Loss"]["ignore_index"] = char_num - 1
 
-    model = build_model(config["Architecture"])
+    model = build_model(config["Model"])
 
     use_sync_bn = config["Global"].get("use_sync_bn", False)
     if use_sync_bn:
@@ -150,7 +150,7 @@ def main(config, device, logger, vdl_writer):
         scaler = None
 
     # load pretrain model
-    pre_best_model_dict = load_model(config, model, optimizer, config["Architecture"]["model_type"])
+    pre_best_model_dict = load_model(config, model, optimizer, config["Model"]["model_type"])
 
     if config["Global"]["distributed"]:
         model = torch.DataParallel(model)

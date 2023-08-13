@@ -50,10 +50,10 @@ def main(config, device, logger, vdl_writer):
 
     # build model
     if hasattr(post_process_class, "character"):
-        config["Architecture"]["Head"]["out_channels"] = len(getattr(post_process_class, "character"))
+        config["Model"]["Head"]["out_channels"] = len(getattr(post_process_class, "character"))
 
-    model = build_model(config["Architecture"])
-    algorithm = config["Architecture"]["algorithm"]
+    model = build_model(config["Model"])
+    algorithm = config["Model"]["algorithm"]
 
     load_model(config, model)
 

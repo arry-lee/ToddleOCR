@@ -47,9 +47,9 @@ def main():
     post_process_class = build_post_process(config["PostProcess"], global_config)
 
     # sr transform
-    config["Architecture"]["Transform"]["infer_mode"] = True
+    config["Model"]["Transform"]["infer_mode"] = True
 
-    model = build_model(config["Architecture"])
+    model = build_model(config["Model"])
 
     load_model(config, model)
 

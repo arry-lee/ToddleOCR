@@ -47,12 +47,12 @@ def main():
     # for rec algorithm
     if hasattr(post_process_class, "character"):
         char_num = len(getattr(post_process_class, "character"))
-        config["Architecture"]["Head"]["out_channels"] = char_num
+        config["Model"]["Head"]["out_channels"] = char_num
 
     # set return_features = True
-    config["Architecture"]["Head"]["return_feats"] = True
+    config["Model"]["Head"]["return_feats"] = True
 
-    model = build_model(config["Architecture"])
+    model = build_model(config["Model"])
 
     best_model_dict = load_model(config, model)
     if len(best_model_dict):

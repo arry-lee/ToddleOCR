@@ -40,10 +40,10 @@ def apply_to_static(model, config, logger):
         return model
     assert "image_shape" in config["Global"], "image_shape must be assigned for static training mode..."
     supported_list = ["DB", "SVTR"]
-    if config["Architecture"]["algorithm"] in ["Distillation"]:
-        algo = list(config["Architecture"]["Models"].values())[0]["algorithm"]
+    if config["Model"]["algorithm"] in ["Distillation"]:
+        algo = list(config["Model"]["Models"].values())[0]["algorithm"]
     else:
-        algo = config["Architecture"]["algorithm"]
+        algo = config["Model"]["algorithm"]
     assert (
         algo in supported_list
     ), f"algorithms that supports static training must in in {supported_list} but got {algo}"

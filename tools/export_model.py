@@ -171,42 +171,42 @@ def main():
     # for rec algorithm
     if hasattr(post_process_class, "character"):
         char_num = len(getattr(post_process_class, "character"))
-        if config["Architecture"]["algorithm"] in [
+        if config["Model"]["algorithm"] in [
             "Distillation",
         ]:  # distillation model
-            for key in config["Architecture"]["Models"]:
-                if config["Architecture"]["Models"][key]["Head"]["name"] == "MultiHead":  # multi head
+            for key in config["Model"]["Models"]:
+                if config["Model"]["Models"][key]["Head"]["name"] == "MultiHead":  # multi head
                     out_channels_list = {}
                     if config["PostProcess"]["name"] == "DistillationSARLabelDecode":
                         char_num = char_num - 2
                     out_channels_list["CTCLabelDecode"] = char_num
                     out_channels_list["SARLabelDecode"] = char_num + 2
-                    config["Architecture"]["Models"][key]["Head"]["out_channels_list"] = out_channels_list
+                    config["Model"]["Models"][key]["Head"]["out_channels_list"] = out_channels_list
                 else:
-                    config["Architecture"]["Models"][key]["Head"]["out_channels"] = char_num
+                    config["Model"]["Models"][key]["Head"]["out_channels"] = char_num
                 # just one final tensor needs to exported for inference
-                config["Architecture"]["Models"][key]["return_all_feats"] = False
-        elif config["Architecture"]["Head"]["name"] == "MultiHead":  # multi head
+                config["Model"]["Models"][key]["return_all_feats"] = False
+        elif config["Model"]["Head"]["name"] == "MultiHead":  # multi head
             out_channels_list = {}
             char_num = len(getattr(post_process_class, "character"))
             if config["PostProcess"]["name"] == "SARLabelDecode":
                 char_num = char_num - 2
             out_channels_list["CTCLabelDecode"] = char_num
             out_channels_list["SARLabelDecode"] = char_num + 2
-            config["Architecture"]["Head"]["out_channels_list"] = out_channels_list
+            config["Model"]["Head"]["out_channels_list"] = out_channels_list
         else:  # base rec model
-            config["Architecture"]["Head"]["out_channels"] = char_num
+            config["Model"]["Head"]["out_channels"] = char_num
 
     # for sr algorithm
-    if config["Architecture"]["model_type"] == "sr":
-        config["Architecture"]["Transform"]["infer_mode"] = True
-    model = build_model(config["Architecture"])
-    load_model(config, model, model_type=config["Architecture"]["model_type"])
+    if config["Model"]["model_type"] == "sr":
+        config["Model"]["Transform"]["infer_mode"] = True
+    model = build_model(config["Model"])
+    load_model(config, model, model_type=config["Model"]["model_type"])
     model.eval()
 
     save_path = config["Global"]["save_inference_dir"]
 
-    arch_config = config["Architecture"]
+    arch_config = config["Model"]
 
     if arch_config["algorithm"] == "SVTR" and arch_config["Head"]["name"] != "MultiHead":
         input_shape = config["Eval"]["dataset"]["transforms"][-2]["SVTRRecResizeImg"]["image_shape"]

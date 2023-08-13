@@ -44,42 +44,42 @@ def main():
     # for rec algorithm
     if hasattr(post_process_class, "character"):
         char_num = len(getattr(post_process_class, "character"))
-        if config["Architecture"]["algorithm"] in [
+        if config["Model"]["algorithm"] in [
             "Distillation",
         ]:  # distillation model
-            for key in config["Architecture"]["Models"]:
-                if config["Architecture"]["Models"][key]["Head"]["name"] == "MultiHead":  # for multi head
+            for key in config["Model"]["Models"]:
+                if config["Model"]["Models"][key]["Head"]["name"] == "MultiHead":  # for multi head
                     out_channels_list = {}
                     if config["PostProcess"]["name"] == "DistillationSARLabelDecode":
                         char_num = char_num - 2
                     out_channels_list["CTCLabelDecode"] = char_num
                     out_channels_list["SARLabelDecode"] = char_num + 2
-                    config["Architecture"]["Models"][key]["Head"]["out_channels_list"] = out_channels_list
+                    config["Model"]["Models"][key]["Head"]["out_channels_list"] = out_channels_list
                 else:
-                    config["Architecture"]["Models"][key]["Head"]["out_channels"] = char_num
-        elif config["Architecture"]["Head"]["name"] == "MultiHead":  # for multi head
+                    config["Model"]["Models"][key]["Head"]["out_channels"] = char_num
+        elif config["Model"]["Head"]["name"] == "MultiHead":  # for multi head
             out_channels_list = {}
             if config["PostProcess"]["name"] == "SARLabelDecode":
                 char_num = char_num - 2
             out_channels_list["CTCLabelDecode"] = char_num
             out_channels_list["SARLabelDecode"] = char_num + 2
-            config["Architecture"]["Head"]["out_channels_list"] = out_channels_list
+            config["Model"]["Head"]["out_channels_list"] = out_channels_list
         else:  # base rec model
-            config["Architecture"]["Head"]["out_channels"] = char_num
+            config["Model"]["Head"]["out_channels"] = char_num
 
-    model = build_model(config["Architecture"])
+    model = build_model(config["Model"])
     extra_input_models = ["SRN", "NRTR", "SAR", "SEED", "SVTR", "VisionLAN", "RobustScanner"]
     extra_input = False
-    if config["Architecture"]["algorithm"] == "Distillation":
-        for key in config["Architecture"]["Models"]:
-            extra_input = extra_input or config["Architecture"]["Models"][key]["algorithm"] in extra_input_models
+    if config["Model"]["algorithm"] == "Distillation":
+        for key in config["Model"]["Models"]:
+            extra_input = extra_input or config["Model"]["Models"][key]["algorithm"] in extra_input_models
     else:
-        extra_input = config["Architecture"]["algorithm"] in extra_input_models
-    if "model_type" in config["Architecture"].keys():
-        if config["Architecture"]["algorithm"] == "CAN":
+        extra_input = config["Model"]["algorithm"] in extra_input_models
+    if "model_type" in config["Model"].keys():
+        if config["Model"]["algorithm"] == "CAN":
             model_type = "can"
         else:
-            model_type = config["Architecture"]["model_type"]
+            model_type = config["Model"]["model_type"]
     else:
         model_type = None
 
@@ -103,7 +103,7 @@ def main():
     else:
         scaler = None
 
-    best_model_dict = load_model(config, model, model_type=config["Architecture"]["model_type"])
+    best_model_dict = load_model(config, model, model_type=config["Model"]["model_type"])
     if len(best_model_dict):
         logger.info("metric in ckpt ***************")
         for k, v in best_model_dict.items():

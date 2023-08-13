@@ -128,9 +128,9 @@ class SerRePredictor(object):
         self.post_process_class = build_post_process(config["PostProcess"], global_config)
 
         # build model
-        self.model = build_model(config["Architecture"])
+        self.model = build_model(config["Model"])
 
-        load_model(config, self.model, model_type=config["Architecture"]["model_type"])
+        load_model(config, self.model, model_type=config["Model"]["model_type"])
 
         self.model.eval()
 

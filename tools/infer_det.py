@@ -59,7 +59,7 @@ def main():
     global_config = config["Global"]
 
     # build model
-    model = build_model(config["Architecture"])
+    model = build_model(config["Model"])
 
     load_model(config, model)
     # build post process
