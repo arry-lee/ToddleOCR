@@ -150,7 +150,7 @@ class Encoder(nn.Module):
         self.encoder_layers = list()
         for i in range(n_layer):
             self.encoder_layers.append(
-                self.add_sublayer(
+                self.add_module(
                     "layer_%d" % i,
                     EncoderLayer(
                         n_head,
@@ -304,11 +304,11 @@ class PrePostProcessLayer(nn.Module):
                 self.functors.append(lambda x, y: x + y if y is not None else x)
             elif cmd == "n":  # add layer normalization
                 self.functors.append(
-                    self.add_sublayer(
+                    self.add_module(
                         "layer_norm_%d" % len(self.sublayers()),
                         torch.nn.LayerNorm(
                             normalized_shape=d_model,
-                            bias=torch.ParamAttr(initializer=torch.nn.initializer.Constant(0.0)),
+                            bias=torch.ParamAttr(initializer=torch.nn.init.Constant(0.0)),
                         ),
                     )
                 )

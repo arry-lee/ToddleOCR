@@ -76,7 +76,7 @@ class DBFPN(nn.Module):
         super(DBFPN, self).__init__()
         self.out_channels = out_channels
         self.use_asf = use_asf
-        weight_attr = torch.nn.initializer.KaimingUniform()
+        weight_attr = torch.nn.init.KaimingUniform()
 
         self.in2_conv = nn.Conv2d(in_channels=in_channels[0], out_channels=self.out_channels, kernel_size=1,  bias=False)
         self.in3_conv = nn.Conv2d(in_channels=in_channels[1], out_channels=self.out_channels, kernel_size=1,  bias=False)
@@ -121,7 +121,7 @@ class DBFPN(nn.Module):
 class RSELayer(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, shortcut=True):
         super(RSELayer, self).__init__()
-        weight_attr = torch.nn.initializer.KaimingUniform()
+        weight_attr = torch.nn.init.KaimingUniform()
         self.out_channels = out_channels
         self.in_conv = nn.Conv2d(
             in_channels=in_channels, out_channels=self.out_channels, kernel_size=kernel_size, padding=int(kernel_size // 2),  bias=False
@@ -178,7 +178,7 @@ class LKPAN(nn.Module):
     def __init__(self, in_channels, out_channels, mode="large", **kwargs):
         super(LKPAN, self).__init__()
         self.out_channels = out_channels
-        weight_attr = torch.nn.initializer.KaimingUniform()
+        weight_attr = torch.nn.init.KaimingUniform()
 
         self.ins_conv = nn.ModuleList()
         self.inp_conv = nn.ModuleList()
@@ -255,7 +255,7 @@ class ASFBlock(nn.Module):
             out_features_num: the number of fused stages
         """
         super(ASFBlock, self).__init__()
-        weight_attr = torch.nn.initializer.KaimingUniform()
+        weight_attr = torch.nn.init.KaimingUniform()
         self.in_channels = in_channels
         self.inter_channels = inter_channels
         self.out_features_num = out_features_num

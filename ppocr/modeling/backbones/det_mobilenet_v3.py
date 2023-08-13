@@ -137,7 +137,7 @@ class MobileNetV3(nn.Module):
         self.stages.append(nn.Sequential(*block_list))
         self.out_channels.append(make_divisible(scale * cls_ch_squeeze))
         for i, stage in enumerate(self.stages):
-            self.add_sublayer(sublayer=stage, name="stage{}".format(i))
+            self.add_module(sublayer=stage, name="stage{}".format(i))
 
     def forward(self, x):
         x = self.conv(x)

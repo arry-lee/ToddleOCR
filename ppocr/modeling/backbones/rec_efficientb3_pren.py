@@ -246,14 +246,14 @@ class EfficientNetb3_PREN(nn.Module):
                 output_filters=EffUtils.round_filters(block_args.output_filters, self._global_params),
                 num_repeat=EffUtils.round_repeats(block_args.num_repeat, self._global_params),
             )
-            self._blocks.append(self.add_sublayer(f"{i}-0", MbConvBlock(block_args)))
+            self._blocks.append(self.add_module(f"{i}-0", MbConvBlock(block_args)))
             _concerned_idx += 1
             if _concerned_idx in self._concerned_block_idxes:
                 self.out_channels.append(block_args.output_filters)
             if block_args.num_repeat > 1:
                 block_args = block_args._replace(input_filters=block_args.output_filters, stride=1)
             for j in range(block_args.num_repeat - 1):
-                self._blocks.append(self.add_sublayer(f"{i}-{j+1}", MbConvBlock(block_args)))
+                self._blocks.append(self.add_module(f"{i}-{j+1}", MbConvBlock(block_args)))
                 _concerned_idx += 1
                 if _concerned_idx in self._concerned_block_idxes:
                     self.out_channels.append(block_args.output_filters)

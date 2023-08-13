@@ -38,14 +38,14 @@ class Conv_BN_ReLU(nn.Module):
                 m.weight = torch.create_parameter(
                     shape=m.weight.shape,
                     dtype="float32",
-                    default_initializer=torch.nn.initializer.Normal(0, math.sqrt(2.0 / n)),
+                    default_initializer=torch.nn.init.Normal(0, math.sqrt(2.0 / n)),
                 )
             elif isinstance(m, nn.BatchNorm2d):
                 m.weight = torch.create_parameter(
-                    shape=m.weight.shape, dtype="float32", default_initializer=torch.nn.initializer.Constant(1.0)
+                    shape=m.weight.shape, dtype="float32", default_initializer=torch.nn.init.Constant(1.0)
                 )
                 m.bias = torch.create_parameter(
-                    shape=m.bias.shape, dtype="float32", default_initializer=torch.nn.initializer.Constant(0.0)
+                    shape=m.bias.shape, dtype="float32", default_initializer=torch.nn.init.Constant(0.0)
                 )
 
     def forward(self, x):
@@ -79,14 +79,14 @@ class FPN(nn.Module):
                 m.weight = torch.create_parameter(
                     shape=m.weight.shape,
                     dtype="float32",
-                    default_initializer=torch.nn.initializer.Normal(0, math.sqrt(2.0 / n)),
+                    default_initializer=torch.nn.init.Normal(0, math.sqrt(2.0 / n)),
                 )
             elif isinstance(m, nn.BatchNorm2d):
                 m.weight = torch.create_parameter(
-                    shape=m.weight.shape, dtype="float32", default_initializer=torch.nn.initializer.Constant(1.0)
+                    shape=m.weight.shape, dtype="float32", default_initializer=torch.nn.init.Constant(1.0)
                 )
                 m.bias = torch.create_parameter(
-                    shape=m.bias.shape, dtype="float32", default_initializer=torch.nn.initializer.Constant(0.0)
+                    shape=m.bias.shape, dtype="float32", default_initializer=torch.nn.init.Constant(0.0)
                 )
 
     def _upsample(self, x, scale=1):

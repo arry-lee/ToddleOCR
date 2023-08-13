@@ -18,8 +18,8 @@ https://github.com/PaddlePaddle/PaddleDetection/blob/release/2.3/ppdet/modeling/
 
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.nn.initializer import Normal
-from torch.nn.initializer import XavierUniform
+from torch.nn.init import Normal
+from torch.nn.init import XavierUniform
 
 __all__ = ["FCEFPN"]
 
@@ -138,7 +138,7 @@ class FCEFPN(nn.Module):
                 lateral_name = "fpn_inner_res{}_sum_lateral".format(i + 2)
             in_c = in_channels[i - st_stage]
             if self.norm_type is not None:
-                lateral = self.add_sublayer(
+                lateral = self.add_module(
                     lateral_name,
                     ConvNormLayer(
                         ch_in=in_c,
@@ -152,7 +152,7 @@ class FCEFPN(nn.Module):
                     ),
                 )
             else:
-                lateral = self.add_sublayer(
+                lateral = self.add_module(
                     lateral_name,
                     nn.Conv2d(
                         in_channels=in_c,
@@ -165,7 +165,7 @@ class FCEFPN(nn.Module):
         for i in range(st_stage, ed_stage + 1):
             fpn_name = "fpn_res{}_sum".format(i + 2)
             if self.norm_type is not None:
-                fpn_conv = self.add_sublayer(
+                fpn_conv = self.add_module(
                     fpn_name,
                     ConvNormLayer(
                         ch_in=out_channels,
@@ -179,7 +179,7 @@ class FCEFPN(nn.Module):
                     ),
                 )
             else:
-                fpn_conv = self.add_sublayer(
+                fpn_conv = self.add_module(
                     fpn_name, nn.Conv2d(in_channels=out_channels, out_channels=out_channels, kernel_size=3, padding=1)
                 )
             self.fpn_convs.append(fpn_conv)
@@ -194,7 +194,7 @@ class FCEFPN(nn.Module):
                     in_c = out_channels
                 extra_fpn_name = "fpn_{}".format(lvl + 2)
                 if self.norm_type is not None:
-                    extra_fpn_conv = self.add_sublayer(
+                    extra_fpn_conv = self.add_module(
                         extra_fpn_name,
                         ConvNormLayer(
                             ch_in=in_c,
@@ -208,7 +208,7 @@ class FCEFPN(nn.Module):
                         ),
                     )
                 else:
-                    extra_fpn_conv = self.add_sublayer(
+                    extra_fpn_conv = self.add_module(
                         extra_fpn_name,
                         nn.Conv2d(
                             in_channels=in_c,

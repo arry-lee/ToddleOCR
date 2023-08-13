@@ -51,7 +51,7 @@ class ResNetFPN(nn.Module):
                             conv_name = "res" + str(block + 2) + "b" + str(i)
                     else:
                         conv_name = "res" + str(block + 2) + chr(97 + i)
-                    block_list = self.add_sublayer(
+                    block_list = self.add_module(
                         "bottleneckBlock_{}_{}".format(block, i), BottleneckBlock(in_channels=in_ch, out_channels=num_filters[block], stride=stride_list[block] if i == 0 else 1, name=conv_name)
                     )
                     in_ch = num_filters[block] * 4
@@ -65,7 +65,7 @@ class ResNetFPN(nn.Module):
                         stride = (2, 1)
                     else:
                         stride = (1, 1)
-                    basic_block = self.add_sublayer(
+                    basic_block = self.add_module(
                         conv_name, BasicBlock(in_channels=in_ch, out_channels=num_filters[block], stride=stride_list[block] if i == 0 else 1, is_first=block == i == 0, name=conv_name)
                     )
                     in_ch = basic_block.out_channels
@@ -78,21 +78,21 @@ class ResNetFPN(nn.Module):
             in_channels = out_ch_list[i + 1] + out_ch_list[i]
 
             self.base_block.append(
-                self.add_sublayer(
+                self.add_module(
                     "F_{}_base_block_0".format(i), nn.Conv2d(in_channels=in_channels, out_channels=out_ch_list[i], kernel_size=1,  bias=True)
                 )
             )
             self.base_block.append(
-                self.add_sublayer(
+                self.add_module(
                     "F_{}_base_block_1".format(i),
                     nn.Conv2d(in_channels=out_ch_list[i], out_channels=out_ch_list[i], kernel_size=3, padding=1, 
                 )
             )
             self.base_block.append(
-                self.add_sublayer("F_{}_base_block_2".format(i), nn.BatchNorm2d(num_channels=out_ch_list[i], act="relu",  bias=True)
+                self.add_module("F_{}_base_block_2".format(i), nn.BatchNorm2d(num_channels=out_ch_list[i], act="relu",  bias=True)
             )
         self.base_block.append(
-            self.add_sublayer(
+            self.add_module(
                 "F_{}_base_block_3".format(i), nn.Conv2d(in_channels=out_ch_list[i], out_channels=512, kernel_size=1, bias=True, )
             )
         )

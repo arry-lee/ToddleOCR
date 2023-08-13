@@ -18,7 +18,7 @@ https://github.com/hikopensource/DAVAR-Lab-OCR/blob/main/davarocr/davar_rcg/mode
 
 import torch
 import torch.nn as nn
-from torch.nn.initializer import TruncatedNormal, Constant, Normal, KaimingNormal
+from torch.nn.init import TruncatedNormal, Constant, Normal, KaimingNormal
 
 kaiming_init_ = KaimingNormal()
 zeros_ = Constant(value=0.0)

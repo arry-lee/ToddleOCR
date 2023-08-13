@@ -45,7 +45,7 @@ class PoolAggregate(nn.Module):
         aggs = []
         for i in range(self.n_r):
             aggs.append(
-                self.add_sublayer(
+                self.add_module(
                     "{}".format(i),
                     nn.Sequential(
                         ("conv1", nn.Conv2d(self.d_in, self.d_middle, 3, 2, 1, bias=False)),

@@ -70,7 +70,7 @@ class LocalizationNetwork(nn.Module):
         for fno in range(0, len(num_filters_list)):
             num_filters = num_filters_list[fno]
             name = "loc_conv%d" % fno
-            conv = self.add_sublayer(
+            conv = self.add_module(
                 name,
                 ConvBNLayer(in_channels=in_channels, out_channels=num_filters, kernel_size=3, act="relu", name=name),
             )

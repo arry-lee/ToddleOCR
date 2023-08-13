@@ -23,7 +23,7 @@ import sys
 import torch
 import torch.nn.functional as F
 from torch import nn
-from torch.nn.initializer import Constant, Normal
+from torch.nn.init import constant, normal
 
 ones_ = Constant(value=1.0)
 zeros_ = Constant(value=0.0)

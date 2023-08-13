@@ -158,7 +158,7 @@ class ResNet(nn.Module):
                             conv_name = "res" + str(block + 2) + "b" + str(i)
                     else:
                         conv_name = "res" + str(block + 2) + chr(97 + i)
-                    bottleneck_block = self.add_sublayer(
+                    bottleneck_block = self.add_module(
                         conv_name,
                         BottleneckBlock(
                             num_channels=num_channels[block] if i == 0 else num_filters[block] * 4,
@@ -179,7 +179,7 @@ class ResNet(nn.Module):
                 block_list = []
                 for i in range(depth[block]):
                     conv_name = "res" + str(block + 2) + chr(97 + i)
-                    basic_block = self.add_sublayer(
+                    basic_block = self.add_module(
                         conv_name,
                         BasicBlock(
                             num_channels=num_channels[block] if i == 0 else num_filters[block],

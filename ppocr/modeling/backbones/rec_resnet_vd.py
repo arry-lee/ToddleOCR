@@ -203,7 +203,7 @@ class ResNet(nn.Module):
                         stride = (2, 1)
                     else:
                         stride = (1, 1)
-                    bottleneck_block = self.add_sublayer(
+                    bottleneck_block = self.add_module(
                         "bb_%d_%d" % (block, i),
                         BottleneckBlock(
                             in_channels=num_channels[block] if i == 0 else num_filters[block] * 4,
@@ -227,7 +227,7 @@ class ResNet(nn.Module):
                     else:
                         stride = (1, 1)
 
-                    basic_block = self.add_sublayer(
+                    basic_block = self.add_module(
                         "bb_%d_%d" % (block, i),
                         BasicBlock(
                             in_channels=num_channels[block] if i == 0 else num_filters[block],

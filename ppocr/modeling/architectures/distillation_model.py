@@ -50,7 +50,7 @@ class DistillationModel(nn.Module):
             if freeze_params:
                 for param in model.parameters():
                     param.trainable = False
-            self.model_list.append(self.add_sublayer(key, model))
+            self.model_list.append(self.add_module(key, model))
             self.model_name_list.append(key)
 
     def forward(self, x, data=None):

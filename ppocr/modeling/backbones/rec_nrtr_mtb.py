@@ -24,7 +24,7 @@ class MTB(nn.Module):
         self.cnn_num = cnn_num
         if self.cnn_num == 2:
             for i in range(self.cnn_num):
-                self.block.add_sublayer(
+                self.block.add_module(
                     "conv_{}".format(i),
                     nn.Conv2d(
                         in_channels=in_channels if i == 0 else 32 * (2 ** (i - 1)),
@@ -34,8 +34,8 @@ class MTB(nn.Module):
                         padding=1,
                     ),
                 )
-                self.block.add_sublayer("relu_{}".format(i), nn.ReLU())
-                self.block.add_sublayer("bn_{}".format(i), nn.BatchNorm2d(32 * (2**i)))
+                self.block.add_module("relu_{}".format(i), nn.ReLU())
+                self.block.add_module("bn_{}".format(i), nn.BatchNorm2d(32 * (2**i)))
 
     def forward(self, images):
         x = self.block(images)
