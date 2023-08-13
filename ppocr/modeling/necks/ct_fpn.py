@@ -39,7 +39,7 @@ class Conv_BN_ReLU(nn.Module):
         self.bn = nn.BatchNorm2d(out_planes)
         self.relu = nn.ReLU()
 
-        for m in self.sublayers():
+        for m in self.children():
             if isinstance(m, nn.Conv2d):
                 n = m._kernel_size[0] * m._kernel_size[1] * m._out_channels
                 # normal_ = Normal(mean=0.0, std=math.sqrt(2.0 / n))

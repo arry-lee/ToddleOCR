@@ -298,7 +298,7 @@ class PrePostProcessLayer(nn.Module):
             elif cmd == "n":  # add layer normalization
                 self.functors.append(
                     self.add_module(
-                        "layer_norm_%d" % len(self.sublayers()),
+                        "layer_norm_%d" % len(self.children()),
                         torch.nn.LayerNorm(
                             normalized_shape=d_model,
                         ),

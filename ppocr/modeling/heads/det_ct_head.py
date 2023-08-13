@@ -33,7 +33,7 @@ class CT_Head(nn.Module):
 
         self.conv2 = nn.Conv2d(hidden_dim, num_classes, kernel_size=1, stride=1, padding=0)
 
-        for m in self.sublayers():
+        for m in self.children():
             if isinstance(m, nn.Conv2d):
                 n = m._kernel_size[0] * m._kernel_size[1] * m._out_channels
                 normal_(m.weight,mean=0.0, std=math.sqrt(2.0 / n))

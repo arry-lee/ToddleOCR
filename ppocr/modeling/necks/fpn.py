@@ -32,7 +32,7 @@ class Conv_BN_ReLU(nn.Module):
         self.bn = nn.BatchNorm2d(out_planes, momentum=0.1)
         self.relu = nn.ReLU()
 
-        for m in self.sublayers():
+        for m in self.children():
             if isinstance(m, nn.Conv2d):
                 n = m._kernel_size[0] * m._kernel_size[1] * m._out_channels
                 m.weight = torch.create_parameter(
@@ -73,7 +73,7 @@ class FPN(nn.Module):
         self.smooth3_ = Conv_BN_ReLU(out_channels, out_channels, kernel_size=3, stride=1, padding=1)
 
         self.out_channels = out_channels * 4
-        for m in self.sublayers():
+        for m in self.children():
             if isinstance(m, nn.Conv2d):
                 n = m._kernel_size[0] * m._kernel_size[1] * m._out_channels
                 m.weight = torch.create_parameter(
