@@ -54,17 +54,17 @@ Model:
         class: MultiHead
         head_list:
           - CTCHead:
-          Neck:
-            class: svtr
-            dims: 64
-            depth: 2
-            hidden_dims: 120
-            use_guide: True
-          Head:
-            fc_decay: 0.00001
+            Neck:
+              class: svtr
+              dims: 64
+              depth: 2
+              hidden_dims: 120
+              use_guide: True
+            Head:
+              fc_decay: 0.00001
           - SARHead:
-          enc_dim: 512
-          max_text_length: *max_text_length
+            enc_dim: 512
+            max_text_length: *max_text_length
     Student:
       pretrained:
       freeze_params: false
@@ -81,17 +81,17 @@ Model:
         class: MultiHead
         head_list:
           - CTCHead:
-          Neck:
-            class: svtr
-            dims: 64
-            depth: 2
-            hidden_dims: 120
-            use_guide: True
-          Head:
-            fc_decay: 0.00001
+            Neck:
+              class: svtr
+              dims: 64
+              depth: 2
+              hidden_dims: 120
+              use_guide: True
+            Head:
+              fc_decay: 0.00001
           - SARHead:
-          enc_dim: 512
-          max_text_length: *max_text_length
+            enc_dim: 512
+            max_text_length: *max_text_length
 Loss:
   class: CombinedLoss
   loss_config_list:
