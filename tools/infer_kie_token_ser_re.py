@@ -178,7 +178,7 @@ if __name__ == "__main__":
     ser_re_engine = SerRePredictor(config, ser_config)
 
     if config["Global"].get("infer_mode", None) is False:
-        data_dir = config["Eval"]["dataset"]["data_dir"]
+        data_dir = config["Eval"]["Dataset"]["data_dir"]
         with open(config["Global"]["infer_img"], "rb") as f:
             infer_imgs = f.readlines()
     else:

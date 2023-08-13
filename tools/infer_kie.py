@@ -117,10 +117,10 @@ def main():
 
     # create data ops
     transforms = []
-    for op in config["Eval"]["dataset"]["transforms"]:
+    for op in config["Eval"]["Dataset"]["transforms"]:
         transforms.append(op)
 
-    data_dir = config["Eval"]["dataset"]["data_dir"]
+    data_dir = config["Eval"]["Dataset"]["data_dir"]
 
     ops = create_operators(transforms, global_config)
 

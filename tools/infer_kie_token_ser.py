@@ -81,7 +81,7 @@ class SerPredictor(object):
 
         # create data ops
         transforms = []
-        for op in config["Eval"]["dataset"]["transforms"]:
+        for op in config["Eval"]["Dataset"]["transforms"]:
             op_name = list(op)[0]
             if "Label" in op_name:
                 op[op_name]["ocr_engine"] = self.ocr_engine
@@ -101,7 +101,7 @@ class SerPredictor(object):
             transforms.append(op)
         if config["Global"].get("infer_mode", None) is None:
             global_config["infer_mode"] = True
-        self.ops = create_operators(config["Eval"]["dataset"]["transforms"], global_config)
+        self.ops = create_operators(config["Eval"]["Dataset"]["transforms"], global_config)
         self.model.eval()
 
     def __call__(self, data):
@@ -123,7 +123,7 @@ if __name__ == "__main__":
     ser_engine = SerPredictor(config)
 
     if config["Global"].get("infer_mode", None) is False:
-        data_dir = config["Eval"]["dataset"]["data_dir"]
+        data_dir = config["Eval"]["Dataset"]["data_dir"]
         with open(config["Global"]["infer_img"], "rb") as f:
             infer_imgs = f.readlines()
     else:

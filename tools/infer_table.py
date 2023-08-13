@@ -59,7 +59,7 @@ def main(config, device, logger, vdl_writer):
 
     # create data ops
     transforms = []
-    for op in config["Eval"]["dataset"]["transforms"]:
+    for op in config["Eval"]["Dataset"]["transforms"]:
         op_name = list(op)[0]
         if "Encode" in op_name:
             continue

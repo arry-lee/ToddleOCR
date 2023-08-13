@@ -55,7 +55,7 @@ def main():
 
     # create data ops
     transforms = []
-    for op in config["Eval"]["dataset"]["transforms"]:
+    for op in config["Eval"]["Dataset"]["transforms"]:
         op_name = list(op)[0]
         if "Label" in op_name:
             continue

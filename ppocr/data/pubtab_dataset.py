@@ -27,8 +27,8 @@ class PubTabDataSet(Dataset):
         self.logger = logger
 
         global_config = config["Global"]
-        dataset_config = config[mode]["dataset"]
-        loader_config = config[mode]["loader"]
+        dataset_config = config[mode]["Dataset"]
+        loader_config = config[mode]["DataLoader"]
 
         label_file_list = dataset_config.pop("label_file_list")
         data_source_num = len(label_file_list)

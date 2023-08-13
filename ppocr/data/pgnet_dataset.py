@@ -28,8 +28,8 @@ class PGDataSet(Dataset):
         self.seed = seed
         self.mode = mode
         global_config = config["Global"]
-        dataset_config = config[mode]["dataset"]
-        loader_config = config[mode]["loader"]
+        dataset_config = config[mode]["Dataset"]
+        loader_config = config[mode]["DataLoader"]
 
         self.delimiter = dataset_config.get("delimiter", "\t")
         label_file_list = dataset_config.pop("label_file_list")

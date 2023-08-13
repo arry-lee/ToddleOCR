@@ -165,8 +165,8 @@ class ArgsParser(ArgumentParser):
             lang = "devanagari"
         global_config["Global"]["character_dict_path"] = "ppocr/utils/dict/{}_dict.txt".format(lang)
         global_config["Global"]["save_model_dir"] = "./output/rec_{}_lite".format(lang)
-        global_config["Train"]["dataset"]["label_file_list"] = ["train_data/{}_train.txt".format(lang)]
-        global_config["Eval"]["dataset"]["label_file_list"] = ["train_data/{}_val.txt".format(lang)]
+        global_config["Train"]["Dataset"]["label_file_list"] = ["train_data/{}_train.txt".format(lang)]
+        global_config["Eval"]["Dataset"]["label_file_list"] = ["train_data/{}_val.txt".format(lang)]
         global_config["Global"]["character_type"] = lang
         assert os.path.isfile(
             os.path.join(project_path, global_config["Global"]["character_dict_path"])
@@ -219,11 +219,11 @@ if __name__ == "__main__":
         os.remove(save_file_path)
 
     if FLAGS.train:
-        global_config["Train"]["dataset"]["label_file_list"] = [FLAGS.train]
+        global_config["Train"]["Dataset"]["label_file_list"] = [FLAGS.train]
         train_label_path = os.path.join(project_path, FLAGS.train)
         loss_file(train_label_path)
     if FLAGS.val:
-        global_config["Eval"]["dataset"]["label_file_list"] = [FLAGS.val]
+        global_config["Eval"]["Dataset"]["label_file_list"] = [FLAGS.val]
         eval_label_path = os.path.join(project_path, FLAGS.val)
         loss_file(eval_label_path)
     if FLAGS.dict:
@@ -231,16 +231,16 @@ if __name__ == "__main__":
         dict_path = os.path.join(project_path, FLAGS.dict)
         loss_file(dict_path)
     if FLAGS.data_dir:
-        global_config["Eval"]["dataset"]["data_dir"] = FLAGS.data_dir
-        global_config["Train"]["dataset"]["data_dir"] = FLAGS.data_dir
+        global_config["Eval"]["Dataset"]["data_dir"] = FLAGS.data_dir
+        global_config["Train"]["Dataset"]["data_dir"] = FLAGS.data_dir
         data_dir = os.path.join(project_path, FLAGS.data_dir)
         loss_file(data_dir)
 
     with open(save_file_path, "w") as f:
         yaml.dump(dict(global_config), f, default_flow_style=False, sort_keys=False)
     logging.info("Project path is          :{}".format(project_path))
-    logging.info("Train list path set to   :{}".format(global_config["Train"]["dataset"]["label_file_list"][0]))
-    logging.info("Eval list path set to    :{}".format(global_config["Eval"]["dataset"]["label_file_list"][0]))
-    logging.info("Dataset root path set to :{}".format(global_config["Eval"]["dataset"]["data_dir"]))
+    logging.info("Train list path set to   :{}".format(global_config["Train"]["Dataset"]["label_file_list"][0]))
+    logging.info("Eval list path set to    :{}".format(global_config["Eval"]["Dataset"]["label_file_list"][0]))
+    logging.info("Dataset root path set to :{}".format(global_config["Eval"]["Dataset"]["data_dir"]))
     logging.info("Dict path set to         :{}".format(global_config["Global"]["character_dict_path"]))
     logging.info("Config file set to       :configs/rec/multi_language/{}".format(save_file_path))

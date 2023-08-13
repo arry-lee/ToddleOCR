@@ -28,8 +28,8 @@ class LMDBDataSet(Dataset):
         super(LMDBDataSet, self).__init__()
 
         global_config = config["Global"]
-        dataset_config = config[mode]["dataset"]
-        loader_config = config[mode]["loader"]
+        dataset_config = config[mode]["Dataset"]
+        loader_config = config[mode]["DataLoader"]
         batch_size = loader_config["batch_size_per_card"]
         data_dir = dataset_config["data_dir"]
         self.do_shuffle = loader_config["shuffle"]

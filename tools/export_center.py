@@ -35,9 +35,9 @@ import tools.program as program
 def main():
     global_config = config["Global"]
     # build dataloader
-    config["Eval"]["dataset"]["name"] = config["Train"]["dataset"]["name"]
-    config["Eval"]["dataset"]["data_dir"] = config["Train"]["dataset"]["data_dir"]
-    config["Eval"]["dataset"]["label_file_list"] = config["Train"]["dataset"]["label_file_list"]
+    config["Eval"]["Dataset"]["name"] = config["Train"]["Dataset"]["name"]
+    config["Eval"]["Dataset"]["data_dir"] = config["Train"]["Dataset"]["data_dir"]
+    config["Eval"]["Dataset"]["label_file_list"] = config["Train"]["Dataset"]["label_file_list"]
     eval_dataloader = build_dataloader(config, "Eval", device, logger)
 
     # build post process

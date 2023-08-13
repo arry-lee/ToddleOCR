@@ -169,7 +169,7 @@ def gen_config():
         "Train": {
             "batch_size_per_card": 8,
             "num_workers_per_card": 4,
-            "dataset": {
+            "Dataset": {
                 "delimiter": "\t",
                 "data_dir": "/",
                 "label_file": "tmp/label.txt",
