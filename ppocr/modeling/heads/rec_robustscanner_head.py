@@ -75,7 +75,7 @@ class ChannelReductionEncoder(nn.Module):
 
 
 def masked_fill(x, mask, value):
-    y = torch.full(x.shape, value, x.dtype)
+    y = torch.full(x.shape, value, dtype=x.dtype)
     return torch.where(mask, y, x)
 
 
