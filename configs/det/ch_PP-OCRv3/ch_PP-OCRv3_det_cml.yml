@@ -182,7 +182,7 @@ Train:
           - 0.224
           - 0.225
         order: hwc
-      - name: ToCHWImage null
+      - name: ToCHWImage
       - name: KeepKeys
         keep_keys:
           - image

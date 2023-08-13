@@ -113,7 +113,7 @@ Train:
           - 1.0
           - 1.0
         order: hwc
-      - name: ToCHWImage null
+      - name: ToCHWImage
       - name: KeepKeys
         keep_keys:
           - image
@@ -153,7 +153,7 @@ Eval:
           - 1.0
           - 1.0
         order: hwc
-      - name: ToCHWImage null
+      - name: ToCHWImage
       - name: KeepKeys
         keep_keys:
           - image

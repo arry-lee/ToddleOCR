@@ -96,7 +96,7 @@ Train:
         mean: [ 0.5, 0.5, 0.5 ]
         std: [ 0.5, 0.5, 0.5 ]
         order: hwc
-      - name: ToCHWImage null
+      - name: ToCHWImage
       - name: KeepKeys
         keep_keys: [ image, structure, bboxes, bbox_masks, shape ]
   DataLoader:
@@ -133,7 +133,7 @@ Eval:
         mean: [ 0.5, 0.5, 0.5 ]
         std: [ 0.5, 0.5, 0.5 ]
         order: hwc
-      - name: ToCHWImage null
+      - name: ToCHWImage
       - name: KeepKeys
         keep_keys: [ image, structure, bboxes, bbox_masks, shape ]
   DataLoader:
