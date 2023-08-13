@@ -26,7 +26,7 @@ class SimpleDataSet(Dataset):
         self.logger = logger
         self.mode = mode.lower()
 
-        global_config = config["Global"]
+        global_config = config["Base"]
         dataset_config = config[mode]["dataset"]
         loader_config = config[mode]["loader"]
 

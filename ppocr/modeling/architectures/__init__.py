@@ -36,9 +36,9 @@ def build_model(config):
 
 
 def apply_to_static(model, config, logger):
-    if config["Global"].get("to_static", False) is not True:
+    if config["Base"].get("to_static", False) is not True:
         return model
-    assert "image_shape" in config["Global"], "image_shape must be assigned for static training mode..."
+    assert "image_shape" in config["Base"], "image_shape must be assigned for static training mode..."
     supported_list = ["DB", "SVTR"]
     if config["Model"]["algorithm"] in ["Distillation"]:
         algo = list(config["Model"]["Models"].values())[0]["algorithm"]
@@ -48,13 +48,13 @@ def apply_to_static(model, config, logger):
         algo in supported_list
     ), f"algorithms that supports static training must in in {supported_list} but got {algo}"
 
-    specs = [InputSpec([None] + config["Global"]["image_shape"], dtype="float32")]
+    specs = [InputSpec([None] + config["Base"]["image_shape"], dtype="float32")]
 
     if algo == "SVTR":
         specs.append(
             [
-                InputSpec([None, config["Global"]["max_text_length"]], dtype="int64"),
-                InputSpec([None, config["Global"]["max_text_length"]], dtype="int64"),
+                InputSpec([None, config["Base"]["max_text_length"]], dtype="int64"),
+                InputSpec([None, config["Base"]["max_text_length"]], dtype="int64"),
                 InputSpec([None], dtype="int64"),
                 InputSpec([None], dtype="float64"),
             ]

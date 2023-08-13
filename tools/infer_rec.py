@@ -39,7 +39,7 @@ import tools.program as program
 
 
 def main():
-    global_config = config["Global"]
+    global_config = config["Base"]
 
     # build post process
     post_process_class = build_post_process(config["PostProcess"], global_config)
@@ -101,14 +101,14 @@ def main():
     global_config["infer_mode"] = True
     ops = create_operators(transforms, global_config)
 
-    save_res_path = config["Global"].get("save_res_path", "./output/rec/predicts_rec.txt")
+    save_res_path = config["Base"].get("save_res_path", "./output/rec/predicts_rec.txt")
     if not os.path.exists(os.path.dirname(save_res_path)):
         os.makedirs(os.path.dirname(save_res_path))
 
     model.eval()
 
     with open(save_res_path, "w") as fout:
-        for file in get_image_file_list(config["Global"]["infer_img"]):
+        for file in get_image_file_list(config["Base"]["infer_img"]):
             logger.info("infer_img: {}".format(file))
             with open(file, "rb") as f:
                 img = f.read()

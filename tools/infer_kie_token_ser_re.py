@@ -116,9 +116,9 @@ def make_input(ser_inputs, ser_results):
 
 class SerRePredictor(object):
     def __init__(self, config, ser_config):
-        global_config = config["Global"]
+        global_config = config["Base"]
         if "infer_mode" in global_config:
-            ser_config["Global"]["infer_mode"] = global_config["infer_mode"]
+            ser_config["Base"]["infer_mode"] = global_config["infer_mode"]
 
         self.ser_engine = SerPredictor(ser_config)
 
@@ -157,7 +157,7 @@ def preprocess():
     logger = get_logger()
 
     # check if set use_gpu=True in paddlepaddle cpu version
-    use_gpu = config["Global"]["use_gpu"]
+    use_gpu = config["Base"]["use_gpu"]
 
     device = "gpu:{}".format(dist.ParallelEnv().dev_id) if use_gpu else "cpu"
     device = torch.set_device(device)
@@ -173,20 +173,20 @@ def preprocess():
 
 if __name__ == "__main__":
     config, ser_config, device, logger = preprocess()
-    os.makedirs(config["Global"]["save_res_path"], exist_ok=True)
+    os.makedirs(config["Base"]["save_res_path"], exist_ok=True)
 
     ser_re_engine = SerRePredictor(config, ser_config)
 
-    if config["Global"].get("infer_mode", None) is False:
+    if config["Base"].get("infer_mode", None) is False:
         data_dir = config["Eval"]["dataset"]["data_dir"]
-        with open(config["Global"]["infer_img"], "rb") as f:
+        with open(config["Base"]["infer_img"], "rb") as f:
             infer_imgs = f.readlines()
     else:
-        infer_imgs = get_image_file_list(config["Global"]["infer_img"])
+        infer_imgs = get_image_file_list(config["Base"]["infer_img"])
 
-    with open(os.path.join(config["Global"]["save_res_path"], "infer_results.txt"), "w", encoding="utf-8") as fout:
+    with open(os.path.join(config["Base"]["save_res_path"], "infer_results.txt"), "w", encoding="utf-8") as fout:
         for idx, info in enumerate(infer_imgs):
-            if config["Global"].get("infer_mode", None) is False:
+            if config["Base"].get("infer_mode", None) is False:
                 data_line = info.decode("utf-8")
                 substr = data_line.strip("\n").split("\t")
                 img_path = os.path.join(data_dir, substr[0])
@@ -196,7 +196,7 @@ if __name__ == "__main__":
                 data = {"img_path": img_path}
 
             save_img_path = os.path.join(
-                config["Global"]["save_res_path"], os.path.splitext(os.path.basename(img_path))[0] + "_ser_re.jpg"
+                config["Base"]["save_res_path"], os.path.splitext(os.path.basename(img_path))[0] + "_ser_re.jpg"
             )
 
             result = ser_re_engine(data)

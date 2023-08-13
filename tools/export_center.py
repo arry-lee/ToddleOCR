@@ -33,7 +33,7 @@ import tools.program as program
 
 
 def main():
-    global_config = config["Global"]
+    global_config = config["Base"]
     # build dataloader
     config["Eval"]["dataset"]["name"] = config["Train"]["dataset"]["name"]
     config["Eval"]["dataset"]["data_dir"] = config["Train"]["dataset"]["data_dir"]

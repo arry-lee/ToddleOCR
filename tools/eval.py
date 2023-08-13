@@ -33,7 +33,7 @@ import tools.program as program
 
 
 def main():
-    global_config = config["Global"]
+    global_config = config["Base"]
     # build dataloader
     valid_dataloader = build_dataloader(config, "Eval", device, logger)
 
@@ -86,17 +86,17 @@ def main():
     # build metric
     eval_class = build_metric(config["Metric"])
     # amp
-    use_amp = config["Global"].get("use_amp", False)
-    amp_level = config["Global"].get("amp_level", "O2")
-    amp_custom_black_list = config["Global"].get("amp_custom_black_list", [])
+    use_amp = config["Base"].get("use_amp", False)
+    amp_level = config["Base"].get("amp_level", "O2")
+    amp_custom_black_list = config["Base"].get("amp_custom_black_list", [])
     if use_amp:
         AMP_RELATED_FLAGS_SETTING = {
             "FLAGS_cudnn_batchnorm_spatial_persistent": 1,
             "FLAGS_max_inplace_grad_add": 8,
         }
         torch.fluid.set_flags(AMP_RELATED_FLAGS_SETTING)
-        scale_loss = config["Global"].get("scale_loss", 1.0)
-        use_dynamic_loss_scaling = config["Global"].get("use_dynamic_loss_scaling", False)
+        scale_loss = config["Base"].get("scale_loss", 1.0)
+        use_dynamic_loss_scaling = config["Base"].get("use_dynamic_loss_scaling", False)
         scaler = torch.amp.GradScaler(init_loss_scaling=scale_loss, use_dynamic_loss_scaling=use_dynamic_loss_scaling)
         if amp_level == "O2":
             model = torch.amp.decorate(models=model, level=amp_level, master_weight=True)

@@ -51,8 +51,8 @@ class EnNumCorpus(object):
         self.logger.info("using NumberCorpus")
         self.num_list = "0123456789"
         self.en_char_list = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-        self.height = config["Global"]["image_height"]
-        self.max_width = config["Global"]["image_width"]
+        self.height = config["Base"]["image_height"]
+        self.max_width = config["Base"]["image_width"]
 
     def generate(self, corpus_length=0):
         corpus = ""

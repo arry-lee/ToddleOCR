@@ -165,7 +165,7 @@ def main():
     logger = get_logger()
     # build post process
 
-    post_process_class = build_post_process(config["PostProcess"], config["Global"])
+    post_process_class = build_post_process(config["PostProcess"], config["Base"])
 
     # build model
     # for rec algorithm
@@ -204,7 +204,7 @@ def main():
     load_model(config, model, model_type=config["Model"]["model_type"])
     model.eval()
 
-    save_path = config["Global"]["save_inference_dir"]
+    save_path = config["Base"]["save_inference_dir"]
 
     arch_config = config["Model"]
 

@@ -163,13 +163,13 @@ class ArgsParser(ArgumentParser):
             lang = "cyrillic"
         elif lang in devanagari_lang:
             lang = "devanagari"
-        global_config["Global"]["character_dict_path"] = "ppocr/utils/dict/{}_dict.txt".format(lang)
-        global_config["Global"]["save_model_dir"] = "./output/rec_{}_lite".format(lang)
+        global_config["Base"]["character_dict_path"] = "ppocr/utils/dict/{}_dict.txt".format(lang)
+        global_config["Base"]["save_model_dir"] = "./output/rec_{}_lite".format(lang)
         global_config["Train"]["dataset"]["label_file_list"] = ["train_data/{}_train.txt".format(lang)]
         global_config["Eval"]["dataset"]["label_file_list"] = ["train_data/{}_val.txt".format(lang)]
-        global_config["Global"]["character_type"] = lang
+        global_config["Base"]["character_type"] = lang
         assert os.path.isfile(
-            os.path.join(project_path, global_config["Global"]["character_dict_path"])
+            os.path.join(project_path, global_config["Base"]["character_dict_path"])
         ), "Loss default dictionary file {}_dict.txt.You can download it from \
 https://github.com/PaddlePaddle/PaddleOCR/tree/dygraph/ppocr/utils/dict/".format(
             lang
@@ -227,7 +227,7 @@ if __name__ == "__main__":
         eval_label_path = os.path.join(project_path, FLAGS.val)
         loss_file(eval_label_path)
     if FLAGS.dict:
-        global_config["Global"]["character_dict_path"] = FLAGS.dict
+        global_config["Base"]["character_dict_path"] = FLAGS.dict
         dict_path = os.path.join(project_path, FLAGS.dict)
         loss_file(dict_path)
     if FLAGS.data_dir:
@@ -242,5 +242,5 @@ if __name__ == "__main__":
     logging.info("Train list path set to   :{}".format(global_config["Train"]["dataset"]["label_file_list"][0]))
     logging.info("Eval list path set to    :{}".format(global_config["Eval"]["dataset"]["label_file_list"][0]))
     logging.info("Dataset root path set to :{}".format(global_config["Eval"]["dataset"]["data_dir"]))
-    logging.info("Dict path set to         :{}".format(global_config["Global"]["character_dict_path"]))
+    logging.info("Dict path set to         :{}".format(global_config["Base"]["character_dict_path"]))
     logging.info("Config file set to       :configs/rec/multi_language/{}".format(save_file_path))

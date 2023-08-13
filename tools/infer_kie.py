@@ -74,7 +74,7 @@ def draw_kie_result(batch, node, idx_to_cls, count):
     vis_img = np.ones((h, w * 3, 3), dtype=np.uint8) * 255
     vis_img[:, :w] = img
     vis_img[:, w:] = pred_img
-    save_kie_path = os.path.dirname(config["Global"]["save_res_path"]) + "/kie_results/"
+    save_kie_path = os.path.dirname(config["Base"]["save_res_path"]) + "/kie_results/"
     if not os.path.exists(save_kie_path):
         os.makedirs(save_kie_path)
     save_path = os.path.join(save_kie_path, str(count) + ".png")
@@ -109,7 +109,7 @@ def write_kie_result(fout, node, data):
 
 
 def main():
-    global_config = config["Global"]
+    global_config = config["Base"]
 
     # build model
     model = build_model(config["Model"])
@@ -124,8 +124,8 @@ def main():
 
     ops = create_operators(transforms, global_config)
 
-    save_res_path = config["Global"]["save_res_path"]
-    class_path = config["Global"]["class_path"]
+    save_res_path = config["Base"]["save_res_path"]
+    class_path = config["Base"]["class_path"]
     idx_to_cls = read_class_list(class_path)
     os.makedirs(os.path.dirname(save_res_path), exist_ok=True)
 
@@ -134,7 +134,7 @@ def main():
     warmup_times = 0
     count_t = []
     with open(save_res_path, "w") as fout:
-        with open(config["Global"]["infer_img"], "rb") as f:
+        with open(config["Base"]["infer_img"], "rb") as f:
             lines = f.readlines()
             for index, data_line in enumerate(lines):
                 if index == 10:

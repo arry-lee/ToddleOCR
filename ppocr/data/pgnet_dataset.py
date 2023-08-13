@@ -27,7 +27,7 @@ class PGDataSet(Dataset):
         self.logger = logger
         self.seed = seed
         self.mode = mode
-        global_config = config["Global"]
+        global_config = config["Base"]
         dataset_config = config[mode]["dataset"]
         loader_config = config[mode]["loader"]
 
