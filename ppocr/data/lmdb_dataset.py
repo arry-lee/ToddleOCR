@@ -1,46 +1,22 @@
-# copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-import numpy as np
 import os
-from torch.utils.data import Dataset
-import lmdb
-import cv2
 import string
+
+import cv2
+import lmdb
+import numpy as np
 import six
 from PIL import Image
+from torchvision.datasets.vision import VisionDataset
 
-from .imaug import transform, create_operators
 
+class LMDBDataSet(VisionDataset):
+    def __init__(self, root, transforms=None, **dataset_config):
+        super(LMDBDataSet, self).__init__(root, transforms)
 
-class LMDBDataSet(Dataset):
-    def __init__(self, config, mode, logger, seed=None):
-        super(LMDBDataSet, self).__init__()
-
-        global_config = config["Global"]
-        dataset_config = config[mode]["Dataset"]
-        loader_config = config[mode]["DataLoader"]
-        batch_size = loader_config["batch_size_per_card"]
-        data_dir = dataset_config["data_dir"]
-        self.do_shuffle = loader_config["shuffle"]
+        data_dir = root
 
         self.lmdb_sets = self.load_hierarchical_lmdb_dataset(data_dir)
-        logger.info("Initialize indexs of datasets:%s" % data_dir)
         self.data_idx_order_list = self.dataset_traversal()
-        if self.do_shuffle:
-            np.random.shuffle(self.data_idx_order_list)
-        self.ops = create_operators(dataset_config["transforms"], global_config)
-        self.ext_op_transform_idx = dataset_config.get("ext_op_transform_idx", 1)
 
         ratio_list = dataset_config.get("ratio_list", [1.0])
         self.need_reset = True in [x < 1 for x in ratio_list]
@@ -85,30 +61,6 @@ class LMDBDataSet(Dataset):
             return None
         return imgori
 
-    def get_ext_data(self):
-        ext_data_num = 0
-        for op in self.ops:
-            if hasattr(op, "ext_data_num"):
-                ext_data_num = getattr(op, "ext_data_num")
-                break
-        load_data_ops = self.ops[: self.ext_op_transform_idx]
-        ext_data = []
-
-        while len(ext_data) < ext_data_num:
-            lmdb_idx, file_idx = self.data_idx_order_list[np.random.randint(len(self))]
-            lmdb_idx = int(lmdb_idx)
-            file_idx = int(file_idx)
-            sample_info = self.get_lmdb_sample_info(self.lmdb_sets[lmdb_idx]["txn"], file_idx)
-            if sample_info is None:
-                continue
-            img, label = sample_info
-            data = {"image": img, "label": label}
-            data = transform(data, load_data_ops)
-            if data is None:
-                continue
-            ext_data.append(data)
-        return ext_data
-
     def get_lmdb_sample_info(self, txn, index):
         label_key = "label-%09d".encode() % index
         label = txn.get(label_key)
@@ -128,11 +80,8 @@ class LMDBDataSet(Dataset):
             return self.__getitem__(np.random.randint(self.__len__()))
         img, label = sample_info
         data = {"image": img, "label": label}
-        data["ext_data"] = self.get_ext_data()
-        outs = transform(data, self.ops)
-        if outs is None:
-            return self.__getitem__(np.random.randint(self.__len__()))
-        return outs
+        data = self.transforms(data)
+        return data
 
     def __len__(self):
         return self.data_idx_order_list.shape[0]
@@ -186,7 +135,7 @@ class LMDBDataSetSR(LMDBDataSet):
             return self.__getitem__(np.random.randint(self.__len__()))
         img_HR, img_lr, label_str = sample_info
         data = {"image_hr": img_HR, "image_lr": img_lr, "label": label_str}
-        outs = transform(data, self.ops)
+        outs = self.transforms(data)
         if outs is None:
             return self.__getitem__(np.random.randint(self.__len__()))
         return outs
