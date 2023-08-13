@@ -6,21 +6,21 @@ Global:
   print_batch_step: 10
   save_model_dir: ./output/v3_devanagari_mobile
   save_epoch_step: 3
-  eval_batch_step: [ 0, 2000 ]
+  eval_batch_step:
+    - 0
+    - 2000
   cal_metric_during_train: true
-  pretrained_model:
-  checkpoints:
-  save_inference_dir:
+  pretrained_model: null
+  checkpoints: null
+  save_inference_dir: null
   use_visualdl: false
   infer_img: doc/imgs_words/ch/word_1.jpg
   character_dict_path: ppocr/utils/dict/devanagari_dict.txt
-  max_text_length: &max_text_length 25
+  max_text_length: 25
   infer_mode: false
   use_space_char: true
   distributed: true
   save_res_path: ./output/rec/predicts_ppocrv3_devanagari.txt
-
-
 Optimizer:
   class: Adam
   beta1: 0.9
@@ -28,19 +28,17 @@ Optimizer:
   lr: 0.001
 LRScheduler:
   class: Cosine
-  
   warmup_epoch: 5
-
-
-
 Model:
   model_type: rec
   algorithm: SVTR
-  Transform:
+  Transform: null
   Backbone:
     class: MobileNetV1Enhance
     scale: 0.5
-    last_conv_stride: [ 1, 2 ]
+    last_conv_stride:
+      - 1
+      - 2
     last_pool_type: avg
   Head:
     class: MultiHead
@@ -51,27 +49,23 @@ Model:
           dims: 64
           depth: 2
           hidden_dims: 120
-          use_guide: True
+          use_guide: true
         Head:
-          fc_decay: 0.00001
+          fc_decay: 1.0e-05
       - class: SARHead
         enc_dim: 512
-        max_text_length: *max_text_length
-
+        max_text_length: 25
 Loss:
   class: MultiLoss
   loss_config_list:
-    - CTCLoss:
-    - SARLoss:
-
+    - CTCLoss: null
+    - SARLoss: null
 PostProcessor:
   class: CTCLabelDecode
-
 Metric:
   class: RecMetric
   main_indicator: acc
-  ignore_space: False
-
+  ignore_space: false
 Train:
   Dataset:
     class: SimpleDataSet
@@ -86,11 +80,17 @@ Train:
       - class: RecConAug
         prob: 0.5
         ext_data_num: 2
-        image_shape: [ 48, 320, 3 ]
+        image_shape:
+          - 48
+          - 320
+          - 3
       - class: RecAug
       - class: MultiLabelEncode
       - class: RecResizeImg
-        image_shape: [ 3, 48, 320 ]
+        image_shape:
+          - 3
+          - 48
+          - 320
       - class: KeepKeys
         keep_keys:
           - image
@@ -115,7 +115,10 @@ Eval:
         channel_first: false
       - class: MultiLabelEncode
       - class: RecResizeImg
-        image_shape: [ 3, 48, 320 ]
+        image_shape:
+          - 3
+          - 48
+          - 320
       - class: KeepKeys
         keep_keys:
           - image

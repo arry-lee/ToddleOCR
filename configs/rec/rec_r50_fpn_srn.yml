@@ -1,41 +1,37 @@
 Global:
-  use_gpu: True
+  use_gpu: true
   epoch_num: 72
   log_smooth_window: 20
   print_batch_step: 5
   save_model_dir: ./output/rec/srn_new
   save_epoch_step: 3
-  # evaluation is run every 5000 iterations after the 4000th iteration
-  eval_batch_step: [ 0, 5000 ]
-  cal_metric_during_train: True
-  pretrained_model:
-  checkpoints:
-  save_inference_dir:
-  use_visualdl: False
+  eval_batch_step:
+    - 0
+    - 5000
+  cal_metric_during_train: true
+  pretrained_model: null
+  checkpoints: null
+  save_inference_dir: null
+  use_visualdl: false
   infer_img: doc/imgs_words/ch/word_1.jpg
-  # for data or label process
-  character_dict_path:
+  character_dict_path: null
   max_text_length: 25
   num_heads: 8
-  infer_mode: False
-  use_space_char: False
+  infer_mode: false
+  use_space_char: false
   save_res_path: ./output/rec/predicts_srn.txt
-
-
 Optimizer:
   class: Adam
   beta1: 0.9
   beta2: 0.999
   clip_norm: 10.0
   lr: 0.0001
-LRScheduler:
-
-
+LRScheduler: null
 Model:
   model_type: rec
   algorithm: SRN
   in_channels: 1
-  Transform:
+  Transform: null
   Backbone:
     class: ResNetFPN
   Head:
@@ -45,63 +41,66 @@ Model:
     num_encoder_TUs: 2
     num_decoder_TUs: 4
     hidden_dims: 512
-
 Loss:
   class: SRNLoss
-
 PostProcessor:
   class: SRNLabelDecode
-
 Metric:
   class: RecMetric
   main_indicator: acc
-
 Train:
   Dataset:
     class: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/training/
     transforms:
-      - class: DecodeImage # load image
+      - class: DecodeImage
         img_mode: BGR
-        channel_first: False
-      - class: SRNLabelEncode # Class handling label
+        channel_first: false
+      - class: SRNLabelEncode
       - class: SRNRecResizeImg
-        image_shape: [ 1, 64, 256 ]
+        image_shape:
+          - 1
+          - 64
+          - 256
       - class: KeepKeys
-        keep_keys: [ 'image',
-                     'label',
-                     'length',
-                     'encoder_word_pos',
-                     'gsrm_word_pos',
-                     'gsrm_slf_attn_bias1',
-                     'gsrm_slf_attn_bias2' ] # dataloader will return list in this order
+        keep_keys:
+          - image
+          - label
+          - length
+          - encoder_word_pos
+          - gsrm_word_pos
+          - gsrm_slf_attn_bias1
+          - gsrm_slf_attn_bias2
   DataLoader:
-    shuffle: False
+    shuffle: false
     batch_size: 64
-    drop_last: False
+    drop_last: false
     num_workers: 4
-
 Eval:
   Dataset:
     class: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/validation/
     transforms:
-      - class: DecodeImage # load image
+      - class: DecodeImage
         img_mode: BGR
-        channel_first: False
-      - class: SRNLabelEncode # Class handling label
+        channel_first: false
+      - class: SRNLabelEncode
       - class: SRNRecResizeImg
-        image_shape: [ 1, 64, 256 ]
+        image_shape:
+          - 1
+          - 64
+          - 256
       - class: KeepKeys
-        keep_keys: [ 'image',
-                     'label',
-                     'length',
-                     'encoder_word_pos',
-                     'gsrm_word_pos',
-                     'gsrm_slf_attn_bias1',
-                     'gsrm_slf_attn_bias2' ]
+        keep_keys:
+          - image
+          - label
+          - length
+          - encoder_word_pos
+          - gsrm_word_pos
+          - gsrm_slf_attn_bias1
+          - gsrm_slf_attn_bias2
   DataLoader:
-    shuffle: False
-    drop_last: False
+    shuffle: false
+    drop_last: false
     batch_size: 32
     num_workers: 4

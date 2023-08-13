@@ -23,11 +23,15 @@ Model:
   Backbone:
     class: ResNet
     layers: 50
-    dcn_stage: [ False, True, True, True ]
+    dcn_stage:
+      - false
+      - true
+      - true
+      - true
   Neck:
     class: DBFPN
     out_channels: 256
-    use_asf: True
+    use_asf: true
   Head:
     class: DBHead
     k: 50
@@ -44,7 +48,6 @@ Optimizer:
   lr: 0.007
 LRScheduler:
   class: DecayLearningRate
-  
   epochs: 1000
   factor: 0.9
   end_lr: 0
@@ -55,7 +58,7 @@ PostProcessor:
   box_thresh: 0.6
   max_candidates: 1000
   unclip_ratio: 1.5
-  det_box_type: 'quad' # 'quad' or 'poly'
+  det_box_type: quad
 Metric:
   class: DetMetric
   main_indicator: hmean

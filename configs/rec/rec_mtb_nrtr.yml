@@ -1,25 +1,24 @@
 Global:
-  use_gpu: True
+  use_gpu: true
   epoch_num: 21
   log_smooth_window: 20
   print_batch_step: 10
   save_model_dir: ./output/rec/nrtr/
   save_epoch_step: 1
-  # evaluation is run every 2000 iterations
-  eval_batch_step: [ 0, 2000 ]
-  cal_metric_during_train: True
-  pretrained_model:
-  checkpoints:
-  save_inference_dir:
-  use_visualdl: False
+  eval_batch_step:
+    - 0
+    - 2000
+  cal_metric_during_train: true
+  pretrained_model: null
+  checkpoints: null
+  save_inference_dir: null
+  use_visualdl: false
   infer_img: doc/imgs_words_en/word_10.png
-  # for data or label process
   character_dict_path: ppocr/utils/EN_symbol_dict.txt
   max_text_length: 25
-  infer_mode: False
-  use_space_char: False
+  infer_mode: false
+  use_space_char: false
   save_res_path: ./output/rec/predicts_nrtr.txt
-
 Optimizer:
   class: Adam
   beta1: 0.9
@@ -28,15 +27,12 @@ Optimizer:
   lr: 0.0005
 LRScheduler:
   class: Cosine
-  
   warmup_epoch: 2
-
-
 Model:
   model_type: rec
   algorithm: NRTR
   in_channels: 1
-  Transform:
+  Transform: null
   Backbone:
     class: MTB
     cnn_num: 2
@@ -44,57 +40,61 @@ Model:
     class: Transformer
     d_model: 512
     num_encoder_layers: 6
-    beam_size: -1 # When Beam size is greater than 0, it means to use beam search when evaluation.
-
-
+    beam_size: -1
 Loss:
   class: CELoss
-  smoothing: True
-
+  smoothing: true
 PostProcessor:
   class: NRTRLabelDecode
-
 Metric:
   class: RecMetric
   main_indicator: acc
-
 Train:
   Dataset:
     class: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/training/
     transforms:
-      - class: DecodeImage # load image
+      - class: DecodeImage
         img_mode: BGR
-        channel_first: False
-      - class: NRTRLabelEncode # Class handling label
+        channel_first: false
+      - class: NRTRLabelEncode
       - class: GrayRecResizeImg
-        image_shape: [ 100, 32 ] # W H
-        resize_type: PIL # PIL or OpenCV
+        image_shape:
+          - 100
+          - 32
+        resize_type: PIL
       - class: KeepKeys
-        keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
+        keep_keys:
+          - image
+          - label
+          - length
   DataLoader:
-    shuffle: True
+    shuffle: true
     batch_size: 512
-    drop_last: True
+    drop_last: true
     num_workers: 8
-
 Eval:
   Dataset:
     class: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/evaluation/
     transforms:
-      - class: DecodeImage # load image
+      - class: DecodeImage
         img_mode: BGR
-        channel_first: False
-      - class: NRTRLabelEncode # Class handling label
+        channel_first: false
+      - class: NRTRLabelEncode
       - class: GrayRecResizeImg
-        image_shape: [ 100, 32 ] # W H
-        resize_type: PIL # PIL or OpenCV
+        image_shape:
+          - 100
+          - 32
+        resize_type: PIL
       - class: KeepKeys
-        keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
+        keep_keys:
+          - image
+          - label
+          - length
   DataLoader:
-    shuffle: False
-    drop_last: False
+    shuffle: false
+    drop_last: false
     batch_size: 256
     num_workers: 4
-    use_shared_memory: False
+    use_shared_memory: false

@@ -6,11 +6,13 @@ Global:
   print_batch_step: 10
   save_model_dir: ./output/rec_pp-OCRv2_distillation
   save_epoch_step: 3
-  eval_batch_step: [ 0, 2000 ]
+  eval_batch_step:
+    - 0
+    - 2000
   cal_metric_during_train: true
-  pretrained_model:
-  checkpoints:
-  save_inference_dir:
+  pretrained_model: null
+  checkpoints: null
+  save_inference_dir: null
   use_visualdl: false
   infer_img: doc/imgs_words/ch/word_1.jpg
   character_dict_path: ppocr/utils/ppocr_keys_v1.txt
@@ -19,31 +21,30 @@ Global:
   use_space_char: true
   distributed: true
   save_res_path: ./output/rec/predicts_pp-OCRv2_distillation.txt
-
-
 Optimizer:
   class: Adam
   beta1: 0.9
   beta2: 0.999
 LRScheduler:
   class: Piecewise
-  decay_epochs: [ 700 ]
-  values: [ 0.001, 0.0001 ]
+  decay_epochs:
+    - 700
+  values:
+    - 0.001
+    - 0.0001
   warmup_epoch: 5
-
-
 Model:
-  model_type: &model_type "rec"
+  model_type: rec
   class: DistillationModel
   algorithm: Distillation
   Models:
     Teacher:
-      pretrained:
+      pretrained: null
       freeze_params: false
       return_all_feats: true
-      model_type: *model_type
+      model_type: rec
       algorithm: CRNN
-      Transform:
+      Transform: null
       Backbone:
         class: MobileNetV1Enhance
         scale: 0.5
@@ -54,14 +55,14 @@ Model:
       Head:
         class: CTCHead
         mid_channels: 96
-        fc_decay: 0.00002
+        fc_decay: 2.0e-05
     Student:
-      pretrained:
+      pretrained: null
       freeze_params: false
       return_all_feats: true
-      model_type: *model_type
+      model_type: rec
       algorithm: CRNN
-      Transform:
+      Transform: null
       Backbone:
         class: MobileNetV1Enhance
         scale: 0.5
@@ -72,41 +73,42 @@ Model:
       Head:
         class: CTCHead
         mid_channels: 96
-        fc_decay: 0.00002
-
-
+        fc_decay: 2.0e-05
 Loss:
   class: CombinedLoss
   loss_config_list:
     - DistillationCTCLoss:
         weight: 1.0
-        model_name_list: [ "Student", "Teacher" ]
+        model_name_list:
+          - Student
+          - Teacher
         key: head_out
     - DistillationDMLLoss:
         weight: 1.0
-        act: "softmax"
+        act: softmax
         use_log: true
         model_name_pairs:
-          - [ "Student", "Teacher" ]
+          - - Student
+            - Teacher
         key: head_out
     - DistillationDistanceLoss:
         weight: 1.0
-        mode: "l2"
+        mode: l2
         model_name_pairs:
-          - [ "Student", "Teacher" ]
+          - - Student
+            - Teacher
         key: backbone_out
-
 PostProcessor:
   class: DistillationCTCLabelDecode
-  model_name: [ "Student", "Teacher" ]
+  model_name:
+    - Student
+    - Teacher
   key: head_out
-
 Metric:
   class: DistillationMetric
   base_metric_name: RecMetric
   main_indicator: acc
-  key: "Student"
-
+  key: Student
 Train:
   Dataset:
     class: SimpleDataSet
@@ -120,7 +122,10 @@ Train:
       - class: RecAug
       - class: CTCLabelEncode
       - class: RecResizeImg
-        image_shape: [ 3, 32, 320 ]
+        image_shape:
+          - 3
+          - 32
+          - 320
       - class: KeepKeys
         keep_keys:
           - image
@@ -144,7 +149,10 @@ Eval:
         channel_first: false
       - class: CTCLabelEncode
       - class: RecResizeImg
-        image_shape: [ 3, 32, 320 ]
+        image_shape:
+          - 3
+          - 32
+          - 320
       - class: KeepKeys
         keep_keys:
           - image

@@ -6,7 +6,9 @@ Global:
   print_batch_step: 10
   save_model_dir: ./output/rec_ppocr_v3_rotnet
   save_epoch_step: 3
-  eval_batch_step: [ 0, 2000 ]
+  eval_batch_step:
+    - 0
+    - 2000
   cal_metric_during_train: true
   pretrained_model: null
   checkpoints: null
@@ -18,7 +20,6 @@ Global:
   infer_mode: false
   use_space_char: true
   save_res_path: ./output/rec/predicts_chinese_lite_v2.0.txt
-
 Optimizer:
   class: Adam
   beta1: 0.9
@@ -26,9 +27,6 @@ Optimizer:
   lr: 0.001
 LRScheduler:
   class: Cosine
-
-
-
 Model:
   model_type: cls
   algorithm: CLS
@@ -36,24 +34,22 @@ Model:
   Backbone:
     class: MobileNetV1Enhance
     scale: 0.5
-    last_conv_stride: [ 1, 2 ]
+    last_conv_stride:
+      - 1
+      - 2
     last_pool_type: avg
-  Neck:
+  Neck: null
   Head:
     class: ClsHead
     class_dim: 4
-
 Loss:
   class: ClsLoss
   main_indicator: acc
-
 PostProcessor:
   class: ClsPostProcess
-
 Metric:
   class: ClsMetric
   main_indicator: acc
-
 Train:
   Dataset:
     class: SimpleDataSet
@@ -67,11 +63,16 @@ Train:
       - class: BaseDataAugmentation
       - class: RandAugment
       - class: SSLRotateResize
-        image_shape: [ 3, 48, 320 ]
+        image_shape:
+          - 3
+          - 48
+          - 320
       - class: KeepKeys
-        keep_keys: [ "image", "label" ]
+        keep_keys:
+          - image
+          - label
   DataLoader:
-    collate_fn: "SSLRotateCollate"
+    collate_fn: SSLRotateCollate
     shuffle: true
     batch_size: 32
     drop_last: true
@@ -87,11 +88,16 @@ Eval:
         img_mode: BGR
         channel_first: false
       - class: SSLRotateResize
-        image_shape: [ 3, 48, 320 ]
+        image_shape:
+          - 3
+          - 48
+          - 320
       - class: KeepKeys
-        keep_keys: [ "image", "label" ]
+        keep_keys:
+          - image
+          - label
   DataLoader:
-    collate_fn: "SSLRotateCollate"
+    collate_fn: SSLRotateCollate
     shuffle: false
     drop_last: false
     batch_size: 64

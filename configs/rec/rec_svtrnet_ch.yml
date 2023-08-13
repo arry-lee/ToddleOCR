@@ -30,7 +30,6 @@ Optimizer:
   lr: 0.0005
 LRScheduler:
   class: Cosine
-  
   warmup_epoch: 2
 Model:
   model_type: rec
@@ -41,7 +40,7 @@ Model:
     img_size:
       - 32
       - 320
-    out_char_num: 40 # W//4 or W//8 or W/12
+    out_char_num: 40
     out_channels: 96
     patch_merging: Conv
     embed_dim:

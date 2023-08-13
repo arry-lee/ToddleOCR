@@ -1,40 +1,36 @@
 Global:
-  use_gpu: True
+  use_gpu: true
   epoch_num: 20
   log_smooth_window: 20
   print_batch_step: 10
   save_model_dir: ./output/rec/vitstr_none_ce/
   save_epoch_step: 1
-  # evaluation is run every 2000 iterations after the 0th iteration#
-  eval_batch_step: [ 0, 2000 ]
-  cal_metric_during_train: True
-  pretrained_model:
-  checkpoints:
-  save_inference_dir:
-  use_visualdl: False
+  eval_batch_step:
+    - 0
+    - 2000
+  cal_metric_during_train: true
+  pretrained_model: null
+  checkpoints: null
+  save_inference_dir: null
+  use_visualdl: false
   infer_img: doc/imgs_words_en/word_10.png
-  # for data or label process
   character_dict_path: ppocr/utils/EN_symbol_dict.txt
   max_text_length: 25
-  infer_mode: False
-  use_space_char: False
+  infer_mode: false
+  use_space_char: false
   save_res_path: ./output/rec/predicts_vitstr.txt
-
-
 Optimizer:
   class: Adadelta
-  epsilon: 1.e-8
+  epsilon: 1.0e-08
   rho: 0.95
   clip_norm: 5.0
   lr: 1.0
-LRScheduler:
-
-
+LRScheduler: null
 Model:
   model_type: rec
   algorithm: ViTSTR
   in_channels: 1
-  Transform:
+  Transform: null
   Backbone:
     class: ViTSTR
     scale: tiny
@@ -43,61 +39,66 @@ Model:
     encoder_type: reshape
   Head:
     class: CTCHead
-
 Loss:
   class: CELoss
-  with_all: True
-  ignore_index: &ignore_index 0 # Must be zero or greater than the number of character classes
-
+  with_all: true
+  ignore_index: 0
 PostProcessor:
   class: ViTSTRLabelDecode
-
 Metric:
   class: RecMetric
   main_indicator: acc
-
 Train:
   Dataset:
     class: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/training/
     transforms:
-      - class: DecodeImage # load image
+      - class: DecodeImage
         img_mode: BGR
-        channel_first: False
-      - class: ViTSTRLabelEncode # Class handling label
-        ignore_index: *ignore_index
+        channel_first: false
+      - class: ViTSTRLabelEncode
+        ignore_index: 0
       - class: GrayRecResizeImg
-        image_shape: [ 224, 224 ] # W H
-        resize_type: PIL # PIL or OpenCV
-        inter_type: 'Image.BICUBIC'
+        image_shape:
+          - 224
+          - 224
+        resize_type: PIL
+        inter_type: Image.BICUBIC
         scale: false
       - class: KeepKeys
-        keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
+        keep_keys:
+          - image
+          - label
+          - length
   DataLoader:
-    shuffle: True
+    shuffle: true
     batch_size: 48
-    drop_last: True
+    drop_last: true
     num_workers: 8
-
 Eval:
   Dataset:
     class: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/evaluation/
     transforms:
-      - class: DecodeImage # load image
+      - class: DecodeImage
         img_mode: BGR
-        channel_first: False
-      - class: ViTSTRLabelEncode # Class handling label
-        ignore_index: *ignore_index
+        channel_first: false
+      - class: ViTSTRLabelEncode
+        ignore_index: 0
       - class: GrayRecResizeImg
-        image_shape: [ 224, 224 ] # W H
-        resize_type: PIL # PIL or OpenCV
-        inter_type: 'Image.BICUBIC'
+        image_shape:
+          - 224
+          - 224
+        resize_type: PIL
+        inter_type: Image.BICUBIC
         scale: false
       - class: KeepKeys
-        keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
+        keep_keys:
+          - image
+          - label
+          - length
   DataLoader:
-    shuffle: False
-    drop_last: False
+    shuffle: false
+    drop_last: false
     batch_size: 256
     num_workers: 2

@@ -5,21 +5,20 @@ Global:
   print_batch_step: 10
   save_model_dir: ./output/sr/sr_tsrn_transformer_strock/
   save_epoch_step: 3
-  # evaluation is run every 2000 iterations
-  eval_batch_step: [ 0, 1000 ]
-  cal_metric_during_train: False
-  pretrained_model:
-  checkpoints:
+  eval_batch_step:
+    - 0
+    - 1000
+  cal_metric_during_train: false
+  pretrained_model: null
+  checkpoints: null
   save_inference_dir: sr_output
-  use_visualdl: False
+  use_visualdl: false
   infer_img: doc/imgs_words_en/word_52.png
-  # for data or label process
   character_dict_path: ./train_data/srdata/english_decomposition.txt
   max_text_length: 100
-  infer_mode: False
-  use_space_char: False
+  infer_mode: false
+  use_space_char: false
   save_res_path: ./output/sr/predicts_gestalt.txt
-
 Optimizer:
   class: Adam
   beta1: 0.5
@@ -27,26 +26,21 @@ Optimizer:
   clip_norm: 0.25
 LRScheduler:
   class: ConstantLR
-
 Model:
   model_type: sr
   algorithm: Gestalt
   Transform:
     class: TSRN
-    STN: True
-    infer_mode: False
-
+    STN: true
+    infer_mode: false
 Loss:
   class: StrokeFocusLoss
   character_dict_path: ./train_data/srdata/english_decomposition.txt
-
 PostProcessor:
   class: None
-
 Metric:
   class: SRMetric
   main_indicator: all
-
 Train:
   Dataset:
     class: LMDBDataSetSR
@@ -56,15 +50,19 @@ Train:
         imgH: 32
         imgW: 128
         down_sample_scale: 2
-      - class: SRLabelEncode # Class handling label
+      - class: SRLabelEncode
       - class: KeepKeys
-        keep_keys: [ 'img_lr', 'img_hr', 'length', 'input_tensor', 'label' ] # dataloader will return list in this order
+        keep_keys:
+          - img_lr
+          - img_hr
+          - length
+          - input_tensor
+          - label
   DataLoader:
-    shuffle: False
+    shuffle: false
     batch_size: 16
-    drop_last: True
+    drop_last: true
     num_workers: 4
-
 Eval:
   Dataset:
     class: LMDBDataSetSR
@@ -74,11 +72,16 @@ Eval:
         imgH: 32
         imgW: 128
         down_sample_scale: 2
-      - class: SRLabelEncode # Class handling label
+      - class: SRLabelEncode
       - class: KeepKeys
-        keep_keys: [ 'img_lr', 'img_hr','length', 'input_tensor', 'label' ] # dataloader will return list in this order
+        keep_keys:
+          - img_lr
+          - img_hr
+          - length
+          - input_tensor
+          - label
   DataLoader:
-    shuffle: False
-    drop_last: False
+    shuffle: false
+    drop_last: false
     batch_size: 16
     num_workers: 4

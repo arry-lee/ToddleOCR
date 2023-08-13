@@ -17,14 +17,13 @@ Global:
   infer_img: doc/imgs_en/img_10.jpg
   save_res_path: ./checkpoints/det_db/predicts_db.txt
   distributed: true
-
 Model:
   class: DistillationModel
   algorithm: Distillation
   model_type: det
   Models:
     Student:
-      pretrained:
+      pretrained: null
       model_type: det
       algorithm: DB
       Transform: null
@@ -36,12 +35,12 @@ Model:
       Neck:
         class: RSEFPN
         out_channels: 96
-        shortcut: True
+        shortcut: true
       Head:
         class: DBHead
         k: 50
     Student2:
-      pretrained:
+      pretrained: null
       model_type: det
       algorithm: DB
       Transform: null
@@ -53,7 +52,7 @@ Model:
       Neck:
         class: RSEFPN
         out_channels: 96
-        shortcut: True
+        shortcut: true
       Head:
         class: DBHead
         k: 50
@@ -71,17 +70,21 @@ Model:
         out_channels: 256
       Head:
         class: DBHead
-        kernel_list: [ 7,2,2 ]
+        kernel_list:
+          - 7
+          - 2
+          - 2
         k: 50
-
 Loss:
   class: CombinedLoss
   loss_config_list:
     - DistillationDilaDBLoss:
         weight: 1.0
         model_name_pairs:
-          - [ "Student", "Teacher" ]
-          - [ "Student2", "Teacher" ]
+          - - Student
+            - Teacher
+          - - Student2
+            - Teacher
         key: maps
         balance_loss: true
         main_loss_type: DiceLoss
@@ -90,20 +93,21 @@ Loss:
         ohem_ratio: 3
     - DistillationDMLLoss:
         model_name_pairs:
-          - [ "Student", "Student2" ]
-        maps_name: "thrink_maps"
+          - Student
+          - Student2
+        maps_name: thrink_maps
         weight: 1.0
-        model_name_pairs: [ "Student", "Student2" ]
         key: maps
     - DistillationDBLoss:
         weight: 1.0
-        model_name_list: [ "Student", "Student2" ]
+        model_name_list:
+          - Student
+          - Student2
         balance_loss: true
         main_loss_type: DiceLoss
         alpha: 5
         beta: 10
         ohem_ratio: 3
-
 Optimizer:
   class: Adam
   beta1: 0.9
@@ -111,32 +115,29 @@ Optimizer:
   lr: 0.001
 LRScheduler:
   class: Cosine
-  
   warmup_epoch: 2
-
-
 PostProcessor:
   class: DistillationDBPostProcess
-  model_name: [ "Student" ]
+  model_name:
+    - Student
   key: head_out
   thresh: 0.3
   box_thresh: 0.6
   max_candidates: 1000
   unclip_ratio: 1.5
-
 Metric:
   class: DistillationMetric
   base_metric_name: DetMetric
   main_indicator: hmean
-  key: "Student"
-
+  key: Student
 Train:
   Dataset:
     class: SimpleDataSet
     data_dir: ./train_data/icdar2015/text_localization/
     label_file_list:
       - ./train_data/icdar2015/text_localization/train_icdar2015_label.txt
-    ratio_list: [ 1.0 ]
+    ratio_list:
+      - 1.0
     transforms:
       - class: DecodeImage
         img_mode: BGR
@@ -195,7 +196,6 @@ Train:
     drop_last: false
     batch_size: 8
     num_workers: 4
-
 Eval:
   Dataset:
     class: SimpleDataSet
@@ -203,21 +203,31 @@ Eval:
     label_file_list:
       - ./train_data/icdar2015/text_localization/test_icdar2015_label.txt
     transforms:
-      - class: DecodeImage # load image
+      - class: DecodeImage
         img_mode: BGR
-        channel_first: False
-      - class: DetLabelEncode # Class handling label
+        channel_first: false
+      - class: DetLabelEncode
       - class: DetResizeForTest
       - class: NormalizeImage
         scale: 1./255.
-        mean: [ 0.485, 0.456, 0.406 ]
-        std: [ 0.229, 0.224, 0.225 ]
-        order: 'hwc'
+        mean:
+          - 0.485
+          - 0.456
+          - 0.406
+        std:
+          - 0.229
+          - 0.224
+          - 0.225
+        order: hwc
       - class: ToCHWImage
       - class: KeepKeys
-        keep_keys: [ 'image', 'shape', 'polys', 'ignore_tags' ]
+        keep_keys:
+          - image
+          - shape
+          - polys
+          - ignore_tags
   DataLoader:
-    shuffle: False
-    drop_last: False
-    batch_size: 1 # must be 1
+    shuffle: false
+    drop_last: false
+    batch_size: 1
     num_workers: 2

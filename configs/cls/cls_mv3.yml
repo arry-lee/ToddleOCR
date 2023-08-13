@@ -5,49 +5,44 @@ Global:
   print_batch_step: 10
   save_model_dir: ./output/cls/mv3/
   save_epoch_step: 3
-  # evaluation is run every 5000 iterations after the 4000th iteration
-  eval_batch_step: [ 0, 1000 ]
-  cal_metric_during_train: True
-  pretrained_model:
-  checkpoints:
-  save_inference_dir:
-  use_visualdl: False
+  eval_batch_step:
+    - 0
+    - 1000
+  cal_metric_during_train: true
+  pretrained_model: null
+  checkpoints: null
+  save_inference_dir: null
+  use_visualdl: false
   infer_img: doc/imgs_words_en/word_10.png
-  label_list: [ '0','180' ]
-
+  label_list:
+    - '0'
+    - '180'
 Model:
   model_type: cls
   algorithm: CLS
-  Transform:
+  Transform: null
   Backbone:
     class: MobileNetV3
     scale: 0.35
     model_name: small
-  Neck:
+  Neck: null
   Head:
     class: ClsHead
     class_dim: 2
-
 Loss:
   class: ClsLoss
-
 Optimizer:
   class: Adam
   beta1: 0.9
   beta2: 0.999
   lr: 0.001
-
 LRScheduler:
   class: Cosine
-
-
 PostProcessor:
   class: ClsPostProcess
-
 Metric:
   class: ClsMetric
   main_indicator: acc
-
 Train:
   Dataset:
     class: SimpleDataSet
@@ -55,22 +50,26 @@ Train:
     label_file_list:
       - ./train_data/cls/train.txt
     transforms:
-      - class: DecodeImage # load image
+      - class: DecodeImage
         img_mode: BGR
-        channel_first: False
-      - class: ClsLabelEncode # Class handling label
+        channel_first: false
+      - class: ClsLabelEncode
       - class: BaseDataAugmentation
       - class: RandAugment
       - class: ClsResizeImg
-        image_shape: [ 3, 48, 192 ]
+        image_shape:
+          - 3
+          - 48
+          - 192
       - class: KeepKeys
-        keep_keys: [ 'image', 'label' ] # dataloader will return list in this order
+        keep_keys:
+          - image
+          - label
   DataLoader:
-    shuffle: True
+    shuffle: true
     batch_size: 512
-    drop_last: True
+    drop_last: true
     num_workers: 8
-
 Eval:
   Dataset:
     class: SimpleDataSet
@@ -78,16 +77,21 @@ Eval:
     label_file_list:
       - ./train_data/cls/test.txt
     transforms:
-      - class: DecodeImage # load image
+      - class: DecodeImage
         img_mode: BGR
-        channel_first: False
-      - class: ClsLabelEncode # Class handling label
+        channel_first: false
+      - class: ClsLabelEncode
       - class: ClsResizeImg
-        image_shape: [ 3, 48, 192 ]
+        image_shape:
+          - 3
+          - 48
+          - 192
       - class: KeepKeys
-        keep_keys: [ 'image', 'label' ] # dataloader will return list in this order
+        keep_keys:
+          - image
+          - label
   DataLoader:
-    shuffle: False
-    drop_last: False
+    shuffle: false
+    drop_last: false
     batch_size: 512
     num_workers: 4
