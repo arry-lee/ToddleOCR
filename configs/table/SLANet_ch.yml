@@ -27,7 +27,7 @@ Optimizer:
   beta1: 0.9
   beta2: 0.999
   clip_norm: 5.0
-  lr:
+LRScheduler:
     learning_rate: 0.001
   
 

@@ -30,7 +30,7 @@ Optimizer:
   weight_decay: 0.05
   no_weight_decay_name: norm pos_embed
   one_dim_param_no_weight_decay: True
-  lr:
+LRScheduler:
     name: Cosine
     learning_rate: 0.0005
     warmup_epoch: 2

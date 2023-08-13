@@ -28,7 +28,7 @@ Optimizer:
   clip_norm: 20.0
   group_lr: true
   training_step: *training_step
-  lr:
+LRScheduler:
     name: Piecewise
     decay_epochs: [6]
     values: [0.0001, 0.00001] 

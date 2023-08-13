@@ -41,7 +41,7 @@ Loss:
 Optimizer:
   name: Momentum
   momentum: 0.9
-  lr:
+LRScheduler:
     name: DecayLearningRate
     learning_rate: 0.007
     epochs: 1000

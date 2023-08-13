@@ -22,7 +22,7 @@ Global:
 
 Optimizer:
   name: Adadelta
-  lr:
+LRScheduler:
     name: Piecewise
     decay_epochs: [2, 5, 7]
     values: [0.5, 0.1, 0.01, 0.001]

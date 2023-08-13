@@ -27,7 +27,7 @@ Optimizer:
   beta1: 0.9
   beta2: 0.999
   clip_norm: 5.0
-  lr:
+LRScheduler:
     name: Piecewise
     learning_rate: 0.001
     decay_epochs : [40, 50]

@@ -41,7 +41,7 @@ Optimizer:
   name: Adam
   beta1: 0.9
   beta2: 0.999
-  lr:
+LRScheduler:
     name: Step
     learning_rate: 0.0001
     step_size: 200

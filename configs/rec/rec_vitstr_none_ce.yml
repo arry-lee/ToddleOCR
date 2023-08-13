@@ -26,7 +26,7 @@ Optimizer:
   epsilon: 1.e-8
   rho: 0.95
   clip_norm: 5.0
-  lr:
+LRScheduler:
     learning_rate: 1.0
 
 Model:

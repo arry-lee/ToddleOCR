@@ -24,7 +24,7 @@ Optimizer:
   name: Momentum
   momentum: 0.9
   clip_norm_global: 100.0
-  lr:
+LRScheduler:
     name: TwoStepCosine
     learning_rate: 0.01
     warmup_epoch: 1
