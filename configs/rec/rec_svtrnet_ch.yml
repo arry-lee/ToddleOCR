@@ -105,22 +105,22 @@ Train:
         prob: 0.5
         ext_data_num: 2
         image_shape:
-            - 32
-            - 320
-            - 3
+          - 32
+          - 320
+          - 3
       - name: RecAug null
       - name: CTCLabelEncode null
       - name: SVTRRecResizeImg
         image_shape:
-            - 3
-            - 32
-            - 320
+          - 3
+          - 32
+          - 320
         padding: true
       - name: KeepKeys
         keep_keys:
-            - image
-            - label
-            - length
+          - image
+          - label
+          - length
   DataLoader:
     shuffle: true
     batch_size: 256
@@ -139,15 +139,15 @@ Eval:
       - name: CTCLabelEncode null
       - name: SVTRRecResizeImg
         image_shape:
-            - 3
-            - 32
-            - 320
+          - 3
+          - 32
+          - 320
         padding: true
       - name: KeepKeys
         keep_keys:
-            - image
-            - label
-            - length
+          - image
+          - label
+          - length
   DataLoader:
     shuffle: false
     drop_last: false

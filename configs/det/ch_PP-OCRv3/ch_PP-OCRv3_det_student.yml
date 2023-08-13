@@ -75,23 +75,23 @@ Train:
       - name: DetLabelEncode null
       - name: IaaAugment
         augmenter_args:
-            - type: Fliplr
-            args:
-              p: 0.5
+          - type: Fliplr
+          args:
+            p: 0.5
             - type: Affine
-            args:
-              rotate:
-                  - -10
-                  - 10
+          args:
+            rotate:
+              - -10
+              - 10
             - type: Resize
-            args:
-              size:
-                  - 0.5
-                  - 3
+          args:
+            size:
+              - 0.5
+              - 3
       - name: EastRandomCropData
         size:
-            - 960
-            - 960
+          - 960
+          - 960
         max_tries: 50
         keep_ratio: true
       - name: MakeBorderMap
@@ -104,22 +104,22 @@ Train:
       - name: NormalizeImage
         scale: 1./255.
         mean:
-            - 0.485
-            - 0.456
-            - 0.406
+          - 0.485
+          - 0.456
+          - 0.406
         std:
-            - 0.229
-            - 0.224
-            - 0.225
+          - 0.229
+          - 0.224
+          - 0.225
         order: hwc
       - name: ToCHWImage null
       - name: KeepKeys
         keep_keys:
-            - image
-            - threshold_map
-            - threshold_mask
-            - shrink_map
-            - shrink_mask
+          - image
+          - threshold_map
+          - threshold_mask
+          - shrink_map
+          - shrink_mask
   DataLoader:
     shuffle: true
     drop_last: false
@@ -140,21 +140,21 @@ Eval:
       - name: NormalizeImage
         scale: 1./255.
         mean:
-            - 0.485
-            - 0.456
-            - 0.406
+          - 0.485
+          - 0.456
+          - 0.406
         std:
-            - 0.229
-            - 0.224
-            - 0.225
+          - 0.229
+          - 0.224
+          - 0.225
         order: hwc
       - name: ToCHWImage null
       - name: KeepKeys
         keep_keys:
-            - image
-            - shape
-            - polys
-            - ignore_tags
+          - image
+          - shape
+          - polys
+          - ignore_tags
   DataLoader:
     shuffle: false
     drop_last: false

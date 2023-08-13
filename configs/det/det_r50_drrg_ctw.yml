@@ -85,7 +85,7 @@ Train:
         pad_ratio: 0.6
       - name: IaaAugment
         augmenter_args:
-            - { 'type': Fliplr, 'args': { 'p': 0.5 } }
+          - { 'type': Fliplr, 'args': { 'p': 0.5 } }
       - name: DRRGTargets
       - name: NormalizeImage
         scale: 1./255.
@@ -95,8 +95,8 @@ Train:
       - name: ToCHWImage
       - name: KeepKeys
         keep_keys: [ 'image', 'gt_text_mask', 'gt_center_region_mask', 'gt_mask',
-                       'gt_top_height_map', 'gt_bot_height_map', 'gt_sin_map',
-                       'gt_cos_map', 'gt_comp_attribs' ] # dataloader will return list in this order
+                     'gt_top_height_map', 'gt_bot_height_map', 'gt_sin_map',
+                     'gt_cos_map', 'gt_comp_attribs' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
     drop_last: False

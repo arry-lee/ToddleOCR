@@ -74,7 +74,7 @@ Train:
         algorithm: *algorithm
         class_path: *class_path
         use_textline_bbox_info: &use_textline_bbox_info True
-          # one of [None, "tb-yx"]
+        # one of [None, "tb-yx"]
         order_method: &order_method "tb-yx"
       - name: VQATokenPad
         max_seq_len: &max_seq_len 512

@@ -121,7 +121,7 @@ Train:
         contains_re: False
         algorithm: *algorithm
         class_path: *class_path
-          # one of [None, "tb-yx"]
+        # one of [None, "tb-yx"]
         order_method: &order_method "tb-yx"
       - name: VQATokenPad
         max_seq_len: &max_seq_len 512

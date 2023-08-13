@@ -54,17 +54,17 @@ Model:
         name: MultiHead
         head_list:
           - CTCHead:
-            Neck:
-              name: svtr
-              dims: 64
-              depth: 2
-              hidden_dims: 120
-              use_guide: True
-            Head:
-              fc_decay: 0.00001
+          Neck:
+            name: svtr
+            dims: 64
+            depth: 2
+            hidden_dims: 120
+            use_guide: True
+          Head:
+            fc_decay: 0.00001
           - SARHead:
-            enc_dim: 512
-            max_text_length: *max_text_length
+          enc_dim: 512
+          max_text_length: *max_text_length
     Student:
       pretrained:
       freeze_params: false
@@ -81,17 +81,17 @@ Model:
         name: MultiHead
         head_list:
           - CTCHead:
-            Neck:
-              name: svtr
-              dims: 64
-              depth: 2
-              hidden_dims: 120
-              use_guide: True
-            Head:
-              fc_decay: 0.00001
+          Neck:
+            name: svtr
+            dims: 64
+            depth: 2
+            hidden_dims: 120
+            use_guide: True
+          Head:
+            fc_decay: 0.00001
           - SARHead:
-            enc_dim: 512
-            max_text_length: *max_text_length
+          enc_dim: 512
+          max_text_length: *max_text_length
 Loss:
   name: CombinedLoss
   loss_config_list:
@@ -167,11 +167,11 @@ Train:
         image_shape: [ 3, 48, 320 ]
       - name: KeepKeys
         keep_keys:
-            - image
-            - label_ctc
-            - label_sar
-            - length
-            - valid_ratio
+          - image
+          - label_ctc
+          - label_sar
+          - length
+          - valid_ratio
   DataLoader:
     shuffle: true
     batch_size: 128
@@ -192,11 +192,11 @@ Eval:
         image_shape: [ 3, 48, 320 ]
       - name: KeepKeys
         keep_keys:
-            - image
-            - label_ctc
-            - label_sar
-            - length
-            - valid_ratio
+          - image
+          - label_ctc
+          - label_sar
+          - length
+          - valid_ratio
   DataLoader:
     shuffle: false
     drop_last: false

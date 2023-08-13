@@ -76,23 +76,23 @@ Train:
       - name: DetLabelEncode null
       - name: IaaAugment
         augmenter_args:
-            - type: Fliplr
-            args:
-              p: 0.5
+          - type: Fliplr
+          args:
+            p: 0.5
             - type: Affine
-            args:
-              rotate:
-                  - -10
-                  - 10
+          args:
+            rotate:
+              - -10
+              - 10
             - type: Resize
-            args:
-              size:
-                  - 0.5
-                  - 3
+          args:
+            size:
+              - 0.5
+              - 3
       - name: EastRandomCropData
         size:
-            - 640
-            - 640
+          - 640
+          - 640
         max_tries: 10
         keep_ratio: true
       - name: MakeShrinkMap
@@ -105,22 +105,22 @@ Train:
       - name: NormalizeImage
         scale: 1./255.
         mean:
-            - 0.48109378172549
-            - 0.45752457890196
-            - 0.40787054090196
+          - 0.48109378172549
+          - 0.45752457890196
+          - 0.40787054090196
         std:
-            - 1.0
-            - 1.0
-            - 1.0
+          - 1.0
+          - 1.0
+          - 1.0
         order: hwc
       - name: ToCHWImage null
       - name: KeepKeys
         keep_keys:
-            - image
-            - threshold_map
-            - threshold_mask
-            - shrink_map
-            - shrink_mask
+          - image
+          - threshold_map
+          - threshold_mask
+          - shrink_map
+          - shrink_mask
   DataLoader:
     shuffle: true
     drop_last: false
@@ -139,27 +139,27 @@ Eval:
       - name: DetLabelEncode null
       - name: DetResizeForTest
         image_shape:
-            - 736
-            - 736
+          - 736
+          - 736
         keep_ratio: True
       - name: NormalizeImage
         scale: 1./255.
         mean:
-            - 0.48109378172549
-            - 0.45752457890196
-            - 0.40787054090196
+          - 0.48109378172549
+          - 0.45752457890196
+          - 0.40787054090196
         std:
-            - 1.0
-            - 1.0
-            - 1.0
+          - 1.0
+          - 1.0
+          - 1.0
         order: hwc
       - name: ToCHWImage null
       - name: KeepKeys
         keep_keys:
-            - image
-            - shape
-            - polys
-            - ignore_tags
+          - image
+          - shape
+          - polys
+          - ignore_tags
   DataLoader:
     shuffle: false
     drop_last: false

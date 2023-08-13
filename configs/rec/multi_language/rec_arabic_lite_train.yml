@@ -68,14 +68,14 @@ Train:
       - name: CTCLabelEncode null
       - name: RecResizeImg
         image_shape:
-            - 3
-            - 32
-            - 320
+          - 3
+          - 32
+          - 320
       - name: KeepKeys
         keep_keys:
-            - image
-            - label
-            - length
+          - image
+          - label
+          - length
   DataLoader:
     shuffle: true
     batch_size: 256
@@ -94,14 +94,14 @@ Eval:
       - name: CTCLabelEncode null
       - name: RecResizeImg
         image_shape:
-            - 3
-            - 32
-            - 320
+          - 3
+          - 32
+          - 320
       - name: KeepKeys
         keep_keys:
-            - image
-            - label
-            - length
+          - image
+          - label
+          - length
   DataLoader:
     shuffle: false
     drop_last: false

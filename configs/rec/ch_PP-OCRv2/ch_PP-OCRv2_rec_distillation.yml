@@ -123,9 +123,9 @@ Train:
         image_shape: [ 3, 32, 320 ]
       - name: KeepKeys
         keep_keys:
-            - image
-            - label
-            - length
+          - image
+          - label
+          - length
   DataLoader:
     shuffle: true
     batch_size: 128
@@ -147,9 +147,9 @@ Eval:
         image_shape: [ 3, 32, 320 ]
       - name: KeepKeys
         keep_keys:
-            - image
-            - label
-            - length
+          - image
+          - label
+          - length
   DataLoader:
     shuffle: false
     drop_last: false

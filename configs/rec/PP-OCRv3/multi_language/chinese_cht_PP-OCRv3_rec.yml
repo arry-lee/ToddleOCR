@@ -93,11 +93,11 @@ Train:
         image_shape: [ 3, 48, 320 ]
       - name: KeepKeys
         keep_keys:
-            - image
-            - label_ctc
-            - label_sar
-            - length
-            - valid_ratio
+          - image
+          - label_ctc
+          - label_sar
+          - length
+          - valid_ratio
   DataLoader:
     shuffle: true
     batch_size: 128
@@ -118,11 +118,11 @@ Eval:
         image_shape: [ 3, 48, 320 ]
       - name: KeepKeys
         keep_keys:
-            - image
-            - label_ctc
-            - label_sar
-            - length
-            - valid_ratio
+          - image
+          - label_ctc
+          - label_sar
+          - length
+          - valid_ratio
   DataLoader:
     shuffle: false
     drop_last: false

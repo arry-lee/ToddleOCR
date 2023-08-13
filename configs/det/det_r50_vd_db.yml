@@ -71,9 +71,9 @@ Train:
       - name: DetLabelEncode # Class handling label
       - name: IaaAugment
         augmenter_args:
-            - { 'type': Fliplr, 'args': { 'p': 0.5 } }
-            - { 'type': Affine, 'args': { 'rotate': [ -10, 10 ] } }
-            - { 'type': Resize, 'args': { 'size': [ 0.5, 3 ] } }
+          - { 'type': Fliplr, 'args': { 'p': 0.5 } }
+          - { 'type': Affine, 'args': { 'rotate': [ -10, 10 ] } }
+          - { 'type': Resize, 'args': { 'size': [ 0.5, 3 ] } }
       - name: EastRandomCropData
         size: [ 640, 640 ]
         max_tries: 50

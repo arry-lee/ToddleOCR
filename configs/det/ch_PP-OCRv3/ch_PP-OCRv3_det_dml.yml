@@ -116,9 +116,9 @@ Train:
       - name: CopyPaste
       - name: IaaAugment
         augmenter_args:
-            - { 'type': Fliplr, 'args': { 'p': 0.5 } }
-            - { 'type': Affine, 'args': { 'rotate': [ -10, 10 ] } }
-            - { 'type': Resize, 'args': { 'size': [ 0.5, 3 ] } }
+          - { 'type': Fliplr, 'args': { 'p': 0.5 } }
+          - { 'type': Affine, 'args': { 'rotate': [ -10, 10 ] } }
+          - { 'type': Resize, 'args': { 'size': [ 0.5, 3 ] } }
       - name: EastRandomCropData
         size: [ 960, 960 ]
         max_tries: 50
