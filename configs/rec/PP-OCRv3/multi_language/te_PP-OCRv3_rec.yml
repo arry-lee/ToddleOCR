@@ -23,8 +23,9 @@ Global:
   save_res_path: ./output/rec/predicts_ppocrv3_te.txt
 Optimizer:
   class: Adam
-  beta1: 0.9
-  beta2: 0.999
+  betas: 
+    - 0.9
+    - 0.999
   lr: 0.001
 LRScheduler:
   class: Cosine

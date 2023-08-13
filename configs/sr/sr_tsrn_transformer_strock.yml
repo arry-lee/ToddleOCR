@@ -21,8 +21,9 @@ Global:
   save_res_path: ./output/sr/predicts_gestalt.txt
 Optimizer:
   class: Adam
-  beta1: 0.5
-  beta2: 0.999
+  betas: 
+    - 0.5
+    - 0.999
   clip_norm: 0.25
 LRScheduler:
   class: ConstantLR
