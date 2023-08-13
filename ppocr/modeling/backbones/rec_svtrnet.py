@@ -166,7 +166,7 @@ class Attention(nn.Module):
                 for w in range(0, W):
                     mask[h * W + w, h : h + hk, w : w + wk] = 0.0
             mask_paddle = mask[:, hk // 2 : H + hk // 2, wk // 2 : W + wk // 2].flatten(1)
-            mask_inf = torch.full([H * W, H * W], "-inf", dtype=torch.float32)
+            mask_inf = torch.full([H * W, H * W], -torch.inf, dtype=torch.float32)
             mask = torch.where(mask_paddle < 1, mask_paddle, mask_inf)
             self.mask = mask.unsqueeze([0, 1])
         self.mixer = mixer

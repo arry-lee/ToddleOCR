@@ -265,8 +265,8 @@ def _get_mask(length, max_length):
     B = length.shape[0]
     grid = torch.arange(0, max_length).unsqueeze(0).tile([B, 1])
     zero_mask = torch.zeros([B, max_length], dtype=torch.float32)
-    inf_mask = torch.full([B, max_length], "-inf", dtype=torch.float32)
-    diag_mask = torch.diag(torch.full([max_length], "-inf", dtype=torch.float32), offset=0, name=None)
+    inf_mask = torch.full([B, max_length], -torch.inf, dtype=torch.float32)
+    diag_mask = torch.diag(torch.full([max_length], -torch.inf, dtype=torch.float32), offset=0, name=None)
     mask = torch.where(grid >= length, inf_mask, zero_mask)
     mask = mask.unsqueeze(1) + diag_mask
     return mask.unsqueeze(1)
