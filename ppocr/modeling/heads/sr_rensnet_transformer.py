@@ -27,8 +27,8 @@ def subsequent_mask(size):
     """Generate a square mask for the sequence. The masked positions are filled with float('-inf').
     Unmasked positions are filled with float(0.0).
     """
-    mask = torch.ones([1, size, size], dtype="float32")
-    mask_inf = torch.triu(torch.full([1, size, size], dtype="float32","-inf"), diagonal=1)
+    mask = torch.ones([1, size, size], dtype=torch.float32)
+    mask_inf = torch.triu(torch.full([1, size, size], dtype=torch.float32","-inf), diagonal=1)
     mask = mask + mask_inf
     padding_mask = torch.equal(mask, torch.Tensor(1, dtype=mask.dtype))
     return padding_mask

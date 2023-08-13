@@ -40,7 +40,7 @@ class PositionalEncoding(nn.Module):
         sinusoid_table = np.array([get_position_angle_vec(pos_i) for pos_i in range(n_position)])
         sinusoid_table[:, 0::2] = np.sin(sinusoid_table[:, 0::2])  # dim 2i
         sinusoid_table[:, 1::2] = np.cos(sinusoid_table[:, 1::2])  # dim 2i+1
-        sinusoid_table = torch.Tensor(sinusoid_table, dtype="float32")
+        sinusoid_table = torch.Tensor(sinusoid_table, dtype=torch.float32)
         sinusoid_table = torch.unsqueeze(sinusoid_table, dim=0)
         return sinusoid_table
 
@@ -202,7 +202,7 @@ class PP_layer(nn.Module):
 
     def forward(self, enc_output):
         # enc_output: b,256,512
-        reading_order = torch.arange(self.character_len, dtype="int64")
+        reading_order = torch.arange(self.character_len, dtype=torch.int64)
         reading_order = reading_order.unsqueeze(0).expand([enc_output.shape[0], self.character_len])  # (S,) -> (B, S)
         reading_order = self.f0_embedding(reading_order)  # b,25,512
 
@@ -264,7 +264,7 @@ class MLM(nn.Module):
         # transformer unit for generating mask_c
         feature_v_seq = self.MLM_SequenceModeling_mask(x, src_mask=None)
         # position embedding layer
-        label_pos = torch.Tensor(label_pos, dtype="int64")
+        label_pos = torch.Tensor(label_pos, dtype=torch.int64)
         pos_emb = self.pos_embedding(label_pos)
         pos_emb = self.w0_linear(torch.unsqueeze(pos_emb, dim=2))
         pos_emb = pos_emb.permute(0, 2, 1)

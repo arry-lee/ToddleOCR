@@ -125,7 +125,7 @@ class TableMasterHead(nn.Module):
 
     def forward_test(self, out_enc):
         batch_size = out_enc.shape[0]
-        SOS = torch.zeros([batch_size, 1], dtype="int64") + self.SOS
+        SOS = torch.zeros([batch_size, 1], dtype=torch.int64) + self.SOS
         output, bbox_output = self.greedy_forward(SOS, out_enc)
         output = F.softmax(output)
         return {"structure_probs": output, "loc_preds": bbox_output}

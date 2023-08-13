@@ -49,8 +49,8 @@ def positionalencoding2d(d_model, height, width):
     # Each dimension use half of d_model
     d_model = int(d_model / 2)
     div_term = torch.exp(torch.arange(0.0, d_model, 2) * -(math.log(10000.0) / d_model))
-    pos_w = torch.arange(0.0, width, dtype="float32").unsqueeze(1)
-    pos_h = torch.arange(0.0, height, dtype="float32").unsqueeze(1)
+    pos_w = torch.arange(0.0, width, dtype=torch.float32).unsqueeze(1)
+    pos_h = torch.arange(0.0, height, dtype=torch.float32).unsqueeze(1)
 
     pe[0:d_model:2, :, :] = torch.sin(pos_w * div_term).transpose([1, 0]).unsqueeze(1).tile([1, height, 1])
     pe[1:d_model:2, :, :] = torch.cos(pos_w * div_term).transpose([1, 0]).unsqueeze(1).tile([1, height, 1])
@@ -177,7 +177,7 @@ class TBSRN(nn.Module):
         batch = len(label)
 
         length = [len(i) for i in label]
-        length_tensor = torch.Tensor(length, dtype="int64")
+        length_tensor = torch.Tensor(length, dtype=torch.int64)
 
         max_length = max(length)
         input_tensor = np.zeros((batch, max_length))
@@ -189,9 +189,9 @@ class TBSRN(nn.Module):
         for i in label:
             for j in i:
                 text_gt.append(self.english_dict[j])
-        text_gt = torch.Tensor(text_gt, dtype="int64")
+        text_gt = torch.Tensor(text_gt, dtype=torch.int64)
 
-        input_tensor = torch.Tensor(input_tensor, dtype="int64")
+        input_tensor = torch.Tensor(input_tensor, dtype=torch.int64)
         return length_tensor, input_tensor, text_gt
 
     def forward(self, x):

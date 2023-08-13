@@ -166,9 +166,9 @@ class GridGenerator(nn.Module):
     def build_C_paddle(self):
         """Return coordinates of fiducial points in I_r; C"""
         F = self.F
-        ctrl_pts_x = torch.linspace(-1.0, 1.0, int(F / 2), dtype="float64")
-        ctrl_pts_y_top = -1 * torch.ones([int(F / 2)], dtype="float64")
-        ctrl_pts_y_bottom = torch.ones([int(F / 2)], dtype="float64")
+        ctrl_pts_x = torch.linspace(-1.0, 1.0, int(F / 2), dtype=torch.float64)
+        ctrl_pts_y_top = -1 * torch.ones([int(F / 2)], dtype=torch.float64)
+        ctrl_pts_y_bottom = torch.ones([int(F / 2)], dtype=torch.float64)
         ctrl_pts_top = torch.stack([ctrl_pts_x, ctrl_pts_y_top], dim=1)
         ctrl_pts_bottom = torch.stack([ctrl_pts_x, ctrl_pts_y_bottom], dim=1)
         C = torch.concat([ctrl_pts_top, ctrl_pts_bottom], dim=0)
@@ -176,11 +176,11 @@ class GridGenerator(nn.Module):
 
     def build_P_paddle(self, I_r_size):
         I_r_height, I_r_width = I_r_size
-        I_r_grid_x = (torch.arange(-I_r_width, I_r_width, 2, dtype="float64") + 1.0) / torch.Tensor(
+        I_r_grid_x = (torch.arange(-I_r_width, I_r_width, 2, dtype=torch.float64) + 1.0) / torch.Tensor(
             np.array([I_r_width])
         )
 
-        I_r_grid_y = (torch.arange(-I_r_height, I_r_height, 2, dtype="float64") + 1.0) / torch.Tensor(
+        I_r_grid_y = (torch.arange(-I_r_height, I_r_height, 2, dtype=torch.float64) + 1.0) / torch.Tensor(
             np.array([I_r_height])
         )
 
@@ -193,15 +193,15 @@ class GridGenerator(nn.Module):
     def build_inv_delta_C_paddle(self, C):
         """Return inv_delta_C which is needed to calculate T"""
         F = self.F
-        hat_eye = torch.eye(F, dtype="float64")  # F x F
+        hat_eye = torch.eye(F, dtype=torch.float64)  # F x F
         hat_C = torch.norm(C.reshape([1, F, 2]) - C.reshape([F, 1, 2]), dim=2) + hat_eye
         hat_C = (hat_C**2) * torch.log(hat_C)
         delta_C = torch.concat(  # F+3 x F+3
             [
-                torch.concat([torch.ones((F, 1), dtype="float64"), C, hat_C], dim=1),  # F x F+3
-                torch.concat([torch.zeros((2, 3), dtype="float64"), C.permute(1, 0)], dim=1),  # 2 x F+3
+                torch.concat([torch.ones((F, 1), dtype=torch.float64), C, hat_C], dim=1),  # F x F+3
+                torch.concat([torch.zeros((2, 3), dtype=torch.float64), C.permute(1, 0)], dim=1),  # 2 x F+3
                 torch.concat(
-                    [torch.zeros((1, 3), dtype="float64"), torch.ones((1, F), dtype="float64")], dim=1
+                    [torch.zeros((1, 3), dtype="float64"), torch.ones((1, F), dtype=torch.float64)], dim=1
                 ),  # 1 x F+3
             ],
             axis=0,
@@ -222,7 +222,7 @@ class GridGenerator(nn.Module):
 
         # rbf: n x F
         rbf = torch.multiply(torch.square(rbf_norm), torch.log(rbf_norm + eps))
-        P_hat = torch.concat([torch.ones((n, 1), dtype="float64"), P, rbf], dim=1)
+        P_hat = torch.concat([torch.ones((n, 1), dtype=torch.float64), P, rbf], dim=1)
         return P_hat  # n x F+3
 
     def get_expand_tensor(self, batch_C_prime):

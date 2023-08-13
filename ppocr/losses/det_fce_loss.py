@@ -210,8 +210,8 @@ class FCELoss(nn.Module):
                 represented by n sample points (xn, yn), whose shape is (-1, n)
         """
 
-        k_vect = torch.arange(-self.fourier_degree, self.fourier_degree + 1, dtype="float32").reshape([-1, 1])
-        i_vect = torch.arange(0, self.num_sample, dtype="float32").reshape([1, -1])
+        k_vect = torch.arange(-self.fourier_degree, self.fourier_degree + 1, dtype=torch.float32).reshape([-1, 1])
+        i_vect = torch.arange(0, self.num_sample, dtype=torch.float32).reshape([1, -1])
 
         transform_matrix = 2 * np.pi / self.num_sample * torch.matmul(k_vect, i_vect)
 

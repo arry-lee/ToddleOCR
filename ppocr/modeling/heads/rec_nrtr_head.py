@@ -146,7 +146,7 @@ class Transformer(nn.Module):
             dec_output = dec_output[:, -1, :]
             word_prob = F.softmax(self.tgt_word_prj(dec_output),dim=-1)
             preds_idx = torch.argmax(word_prob, dim=-1)
-            if torch.equal_all(preds_idx, torch.full(preds_idx.shape, 3, dtype="int64")):
+            if torch.equal_all(preds_idx, torch.full(preds_idx.shape, 3, dtype=torch.int64)):
                 break
             preds_prob = torch.max(word_prob, dim=-1)
             dec_seq = torch.concat([dec_seq, torch.reshape(preds_idx, [-1, 1])], dim=1)
@@ -179,7 +179,7 @@ class Transformer(nn.Module):
 
             n_prev_active_inst = len(inst_idx_to_position_map)
             active_inst_idx = [inst_idx_to_position_map[k] for k in active_inst_idx_list]
-            active_inst_idx = torch.Tensor(active_inst_idx, dtype="int64")
+            active_inst_idx = torch.Tensor(active_inst_idx, dtype=torch.int64)
             active_src_enc = collect_active_part(src_enc.transpose([1, 0, 2]), active_inst_idx, n_prev_active_inst, n_bm).transpose([1, 0, 2])
             active_inst_idx_to_position_map = get_inst_idx_to_tensor_position_map(active_inst_idx_list)
             return active_src_enc, active_inst_idx_to_position_map
@@ -269,8 +269,8 @@ class Transformer(nn.Module):
         """Generate a square mask for the sequence. The masked positions are filled with float('-inf').
         Unmasked positions are filled with float(0.0).
         """
-        mask = torch.zeros([sz, sz], dtype="float32")
-        mask_inf = torch.triu(torch.full([sz, sz], dtype="float32","-inf"), diagonal=1)
+        mask = torch.zeros([sz, sz], dtype=torch.float32)
+        mask_inf = torch.triu(torch.full([sz, sz],"-inf", dtype=torch.float32), diagonal=1)
         mask = mask + mask_inf
         return mask.unsqueeze([0, 1])
 
@@ -542,7 +542,7 @@ class Beam:
 
     def sort_scores(self):
         "Sort the scores."
-        return self.scores, torch.Tensor([i for i in range(int(self.scores.shape[0]))], dtype="int32")
+        return self.scores, torch.Tensor([i for i in range(int(self.scores.shape[0]))], dtype=torch.int32)
 
     def get_the_best_score_and_idx(self):
         "Get the score of the best in the beam."
@@ -557,7 +557,7 @@ class Beam:
             _, keys = self.sort_scores()
             hyps = [self.get_hypothesis(k) for k in keys]
             hyps = [[2] + h for h in hyps]
-            dec_seq = torch.Tensor(hyps, dtype="int64")
+            dec_seq = torch.Tensor(hyps, dtype=torch.int64)
         return dec_seq
 
     def get_hypothesis(self, k):

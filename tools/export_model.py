@@ -33,64 +33,64 @@ def export_single_model(model, arch_config, save_path, logger, input_shape=None,
     if arch_config["algorithm"] == "SRN":
         max_text_length = arch_config["Head"]["max_text_length"]
         other_shape = [
-            torch.static.InputSpec(shape=[None, 1, 64, 256], dtype="float32"),
+            torch.static.InputSpec(shape=[None, 1, 64, 256], dtype=torch.float32),
             [
-                torch.static.InputSpec(shape=[None, 256, 1], dtype="int64"),
-                torch.static.InputSpec(shape=[None, max_text_length, 1], dtype="int64"),
-                torch.static.InputSpec(shape=[None, 8, max_text_length, max_text_length], dtype="int64"),
-                torch.static.InputSpec(shape=[None, 8, max_text_length, max_text_length], dtype="int64"),
+                torch.static.InputSpec(shape=[None, 256, 1], dtype=torch.int64),
+                torch.static.InputSpec(shape=[None, max_text_length, 1], dtype=torch.int64),
+                torch.static.InputSpec(shape=[None, 8, max_text_length, max_text_length], dtype=torch.int64),
+                torch.static.InputSpec(shape=[None, 8, max_text_length, max_text_length], dtype=torch.int64),
             ],
         ]
         model = to_static(model, input_spec=other_shape)
     elif arch_config["algorithm"] == "SAR":
         other_shape = [
-            torch.static.InputSpec(shape=[None, 3, 48, 160], dtype="float32"),
-            [torch.static.InputSpec(shape=[None], dtype="float32")],
+            torch.static.InputSpec(shape=[None, 3, 48, 160], dtype=torch.float32),
+            [torch.static.InputSpec(shape=[None], dtype=torch.float32)],
         ]
         model = to_static(model, input_spec=other_shape)
     elif arch_config["algorithm"] == "SVTR":
         if arch_config["Head"]["name"] == "MultiHead":
             other_shape = [
-                torch.static.InputSpec(shape=[None, 3, 48, -1], dtype="float32"),
+                torch.static.InputSpec(shape=[None, 3, 48, -1], dtype=torch.float32),
             ]
         else:
             other_shape = [
-                torch.static.InputSpec(shape=[None] + input_shape, dtype="float32"),
+                torch.static.InputSpec(shape=[None] + input_shape, dtype=torch.float32),
             ]
         model = to_static(model, input_spec=other_shape)
     elif arch_config["algorithm"] == "PREN":
         other_shape = [
-            torch.static.InputSpec(shape=[None, 3, 64, 256], dtype="float32"),
+            torch.static.InputSpec(shape=[None, 3, 64, 256], dtype=torch.float32),
         ]
         model = to_static(model, input_spec=other_shape)
     elif arch_config["model_type"] == "sr":
-        other_shape = [torch.static.InputSpec(shape=[None, 3, 16, 64], dtype="float32")]
+        other_shape = [torch.static.InputSpec(shape=[None, 3, 16, 64], dtype=torch.float32)]
         model = to_static(model, input_spec=other_shape)
     elif arch_config["algorithm"] == "ViTSTR":
         other_shape = [
-            torch.static.InputSpec(shape=[None, 1, 224, 224], dtype="float32"),
+            torch.static.InputSpec(shape=[None, 1, 224, 224], dtype=torch.float32),
         ]
         model = to_static(model, input_spec=other_shape)
     elif arch_config["algorithm"] == "ABINet":
         other_shape = [
-            torch.static.InputSpec(shape=[None, 3, 32, 128], dtype="float32"),
+            torch.static.InputSpec(shape=[None, 3, 32, 128], dtype=torch.float32),
         ]
         # print([None, 3, 32, 128])
         model = to_static(model, input_spec=other_shape)
     elif arch_config["algorithm"] in ["NRTR", "SPIN", "RFL"]:
         other_shape = [
-            torch.static.InputSpec(shape=[None, 1, 32, 100], dtype="float32"),
+            torch.static.InputSpec(shape=[None, 1, 32, 100], dtype=torch.float32),
         ]
         model = to_static(model, input_spec=other_shape)
     elif arch_config["algorithm"] == "VisionLAN":
         other_shape = [
-            torch.static.InputSpec(shape=[None, 3, 64, 256], dtype="float32"),
+            torch.static.InputSpec(shape=[None, 3, 64, 256], dtype=torch.float32),
         ]
         model = to_static(model, input_spec=other_shape)
     elif arch_config["algorithm"] == "RobustScanner":
         max_text_length = arch_config["Head"]["max_text_length"]
         other_shape = [
-            torch.static.InputSpec(shape=[None, 3, 48, 160], dtype="float32"),
+            torch.static.InputSpec(shape=[None, 3, 48, 160], dtype=torch.float32),
             [
                 torch.static.InputSpec(
                     shape=[
@@ -98,32 +98,32 @@ def export_single_model(model, arch_config, save_path, logger, input_shape=None,
                     ],
                     dtype="float32",
                 ),
-                torch.static.InputSpec(shape=[None, max_text_length], dtype="int64"),
+                torch.static.InputSpec(shape=[None, max_text_length], dtype=torch.int64),
             ],
         ]
         model = to_static(model, input_spec=other_shape)
     elif arch_config["algorithm"] == "CAN":
         other_shape = [
             [
-                torch.static.InputSpec(shape=[None, 1, None, None], dtype="float32"),
-                torch.static.InputSpec(shape=[None, 1, None, None], dtype="float32"),
-                torch.static.InputSpec(shape=[None, arch_config["Head"]["max_text_length"]], dtype="int64"),
+                torch.static.InputSpec(shape=[None, 1, None, None], dtype=torch.float32),
+                torch.static.InputSpec(shape=[None, 1, None, None], dtype=torch.float32),
+                torch.static.InputSpec(shape=[None, arch_config["Head"]["max_text_length"]], dtype=torch.int64),
             ]
         ]
         model = to_static(model, input_spec=other_shape)
     elif arch_config["algorithm"] in ["LayoutLM", "LayoutLMv2", "LayoutXLM"]:
         input_spec = [
-            torch.static.InputSpec(shape=[None, 512], dtype="int64"),  # input_ids
-            torch.static.InputSpec(shape=[None, 512, 4], dtype="int64"),  # bbox
-            torch.static.InputSpec(shape=[None, 512], dtype="int64"),  # attention_mask
-            torch.static.InputSpec(shape=[None, 512], dtype="int64"),  # token_type_ids
-            torch.static.InputSpec(shape=[None, 3, 224, 224], dtype="int64"),  # image
+            torch.static.InputSpec(shape=[None, 512], dtype=torch.int64),  # input_ids
+            torch.static.InputSpec(shape=[None, 512, 4], dtype=torch.int64),  # bbox
+            torch.static.InputSpec(shape=[None, 512], dtype=torch.int64),  # attention_mask
+            torch.static.InputSpec(shape=[None, 512], dtype=torch.int64),  # token_type_ids
+            torch.static.InputSpec(shape=[None, 3, 224, 224], dtype=torch.int64),  # image
         ]
         if "Re" in arch_config["Backbone"]["name"]:
             input_spec.extend(
                 [
-                    torch.static.InputSpec(shape=[None, 512, 3], dtype="int64"),  # entities
-                    torch.static.InputSpec(shape=[None, None, 2], dtype="int64"),  # relations
+                    torch.static.InputSpec(shape=[None, 512, 3], dtype=torch.int64),  # entities
+                    torch.static.InputSpec(shape=[None, None, 2], dtype=torch.int64),  # relations
                 ]
             )
         if model.backbone.use_visual_backbone is False:
@@ -148,7 +148,7 @@ def export_single_model(model, arch_config, save_path, logger, input_shape=None,
                 infer_shape = [3, 480, 480]
             if arch_config["algorithm"] == "SLANet":
                 infer_shape = [3, -1, -1]
-        model = to_static(model, input_spec=[torch.static.InputSpec(shape=[None] + infer_shape, dtype="float32")])
+        model = to_static(model, input_spec=[torch.static.InputSpec(shape=[None] + infer_shape, dtype=torch.float32)])
 
     if quanter is None:
         torch.jit.save(model, save_path)

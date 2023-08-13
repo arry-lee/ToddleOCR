@@ -292,7 +292,7 @@ class ParallelSARDecoder(BaseDecoder):
 
         seq_len = self.max_seq_len
         bsz = feat.shape[0]
-        start_token = torch.full((bsz,), fill_value=self.start_idx, dtype="int64")
+        start_token = torch.full((bsz,), fill_value=self.start_idx, dtype=torch.int64)
         # bsz
         start_token = self.embedding(start_token)
         # bsz * emb_dim

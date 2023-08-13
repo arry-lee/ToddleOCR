@@ -345,7 +345,7 @@ class ProposalLocalGraphs:
 
             local_graph_nodes = torch.Tensor(pivot_local_graph)
             local_graph_nodes = torch.concat(
-                [local_graph_nodes, torch.zeros([num_max_nodes - num_nodes], dtype="int64")], dim=-1
+                [local_graph_nodes, torch.zeros([num_max_nodes - num_nodes], dtype=torch.int64)], dim=-1
             )
 
             local_graphs_node_feat.append(pad_normalized_feats)

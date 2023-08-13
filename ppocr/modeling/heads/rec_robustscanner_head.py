@@ -234,7 +234,7 @@ class SequenceAttentionDecoder(BaseDecoder):
         seq_len = self.max_seq_len
         batch_size = feat.shape[0]
 
-        decode_sequence = torch.ones((batch_size, seq_len), dtype="int64") * self.start_idx
+        decode_sequence = torch.ones((batch_size, seq_len), dtype=torch.int64) * self.start_idx
 
         outputs = []
         for i in range(seq_len):
@@ -381,7 +381,7 @@ class PositionAttentionDecoder(BaseDecoder):
     def _get_position_index(self, length, batch_size):
         position_index_list = []
         for i in range(batch_size):
-            position_index = torch.arange(0, end=length, step=1, dtype="int64")
+            position_index = torch.arange(0, end=length, step=1, dtype=torch.int64)
             position_index_list.append(position_index)
         batch_position_index = torch.stack(position_index_list, dim=0)
         return batch_position_index
@@ -606,7 +606,7 @@ class RobustScannerDecoder(BaseDecoder):
         seq_len = self.max_seq_len
         batch_size = feat.shape[0]
 
-        decode_sequence = torch.ones((batch_size, seq_len), dtype="int64") * self.start_idx
+        decode_sequence = torch.ones((batch_size, seq_len), dtype=torch.int64) * self.start_idx
 
         position_glimpse = self.position_decoder.forward_test(feat, out_enc, valid_ratios, word_positions)
 
@@ -677,7 +677,7 @@ class RobustScannerHead(nn.Module):
 
         if self.training:
             label = targets[0]  # label
-            label = torch.Tensor(label, dtype="int64")
+            label = torch.Tensor(label, dtype=torch.int64)
             final_out = self.decoder(inputs, out_enc, label, valid_ratios, word_positions)
         if not self.training:
             final_out = self.decoder(

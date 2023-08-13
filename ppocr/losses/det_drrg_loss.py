@@ -177,7 +177,7 @@ class DRRGLoss(nn.Module):
         center_mask = gt["gt_center_region_mask"][0] * gt["gt_mask"][0]
         if int(center_mask.sum()) > 0:
             map_sz = pred_top_height_map.shape
-            ones = torch.ones(map_sz, dtype="float32")
+            ones = torch.ones(map_sz, dtype=torch.float32)
             loss_top = F.smooth_l1_loss(
                 pred_top_height_map / (gt["gt_top_height_map"][0] + 1e-2), ones, reduction="none"
             )

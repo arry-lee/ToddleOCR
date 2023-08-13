@@ -77,7 +77,7 @@ class TableAttentionHead(nn.Module):
             loc_preds = self.loc_generator(loc_concat)
             loc_preds = F.sigmoid(loc_preds)
         else:
-            temp_elem = torch.zeros([batch_size], dtype="int32")
+            temp_elem = torch.zeros([batch_size], dtype=torch.int32)
             structure_probs = None
             loc_preds = None
             elem_onehots = None
@@ -151,7 +151,7 @@ class SLAHead(nn.Module):
                 structure_preds[:, i, :] = structure_step
                 loc_preds[:, i, :] = loc_step
         else:
-            pre_chars = torch.zeros([batch_size], dtype="int32")
+            pre_chars = torch.zeros([batch_size], dtype=torch.int32)
             max_text_length = torch.Tensor(self.max_text_length)
             # for export
             loc_step, structure_step = None, None

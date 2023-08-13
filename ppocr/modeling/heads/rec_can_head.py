@@ -97,14 +97,14 @@ class PositionEmbeddingSine(nn.Module):
         self.scale = scale
 
     def forward(self, x, mask):
-        y_embed = torch.cumsum(mask, 1, dtype="float32")
-        x_embed = torch.cumsum(mask, 2, dtype="float32")
+        y_embed = torch.cumsum(mask, 1, dtype=torch.float32)
+        x_embed = torch.cumsum(mask, 2, dtype=torch.float32)
 
         if self.normalize:
             eps = 1e-6
             y_embed = y_embed / (y_embed[:, -1:, :] + eps) * self.scale
             x_embed = x_embed / (x_embed[:, :, -1:] + eps) * self.scale
-        dim_t = torch.arange(self.num_pos_feats, dtype="float32")
+        dim_t = torch.arange(self.num_pos_feats, dtype=torch.float32)
         dim_d = torch.unsqueeze(torch.Tensor(2), 0).repeat(dim_t.shape)
         dim_t = self.temperature ** (2 * (dim_t / dim_d).astype("int64") / self.num_pos_feats)
 
@@ -187,7 +187,7 @@ class AttDecoder(nn.Module):
 
         cnn_features_trans = cnn_features_trans + pos
 
-        word = torch.ones([batch_size, 1], dtype="int64")  # init word as sos
+        word = torch.ones([batch_size, 1], dtype=torch.int64)  # init word as sos
         word = word.squeeze(axis=1)
         for i in range(num_steps):
             word_embedding = self.embedding(word)

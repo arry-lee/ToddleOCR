@@ -137,8 +137,8 @@ def main():
                     torch.Tensor(word_positons),
                 ]
             if config["Model"]["algorithm"] == "CAN":
-                image_mask = torch.ones((np.expand_dims(batch[0], dim=0).shape), dtype="float32")
-                label = torch.ones((1, 36), dtype="int64")
+                image_mask = torch.ones((np.expand_dims(batch[0], dim=0).shape), dtype=torch.float32)
+                label = torch.ones((1, 36), dtype=torch.int64)
             images = np.expand_dims(batch[0], axis=0)
             images = torch.Tensor(images)
             if config["Model"]["algorithm"] == "SRN":
