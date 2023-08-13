@@ -27,7 +27,7 @@ class LMDBDataSet(Dataset):
     def __init__(self, config, mode, logger, seed=None):
         super(LMDBDataSet, self).__init__()
 
-        global_config = config["Base"]
+        global_config = config["Global"]
         dataset_config = config[mode]["dataset"]
         loader_config = config[mode]["loader"]
         batch_size = loader_config["batch_size_per_card"]

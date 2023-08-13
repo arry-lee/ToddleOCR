@@ -33,7 +33,7 @@ Optimizer:
     name: 'L2'
     factor: 0
 
-Architecture:
+Model:
   model_type: rec
   algorithm: RobustScanner
   Transform:
@@ -106,4 +106,3 @@ Eval:
     batch_size_per_card: 64
     num_workers: 4
     use_shared_memory: False
-  

@@ -170,7 +170,7 @@ class Pipeline:
 
     def __init__(self, config):
         self.config = config
-        self.global_config = config.get('Base')
+        self.global_config = config.get("Global")
         self.use_gpu = self.global_config.get('use_gpu', False) and torch.cuda.is_available()
         self.device = 'cuda' if self.use_gpu else 'cpu'
         self.use_dist = self.global_config.get('distributed', False)

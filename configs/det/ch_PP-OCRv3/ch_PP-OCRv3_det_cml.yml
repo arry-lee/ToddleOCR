@@ -18,7 +18,7 @@ Global:
   save_res_path: ./checkpoints/det_db/predicts_db.txt
   distributed: true
 
-Architecture:
+Model:
   name: DistillationModel
   algorithm: Distillation
   model_type: det

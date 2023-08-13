@@ -32,7 +32,7 @@ Optimizer:
     decay_epochs : [3, 4, 5]
     values : [0.001, 0.0003, 0.00009, 0.000027]
 
-Architecture:
+Model:
   model_type: rec
   algorithm: RFL
   in_channels: 1

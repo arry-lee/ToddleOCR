@@ -30,7 +30,7 @@ Optimizer:
     warmup_epoch: 1
   weight_decay: 0.0001
 
-Architecture:
+Model:
   model_type: rec
   algorithm: CAN
   in_channels: 1

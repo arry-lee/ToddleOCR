@@ -38,7 +38,7 @@ import tools.program as program
 
 
 def main():
-    global_config = config["Base"]
+    global_config = config["Global"]
 
     # build post process
     post_process_class = build_post_process(config["PostProcess"], global_config)
@@ -63,7 +63,7 @@ def main():
     ops = create_operators(transforms, global_config)
 
     model.eval()
-    for file in get_image_file_list(config["Base"]["infer_img"]):
+    for file in get_image_file_list(config["Global"]["infer_img"]):
         logger.info("infer_img: {}".format(file))
         with open(file, "rb") as f:
             img = f.read()

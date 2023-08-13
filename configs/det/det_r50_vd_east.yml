@@ -15,7 +15,7 @@ Global:
   infer_img: 
   save_res_path: ./output/det_east/predicts_east.txt
 
-Architecture:
+Model:
   model_type: det
   algorithm: EAST
   Transform:

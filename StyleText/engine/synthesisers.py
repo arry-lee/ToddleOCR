@@ -25,7 +25,7 @@ class ImageSynthesiser(object):
         self.FLAGS = ArgsParser().parse_args()
         self.config = load_config(self.FLAGS.config)
         self.config = override_config(self.config, options=self.FLAGS.override)
-        self.output_dir = self.config["Base"]["output_dir"]
+        self.output_dir = self.config["Global"]["output_dir"]
         if not os.path.exists(self.output_dir):
             os.mkdir(self.output_dir)
         self.logger = get_logger(log_file="{}/predict.log".format(self.output_dir))
@@ -48,7 +48,7 @@ class DatasetSynthesiser(ImageSynthesiser):
     def __init__(self):
         super(DatasetSynthesiser, self).__init__()
         self.tag = self.FLAGS.tag
-        self.output_num = self.config["Base"]["output_num"]
+        self.output_num = self.config["Global"]["output_num"]
         corpus_generator_method = self.config["CorpusGenerator"]["method"]
         self.corpus_generator = getattr(corpus_generators, corpus_generator_method)(self.config)
 

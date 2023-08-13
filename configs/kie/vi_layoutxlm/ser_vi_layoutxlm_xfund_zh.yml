@@ -21,7 +21,7 @@ Global:
   kie_rec_model_dir: 
   kie_det_model_dir:
 
-Architecture:
+Model:
   model_type: kie
   algorithm: &algorithm "LayoutXLM"
   Transform:

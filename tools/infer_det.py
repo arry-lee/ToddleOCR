@@ -56,7 +56,7 @@ def draw_det_res(dt_boxes, config, img, img_name, save_path):
 
 @torch.no_grad()
 def main():
-    global_config = config["Base"]
+    global_config = config["Global"]
 
     # build model
     model = build_model(config["Model"])
@@ -77,13 +77,13 @@ def main():
 
     ops = create_operators(transforms, global_config)
 
-    save_res_path = config["Base"]["save_res_path"]
+    save_res_path = config["Global"]["save_res_path"]
     if not os.path.exists(os.path.dirname(save_res_path)):
         os.makedirs(os.path.dirname(save_res_path))
 
     model.eval()
     with open(save_res_path, "wb") as fout:
-        for file in get_image_file_list(config["Base"]["infer_img"]):
+        for file in get_image_file_list(config["Global"]["infer_img"]):
             logger.info("infer_img: {}".format(file))
             with open(file, "rb") as f:
                 img = f.read()
@@ -110,7 +110,7 @@ def main():
                         tmp_json["points"] = np.array(box).tolist()
                         dt_boxes_list.append(tmp_json)
                     det_box_json[k] = dt_boxes_list
-                    save_det_path = os.path.dirname(config["Base"]["save_res_path"]) + "/det_results_{}/".format(k)
+                    save_det_path = os.path.dirname(config["Global"]["save_res_path"]) + "/det_results_{}/".format(k)
                     draw_det_res(boxes, config, src_img, file, save_det_path)
             else:
                 boxes = post_result[0]["points"]
@@ -120,7 +120,7 @@ def main():
                     tmp_json = {"transcription": ""}
                     tmp_json["points"] = np.array(box).tolist()
                     dt_boxes_json.append(tmp_json)
-                save_det_path = os.path.dirname(config["Base"]["save_res_path"]) + "/det_results/"
+                save_det_path = os.path.dirname(config["Global"]["save_res_path"]) + "/det_results/"
                 draw_det_res(boxes, config, src_img, file, save_det_path)
             otstr = file + "\t" + json.dumps(dt_boxes_json) + "\n"
             fout.write(otstr.encode())

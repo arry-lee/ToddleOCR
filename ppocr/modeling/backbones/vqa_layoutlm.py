@@ -28,14 +28,14 @@ __all__ = ["LayoutXLMForSer", "LayoutLMForSer"]
 
 pretrained_model_dict = {
     LayoutXLMModel: {
-        "base": "layoutxlm-base-uncased",
+        "Global": "layoutxlm-base-uncased",
         "vi": "vi-layoutxlm-base-uncased",
     },
     LayoutLMModel: {
-        "base": "layoutlm-base-uncased",
+        "Global": "layoutlm-base-uncased",
     },
     LayoutLMv2Model: {
-        "base": "layoutlmv2-base-uncased",
+        "Global": "layoutlmv2-base-uncased",
         "vi": "vi-layoutlmv2-base-uncased",
     },
 }
@@ -43,7 +43,7 @@ pretrained_model_dict = {
 
 class NLPBaseModel(nn.Module):
     def __init__(
-        self, base_model_class, model_class, mode="base", type="ser", pretrained=True, checkpoints=None, **kwargs
+        self, base_model_class, model_class, mode="Global", type="ser", pretrained=True, checkpoints=None, **kwargs
     ):
         super(NLPBaseModel, self).__init__()
         if checkpoints is not None:  # load the trained model
@@ -63,7 +63,7 @@ class NLPBaseModel(nn.Module):
 
 
 class LayoutLMForSer(NLPBaseModel):
-    def __init__(self, num_classes, pretrained=True, checkpoints=None, mode="base", **kwargs):
+    def __init__(self, num_classes, pretrained=True, checkpoints=None, mode="Global", **kwargs):
         super(LayoutLMForSer, self).__init__(
             LayoutLMModel,
             LayoutLMForTokenClassification,
@@ -88,7 +88,7 @@ class LayoutLMForSer(NLPBaseModel):
 
 
 class LayoutLMv2ForSer(NLPBaseModel):
-    def __init__(self, num_classes, pretrained=True, checkpoints=None, mode="base", **kwargs):
+    def __init__(self, num_classes, pretrained=True, checkpoints=None, mode="Global", **kwargs):
         super(LayoutLMv2ForSer, self).__init__(
             LayoutLMv2Model,
             LayoutLMv2ForTokenClassification,
@@ -125,7 +125,7 @@ class LayoutLMv2ForSer(NLPBaseModel):
 
 
 class LayoutXLMForSer(NLPBaseModel):
-    def __init__(self, num_classes, pretrained=True, checkpoints=None, mode="base", **kwargs):
+    def __init__(self, num_classes, pretrained=True, checkpoints=None, mode="Global", **kwargs):
         super(LayoutXLMForSer, self).__init__(
             LayoutXLMModel,
             LayoutXLMForTokenClassification,
@@ -162,7 +162,7 @@ class LayoutXLMForSer(NLPBaseModel):
 
 
 class LayoutLMv2ForRe(NLPBaseModel):
-    def __init__(self, pretrained=True, checkpoints=None, mode="base", **kwargs):
+    def __init__(self, pretrained=True, checkpoints=None, mode="Global", **kwargs):
         super(LayoutLMv2ForRe, self).__init__(
             LayoutLMv2Model, LayoutLMv2ForRelationExtraction, mode, "re", pretrained, checkpoints
         )
@@ -186,7 +186,7 @@ class LayoutLMv2ForRe(NLPBaseModel):
 
 
 class LayoutXLMForRe(NLPBaseModel):
-    def __init__(self, pretrained=True, checkpoints=None, mode="base", **kwargs):
+    def __init__(self, pretrained=True, checkpoints=None, mode="Global", **kwargs):
         super(LayoutXLMForRe, self).__init__(
             LayoutXLMModel, LayoutXLMForRelationExtraction, mode, "re", pretrained, checkpoints
         )

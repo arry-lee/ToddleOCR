@@ -135,7 +135,7 @@ class Attention(nn.Module):
         self,
         dim,
         num_heads=8,
-        mixer="Base",
+        mixer="Global",
         HW=None,
         local_k=[7, 11],
         qkv_bias=False,
@@ -197,7 +197,7 @@ class Block(nn.Module):
         self,
         dim,
         num_heads,
-        mixer="Base",
+        mixer="Global",
         local_mixer=[7, 11],
         HW=None,
         mlp_ratio=4.0,
@@ -216,7 +216,7 @@ class Block(nn.Module):
             self.norm1 = eval(norm_layer)(dim, epsilon=epsilon)
         else:
             self.norm1 = norm_layer(dim)
-        if mixer == "Base" or mixer == "Local":
+        if mixer == "Global" or mixer == "Local":
             self.mixer = Attention(
                 dim,
                 num_heads=num_heads,
@@ -374,7 +374,7 @@ class SVTRNet(nn.Module):
         embed_dim=[64, 128, 256],
         depth=[3, 6, 3],
         num_heads=[2, 4, 8],
-        mixer=["Local"] * 6 + ["Base"] * 6,  # Local atten, Global atten, Conv
+        mixer=["Local"] * 6 + ["Global"] * 6,  # Local atten, Global atten, Conv
         local_mixer=[[7, 11], [7, 11], [7, 11]],
         patch_merging="Conv",  # Conv, Pool, None
         mlp_ratio=4,

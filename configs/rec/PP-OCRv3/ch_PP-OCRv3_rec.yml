@@ -34,7 +34,7 @@ Optimizer:
     factor: 3.0e-05
 
 
-Architecture:
+Model:
   model_type: rec
   algorithm: SVTR
   Transform:

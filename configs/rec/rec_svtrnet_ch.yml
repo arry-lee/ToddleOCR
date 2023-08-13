@@ -31,7 +31,7 @@ Optimizer:
     name: Cosine
     learning_rate: 0.0005
     warmup_epoch: 2
-Architecture:
+Model:
   model_type: rec
   algorithm: SVTR
   Transform: null

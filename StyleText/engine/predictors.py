@@ -25,13 +25,13 @@ class StyleTextRecPredictor(object):
     def __init__(self, config):
         algorithm = config["Predictor"]["algorithm"]
         assert algorithm in ["StyleTextRec"], "Generator {} not supported.".format(algorithm)
-        use_gpu = config["Base"]["use_gpu"]
+        use_gpu = config["Global"]["use_gpu"]
         check_gpu(use_gpu)
         torch.set_device("gpu" if use_gpu else "cpu")
         self.logger = get_logger()
         self.generator = getattr(style_text_rec, algorithm)(config)
-        self.height = config["Base"]["image_height"]
-        self.width = config["Base"]["image_width"]
+        self.height = config["Global"]["image_height"]
+        self.width = config["Global"]["image_width"]
         self.scale = config["Predictor"]["scale"]
         self.mean = config["Predictor"]["mean"]
         self.std = config["Predictor"]["std"]

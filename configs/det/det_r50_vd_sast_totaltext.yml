@@ -15,7 +15,7 @@ Global:
   infer_img: 
   save_res_path: ./output/sast_r50_vd_tt/predicts_sast.txt
 
-Architecture:
+Model:
   model_type: det
   algorithm: SAST
   Transform:

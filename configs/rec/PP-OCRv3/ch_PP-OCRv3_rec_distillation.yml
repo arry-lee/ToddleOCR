@@ -35,7 +35,7 @@ Optimizer:
     factor: 3.0e-05
 
 
-Architecture:
+Model:
   model_type: &model_type "rec"
   name: DistillationModel
   algorithm: Distillation

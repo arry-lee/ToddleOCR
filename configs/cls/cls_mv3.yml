@@ -15,7 +15,7 @@ Global:
   infer_img: doc/imgs_words_en/word_10.png
   label_list: ['0','180']
 
-Architecture:
+Model:
   model_type: cls
   algorithm: CLS
   Transform:

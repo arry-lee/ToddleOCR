@@ -114,7 +114,7 @@ def load_config(file_path):
 
 def gen_config():
     base_config = {
-        "Base": {
+        "Global": {
             "algorithm": "SRNet",
             "use_gpu": True,
             "start_epoch": 1,

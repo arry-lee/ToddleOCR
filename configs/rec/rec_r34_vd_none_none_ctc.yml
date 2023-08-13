@@ -30,7 +30,7 @@ Optimizer:
     name: 'L2'
     factor: 0
 
-Architecture:
+Model:
   model_type: rec
   algorithm: Rosetta
   Backbone:

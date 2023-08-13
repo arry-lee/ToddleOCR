@@ -15,7 +15,7 @@ Global:
   save_res_path: ./output/ser_layoutxlm_xfund_zh/res
 
 
-Architecture:
+Model:
   model_type: &model_type "kie"
   name: DistillationModel
   algorithm: Distillation

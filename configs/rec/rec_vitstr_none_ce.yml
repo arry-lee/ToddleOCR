@@ -29,7 +29,7 @@ Optimizer:
   lr:
     learning_rate: 1.0
 
-Architecture:
+Model:
   model_type: rec
   algorithm: ViTSTR
   in_channels: 1

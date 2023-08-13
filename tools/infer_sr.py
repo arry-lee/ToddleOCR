@@ -41,7 +41,7 @@ import tools.program as program
 
 
 def main():
-    global_config = config["Base"]
+    global_config = config["Global"]
 
     # build post process
     post_process_class = build_post_process(config["PostProcess"], global_config)
@@ -67,12 +67,12 @@ def main():
     global_config["infer_mode"] = True
     ops = create_operators(transforms, global_config)
 
-    save_visual_path = config["Base"].get("save_visual", "infer_result/")
+    save_visual_path = config["Global"].get("save_visual", "infer_result/")
     if not os.path.exists(os.path.dirname(save_visual_path)):
         os.makedirs(os.path.dirname(save_visual_path))
 
     model.eval()
-    for file in get_image_file_list(config["Base"]["infer_img"]):
+    for file in get_image_file_list(config["Global"]["infer_img"]):
         logger.info("infer_img: {}".format(file))
         img = Image.open(file).convert("RGB")
         data = {"image_lr": img}

@@ -63,7 +63,7 @@ def draw_e2e_res_for_chinese(image, boxes, txts, config, img_name, font_path="./
     img_show.paste(img_left, (0, 0, w, h))
     img_show.paste(img_right, (w, 0, w * 2, h))
 
-    save_e2e_path = os.path.dirname(config["Base"]["save_res_path"]) + "/e2e_results/"
+    save_e2e_path = os.path.dirname(config["Global"]["save_res_path"]) + "/e2e_results/"
     if not os.path.exists(save_e2e_path):
         os.makedirs(save_e2e_path)
     save_path = os.path.join(save_e2e_path, os.path.basename(img_name))
@@ -86,7 +86,7 @@ def draw_e2e_res(dt_boxes, strs, config, img, img_name):
                 color=(0, 255, 0),
                 thickness=1,
             )
-        save_det_path = os.path.dirname(config["Base"]["save_res_path"]) + "/e2e_results/"
+        save_det_path = os.path.dirname(config["Global"]["save_res_path"]) + "/e2e_results/"
         if not os.path.exists(save_det_path):
             os.makedirs(save_det_path)
         save_path = os.path.join(save_det_path, os.path.basename(img_name))
@@ -95,7 +95,7 @@ def draw_e2e_res(dt_boxes, strs, config, img, img_name):
 
 
 def main():
-    global_config = config["Base"]
+    global_config = config["Global"]
 
     # build model
     model = build_model(config["Model"])
@@ -117,13 +117,13 @@ def main():
 
     ops = create_operators(transforms, global_config)
 
-    save_res_path = config["Base"]["save_res_path"]
+    save_res_path = config["Global"]["save_res_path"]
     if not os.path.exists(os.path.dirname(save_res_path)):
         os.makedirs(os.path.dirname(save_res_path))
 
     model.eval()
     with open(save_res_path, "wb") as fout:
-        for file in get_image_file_list(config["Base"]["infer_img"]):
+        for file in get_image_file_list(config["Global"]["infer_img"]):
             logger.info("infer_img: {}".format(file))
             with open(file, "rb") as f:
                 img = f.read()

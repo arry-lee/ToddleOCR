@@ -31,7 +31,7 @@ Optimizer:
     values: [0.001, 0.0003, 0.00009, 0.000027] 
   clip_norm: 5
 
-Architecture:
+Model:
   model_type: rec
   algorithm: SPIN
   in_channels: 1

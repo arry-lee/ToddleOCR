@@ -43,10 +43,10 @@ dist.get_world_size()
 
 def main(config, device, logger, vdl_writer):
     # init dist environment
-    if config["Base"]["distributed"]:
+    if config["Global"]["distributed"]:
         dist.init_parallel_env()
 
-    global_config = config["Base"]
+    global_config = config["Global"]
 
     # build dataloader
     train_dataloader = build_dataloader(config, "Train", device, logger)
@@ -107,7 +107,7 @@ def main(config, device, logger, vdl_writer):
 
     model = build_model(config["Model"])
 
-    use_sync_bn = config["Base"].get("use_sync_bn", False)
+    use_sync_bn = config["Global"].get("use_sync_bn", False)
     if use_sync_bn:
         model = torch.nn.SyncBatchNorm.convert_sync_batchnorm(model)
         logger.info("convert_sync_batchnorm")
@@ -119,7 +119,7 @@ def main(config, device, logger, vdl_writer):
 
     # build optim
     optimizer, lr_scheduler = build_optimizer(
-        config["Optimizer"], epochs=config["Base"]["epoch_num"], step_each_epoch=len(train_dataloader), model=model
+        config["Optimizer"], epochs=config["Global"]["epoch_num"], step_each_epoch=len(train_dataloader), model=model
     )
 
     # build metric
@@ -129,9 +129,9 @@ def main(config, device, logger, vdl_writer):
     if valid_dataloader is not None:
         logger.info("valid dataloader has {} iters".format(len(valid_dataloader)))
 
-    use_amp = config["Base"].get("use_amp", False)
-    amp_level = config["Base"].get("amp_level", "O2")
-    amp_custom_black_list = config["Base"].get("amp_custom_black_list", [])
+    use_amp = config["Global"].get("use_amp", False)
+    amp_level = config["Global"].get("amp_level", "O2")
+    amp_custom_black_list = config["Global"].get("amp_custom_black_list", [])
     if use_amp:
         AMP_RELATED_FLAGS_SETTING = {
             "FLAGS_max_inplace_grad_add": 8,
@@ -139,8 +139,8 @@ def main(config, device, logger, vdl_writer):
         if torch.is_compiled_with_cuda():
             AMP_RELATED_FLAGS_SETTING.update({"FLAGS_cudnn_batchnorm_spatial_persistent": 1})
         torch.fluid.set_flags(AMP_RELATED_FLAGS_SETTING)
-        scale_loss = config["Base"].get("scale_loss", 1.0)
-        use_dynamic_loss_scaling = config["Base"].get("use_dynamic_loss_scaling", False)
+        scale_loss = config["Global"].get("scale_loss", 1.0)
+        use_dynamic_loss_scaling = config["Global"].get("use_dynamic_loss_scaling", False)
         scaler = torch.amp.GradScaler(init_loss_scaling=scale_loss, use_dynamic_loss_scaling=use_dynamic_loss_scaling)
         if amp_level == "O2":
             model, optimizer = torch.amp.decorate(
@@ -152,7 +152,7 @@ def main(config, device, logger, vdl_writer):
     # load pretrain model
     pre_best_model_dict = load_model(config, model, optimizer, config["Model"]["model_type"])
 
-    if config["Base"]["distributed"]:
+    if config["Global"]["distributed"]:
         model = torch.DataParallel(model)
     # start train
     program.train(
@@ -195,7 +195,7 @@ def test_reader(config, device, logger):
 
 if __name__ == "__main__":
     config, device, logger, vdl_writer = program.preprocess(is_train=True)
-    seed = config["Base"]["seed"] if "seed" in config["Base"] else 1024
+    seed = config["Global"]["seed"] if "seed" in config["Global"] else 1024
     set_seed(seed)
     main(config, device, logger, vdl_writer)
     # test_reader(config, device, logger)

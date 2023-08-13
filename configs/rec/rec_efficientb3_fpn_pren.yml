@@ -27,7 +27,7 @@ Optimizer:
     decay_epochs: [2, 5, 7]
     values: [0.5, 0.1, 0.01, 0.001]
 
-Architecture:
+Model:
   model_type: rec
   algorithm: PREN
   in_channels: 3

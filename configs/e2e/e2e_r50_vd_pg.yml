@@ -22,7 +22,7 @@ Global:
   max_text_nums: 30 # the max seq nums in a pic
   tcl_len: 64
 
-Architecture:
+Model:
   model_type: e2e
   algorithm: PGNet
   Transform:

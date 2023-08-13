@@ -18,7 +18,7 @@ Global:
   save_res_path: ./checkpoints/det_db/predicts_db.txt
   distributed: true
 
-Architecture:
+Model:
   model_type: det
   algorithm: DB
   Transform:

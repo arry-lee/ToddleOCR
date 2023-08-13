@@ -34,7 +34,7 @@ Optimizer:
     name: 'L2'
     factor: 0.
 
-Architecture:
+Model:
   model_type: rec
   algorithm: ABINet
   in_channels: 3

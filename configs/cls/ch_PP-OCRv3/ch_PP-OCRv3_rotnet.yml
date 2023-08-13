@@ -28,7 +28,7 @@ Optimizer:
   regularizer:
     name: L2
     factor: 1.0e-05
-Architecture:
+Model:
   model_type: cls
   algorithm: CLS
   Transform: null

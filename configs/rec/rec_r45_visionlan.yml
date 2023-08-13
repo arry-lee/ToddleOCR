@@ -36,7 +36,7 @@ Optimizer:
     name: 'L2'
     factor: 0
 
-Architecture:
+Model:
   model_type: rec
   algorithm: VisionLAN
   Transform:
@@ -103,4 +103,3 @@ Eval:
     drop_last: False
     batch_size_per_card: 64
     num_workers: 4
-  

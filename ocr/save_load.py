@@ -30,7 +30,7 @@ def load_model(config, model:nn.Module,logger,optimizer=None, model_type='det'):
     load model from checkpoint or pretrained_model
     """
 
-    global_config = config['Base']
+    global_config = config["Global"]
     checkpoints = global_config.get('checkpoints')
     pretrained_model = global_config.get('pretrained_model')
     best_model_dict = {}
@@ -174,7 +174,7 @@ def save_model(model,
 
     is_nlp_model = config['Model']["model_type"] == 'kie' and config["Model"]["algorithm"] not in ["SDMGR"]
     if is_nlp_model:  # for kie system, we follow the save/load rules in NLP
-        if config['Base']['distributed']:
+        if config["Global"]['distributed']:
             arch = model._layers
         else:
             arch = model

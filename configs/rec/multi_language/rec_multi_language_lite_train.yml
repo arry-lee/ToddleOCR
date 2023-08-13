@@ -34,7 +34,7 @@ Optimizer:
     name: 'L2'
     factor: 0.00001
 
-Architecture:
+Model:
   model_type: rec
   algorithm: CRNN
   Transform:

@@ -33,7 +33,7 @@ Optimizer:
     name: L2
     factor: 0.0
 
-Architecture:
+Model:
   model_type: table
   algorithm: TableMaster
   Backbone:

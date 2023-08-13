@@ -185,12 +185,12 @@ def train(
     amp_level="O2",
     amp_custom_black_list=[],
 ):
-    cal_metric_during_train = config["Base"].get("cal_metric_during_train", False)
-    calc_epoch_interval = config["Base"].get("calc_epoch_interval", 1)
-    log_smooth_window = config["Base"]["log_smooth_window"]
-    epoch_num = config["Base"]["epoch_num"]
-    print_batch_step = config["Base"]["print_batch_step"]
-    eval_batch_step = config["Base"]["eval_batch_step"]
+    cal_metric_during_train = config["Global"].get("cal_metric_during_train", False)
+    calc_epoch_interval = config["Global"].get("calc_epoch_interval", 1)
+    log_smooth_window = config["Global"]["log_smooth_window"]
+    epoch_num = config["Global"]["epoch_num"]
+    print_batch_step = config["Global"]["print_batch_step"]
+    eval_batch_step = config["Global"]["eval_batch_step"]
     profiler_options = config["profiler_options"]
 
     global_step = 0
@@ -207,8 +207,8 @@ def train(
             "During the training process, after the {}th iteration, "
             "an evaluation is run every {} iterations".format(start_eval_step, eval_batch_step)
         )
-    save_epoch_step = config["Base"]["save_epoch_step"]
-    save_model_dir = config["Base"]["save_model_dir"]
+    save_epoch_step = config["Global"]["save_epoch_step"]
+    save_model_dir = config["Global"]["save_model_dir"]
     if not os.path.exists(save_model_dir):
         os.makedirs(save_model_dir)
     main_indicator = eval_class.main_indicator
@@ -603,7 +603,7 @@ def preprocess(is_train=False):
 
     if is_train:
         # save_config
-        save_model_dir = config["Base"]["save_model_dir"]
+        save_model_dir = config["Global"]["save_model_dir"]
         os.makedirs(save_model_dir, exist_ok=True)
         with open(os.path.join(save_model_dir, "config.yml"), "w") as f:
             yaml.dump(dict(config), f, default_flow_style=False, sort_keys=False)
@@ -613,10 +613,10 @@ def preprocess(is_train=False):
     logger = get_logger(log_file=log_file)
 
     # check if set use_gpu=True in paddlepaddle cpu version
-    use_gpu = config["Base"].get("use_gpu", False)
-    use_xpu = config["Base"].get("use_xpu", False)
-    use_npu = config["Base"].get("use_npu", False)
-    use_mlu = config["Base"].get("use_mlu", False)
+    use_gpu = config["Global"].get("use_gpu", False)
+    use_xpu = config["Global"].get("use_xpu", False)
+    use_npu = config["Global"].get("use_npu", False)
+    use_mlu = config["Global"].get("use_mlu", False)
 
     alg = config["Model"]["algorithm"]
     assert alg in [
@@ -671,17 +671,17 @@ def preprocess(is_train=False):
 
     device = torch.set_device(device)
 
-    config["Base"]["distributed"] = dist.get_world_size() != 1
+    config["Global"]["distributed"] = dist.get_world_size() != 1
 
     loggers = []
 
-    if "use_visualdl" in config["Base"] and config["Base"]["use_visualdl"]:
-        save_model_dir = config["Base"]["save_model_dir"]
+    if "use_visualdl" in config["Global"] and config["Global"]["use_visualdl"]:
+        save_model_dir = config["Global"]["save_model_dir"]
         vdl_writer_path = "{}/vdl/".format(save_model_dir)
         log_writer = VDLLogger(vdl_writer_path)
         loggers.append(log_writer)
-    if ("use_wandb" in config["Base"] and config["Base"]["use_wandb"]) or "wandb" in config:
-        save_dir = config["Base"]["save_model_dir"]
+    if ("use_wandb" in config["Global"] and config["Global"]["use_wandb"]) or "wandb" in config:
+        save_dir = config["Global"]["save_model_dir"]
         wandb_writer_path = "{}/wandb".format(save_dir)
         if "wandb" in config:
             wandb_params = config["wandb"]

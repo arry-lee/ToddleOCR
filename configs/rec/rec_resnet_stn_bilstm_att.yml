@@ -34,7 +34,7 @@ Optimizer:
     factor: 2.0e-05
 
 
-Architecture:
+Model:
   model_type: rec
   algorithm: SEED
   Transform:

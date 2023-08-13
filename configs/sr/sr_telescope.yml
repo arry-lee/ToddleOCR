@@ -28,7 +28,7 @@ Optimizer:
   lr:
     learning_rate: 0.0001
 
-Architecture:
+Model:
   model_type: sr
   algorithm: Telescope
   Transform:
@@ -81,4 +81,3 @@ Eval:
     drop_last: False
     batch_size_per_card: 16
     num_workers: 4
-

@@ -21,7 +21,7 @@ import torch
 import torch.nn as nn
 from ppocr.modeling.backbones.rec_svtrnet import Block, PatchEmbed, zeros_, trunc_normal_, ones_
 
-scale_dim_heads = {"tiny": [192, 3], "small": [384, 6], "base": [768, 12]}
+scale_dim_heads = {"tiny": [192, 3], "small": [384, 6], "Global": [768, 12]}
 
 
 class ViTSTR(nn.Module):

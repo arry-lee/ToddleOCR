@@ -43,7 +43,7 @@ import cv2
 
 @torch.no_grad()
 def main(config, device, logger, vdl_writer):
-    global_config = config["Base"]
+    global_config = config["Global"]
 
     # build post process
     post_process_class = build_post_process(config["PostProcess"], global_config)
@@ -70,12 +70,12 @@ def main(config, device, logger, vdl_writer):
     global_config["infer_mode"] = True
     ops = create_operators(transforms, global_config)
 
-    save_res_path = config["Base"]["save_res_path"]
+    save_res_path = config["Global"]["save_res_path"]
     os.makedirs(save_res_path, exist_ok=True)
 
     model.eval()
     with open(os.path.join(save_res_path, "infer.txt"), mode="w", encoding="utf-8") as f_w:
-        for file in get_image_file_list(config["Base"]["infer_img"]):
+        for file in get_image_file_list(config["Global"]["infer_img"]):
             logger.info("infer_img: {}".format(file))
             with open(file, "rb") as f:
                 img = f.read()

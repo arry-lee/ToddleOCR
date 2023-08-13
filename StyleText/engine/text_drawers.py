@@ -7,9 +7,9 @@ from utils.logging import get_logger
 class StdTextDrawer(object):
     def __init__(self, config):
         self.logger = get_logger()
-        self.max_width = config["Base"]["image_width"]
+        self.max_width = config["Global"]["image_width"]
         self.char_list = " 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-        self.height = config["Base"]["image_height"]
+        self.height = config["Global"]["image_height"]
         self.font_dict = {}
         self.load_fonts(config["TextDrawer"]["fonts"])
         self.support_languages = list(self.font_dict)

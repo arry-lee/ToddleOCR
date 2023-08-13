@@ -21,7 +21,7 @@ class DatasetSampler(object):
         self.image_home = config["StyleSampler"]["image_home"]
         label_file = config["StyleSampler"]["label_file"]
         self.dataset_with_label = config["StyleSampler"]["with_label"]
-        self.height = config["Base"]["image_height"]
+        self.height = config["Global"]["image_height"]
         self.index = 0
         with open(label_file, "r") as f:
             label_raw = f.read()

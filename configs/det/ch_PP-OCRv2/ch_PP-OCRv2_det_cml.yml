@@ -18,7 +18,7 @@ Global:
   amp_level: O2
   amp_custom_black_list: ['exp']
 
-Architecture:
+Model:
   name: DistillationModel
   algorithm: Distillation
   model_type: det

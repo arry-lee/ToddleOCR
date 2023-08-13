@@ -58,7 +58,7 @@ def to_tensor(data):
 
 class SerPredictor(object):
     def __init__(self, config):
-        global_config = config["Base"]
+        global_config = config["Global"]
         self.algorithm = config["Model"]["algorithm"]
 
         # build post process
@@ -99,7 +99,7 @@ class SerPredictor(object):
                 ]
 
             transforms.append(op)
-        if config["Base"].get("infer_mode", None) is None:
+        if config["Global"].get("infer_mode", None) is None:
             global_config["infer_mode"] = True
         self.ops = create_operators(config["Eval"]["dataset"]["transforms"], global_config)
         self.model.eval()
@@ -118,20 +118,20 @@ class SerPredictor(object):
 
 if __name__ == "__main__":
     config, device, logger, vdl_writer = program.preprocess()
-    os.makedirs(config["Base"]["save_res_path"], exist_ok=True)
+    os.makedirs(config["Global"]["save_res_path"], exist_ok=True)
 
     ser_engine = SerPredictor(config)
 
-    if config["Base"].get("infer_mode", None) is False:
+    if config["Global"].get("infer_mode", None) is False:
         data_dir = config["Eval"]["dataset"]["data_dir"]
-        with open(config["Base"]["infer_img"], "rb") as f:
+        with open(config["Global"]["infer_img"], "rb") as f:
             infer_imgs = f.readlines()
     else:
-        infer_imgs = get_image_file_list(config["Base"]["infer_img"])
+        infer_imgs = get_image_file_list(config["Global"]["infer_img"])
 
-    with open(os.path.join(config["Base"]["save_res_path"], "infer_results.txt"), "w", encoding="utf-8") as fout:
+    with open(os.path.join(config["Global"]["save_res_path"], "infer_results.txt"), "w", encoding="utf-8") as fout:
         for idx, info in enumerate(infer_imgs):
-            if config["Base"].get("infer_mode", None) is False:
+            if config["Global"].get("infer_mode", None) is False:
                 data_line = info.decode("utf-8")
                 substr = data_line.strip("\n").split("\t")
                 img_path = os.path.join(data_dir, substr[0])
@@ -141,7 +141,7 @@ if __name__ == "__main__":
                 data = {"img_path": img_path}
 
             save_img_path = os.path.join(
-                config["Base"]["save_res_path"], os.path.splitext(os.path.basename(img_path))[0] + "_ser.jpg"
+                config["Global"]["save_res_path"], os.path.splitext(os.path.basename(img_path))[0] + "_ser.jpg"
             )
 
             result, _ = ser_engine(data)

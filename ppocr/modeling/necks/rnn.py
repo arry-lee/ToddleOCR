@@ -140,7 +140,7 @@ class EncoderWithSVTR(nn.Module):
                 Block(
                     dim=hidden_dims,
                     num_heads=num_heads,
-                    mixer="Base",
+                    mixer="Global",
                     HW=None,
                     mlp_ratio=mlp_ratio,
                     qkv_bias=qkv_bias,
