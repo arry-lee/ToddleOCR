@@ -62,7 +62,7 @@ Metric:
   main_indicator: acc
 
 Train:
-  dataset:
+  Dataset:
     name: SimpleDataSet
     data_dir: ./train_data/
     label_file_list:
@@ -80,13 +80,13 @@ Train:
         - image
         - label
         - length
-  loader:
+  DataLoader:
     shuffle: true
     batch_size_per_card: 128
     drop_last: true
     num_workers: 8
 Eval:
-  dataset:
+  Dataset:
     name: SimpleDataSet
     data_dir: ./train_data
     label_file_list:
@@ -103,7 +103,7 @@ Eval:
         - image
         - label
         - length
-  loader:
+  DataLoader:
     shuffle: false
     drop_last: false
     batch_size_per_card: 128

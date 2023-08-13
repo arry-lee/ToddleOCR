@@ -70,7 +70,7 @@ Metric:
   is_filter: True
 
 Train:
-  dataset:
+  Dataset:
     name: SimpleDataSet
     data_dir: ./train_data/ic15_data/
     label_file_list: ["./train_data/ic15_data/rec_gt_train.txt"]
@@ -86,14 +86,14 @@ Train:
           std: [127.5]
       - KeepKeys:
           keep_keys: ['image', 'label', 'length'] # dataloader will return list in this order
-  loader:
+  DataLoader:
     shuffle: True
     batch_size_per_card: 8
     drop_last: True
     num_workers: 4
 
 Eval:
-  dataset:
+  Dataset:
     name: SimpleDataSet
     data_dir: ./train_data/ic15_data
     label_file_list: ["./train_data/ic15_data/rec_gt_test.txt"]
@@ -109,7 +109,7 @@ Eval:
           std: [127.5]
       - KeepKeys:
           keep_keys: ['image', 'label', 'length'] # dataloader will return list in this order
-  loader:
+  DataLoader:
     shuffle: False
     drop_last: False
     batch_size_per_card: 8

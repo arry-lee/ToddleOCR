@@ -56,7 +56,7 @@ Metric:
   main_indicator: acc
 
 Train:
-  dataset:
+  Dataset:
     name: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/training/
     transforms:
@@ -74,14 +74,14 @@ Train:
                       'gsrm_word_pos',
                       'gsrm_slf_attn_bias1',
                       'gsrm_slf_attn_bias2'] # dataloader will return list in this order
-  loader:
+  DataLoader:
     shuffle: False
     batch_size_per_card: 64
     drop_last: False
     num_workers: 4
 
 Eval:
-  dataset:
+  Dataset:
     name: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/validation/
     transforms:
@@ -99,7 +99,7 @@ Eval:
                       'gsrm_word_pos',
                       'gsrm_slf_attn_bias1',
                       'gsrm_slf_attn_bias2'] 
-  loader:
+  DataLoader:
     shuffle: False
     drop_last: False
     batch_size_per_card: 32

@@ -74,7 +74,7 @@ Metric:
   ignore_space: False
 
 Train:
-  dataset:
+  Dataset:
     name: SimpleDataSet
     data_dir: ./train_data/
     ext_op_transform_idx: 1
@@ -100,13 +100,13 @@ Train:
         - label_sar
         - length
         - valid_ratio
-  loader:
+  DataLoader:
     shuffle: true
     batch_size_per_card: 128
     drop_last: true
     num_workers: 4
 Eval:
-  dataset:
+  Dataset:
     name: SimpleDataSet
     data_dir: ./train_data
     label_file_list:
@@ -125,7 +125,7 @@ Eval:
         - label_sar
         - length
         - valid_ratio
-  loader:
+  DataLoader:
     shuffle: false
     drop_last: false
     batch_size_per_card: 128

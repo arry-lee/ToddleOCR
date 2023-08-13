@@ -68,7 +68,7 @@ Metric:
   main_indicator: f_score_e2e
 
 Train:
-  dataset:
+  Dataset:
     name: PGDataSet
     data_dir: ./train_data/total_text/train
     label_file_list: [./train_data/total_text/train/train.txt]
@@ -79,7 +79,7 @@ Train:
           channel_first: False
       - E2ELabelEncodeTrain:
       - PGProcessTrain:
-          batch_size: 14  # same as loader: batch_size_per_card
+          batch_size: 14  # same as DataLoader: batch_size_per_card
           use_resize: True
           use_random_crop: False
           min_crop_size: 24
@@ -88,14 +88,14 @@ Train:
           point_gather_mode: align # two mode: align and none, align mode is better than none mode
       - KeepKeys:
           keep_keys: [ 'images', 'tcl_maps', 'tcl_label_maps', 'border_maps','direction_maps', 'training_masks', 'label_list', 'pos_list', 'pos_mask' ] # dataloader will return list in this order
-  loader:
+  DataLoader:
     shuffle: True
     drop_last: True
     batch_size_per_card: 14
     num_workers: 16
 
 Eval:
-  dataset:
+  Dataset:
     name: PGDataSet
     data_dir: ./train_data/total_text/test
     label_file_list: [./train_data/total_text/test/test.txt]
@@ -114,7 +114,7 @@ Eval:
       - ToCHWImage:
       - KeepKeys:
           keep_keys: [ 'image', 'shape', 'polys', 'texts', 'ignore_tags', 'img_id']
-  loader:
+  DataLoader:
     shuffle: False
     drop_last: False
     batch_size_per_card: 1 # must be 1

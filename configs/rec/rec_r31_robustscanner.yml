@@ -64,7 +64,7 @@ Metric:
 
 
 Train:
-  dataset:
+  Dataset:
     name: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/training/
     transforms:
@@ -78,7 +78,7 @@ Train:
           max_text_length: *max_text_length
       - KeepKeys:
           keep_keys: ['image', 'label', 'valid_ratio', 'word_positons'] # dataloader will return list in this order
-  loader:
+  DataLoader:
     shuffle: True
     batch_size_per_card: 64
     drop_last: True
@@ -86,7 +86,7 @@ Train:
     use_shared_memory: False
 
 Eval:
-  dataset:
+  Dataset:
     name: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/evaluation/
     transforms:
@@ -100,7 +100,7 @@ Eval:
           width_downsample_ratio: 0.25
       - KeepKeys:
           keep_keys: ['image', 'label', 'valid_ratio', 'word_positons'] # dataloader will return list in this order
-  loader:
+  DataLoader:
     shuffle: False
     drop_last: False
     batch_size_per_card: 64

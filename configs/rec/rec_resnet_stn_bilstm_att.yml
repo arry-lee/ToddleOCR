@@ -64,7 +64,7 @@ Metric:
   is_filter: True
 
 Train:
-  dataset:
+  Dataset:
     name: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/training/
     transforms:
@@ -80,14 +80,14 @@ Train:
           padding: False
       - KeepKeys:
           keep_keys: ['image', 'label', 'length', 'fast_label'] # dataloader will return list in this order
-  loader:
+  DataLoader:
     shuffle: True
     batch_size_per_card: 256
     drop_last: True
     num_workers: 6
 
 Eval:
-  dataset:
+  Dataset:
     name: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/evaluation/
     transforms:
@@ -101,7 +101,7 @@ Eval:
           padding: False
       - KeepKeys:
           keep_keys: ['image', 'label', 'length'] # dataloader will return list in this order
-  loader:
+  DataLoader:
     shuffle: False
     drop_last: True
     batch_size_per_card: 256

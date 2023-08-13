@@ -52,7 +52,7 @@ Metric:
   main_indicator: f_score
 
 Train:
-  dataset:
+  Dataset:
     name: SimpleDataSet
     data_dir: ./train_data/total_text/train
     label_file_list:
@@ -76,14 +76,14 @@ Train:
       - NormalizeImage:
       - KeepKeys:
           keep_keys: ['image', 'gt_kernel', 'training_mask', 'gt_instance', 'gt_kernel_instance', 'training_mask_distance', 'gt_distance'] # the order of the dataloader list
-  loader:
+  DataLoader:
     shuffle: True
     drop_last: True
     batch_size_per_card: 4
     num_workers: 8
 
 Eval:
-  dataset:
+  Dataset:
     name: SimpleDataSet
     data_dir: ./train_data/total_text/test
     label_file_list:
@@ -100,7 +100,7 @@ Eval:
       - ToCHWImage: 
       - KeepKeys:
           keep_keys: ['image', 'shape', 'polys', 'texts'] # the order of the dataloader list          
-  loader:
+  DataLoader:
     shuffle: False
     drop_last: False
     batch_size_per_card: 1

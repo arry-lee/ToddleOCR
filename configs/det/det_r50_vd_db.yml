@@ -59,7 +59,7 @@ Metric:
   main_indicator: hmean
 
 Train:
-  dataset:
+  Dataset:
     name: SimpleDataSet
     data_dir: ./train_data/icdar2015/text_localization/
     label_file_list:
@@ -94,14 +94,14 @@ Train:
       - ToCHWImage:
       - KeepKeys:
           keep_keys: ['image', 'threshold_map', 'threshold_mask', 'shrink_map', 'shrink_mask'] # the order of the dataloader list
-  loader:
+  DataLoader:
     shuffle: True
     drop_last: False
     batch_size_per_card: 16
     num_workers: 4
 
 Eval:
-  dataset:
+  Dataset:
     name: SimpleDataSet
     data_dir: ./train_data/icdar2015/text_localization/
     label_file_list:
@@ -121,7 +121,7 @@ Eval:
       - ToCHWImage:
       - KeepKeys:
           keep_keys: ['image', 'shape', 'polys', 'ignore_tags']
-  loader:
+  DataLoader:
     shuffle: False
     drop_last: False
     batch_size_per_card: 1 # must be 1

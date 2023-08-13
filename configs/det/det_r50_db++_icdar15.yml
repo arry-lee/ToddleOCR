@@ -59,7 +59,7 @@ Metric:
   name: DetMetric
   main_indicator: hmean
 Train:
-  dataset:
+  Dataset:
     name: SimpleDataSet
     data_dir: ./train_data/icdar2015/text_localization/                                                                        
     label_file_list:                                                                                            
@@ -118,13 +118,13 @@ Train:
         - threshold_mask
         - shrink_map
         - shrink_mask
-  loader:
+  DataLoader:
     shuffle: true
     drop_last: false
     batch_size_per_card: 4
     num_workers: 8
 Eval:
-  dataset:
+  Dataset:
     name: SimpleDataSet
     data_dir: ./train_data/icdar2015/text_localization                                                                          
     label_file_list:                                                                                            
@@ -156,7 +156,7 @@ Eval:
         - shape
         - polys
         - ignore_tags
-  loader:
+  DataLoader:
     shuffle: false
     drop_last: false
     batch_size_per_card: 1

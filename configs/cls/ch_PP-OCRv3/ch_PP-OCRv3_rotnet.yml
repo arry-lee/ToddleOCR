@@ -54,7 +54,7 @@ Metric:
   main_indicator: acc
 
 Train:
-  dataset:
+  Dataset:
     name: SimpleDataSet
     data_dir: ./train_data
     label_file_list:
@@ -69,14 +69,14 @@ Train:
         image_shape: [3, 48, 320]
     - KeepKeys:
         keep_keys: ["image", "label"]
-  loader:
+  DataLoader:
     collate_fn: "SSLRotateCollate"
     shuffle: true
     batch_size_per_card: 32
     drop_last: true
     num_workers: 8
 Eval:
-  dataset:
+  Dataset:
     name: SimpleDataSet
     data_dir: ./train_data
     label_file_list:
@@ -89,7 +89,7 @@ Eval:
         image_shape: [3, 48, 320]
     - KeepKeys:
         keep_keys: ["image", "label"]
-  loader:
+  DataLoader:
     collate_fn: "SSLRotateCollate"
     shuffle: false
     drop_last: false

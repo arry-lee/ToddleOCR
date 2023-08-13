@@ -57,7 +57,7 @@ Metric:
   main_indicator: acc
 
 Train:
-  dataset:
+  Dataset:
     name: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/training/
     transforms:
@@ -69,14 +69,14 @@ Train:
           image_shape: [3, 32, 100]
       - KeepKeys:
           keep_keys: ['image', 'label', 'length'] # dataloader will return list in this order
-  loader:
+  DataLoader:
     shuffle: False
     batch_size_per_card: 256
     drop_last: True
     num_workers: 8
 
 Eval:
-  dataset:
+  Dataset:
     name: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/validation/
     transforms:
@@ -88,7 +88,7 @@ Eval:
           image_shape: [3, 32, 100]
       - KeepKeys:
           keep_keys: ['image', 'label', 'length'] # dataloader will return list in this order
-  loader:
+  DataLoader:
     shuffle: False
     drop_last: False
     batch_size_per_card: 256

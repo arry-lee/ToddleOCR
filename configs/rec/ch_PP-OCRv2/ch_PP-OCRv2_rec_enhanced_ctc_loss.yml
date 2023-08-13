@@ -63,7 +63,7 @@ Loss:
       num_classes: 6625
       feat_dim: 96
       center_file_path:
-  # you can also try to add ace loss on your own dataset
+  # you can also try to add ace loss on your own Dataset
   # - ACELoss:
   #     weight: 0.1
 
@@ -75,7 +75,7 @@ Metric:
   main_indicator: acc
 
 Train:
-  dataset:
+  Dataset:
     name: SimpleDataSet
     data_dir: ./train_data/
     label_file_list:
@@ -94,13 +94,13 @@ Train:
         - label
         - length
         - label_ace
-  loader:
+  DataLoader:
     shuffle: true
     batch_size_per_card: 128
     drop_last: true
     num_workers: 8
 Eval:
-  dataset:
+  Dataset:
     name: SimpleDataSet
     data_dir: ./train_data
     label_file_list:
@@ -117,7 +117,7 @@ Eval:
         - image
         - label
         - length
-  loader:
+  DataLoader:
     shuffle: false
     drop_last: false
     batch_size_per_card: 128

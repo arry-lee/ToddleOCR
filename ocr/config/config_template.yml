@@ -55,7 +55,7 @@ Metric:
 Train:
   Dataset:
     class: torchvision.datasets.CocoCaptions
-    root: 'path/to/dataset'  # COCO-Text 数据集的根目录
+    root: 'path/to/Dataset'  # COCO-Text 数据集的根目录
     annFile: 'path/to/annotations.json'  # COCO-Text 数据集的注释文件路径
     transform:
       class: torchvision.transforms.ToTensor  # 转换为张量格式
@@ -73,7 +73,7 @@ Train:
 Eval:
   Dataset:
     class: torchvision.datasets.CocoCaptions
-    root: 'path/to/dataset'  # COCO-Text 数据集的根目录
+    root: 'path/to/Dataset'  # COCO-Text 数据集的根目录
     annFile: 'path/to/annotations.json'  # COCO-Text 数据集的注释文件路径
     transform:
       class: torchvision.transforms.ToTensor  # 转换为张量格式

@@ -60,7 +60,7 @@ Metric:
   compute_bbox_metric: false # cost many time, set False for training
 
 Train:
-  dataset:
+  Dataset:
     name: PubTabDataSet
     data_dir: train_data/table/pubtabnet/train/
     label_file_list: [train_data/table/pubtabnet/PubTabNet_2.0.0_train.jsonl]
@@ -87,14 +87,14 @@ Train:
       - ToCHWImage:
       - KeepKeys:
           keep_keys: [ 'image', 'structure', 'bboxes', 'bbox_masks', 'shape' ]
-  loader:
+  DataLoader:
     shuffle: True
     batch_size_per_card: 48
     drop_last: True
     num_workers: 1
 
 Eval:
-  dataset:
+  Dataset:
     name: PubTabDataSet
     data_dir: train_data/table/pubtabnet/val/
     label_file_list: [train_data/table/pubtabnet/PubTabNet_2.0.0_val.jsonl]
@@ -121,7 +121,7 @@ Eval:
       - ToCHWImage:
       - KeepKeys:
           keep_keys: [ 'image', 'structure', 'bboxes', 'bbox_masks', 'shape' ]
-  loader:
+  DataLoader:
     shuffle: False
     drop_last: False
     batch_size_per_card: 48

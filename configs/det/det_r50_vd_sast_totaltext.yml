@@ -56,7 +56,7 @@ Metric:
   main_indicator: hmean
 
 Train:
-  dataset:
+  Dataset:
     name: SimpleDataSet
     data_dir: ./train_data/
     label_file_list: [./train_data/art_latin_icdar_14pt/train_no_tt_test/train_label_json.txt, ./train_data/total_text_icdar_14pt/train_label_json.txt]
@@ -74,14 +74,14 @@ Train:
           max_text_size: 512
       - KeepKeys:
           keep_keys: ['image', 'score_map', 'border_map', 'training_mask', 'tvo_map', 'tco_map'] # dataloader will return list in this order
-  loader:
+  DataLoader:
     shuffle: True
     drop_last: False
     batch_size_per_card: 4
     num_workers: 4
 
 Eval:
-  dataset:
+  Dataset:
     name: SimpleDataSet
     data_dir: ./train_data/
     label_file_list: 
@@ -101,7 +101,7 @@ Eval:
       - ToCHWImage:
       - KeepKeys:
           keep_keys: ['image', 'shape', 'polys', 'ignore_tags']
-  loader:
+  DataLoader:
     shuffle: False
     drop_last: False
     batch_size_per_card: 1 # must be 1

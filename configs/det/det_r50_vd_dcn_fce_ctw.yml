@@ -61,7 +61,7 @@ Metric:
   main_indicator: hmean
 
 Train:
-  dataset:
+  Dataset:
     name: SimpleDataSet
     data_dir: ./train_data/ctw1500/imgs/
     label_file_list: 
@@ -102,14 +102,14 @@ Train:
       - ToCHWImage:
       - KeepKeys:
           keep_keys: ['image', 'p3_maps', 'p4_maps', 'p5_maps'] # dataloader will return list in this order
-  loader:
+  DataLoader:
     shuffle: True
     drop_last: False
     batch_size_per_card: 6
     num_workers: 8
 
 Eval:
-  dataset:
+  Dataset:
     name: SimpleDataSet
     data_dir: ./train_data/ctw1500/imgs/
     label_file_list:
@@ -132,7 +132,7 @@ Eval:
       - ToCHWImage:
       - KeepKeys:
           keep_keys: ['image', 'shape', 'polys', 'ignore_tags']
-  loader:
+  DataLoader:
     shuffle: False
     drop_last: False
     batch_size_per_card: 1 # must be 1

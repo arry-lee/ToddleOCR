@@ -61,7 +61,7 @@ Metric:
   main_indicator: acc
 
 Train:
-  dataset:
+  Dataset:
     name: SimpleDataSet
     data_dir: ./train_data/
     label_file_list: ["./train_data/train_list.txt"]
@@ -75,14 +75,14 @@ Train:
           image_shape: [3, 32, 320]
       - KeepKeys:
           keep_keys: ['image', 'label', 'length'] # dataloader will return list in this order
-  loader:
+  DataLoader:
     shuffle: True
     batch_size_per_card: 256
     drop_last: True
     num_workers: 8
 
 Eval:
-  dataset:
+  Dataset:
     name: SimpleDataSet
     data_dir: ./train_data
     label_file_list: ["./train_data/val_list.txt"]
@@ -95,7 +95,7 @@ Eval:
           image_shape: [3, 32, 320]
       - KeepKeys:
           keep_keys: ['image', 'label', 'length'] # dataloader will return list in this order
-  loader:
+  DataLoader:
     shuffle: False
     drop_last: False
     batch_size_per_card: 256

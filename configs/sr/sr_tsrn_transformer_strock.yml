@@ -48,7 +48,7 @@ Metric:
   main_indicator: all
 
 Train:
-  dataset:
+  Dataset:
     name: LMDBDataSetSR
     data_dir: ./train_data/srdata/train
     transforms:
@@ -59,14 +59,14 @@ Train:
       - SRLabelEncode: # Class handling label
       - KeepKeys:
           keep_keys: ['img_lr', 'img_hr', 'length', 'input_tensor', 'label'] # dataloader will return list in this order
-  loader:
+  DataLoader:
     shuffle: False
     batch_size_per_card: 16
     drop_last: True
     num_workers: 4
 
 Eval:
-  dataset:
+  Dataset:
     name: LMDBDataSetSR
     data_dir: ./train_data/srdata/test
     transforms:
@@ -77,7 +77,7 @@ Eval:
       - SRLabelEncode: # Class handling label
       - KeepKeys:
           keep_keys: ['img_lr', 'img_hr','length', 'input_tensor', 'label'] # dataloader will return list in this order
-  loader:
+  DataLoader:
     shuffle: False
     drop_last: False
     batch_size_per_card: 16

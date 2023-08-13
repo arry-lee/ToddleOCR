@@ -52,7 +52,7 @@ Metric:
   main_indicator: hmean
 
 Train:
-  dataset:
+  Dataset:
     name: SimpleDataSet
     data_dir: train_data/XFUND/zh_train/image
     label_file_list: 
@@ -80,14 +80,14 @@ Train:
       - ToCHWImage:
       - KeepKeys:
           keep_keys: [ 'input_ids', 'bbox', 'attention_mask', 'token_type_ids', 'image', 'labels'] # dataloader will return list in this order
-  loader:
+  DataLoader:
     shuffle: True
     drop_last: False
     batch_size_per_card: 8
     num_workers: 4
 
 Eval:
-  dataset:
+  Dataset:
     name: SimpleDataSet
     data_dir: train_data/XFUND/zh_val/image
     label_file_list:
@@ -115,7 +115,7 @@ Eval:
       - ToCHWImage:
       - KeepKeys:
           keep_keys: [ 'input_ids', 'bbox', 'attention_mask', 'token_type_ids', 'image', 'labels'] # dataloader will return list in this order
-  loader:
+  DataLoader:
     shuffle: False
     drop_last: False
     batch_size_per_card: 8

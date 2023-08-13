@@ -72,7 +72,7 @@ Metric:
   main_indicator: exp_rate
 
 Train:
-  dataset:
+  Dataset:
     name: SimpleDataSet
     data_dir: ./train_data/CROHME/training/images/
     label_file_list: ["./train_data/CROHME/training/labels.txt"]
@@ -89,7 +89,7 @@ Train:
           lower: False
       - KeepKeys:
           keep_keys: ['image', 'label']
-  loader:
+  DataLoader:
     shuffle: True
     batch_size_per_card: 8
     drop_last: False
@@ -97,7 +97,7 @@ Train:
     collate_fn: DyMaskCollator
 
 Eval:
-  dataset:
+  Dataset:
     name: SimpleDataSet
     data_dir: ./train_data/CROHME/evaluation/images/
     label_file_list: ["./train_data/CROHME/evaluation/labels.txt"]
@@ -114,7 +114,7 @@ Eval:
           lower: False
       - KeepKeys:
           keep_keys: ['image', 'label']
-  loader:
+  DataLoader:
     shuffle: False
     drop_last: False
     batch_size_per_card: 1
