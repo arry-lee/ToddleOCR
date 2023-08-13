@@ -10,21 +10,24 @@ from torchvision.datasets.vision import VisionDataset
 
 
 class LMDBDataSet(VisionDataset):
-    def __init__(self, root, transforms=None, **dataset_config):
+    def __init__(self, root, transforms=None, **kwargs):
         super(LMDBDataSet, self).__init__(root, transforms)
 
-        data_dir = root
-
-        self.lmdb_sets = self.load_hierarchical_lmdb_dataset(data_dir)
+        self.lmdb_sets = self.load_hierarchical_lmdb_dataset()
         self.data_idx_order_list = self.dataset_traversal()
 
-        ratio_list = dataset_config.get("ratio_list", [1.0])
+        ratio_list = kwargs.get("ratio_list", [1.0])
+        self.seed = kwargs.get("seed", None)
+        if self.seed is not None:
+            np.random.seed(self.seed)
+        self.mode = kwargs.get("mode", "train")
+
         self.need_reset = True in [x < 1 for x in ratio_list]
 
-    def load_hierarchical_lmdb_dataset(self, data_dir):
+    def load_hierarchical_lmdb_dataset(self):
         lmdb_sets = {}
         dataset_idx = 0
-        for dirpath, dirnames, filenames in os.walk(data_dir + "/"):
+        for dirpath, dirnames, filenames in os.walk(self.root):
             if not dirnames:
                 env = lmdb.open(dirpath, max_readers=32, readonly=True, lock=False, readahead=False, meminit=False)
                 txn = env.begin(write=False)

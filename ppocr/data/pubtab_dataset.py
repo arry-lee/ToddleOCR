@@ -11,56 +11,46 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import numpy as np
+import json
 import os
 import random
-from torch.utils.data import Dataset
-import json
-from copy import deepcopy
 
-from .imaug import transform, create_operators
+import numpy as np
+from torchvision.datasets import VisionDataset
 
 
-class PubTabDataSet(Dataset):
-    def __init__(self, config, mode, logger, seed=None):
-        super(PubTabDataSet, self).__init__()
-        self.logger = logger
+class PubTabDataSet(VisionDataset):
+    def __init__(self, root, transforms=None, **kwargs):
+        super().__init__(root, transforms)
 
-        global_config = config["Global"]
-        dataset_config = config[mode]["Dataset"]
-        loader_config = config[mode]["DataLoader"]
-
-        label_file_list = dataset_config.pop("label_file_list")
+        label_file_list = kwargs.pop("label_file_list")
         data_source_num = len(label_file_list)
-        ratio_list = dataset_config.get("ratio_list", [1.0])
+
+        ratio_list = kwargs.get("ratio_list", [1.0])
+        self.seed = kwargs.get("seed", None)
+
+        self.mode = kwargs.get("mode", "train")
+
+        if self.seed is not None:
+            random.seed(self.seed)
+
         if isinstance(ratio_list, (float, int)):
             ratio_list = [float(ratio_list)] * int(data_source_num)
 
         assert len(ratio_list) == data_source_num, "The length of ratio_list should be the same as the file_list."
 
-        self.data_dir = dataset_config["data_dir"]
-        self.do_shuffle = loader_config["shuffle"]
-
-        self.seed = seed
-        self.mode = mode.lower()
-        logger.info("Initialize indexs of datasets:%s" % label_file_list)
         self.data_lines = self.get_image_info_list(label_file_list, ratio_list)
-        # self.check(config['Global']['max_text_length'])
 
-        if mode.lower() == "train" and self.do_shuffle:
-            self.shuffle_data_random()
-        self.ops = create_operators(dataset_config["transforms"], global_config)
         self.need_reset = True in [x < 1 for x in ratio_list]
 
-    def get_image_info_list(self, file_list, ratio_list):
+    def get_image_info_list(self, file_list, ratio_list=None):
         if isinstance(file_list, str):
             file_list = [file_list]
         data_lines = []
         for idx, file in enumerate(file_list):
             with open(file, "rb") as f:
                 lines = f.readlines()
-                if self.mode == "train" or ratio_list[idx] < 1.0:
-                    random.seed(self.seed)
+                if ratio_list[idx] < 1.0:
                     lines = random.sample(lines, round(len(lines) * ratio_list[idx]))
                 data_lines.extend(lines)
         return data_lines
@@ -74,21 +64,15 @@ class PubTabDataSet(Dataset):
             cells = info["html"]["cells"].copy()
             structure = info["html"]["structure"]["tokens"].copy()
 
-            img_path = os.path.join(self.data_dir, file_name)
+            img_path = os.path.join(self.root, file_name)
             if not os.path.exists(img_path):
-                self.logger.warning("{} does not exist!".format(img_path))
+                print("{} does not exist!".format(img_path))
                 continue
             if len(structure) == 0 or len(structure) > max_text_length:
                 continue
             # data = {'img_path': img_path, 'cells': cells, 'structure':structure,'file_name':file_name}
             data_lines.append(line)
         self.data_lines = data_lines
-
-    def shuffle_data_random(self):
-        if self.do_shuffle:
-            random.seed(self.seed)
-            random.shuffle(self.data_lines)
-        return
 
     def __getitem__(self, idx):
         try:
@@ -99,7 +83,7 @@ class PubTabDataSet(Dataset):
             cells = info["html"]["cells"].copy()
             structure = info["html"]["structure"]["tokens"].copy()
 
-            img_path = os.path.join(self.data_dir, file_name)
+            img_path = os.path.join(self.root, file_name)
             if not os.path.exists(img_path):
                 raise Exception("{} does not exist!".format(img_path))
             data = {"img_path": img_path, "cells": cells, "structure": structure, "file_name": file_name}
@@ -107,12 +91,12 @@ class PubTabDataSet(Dataset):
             with open(data["img_path"], "rb") as f:
                 img = f.read()
                 data["image"] = img
-            outs = transform(data, self.ops)
+            outs = self.transforms(data)
         except:
             import traceback
 
             err = traceback.format_exc()
-            self.logger.error("When parsing line {}, error happened with msg: {}".format(data_line, err))
+            print("When parsing line {}, error happened with msg: {}".format(data_line, err))
             outs = None
         if outs is None:
             rnd_idx = np.random.randint(self.__len__()) if self.mode == "train" else (idx + 1) % self.__len__()
