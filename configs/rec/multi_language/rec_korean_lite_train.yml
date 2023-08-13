@@ -64,14 +64,14 @@ Train:
     data_dir: ./train_data/
     label_file_list: [ "./train_data/train_list.txt" ]
     transforms:
-      - DecodeImage: # load image
+      - name: DecodeImage # load image
           img_mode: BGR
           channel_first: False
-      - RecAug:
-      - CTCLabelEncode: # Class handling label
-      - RecResizeImg:
+      - name: RecAug
+      - name: CTCLabelEncode # Class handling label
+      - name: RecResizeImg
           image_shape: [ 3, 32, 320 ]
-      - KeepKeys:
+      - name: KeepKeys
           keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
@@ -85,13 +85,13 @@ Eval:
     data_dir: ./train_data/
     label_file_list: [ "./train_data/eval_list.txt" ]
     transforms:
-      - DecodeImage: # load image
+      - name: DecodeImage # load image
           img_mode: BGR
           channel_first: False
-      - CTCLabelEncode: # Class handling label
-      - RecResizeImg:
+      - name: CTCLabelEncode # Class handling label
+      - name: RecResizeImg
           image_shape: [ 3, 32, 320 ]
-      - KeepKeys:
+      - name: KeepKeys
           keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False

@@ -61,17 +61,17 @@ Train:
     label_file_list:
       - train_data/arabic_train.txt
     transforms:
-      - DecodeImage:
+      - name: DecodeImage
           img_mode: BGR
           channel_first: false
-      - RecAug: null
-      - CTCLabelEncode: null
-      - RecResizeImg:
+      - name: RecAug null
+      - name: CTCLabelEncode null
+      - name: RecResizeImg
           image_shape:
             - 3
             - 32
             - 320
-      - KeepKeys:
+      - name: KeepKeys
           keep_keys:
             - image
             - label
@@ -88,16 +88,16 @@ Eval:
     label_file_list:
       - train_data/arabic_val.txt
     transforms:
-      - DecodeImage:
+      - name: DecodeImage
           img_mode: BGR
           channel_first: false
-      - CTCLabelEncode: null
-      - RecResizeImg:
+      - name: CTCLabelEncode null
+      - name: RecResizeImg
           image_shape:
             - 3
             - 32
             - 320
-      - KeepKeys:
+      - name: KeepKeys
           keep_keys:
             - image
             - label

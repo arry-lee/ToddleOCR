@@ -60,22 +60,22 @@ Train:
       - ./train_data/total_text/train/train.txt
     ratio_list: [ 1.0 ]
     transforms:
-      - DecodeImage:
+      - name: DecodeImage
           img_mode: RGB
           channel_first: False
-      - CTLabelEncode: # Class handling label
-      - RandomScale:
-      - MakeShrink:
-      - GroupRandomHorizontalFlip:
-      - GroupRandomRotate:
-      - GroupRandomCropPadding:
-      - MakeCentripetalShift:
-      - ColorJitter:
+      - name: CTLabelEncode # Class handling label
+      - name: RandomScale
+      - name: MakeShrink
+      - name: GroupRandomHorizontalFlip
+      - name: GroupRandomRotate
+      - name: GroupRandomCropPadding
+      - name: MakeCentripetalShift
+      - name: ColorJitter
           brightness: 0.125
           saturation: 0.5
-      - ToCHWImage:
-      - NormalizeImage:
-      - KeepKeys:
+      - name: ToCHWImage
+      - name: NormalizeImage
+      - name: KeepKeys
           keep_keys: [ 'image', 'gt_kernel', 'training_mask', 'gt_instance', 'gt_kernel_instance', 'training_mask_distance', 'gt_distance' ] # the order of the dataloader list
   DataLoader:
     shuffle: True
@@ -91,15 +91,15 @@ Eval:
       - ./train_data/total_text/test/test.txt
     ratio_list: [ 1.0 ]
     transforms:
-      - DecodeImage:
+      - name: DecodeImage
           img_mode: RGB
           channel_first: False
-      - CTLabelEncode: # Class handling label
-      - ScaleAlignedShort:
-      - NormalizeImage:
+      - name: CTLabelEncode # Class handling label
+      - name: ScaleAlignedShort
+      - name: NormalizeImage
           order: 'hwc'
-      - ToCHWImage:
-      - KeepKeys:
+      - name: ToCHWImage
+      - name: KeepKeys
           keep_keys: [ 'image', 'shape', 'polys', 'texts' ] # the order of the dataloader list
   DataLoader:
     shuffle: False

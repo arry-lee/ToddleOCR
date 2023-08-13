@@ -61,17 +61,17 @@ Train:
     name: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/training/
     transforms:
-      - DecodeImage: # load image
+      - name: DecodeImage # load image
           img_mode: BGR
           channel_first: False
-      - ViTSTRLabelEncode: # Class handling label
+      - name: ViTSTRLabelEncode # Class handling label
           ignore_index: *ignore_index
-      - GrayRecResizeImg:
+      - name: GrayRecResizeImg
           image_shape: [ 224, 224 ] # W H
           resize_type: PIL # PIL or OpenCV
           inter_type: 'Image.BICUBIC'
           scale: false
-      - KeepKeys:
+      - name: KeepKeys
           keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
@@ -84,17 +84,17 @@ Eval:
     name: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/evaluation/
     transforms:
-      - DecodeImage: # load image
+      - name: DecodeImage # load image
           img_mode: BGR
           channel_first: False
-      - ViTSTRLabelEncode: # Class handling label
+      - name: ViTSTRLabelEncode # Class handling label
           ignore_index: *ignore_index
-      - GrayRecResizeImg:
+      - name: GrayRecResizeImg
           image_shape: [ 224, 224 ] # W H
           resize_type: PIL # PIL or OpenCV
           inter_type: 'Image.BICUBIC'
           scale: false
-      - KeepKeys:
+      - name: KeepKeys
           keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False

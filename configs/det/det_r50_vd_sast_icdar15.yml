@@ -62,17 +62,17 @@ Train:
     label_file_list: [ ./train_data/icdar2013/train_label_json.txt, ./train_data/icdar2015/train_label_json.txt, ./train_data/icdar17_mlt_latin/train_label_json.txt, ./train_data/coco_text_icdar_4pts/train_label_json.txt ]
     ratio_list: [ 0.1, 0.45, 0.3, 0.15 ]
     transforms:
-      - DecodeImage: # load image
+      - name: DecodeImage # load image
           img_mode: BGR
           channel_first: False
-      - DetLabelEncode: # Class handling label
-      - SASTProcessTrain:
+      - name: DetLabelEncode # Class handling label
+      - name: SASTProcessTrain
           image_shape: [ 512, 512 ]
           min_crop_side_ratio: 0.3
           min_crop_size: 24
           min_text_size: 4
           max_text_size: 512
-      - KeepKeys:
+      - name: KeepKeys
           keep_keys: [ 'image', 'score_map', 'border_map', 'training_mask', 'tvo_map', 'tco_map' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
@@ -87,19 +87,19 @@ Eval:
     label_file_list:
       - ./train_data/icdar2015/text_localization/test_icdar2015_label.txt
     transforms:
-      - DecodeImage: # load image
+      - name: DecodeImage # load image
           img_mode: BGR
           channel_first: False
-      - DetLabelEncode: # Class handling label
-      - DetResizeForTest:
+      - name: DetLabelEncode # Class handling label
+      - name: DetResizeForTest
           resize_long: 1536
-      - NormalizeImage:
+      - name: NormalizeImage
           scale: 1./255.
           mean: [ 0.485, 0.456, 0.406 ]
           std: [ 0.229, 0.224, 0.225 ]
           order: 'hwc'
-      - ToCHWImage:
-      - KeepKeys:
+      - name: ToCHWImage
+      - name: KeepKeys
           keep_keys: [ 'image', 'shape', 'polys', 'ignore_tags' ]
   DataLoader:
     shuffle: False

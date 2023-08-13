@@ -57,14 +57,14 @@ Train:
     name: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/training/
     transforms:
-      - DecodeImage:
+      - name: DecodeImage
           img_mode: BGR
           channel_first: False
-      - PRENLabelEncode:
-      - RecAug:
-      - PRENResizeImg:
+      - name: PRENLabelEncode
+      - name: RecAug
+      - name: PRENResizeImg
           image_shape: [ 64, 256 ]  # h,w
-      - KeepKeys:
+      - name: KeepKeys
           keep_keys: [ 'image', 'label' ]
   DataLoader:
     shuffle: True
@@ -77,13 +77,13 @@ Eval:
     name: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/validation/
     transforms:
-      - DecodeImage:
+      - name: DecodeImage
           img_mode: BGR
           channel_first: False
-      - PRENLabelEncode:
-      - PRENResizeImg:
+      - name: PRENLabelEncode
+      - name: PRENResizeImg
           image_shape: [ 64, 256 ]  # h,w
-      - KeepKeys:
+      - name: KeepKeys
           keep_keys: [ 'image', 'label' ]
   DataLoader:
     shuffle: False

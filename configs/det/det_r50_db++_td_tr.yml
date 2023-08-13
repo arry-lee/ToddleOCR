@@ -70,11 +70,11 @@ Train:
       - 1.0
       - 1.0
     transforms:
-      - DecodeImage:
+      - name: DecodeImage
           img_mode: BGR
           channel_first: false
-      - DetLabelEncode: null
-      - IaaAugment:
+      - name: DetLabelEncode null
+      - name: IaaAugment
           augmenter_args:
             - type: Fliplr
               args:
@@ -89,20 +89,20 @@ Train:
                 size:
                   - 0.5
                   - 3
-      - EastRandomCropData:
+      - name: EastRandomCropData
           size:
             - 640
             - 640
           max_tries: 10
           keep_ratio: true
-      - MakeShrinkMap:
+      - name: MakeShrinkMap
           shrink_ratio: 0.4
           min_text_size: 8
-      - MakeBorderMap:
+      - name: MakeBorderMap
           shrink_ratio: 0.4
           thresh_min: 0.3
           thresh_max: 0.7
-      - NormalizeImage:
+      - name: NormalizeImage
           scale: 1./255.
           mean:
             - 0.48109378172549
@@ -113,8 +113,8 @@ Train:
             - 1.0
             - 1.0
           order: hwc
-      - ToCHWImage: null
-      - KeepKeys:
+      - name: ToCHWImage null
+      - name: KeepKeys
           keep_keys:
             - image
             - threshold_map
@@ -133,16 +133,16 @@ Eval:
     label_file_list:
       - ./train_data/TD_TR/TD500/test_gt_labels.txt
     transforms:
-      - DecodeImage:
+      - name: DecodeImage
           img_mode: BGR
           channel_first: false
-      - DetLabelEncode: null
-      - DetResizeForTest:
+      - name: DetLabelEncode null
+      - name: DetResizeForTest
           image_shape:
             - 736
             - 736
           keep_ratio: True
-      - NormalizeImage:
+      - name: NormalizeImage
           scale: 1./255.
           mean:
             - 0.48109378172549
@@ -153,8 +153,8 @@ Eval:
             - 1.0
             - 1.0
           order: hwc
-      - ToCHWImage: null
-      - KeepKeys:
+      - name: ToCHWImage null
+      - name: KeepKeys
           keep_keys:
             - image
             - shape

@@ -61,20 +61,20 @@ Train:
     label_file_list: [ './train_data/wildreceipt/wildreceipt_train.txt' ]
     ratio_list: [ 1.0 ]
     transforms:
-      - DecodeImage: # load image
+      - name: DecodeImage # load image
           img_mode: RGB
           channel_first: False
-      - NormalizeImage:
+      - name: NormalizeImage
           scale: 1
           mean: [ 123.675, 116.28, 103.53 ]
           std: [ 58.395, 57.12, 57.375 ]
           order: 'hwc'
-      - KieLabelEncode: # Class handling label
+      - name: KieLabelEncode # Class handling label
           character_dict_path: ./train_data/wildreceipt/dict.txt
           class_path: *class_path
-      - KieResize:
-      - ToCHWImage:
-      - KeepKeys:
+      - name: KieResize
+      - name: ToCHWImage
+      - name: KeepKeys
           keep_keys: [ 'image', 'relations', 'texts', 'points', 'labels', 'tag', 'shape' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
@@ -89,19 +89,19 @@ Eval:
     label_file_list:
       - ./train_data/wildreceipt/wildreceipt_test.txt
     transforms:
-      - DecodeImage: # load image
+      - name: DecodeImage # load image
           img_mode: RGB
           channel_first: False
-      - KieLabelEncode: # Class handling label
+      - name: KieLabelEncode # Class handling label
           character_dict_path: ./train_data/wildreceipt/dict.txt
-      - KieResize:
-      - NormalizeImage:
+      - name: KieResize
+      - name: NormalizeImage
           scale: 1
           mean: [ 123.675, 116.28, 103.53 ]
           std: [ 58.395, 57.12, 57.375 ]
           order: 'hwc'
-      - ToCHWImage:
-      - KeepKeys:
+      - name: ToCHWImage
+      - name: KeepKeys
           keep_keys: [ 'image', 'relations', 'texts', 'points', 'labels', 'tag', 'ori_image', 'ori_boxes', 'shape' ]
   DataLoader:
     shuffle: False

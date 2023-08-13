@@ -114,14 +114,14 @@ Train:
     label_file_list:
       - ./train_data/train_list.txt
     transforms:
-      - DecodeImage:
+      - name: DecodeImage
           img_mode: BGR
           channel_first: false
-      - RecAug:
-      - CTCLabelEncode:
-      - RecResizeImg:
+      - name: RecAug
+      - name: CTCLabelEncode
+      - name: RecResizeImg
           image_shape: [ 3, 32, 320 ]
-      - KeepKeys:
+      - name: KeepKeys
           keep_keys:
             - image
             - label
@@ -139,13 +139,13 @@ Eval:
     label_file_list:
       - ./train_data/val_list.txt
     transforms:
-      - DecodeImage:
+      - name: DecodeImage
           img_mode: BGR
           channel_first: false
-      - CTCLabelEncode:
-      - RecResizeImg:
+      - name: CTCLabelEncode
+      - name: RecResizeImg
           image_shape: [ 3, 32, 320 ]
-      - KeepKeys:
+      - name: KeepKeys
           keep_keys:
             - image
             - label

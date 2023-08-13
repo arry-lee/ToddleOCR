@@ -68,14 +68,14 @@ Train:
     name: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/training/
     transforms:
-      - DecodeImage: # load image
+      - name: DecodeImage # load image
           img_mode: RGB
           channel_first: False
-      - ABINetRecAug:
-      - VLLabelEncode: # Class handling label
-      - VLRecResizeImg:
+      - name: ABINetRecAug
+      - name: VLLabelEncode # Class handling label
+      - name: VLRecResizeImg
           image_shape: [ 3, 64, 256 ]
-      - KeepKeys:
+      - name: KeepKeys
           keep_keys: [ 'image', 'label', 'label_res', 'label_sub', 'label_id', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
@@ -88,13 +88,13 @@ Eval:
     name: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/validation/
     transforms:
-      - DecodeImage: # load image
+      - name: DecodeImage # load image
           img_mode: RGB
           channel_first: False
-      - VLLabelEncode: # Class handling label
-      - VLRecResizeImg:
+      - name: VLLabelEncode # Class handling label
+      - name: VLRecResizeImg
           image_shape: [ 3, 64, 256 ]
-      - KeepKeys:
+      - name: KeepKeys
           keep_keys: [ 'image', 'label', 'label_res', 'label_sub', 'label_id', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False

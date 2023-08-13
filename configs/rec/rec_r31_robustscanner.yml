@@ -66,15 +66,15 @@ Train:
     name: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/training/
     transforms:
-      - DecodeImage: # load image
+      - name: DecodeImage # load image
           img_mode: BGR
           channel_first: False
-      - SARLabelEncode: # Class handling label
-      - RobustScannerRecResizeImg:
+      - name: SARLabelEncode # Class handling label
+      - name: RobustScannerRecResizeImg
           image_shape: [ 3, 48, 48, 160 ] # h:48 w:[48,160]
           width_downsample_ratio: 0.25
           max_text_length: *max_text_length
-      - KeepKeys:
+      - name: KeepKeys
           keep_keys: [ 'image', 'label', 'valid_ratio', 'word_positons' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
@@ -88,15 +88,15 @@ Eval:
     name: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/evaluation/
     transforms:
-      - DecodeImage: # load image
+      - name: DecodeImage # load image
           img_mode: BGR
           channel_first: False
-      - SARLabelEncode: # Class handling label
-      - RobustScannerRecResizeImg:
+      - name: SARLabelEncode # Class handling label
+      - name: RobustScannerRecResizeImg
           image_shape: [ 3, 48, 48, 160 ]
           max_text_length: *max_text_length
           width_downsample_ratio: 0.25
-      - KeepKeys:
+      - name: KeepKeys
           keep_keys: [ 'image', 'label', 'valid_ratio', 'word_positons' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False

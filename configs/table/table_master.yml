@@ -74,30 +74,30 @@ Train:
     data_dir: train_data/table/pubtabnet/train/
     label_file_list: [ train_data/table/pubtabnet/PubTabNet_2.0.0_train.jsonl ]
     transforms:
-      - DecodeImage:
+      - name: DecodeImage
           img_mode: BGR
           channel_first: False
-      - TableMasterLabelEncode:
+      - name: TableMasterLabelEncode
           learn_empty_box: False
           merge_no_span_structure: *merge_no_span_structure
           replace_empty_cell_token: True
           loc_reg_num: *loc_reg_num
           max_text_length: *max_text_length
-      - ResizeTableImage:
+      - name: ResizeTableImage
           max_len: 480
           resize_bboxes: True
-      - PaddingTableImage:
+      - name: PaddingTableImage
           size: [ 480, 480 ]
-      - TableBoxEncode:
+      - name: TableBoxEncode
           in_box_format: *box_format
           out_box_format: *box_format
-      - NormalizeImage:
+      - name: NormalizeImage
           scale: 1./255.
           mean: [ 0.5, 0.5, 0.5 ]
           std: [ 0.5, 0.5, 0.5 ]
           order: hwc
-      - ToCHWImage: null
-      - KeepKeys:
+      - name: ToCHWImage null
+      - name: KeepKeys
           keep_keys: [ image, structure, bboxes, bbox_masks, shape ]
   DataLoader:
     shuffle: True
@@ -111,30 +111,30 @@ Eval:
     data_dir: train_data/table/pubtabnet/val/
     label_file_list: [ train_data/table/pubtabnet/PubTabNet_2.0.0_val.jsonl ]
     transforms:
-      - DecodeImage:
+      - name: DecodeImage
           img_mode: BGR
           channel_first: False
-      - TableMasterLabelEncode:
+      - name: TableMasterLabelEncode
           learn_empty_box: False
           merge_no_span_structure: *merge_no_span_structure
           replace_empty_cell_token: True
           loc_reg_num: *loc_reg_num
           max_text_length: *max_text_length
-      - ResizeTableImage:
+      - name: ResizeTableImage
           max_len: 480
           resize_bboxes: True
-      - PaddingTableImage:
+      - name: PaddingTableImage
           size: [ 480, 480 ]
-      - TableBoxEncode:
+      - name: TableBoxEncode
           in_box_format: *box_format
           out_box_format: *box_format
-      - NormalizeImage:
+      - name: NormalizeImage
           scale: 1./255.
           mean: [ 0.5, 0.5, 0.5 ]
           std: [ 0.5, 0.5, 0.5 ]
           order: hwc
-      - ToCHWImage: null
-      - KeepKeys:
+      - name: ToCHWImage null
+      - name: KeepKeys
           keep_keys: [ image, structure, bboxes, bbox_masks, shape ]
   DataLoader:
     shuffle: False

@@ -57,14 +57,14 @@ Train:
     data_dir: ./train_data/
     ratio_list: 1.0
     transforms:
-      - DecodeImage: # load image
+      - name: DecodeImage # load image
           img_mode: BGR
           channel_first: False
-      - SARLabelEncode: # Class handling label
-      - SARRecResizeImg:
+      - name: SARLabelEncode # Class handling label
+      - name: SARRecResizeImg
           image_shape: [ 3, 48, 48, 160 ] # h:48 w:[48,160]
           width_downsample_ratio: 0.25
-      - KeepKeys:
+      - name: KeepKeys
           keep_keys: [ 'image', 'label', 'valid_ratio' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
@@ -78,14 +78,14 @@ Eval:
     name: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/evaluation/
     transforms:
-      - DecodeImage: # load image
+      - name: DecodeImage # load image
           img_mode: BGR
           channel_first: False
-      - SARLabelEncode: # Class handling label
-      - SARRecResizeImg:
+      - name: SARLabelEncode # Class handling label
+      - name: SARRecResizeImg
           image_shape: [ 3, 48, 48, 160 ]
           width_downsample_ratio: 0.25
-      - KeepKeys:
+      - name: KeepKeys
           keep_keys: [ 'image', 'label', 'valid_ratio' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False

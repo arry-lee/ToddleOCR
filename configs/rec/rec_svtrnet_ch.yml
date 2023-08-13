@@ -98,25 +98,25 @@ Train:
       - ./train_data/train_list.txt
     ext_op_transform_idx: 1
     transforms:
-      - DecodeImage:
+      - name: DecodeImage
           img_mode: BGR
           channel_first: false
-      - RecConAug:
+      - name: RecConAug
           prob: 0.5
           ext_data_num: 2
           image_shape:
             - 32
             - 320
             - 3
-      - RecAug: null
-      - CTCLabelEncode: null
-      - SVTRRecResizeImg:
+      - name: RecAug null
+      - name: CTCLabelEncode null
+      - name: SVTRRecResizeImg
           image_shape:
             - 3
             - 32
             - 320
           padding: true
-      - KeepKeys:
+      - name: KeepKeys
           keep_keys:
             - image
             - label
@@ -133,17 +133,17 @@ Eval:
     label_file_list:
       - ./train_data/val_list.txt
     transforms:
-      - DecodeImage:
+      - name: DecodeImage
           img_mode: BGR
           channel_first: false
-      - CTCLabelEncode: null
-      - SVTRRecResizeImg:
+      - name: CTCLabelEncode null
+      - name: SVTRRecResizeImg
           image_shape:
             - 3
             - 32
             - 320
           padding: true
-      - KeepKeys:
+      - name: KeepKeys
           keep_keys:
             - image
             - label

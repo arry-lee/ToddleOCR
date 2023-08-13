@@ -74,15 +74,15 @@ Train:
     name: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/training
     transforms:
-      - DecodeImage: # load image
+      - name: DecodeImage # load image
           img_mode: BGR
           channel_first: False
-      - RFLLabelEncode: # Class handling label
-      - RFLRecResizeImg:
+      - name: RFLLabelEncode # Class handling label
+      - name: RFLRecResizeImg
           image_shape: [ 1, 32, 100 ]
           padding: false
           interpolation: 2
-      - KeepKeys:
+      - name: KeepKeys
           keep_keys: [ 'image', 'label', 'length', 'cnt_label' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
@@ -95,15 +95,15 @@ Eval:
     name: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/validation/
     transforms:
-      - DecodeImage: # load image
+      - name: DecodeImage # load image
           img_mode: BGR
           channel_first: False
-      - RFLLabelEncode: # Class handling label
-      - RFLRecResizeImg:
+      - name: RFLLabelEncode # Class handling label
+      - name: RFLRecResizeImg
           image_shape: [ 1, 32, 100 ]
           padding: false
           interpolation: 2
-      - KeepKeys:
+      - name: KeepKeys
           keep_keys: [ 'image', 'label', 'length', 'cnt_label' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False

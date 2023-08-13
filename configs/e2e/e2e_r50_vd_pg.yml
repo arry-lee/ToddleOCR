@@ -73,11 +73,11 @@ Train:
     label_file_list: [ ./train_data/total_text/train/train.txt ]
     ratio_list: [ 1.0 ]
     transforms:
-      - DecodeImage: # load image
+      - name: DecodeImage # load image
           img_mode: BGR
           channel_first: False
-      - E2ELabelEncodeTrain:
-      - PGProcessTrain:
+      - name: E2ELabelEncodeTrain
+      - name: PGProcessTrain
           batch_size: 14  # same as DataLoader: batch_size
           use_resize: True
           use_random_crop: False
@@ -85,7 +85,7 @@ Train:
           min_text_size: 4
           max_text_size: 512
           point_gather_mode: align # two mode: align and none, align mode is better than none mode
-      - KeepKeys:
+      - name: KeepKeys
           keep_keys: [ 'images', 'tcl_maps', 'tcl_label_maps', 'border_maps','direction_maps', 'training_masks', 'label_list', 'pos_list', 'pos_mask' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
@@ -99,19 +99,19 @@ Eval:
     data_dir: ./train_data/total_text/test
     label_file_list: [ ./train_data/total_text/test/test.txt ]
     transforms:
-      - DecodeImage: # load image
+      - name: DecodeImage # load image
           img_mode: BGR
           channel_first: False
-      - E2ELabelEncodeTest:
-      - E2EResizeForTest:
+      - name: E2ELabelEncodeTest
+      - name: E2EResizeForTest
           max_side_len: 768
-      - NormalizeImage:
+      - name: NormalizeImage
           scale: 1./255.
           mean: [ 0.485, 0.456, 0.406 ]
           std: [ 0.229, 0.224, 0.225 ]
           order: 'hwc'
-      - ToCHWImage:
-      - KeepKeys:
+      - name: ToCHWImage
+      - name: KeepKeys
           keep_keys: [ 'image', 'shape', 'polys', 'texts', 'ignore_tags', 'img_id' ]
   DataLoader:
     shuffle: False

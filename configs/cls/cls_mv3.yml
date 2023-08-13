@@ -36,9 +36,9 @@ Optimizer:
   beta1: 0.9
   beta2: 0.999
   lr: 0.001
+  
 LRScheduler:
   name: Cosine
-
 
 
 PostProcessor:
@@ -55,15 +55,15 @@ Train:
     label_file_list:
       - ./train_data/cls/train.txt
     transforms:
-      - DecodeImage: # load image
+      - name: DecodeImage # load image
           img_mode: BGR
           channel_first: False
-      - ClsLabelEncode: # Class handling label
-      - BaseDataAugmentation:
-      - RandAugment:
-      - ClsResizeImg:
+      - name: ClsLabelEncode # Class handling label
+      - name: BaseDataAugmentation
+      - name: RandAugment
+      - name: ClsResizeImg
           image_shape: [ 3, 48, 192 ]
-      - KeepKeys:
+      - name: KeepKeys
           keep_keys: [ 'image', 'label' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
@@ -78,13 +78,13 @@ Eval:
     label_file_list:
       - ./train_data/cls/test.txt
     transforms:
-      - DecodeImage: # load image
+      - name: DecodeImage # load image
           img_mode: BGR
           channel_first: False
-      - ClsLabelEncode: # Class handling label
-      - ClsResizeImg:
+      - name: ClsLabelEncode # Class handling label
+      - name: ClsResizeImg
           image_shape: [ 3, 48, 192 ]
-      - KeepKeys:
+      - name: KeepKeys
           keep_keys: [ 'image', 'label' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False

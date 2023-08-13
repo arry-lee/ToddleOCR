@@ -61,13 +61,13 @@ Train:
     name: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/training/
     transforms:
-      - DecodeImage: # load image
+      - name: DecodeImage # load image
           img_mode: BGR
           channel_first: False
-      - SRNLabelEncode: # Class handling label
-      - SRNRecResizeImg:
+      - name: SRNLabelEncode # Class handling label
+      - name: SRNRecResizeImg
           image_shape: [ 1, 64, 256 ]
-      - KeepKeys:
+      - name: KeepKeys
           keep_keys: [ 'image',
                        'label',
                        'length',
@@ -86,13 +86,13 @@ Eval:
     name: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/validation/
     transforms:
-      - DecodeImage: # load image
+      - name: DecodeImage # load image
           img_mode: BGR
           channel_first: False
-      - SRNLabelEncode: # Class handling label
-      - SRNRecResizeImg:
+      - name: SRNLabelEncode # Class handling label
+      - name: SRNRecResizeImg
           image_shape: [ 1, 64, 256 ]
-      - KeepKeys:
+      - name: KeepKeys
           keep_keys: [ 'image',
                        'label',
                        'length',

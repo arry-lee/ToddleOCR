@@ -66,17 +66,17 @@ Train:
     name: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/training/
     transforms:
-      - Fasttext:
+      - name: Fasttext
           path: "./cc.en.300.bin"
-      - DecodeImage: # load image
+      - name: DecodeImage # load image
           img_mode: BGR
           channel_first: False
-      - SEEDLabelEncode: # Class handling label
-      - RecResizeImg:
+      - name: SEEDLabelEncode # Class handling label
+      - name: RecResizeImg
           character_dict_path:
           image_shape: [ 3, 64, 256 ]
           padding: False
-      - KeepKeys:
+      - name: KeepKeys
           keep_keys: [ 'image', 'label', 'length', 'fast_label' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
@@ -89,15 +89,15 @@ Eval:
     name: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/evaluation/
     transforms:
-      - DecodeImage: # load image
+      - name: DecodeImage # load image
           img_mode: BGR
           channel_first: False
-      - SEEDLabelEncode: # Class handling label
-      - RecResizeImg:
+      - name: SEEDLabelEncode # Class handling label
+      - name: RecResizeImg
           character_dict_path:
           image_shape: [ 3, 64, 256 ]
           padding: False
-      - KeepKeys:
+      - name: KeepKeys
           keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False

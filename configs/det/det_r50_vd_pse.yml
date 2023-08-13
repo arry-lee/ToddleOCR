@@ -69,33 +69,33 @@ Train:
       - ./train_data/icdar2015/text_localization/train_icdar2015_label.txt
     ratio_list: [ 1.0 ]
     transforms:
-      - DecodeImage: # load image
+      - name: DecodeImage # load image
           img_mode: BGR
           channel_first: False
-      - DetLabelEncode: # Class handling label
-      - ColorJitter:
+      - name: DetLabelEncode # Class handling label
+      - name: ColorJitter
           brightness: 0.12549019607843137
           saturation: 0.5
-      - IaaAugment:
+      - name: IaaAugment
           augmenter_args:
             - { 'type': Resize, 'args': { 'size': [ 0.5, 3 ] } }
             - { 'type': Fliplr, 'args': { 'p': 0.5 } }
             - { 'type': Affine, 'args': { 'rotate': [ -10, 10 ] } }
-      - MakePseGt:
+      - name: MakePseGt
           kernel_num: 7
           min_shrink_ratio: 0.4
           size: 640
-      - RandomCropImgMask:
+      - name: RandomCropImgMask
           size: [ 640,640 ]
           main_key: gt_text
           crop_keys: [ 'image', 'gt_text', 'gt_kernels', 'mask' ]
-      - NormalizeImage:
+      - name: NormalizeImage
           scale: 1./255.
           mean: [ 0.485, 0.456, 0.406 ]
           std: [ 0.229, 0.224, 0.225 ]
           order: 'hwc'
-      - ToCHWImage:
-      - KeepKeys:
+      - name: ToCHWImage
+      - name: KeepKeys
           keep_keys: [ 'image', 'gt_text', 'gt_kernels', 'mask' ] # the order of the dataloader list
   DataLoader:
     shuffle: True
@@ -111,20 +111,20 @@ Eval:
       - ./train_data/icdar2015/text_localization/test_icdar2015_label.txt
     ratio_list: [ 1.0 ]
     transforms:
-      - DecodeImage: # load image
+      - name: DecodeImage # load image
           img_mode: BGR
           channel_first: False
-      - DetLabelEncode: # Class handling label
-      - DetResizeForTest:
+      - name: DetLabelEncode # Class handling label
+      - name: DetResizeForTest
           limit_side_len: 736
           limit_type: min
-      - NormalizeImage:
+      - name: NormalizeImage
           scale: 1./255.
           mean: [ 0.485, 0.456, 0.406 ]
           std: [ 0.229, 0.224, 0.225 ]
           order: 'hwc'
-      - ToCHWImage:
-      - KeepKeys:
+      - name: ToCHWImage
+      - name: KeepKeys
           keep_keys: [ 'image', 'shape', 'polys', 'ignore_tags' ]
   DataLoader:
     shuffle: False

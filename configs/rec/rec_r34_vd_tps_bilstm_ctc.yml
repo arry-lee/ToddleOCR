@@ -63,13 +63,13 @@ Train:
     name: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/training/
     transforms:
-      - DecodeImage: # load image
+      - name: DecodeImage # load image
           img_mode: BGR
           channel_first: False
-      - CTCLabelEncode: # Class handling label
-      - RecResizeImg:
+      - name: CTCLabelEncode # Class handling label
+      - name: RecResizeImg
           image_shape: [ 3, 32, 100 ]
-      - KeepKeys:
+      - name: KeepKeys
           keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
@@ -82,13 +82,13 @@ Eval:
     name: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/validation/
     transforms:
-      - DecodeImage: # load image
+      - name: DecodeImage # load image
           img_mode: BGR
           channel_first: False
-      - CTCLabelEncode: # Class handling label
-      - RecResizeImg:
+      - name: CTCLabelEncode # Class handling label
+      - name: RecResizeImg
           image_shape: [ 3, 32, 100 ]
-      - KeepKeys:
+      - name: KeepKeys
           keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False

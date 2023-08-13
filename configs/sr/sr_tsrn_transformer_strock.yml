@@ -52,12 +52,12 @@ Train:
     name: LMDBDataSetSR
     data_dir: ./train_data/srdata/train
     transforms:
-      - SRResize:
+      - name: SRResize
           imgH: 32
           imgW: 128
           down_sample_scale: 2
-      - SRLabelEncode: # Class handling label
-      - KeepKeys:
+      - name: SRLabelEncode # Class handling label
+      - name: KeepKeys
           keep_keys: [ 'img_lr', 'img_hr', 'length', 'input_tensor', 'label' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False
@@ -70,12 +70,12 @@ Eval:
     name: LMDBDataSetSR
     data_dir: ./train_data/srdata/test
     transforms:
-      - SRResize:
+      - name: SRResize
           imgH: 32
           imgW: 128
           down_sample_scale: 2
-      - SRLabelEncode: # Class handling label
-      - KeepKeys:
+      - name: SRLabelEncode # Class handling label
+      - name: KeepKeys
           keep_keys: [ 'img_lr', 'img_hr','length', 'input_tensor', 'label' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False
