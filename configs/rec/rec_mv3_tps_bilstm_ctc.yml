@@ -21,7 +21,7 @@ Global:
   save_res_path: ./output/rec/predicts_mv3_tps_bilstm_ctc.txt
 
 Optimizer:
-  name: Adam
+  class: Adam
   beta1: 0.9
   beta2: 0.999
   lr: 0.0005
@@ -33,44 +33,44 @@ Model:
   model_type: rec
   algorithm: STARNet
   Transform:
-    name: TPS
+    class: TPS
     num_fiducial: 20
     loc_lr: 0.1
     model_name: small
   Backbone:
-    name: MobileNetV3
+    class: MobileNetV3
     scale: 0.5
     model_name: large
   Neck:
-    name: SequenceEncoder
+    class: SequenceEncoder
     encoder_type: rnn
     hidden_size: 96
   Head:
-    name: CTCHead
+    class: CTCHead
     fc_decay: 0.0004
 
 Loss:
-  name: CTCLoss
+  class: CTCLoss
 
 PostProcessor:
-  name: CTCLabelDecode
+  class: CTCLabelDecode
 
 Metric:
-  name: RecMetric
+  class: RecMetric
   main_indicator: acc
 
 Train:
   Dataset:
-    name: LMDBDataSet
+    class: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/training/
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: BGR
         channel_first: False
-      - name: CTCLabelEncode # Class handling label
-      - name: RecResizeImg
+      - class: CTCLabelEncode # Class handling label
+      - class: RecResizeImg
         image_shape: [ 3, 32, 100 ]
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False
@@ -80,16 +80,16 @@ Train:
 
 Eval:
   Dataset:
-    name: LMDBDataSet
+    class: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/validation/
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: BGR
         channel_first: False
-      - name: CTCLabelEncode # Class handling label
-      - name: RecResizeImg
+      - class: CTCLabelEncode # Class handling label
+      - class: RecResizeImg
         image_shape: [ 3, 32, 100 ]
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False

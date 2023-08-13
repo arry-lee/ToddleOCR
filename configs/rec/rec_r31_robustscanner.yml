@@ -22,11 +22,11 @@ Global:
   save_res_path: ./output/rec/predicts_robustscanner.txt
 
 Optimizer:
-  name: Adam
+  class: Adam
   beta1: 0.9
   beta2: 0.999
 LRScheduler:
-  name: Piecewise
+  class: Piecewise
   decay_epochs: [ 3, 4 ]
   values: [ 0.001, 0.0001, 0.00001 ]
 
@@ -36,10 +36,10 @@ Model:
   algorithm: RobustScanner
   Transform:
   Backbone:
-    name: ResNet31
+    class: ResNet31
     init_type: KaimingNormal
   Head:
-    name: RobustScannerHead
+    class: RobustScannerHead
     enc_outchannles: 128
     hybrid_dec_rnn_layers: 2
     hybrid_dec_dropout: 0
@@ -51,30 +51,30 @@ Model:
     max_text_length: *max_text_length
 
 Loss:
-  name: SARLoss
+  class: SARLoss
 
 PostProcessor:
-  name: SARLabelDecode
+  class: SARLabelDecode
 
 Metric:
-  name: RecMetric
+  class: RecMetric
   is_filter: True
 
 
 Train:
   Dataset:
-    name: LMDBDataSet
+    class: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/training/
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: BGR
         channel_first: False
-      - name: SARLabelEncode # Class handling label
-      - name: RobustScannerRecResizeImg
+      - class: SARLabelEncode # Class handling label
+      - class: RobustScannerRecResizeImg
         image_shape: [ 3, 48, 48, 160 ] # h:48 w:[48,160]
         width_downsample_ratio: 0.25
         max_text_length: *max_text_length
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ 'image', 'label', 'valid_ratio', 'word_positons' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
@@ -85,18 +85,18 @@ Train:
 
 Eval:
   Dataset:
-    name: LMDBDataSet
+    class: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/evaluation/
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: BGR
         channel_first: False
-      - name: SARLabelEncode # Class handling label
-      - name: RobustScannerRecResizeImg
+      - class: SARLabelEncode # Class handling label
+      - class: RobustScannerRecResizeImg
         image_shape: [ 3, 48, 48, 160 ]
         max_text_length: *max_text_length
         width_downsample_ratio: 0.25
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ 'image', 'label', 'valid_ratio', 'word_positons' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False

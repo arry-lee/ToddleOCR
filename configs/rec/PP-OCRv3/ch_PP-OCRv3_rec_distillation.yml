@@ -22,11 +22,11 @@ Global:
 
 
 Optimizer:
-  name: Adam
+  class: Adam
   beta1: 0.9
   beta2: 0.999
 LRScheduler:
-  name: Piecewise
+  class: Piecewise
   decay_epochs: [ 700 ]
   values: [ 0.0005, 0.00005 ]
   warmup_epoch: 5
@@ -35,7 +35,7 @@ LRScheduler:
 
 Model:
   model_type: &model_type "rec"
-  name: DistillationModel
+  class: DistillationModel
   algorithm: Distillation
   Models:
     Teacher:
@@ -46,16 +46,16 @@ Model:
       algorithm: SVTR
       Transform:
       Backbone:
-        name: MobileNetV1Enhance
+        class: MobileNetV1Enhance
         scale: 0.5
         last_conv_stride: [ 1, 2 ]
         last_pool_type: avg
       Head:
-        name: MultiHead
+        class: MultiHead
         head_list:
           - CTCHead:
           Neck:
-            name: svtr
+            class: svtr
             dims: 64
             depth: 2
             hidden_dims: 120
@@ -73,16 +73,16 @@ Model:
       algorithm: SVTR
       Transform:
       Backbone:
-        name: MobileNetV1Enhance
+        class: MobileNetV1Enhance
         scale: 0.5
         last_conv_stride: [ 1, 2 ]
         last_pool_type: avg
       Head:
-        name: MultiHead
+        class: MultiHead
         head_list:
           - CTCHead:
           Neck:
-            name: svtr
+            class: svtr
             dims: 64
             depth: 2
             hidden_dims: 120
@@ -93,7 +93,7 @@ Model:
           enc_dim: 512
           max_text_length: *max_text_length
 Loss:
-  name: CombinedLoss
+  class: CombinedLoss
   loss_config_list:
     - DistillationDMLLoss:
         weight: 1.0
@@ -104,7 +104,7 @@ Loss:
         key: head_out
         multi_head: True
         dis_head: ctc
-        name: dml_ctc
+        class: dml_ctc
     - DistillationDMLLoss:
         weight: 0.5
         act: "softmax"
@@ -114,7 +114,7 @@ Loss:
         key: head_out
         multi_head: True
         dis_head: sar
-        name: dml_sar
+        class: dml_sar
     - DistillationDistanceLoss:
         weight: 1.0
         mode: "l2"
@@ -133,13 +133,13 @@ Loss:
         multi_head: True
 
 PostProcessor:
-  name: DistillationCTCLabelDecode
+  class: DistillationCTCLabelDecode
   model_name: [ "Student", "Teacher" ]
   key: head_out
   multi_head: True
 
 Metric:
-  name: DistillationMetric
+  class: DistillationMetric
   base_metric_name: RecMetric
   main_indicator: acc
   key: "Student"
@@ -147,25 +147,25 @@ Metric:
 
 Train:
   Dataset:
-    name: SimpleDataSet
+    class: SimpleDataSet
     data_dir: ./train_data/
     ext_op_transform_idx: 1
     label_file_list:
       - ./train_data/train_list.txt
     transforms:
-      - name: DecodeImage
+      - class: DecodeImage
         img_mode: BGR
         channel_first: false
-      - name: RecConAug
+      - class: RecConAug
         prob: 0.5
         ext_data_num: 2
         image_shape: [ 48, 320, 3 ]
         max_text_length: *max_text_length
-      - name: RecAug
-      - name: MultiLabelEncode
-      - name: RecResizeImg
+      - class: RecAug
+      - class: MultiLabelEncode
+      - class: RecResizeImg
         image_shape: [ 3, 48, 320 ]
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys:
           - image
           - label_ctc
@@ -179,18 +179,18 @@ Train:
     num_workers: 4
 Eval:
   Dataset:
-    name: SimpleDataSet
+    class: SimpleDataSet
     data_dir: ./train_data
     label_file_list:
       - ./train_data/val_list.txt
     transforms:
-      - name: DecodeImage
+      - class: DecodeImage
         img_mode: BGR
         channel_first: false
-      - name: MultiLabelEncode
-      - name: RecResizeImg
+      - class: MultiLabelEncode
+      - class: RecResizeImg
         image_shape: [ 3, 48, 320 ]
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys:
           - image
           - label_ctc

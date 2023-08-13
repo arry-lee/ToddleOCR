@@ -21,9 +21,9 @@ Global:
   save_res_path: ./output/rec/predicts_pren.txt
 
 Optimizer:
-  name: Adadelta
+  class: Adadelta
 LRScheduler:
-  name: Piecewise
+  class: Piecewise
   decay_epochs: [ 2, 5, 7 ]
   values: [ 0.5, 0.1, 0.01, 0.001 ]
 
@@ -32,39 +32,39 @@ Model:
   algorithm: PREN
   in_channels: 3
   Backbone:
-    name: EfficientNetb3_PREN
+    class: EfficientNetb3_PREN
   Neck:
-    name: PRENFPN
+    class: PRENFPN
     n_r: 5
     d_model: 384
     max_len: *max_text_length
     dropout: 0.1
   Head:
-    name: PRENHead
+    class: PRENHead
 
 Loss:
-  name: PRENLoss
+  class: PRENLoss
 
 PostProcessor:
-  name: PRENLabelDecode
+  class: PRENLabelDecode
 
 Metric:
-  name: RecMetric
+  class: RecMetric
   main_indicator: acc
 
 Train:
   Dataset:
-    name: LMDBDataSet
+    class: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/training/
     transforms:
-      - name: DecodeImage
+      - class: DecodeImage
         img_mode: BGR
         channel_first: False
-      - name: PRENLabelEncode
-      - name: RecAug
-      - name: PRENResizeImg
+      - class: PRENLabelEncode
+      - class: RecAug
+      - class: PRENResizeImg
         image_shape: [ 64, 256 ]  # h,w
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ 'image', 'label' ]
   DataLoader:
     shuffle: True
@@ -74,16 +74,16 @@ Train:
 
 Eval:
   Dataset:
-    name: LMDBDataSet
+    class: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/validation/
     transforms:
-      - name: DecodeImage
+      - class: DecodeImage
         img_mode: BGR
         channel_first: False
-      - name: PRENLabelEncode
-      - name: PRENResizeImg
+      - class: PRENLabelEncode
+      - class: PRENResizeImg
         image_shape: [ 64, 256 ]  # h,w
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ 'image', 'label' ]
   DataLoader:
     shuffle: False

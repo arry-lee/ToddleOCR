@@ -21,58 +21,58 @@ Model:
   algorithm: DB++
   Transform: null
   Backbone:
-    name: ResNet
+    class: ResNet
     layers: 50
     dcn_stage: [ False, True, True, True ]
   Neck:
-    name: DBFPN
+    class: DBFPN
     out_channels: 256
     use_asf: True
   Head:
-    name: DBHead
+    class: DBHead
     k: 50
 Loss:
-  name: DBLoss
+  class: DBLoss
   balance_loss: true
   main_loss_type: BCELoss
   alpha: 5
   beta: 10
   ohem_ratio: 3
 Optimizer:
-  name: Momentum
+  class: Momentum
   momentum: 0.9
   lr: 0.007
 LRScheduler:
-  name: DecayLearningRate
+  class: DecayLearningRate
   
   epochs: 1000
   factor: 0.9
   end_lr: 0
   weight_decay: 0.0001
 PostProcessor:
-  name: DBPostProcess
+  class: DBPostProcess
   thresh: 0.3
   box_thresh: 0.6
   max_candidates: 1000
   unclip_ratio: 1.5
   det_box_type: 'quad' # 'quad' or 'poly'
 Metric:
-  name: DetMetric
+  class: DetMetric
   main_indicator: hmean
 Train:
   Dataset:
-    name: SimpleDataSet
+    class: SimpleDataSet
     data_dir: ./train_data/icdar2015/text_localization/
     label_file_list:
       - ./train_data/icdar2015/text_localization/train_icdar2015_label.txt
     ratio_list:
       - 1.0
     transforms:
-      - name: DecodeImage
+      - class: DecodeImage
         img_mode: BGR
         channel_first: false
-      - name: DetLabelEncode null
-      - name: IaaAugment
+      - class: DetLabelEncode null
+      - class: IaaAugment
         augmenter_args:
           - type: Fliplr
             args:
@@ -87,20 +87,20 @@ Train:
               size:
                 - 0.5
                 - 3
-      - name: EastRandomCropData
+      - class: EastRandomCropData
         size:
           - 640
           - 640
         max_tries: 10
         keep_ratio: true
-      - name: MakeShrinkMap
+      - class: MakeShrinkMap
         shrink_ratio: 0.4
         min_text_size: 8
-      - name: MakeBorderMap
+      - class: MakeBorderMap
         shrink_ratio: 0.4
         thresh_min: 0.3
         thresh_max: 0.7
-      - name: NormalizeImage
+      - class: NormalizeImage
         scale: 1./255.
         mean:
           - 0.48109378172549
@@ -111,8 +111,8 @@ Train:
           - 1.0
           - 1.0
         order: hwc
-      - name: ToCHWImage
-      - name: KeepKeys
+      - class: ToCHWImage
+      - class: KeepKeys
         keep_keys:
           - image
           - threshold_map
@@ -126,20 +126,20 @@ Train:
     num_workers: 8
 Eval:
   Dataset:
-    name: SimpleDataSet
+    class: SimpleDataSet
     data_dir: ./train_data/icdar2015/text_localization
     label_file_list:
       - ./train_data/icdar2015/text_localization/test_icdar2015_label.txt
     transforms:
-      - name: DecodeImage
+      - class: DecodeImage
         img_mode: BGR
         channel_first: false
-      - name: DetLabelEncode null
-      - name: DetResizeForTest
+      - class: DetLabelEncode null
+      - class: DetResizeForTest
         image_shape:
           - 1152
           - 2048
-      - name: NormalizeImage
+      - class: NormalizeImage
         scale: 1./255.
         mean:
           - 0.48109378172549
@@ -150,8 +150,8 @@ Eval:
           - 1.0
           - 1.0
         order: hwc
-      - name: ToCHWImage
-      - name: KeepKeys
+      - class: ToCHWImage
+      - class: KeepKeys
         keep_keys:
           - image
           - shape

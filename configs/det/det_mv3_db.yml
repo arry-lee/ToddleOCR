@@ -22,18 +22,18 @@ Model:
   algorithm: DB
   Transform:
   Backbone:
-    name: MobileNetV3
+    class: MobileNetV3
     scale: 0.5
     model_name: large
   Neck:
-    name: DBFPN
+    class: DBFPN
     out_channels: 256
   Head:
-    name: DBHead
+    class: DBHead
     k: 50
 
 Loss:
-  name: DBLoss
+  class: DBLoss
   balance_loss: true
   main_loss_type: DiceLoss
   alpha: 5
@@ -41,7 +41,7 @@ Loss:
   ohem_ratio: 3
 
 Optimizer:
-  name: Adam
+  class: Adam
   beta1: 0.9
   beta2: 0.999
   lr: 0.001
@@ -50,51 +50,51 @@ LRScheduler:
 
 
 PostProcessor:
-  name: DBPostProcess
+  class: DBPostProcess
   thresh: 0.3
   box_thresh: 0.6
   max_candidates: 1000
   unclip_ratio: 1.5
 
 Metric:
-  name: DetMetric
+  class: DetMetric
   main_indicator: hmean
 
 Train:
   Dataset:
-    name: SimpleDataSet
+    class: SimpleDataSet
     data_dir: ./train_data/icdar2015/text_localization/
     label_file_list:
       - ./train_data/icdar2015/text_localization/train_icdar2015_label.txt
     ratio_list: [ 1.0 ]
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: BGR
         channel_first: False
-      - name: DetLabelEncode # Class handling label
-      - name: IaaAugment
+      - class: DetLabelEncode # Class handling label
+      - class: IaaAugment
         augmenter_args:
           - { 'type': Fliplr, 'args': { 'p': 0.5 } }
           - { 'type': Affine, 'args': { 'rotate': [ -10, 10 ] } }
           - { 'type': Resize, 'args': { 'size': [ 0.5, 3 ] } }
-      - name: EastRandomCropData
+      - class: EastRandomCropData
         size: [ 640, 640 ]
         max_tries: 50
         keep_ratio: true
-      - name: MakeBorderMap
+      - class: MakeBorderMap
         shrink_ratio: 0.4
         thresh_min: 0.3
         thresh_max: 0.7
-      - name: MakeShrinkMap
+      - class: MakeShrinkMap
         shrink_ratio: 0.4
         min_text_size: 8
-      - name: NormalizeImage
+      - class: NormalizeImage
         scale: 1./255.
         mean: [ 0.485, 0.456, 0.406 ]
         std: [ 0.229, 0.224, 0.225 ]
         order: 'hwc'
-      - name: ToCHWImage
-      - name: KeepKeys
+      - class: ToCHWImage
+      - class: KeepKeys
         keep_keys: [ 'image', 'threshold_map', 'threshold_mask', 'shrink_map', 'shrink_mask' ] # the order of the dataloader list
   DataLoader:
     shuffle: True
@@ -105,24 +105,24 @@ Train:
 
 Eval:
   Dataset:
-    name: SimpleDataSet
+    class: SimpleDataSet
     data_dir: ./train_data/icdar2015/text_localization/
     label_file_list:
       - ./train_data/icdar2015/text_localization/test_icdar2015_label.txt
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: BGR
         channel_first: False
-      - name: DetLabelEncode # Class handling label
-      - name: DetResizeForTest
+      - class: DetLabelEncode # Class handling label
+      - class: DetResizeForTest
         image_shape: [ 736, 1280 ]
-      - name: NormalizeImage
+      - class: NormalizeImage
         scale: 1./255.
         mean: [ 0.485, 0.456, 0.406 ]
         std: [ 0.229, 0.224, 0.225 ]
         order: 'hwc'
-      - name: ToCHWImage
-      - name: KeepKeys
+      - class: ToCHWImage
+      - class: KeepKeys
         keep_keys: [ 'image', 'shape', 'polys', 'ignore_tags' ]
   DataLoader:
     shuffle: False

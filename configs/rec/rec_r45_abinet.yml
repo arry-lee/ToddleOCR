@@ -22,12 +22,12 @@ Global:
   save_res_path: ./output/rec/predicts_abinet.txt
 
 Optimizer:
-  name: Adam
+  class: Adam
   beta1: 0.9
   beta2: 0.99
   clip_norm: 20.0
 LRScheduler:
-  name: Piecewise
+  class: Piecewise
   decay_epochs: [ 6 ]
   values: [ 0.0001, 0.00001 ]
 
@@ -38,38 +38,38 @@ Model:
   in_channels: 3
   Transform:
   Backbone:
-    name: ResNet45
+    class: ResNet45
   Head:
-    name: ABINetHead
+    class: ABINetHead
     use_lang: True
     iter_size: 3
 
 
 Loss:
-  name: CELoss
+  class: CELoss
   ignore_index: &ignore_index 100 # Must be greater than the number of character classes
 
 PostProcessor:
-  name: ABINetLabelDecode
+  class: ABINetLabelDecode
 
 Metric:
-  name: RecMetric
+  class: RecMetric
   main_indicator: acc
 
 Train:
   Dataset:
-    name: LMDBDataSet
+    class: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/training/
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: RGB
         channel_first: False
-      - name: ABINetRecAug
-      - name: ABINetLabelEncode # Class handling label
+      - class: ABINetRecAug
+      - class: ABINetLabelEncode # Class handling label
         ignore_index: *ignore_index
-      - name: ABINetRecResizeImg
+      - class: ABINetRecResizeImg
         image_shape: [ 3, 32, 128 ]
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
@@ -79,17 +79,17 @@ Train:
 
 Eval:
   Dataset:
-    name: LMDBDataSet
+    class: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/evaluation/
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: RGB
         channel_first: False
-      - name: ABINetLabelEncode # Class handling label
+      - class: ABINetLabelEncode # Class handling label
         ignore_index: *ignore_index
-      - name: ABINetRecResizeImg
+      - class: ABINetRecResizeImg
         image_shape: [ 3, 32, 128 ]
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False

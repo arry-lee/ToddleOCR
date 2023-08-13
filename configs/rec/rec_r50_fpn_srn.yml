@@ -23,7 +23,7 @@ Global:
 
 
 Optimizer:
-  name: Adam
+  class: Adam
   beta1: 0.9
   beta2: 0.999
   clip_norm: 10.0
@@ -37,9 +37,9 @@ Model:
   in_channels: 1
   Transform:
   Backbone:
-    name: ResNetFPN
+    class: ResNetFPN
   Head:
-    name: SRNHead
+    class: SRNHead
     max_text_length: 25
     num_heads: 8
     num_encoder_TUs: 2
@@ -47,27 +47,27 @@ Model:
     hidden_dims: 512
 
 Loss:
-  name: SRNLoss
+  class: SRNLoss
 
 PostProcessor:
-  name: SRNLabelDecode
+  class: SRNLabelDecode
 
 Metric:
-  name: RecMetric
+  class: RecMetric
   main_indicator: acc
 
 Train:
   Dataset:
-    name: LMDBDataSet
+    class: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/training/
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: BGR
         channel_first: False
-      - name: SRNLabelEncode # Class handling label
-      - name: SRNRecResizeImg
+      - class: SRNLabelEncode # Class handling label
+      - class: SRNRecResizeImg
         image_shape: [ 1, 64, 256 ]
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ 'image',
                      'label',
                      'length',
@@ -83,16 +83,16 @@ Train:
 
 Eval:
   Dataset:
-    name: LMDBDataSet
+    class: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/validation/
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: BGR
         channel_first: False
-      - name: SRNLabelEncode # Class handling label
-      - name: SRNRecResizeImg
+      - class: SRNLabelEncode # Class handling label
+      - class: SRNRecResizeImg
         image_shape: [ 1, 64, 256 ]
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ 'image',
                      'label',
                      'length',

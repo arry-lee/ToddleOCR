@@ -20,57 +20,57 @@ Model:
   algorithm: EAST
   Transform:
   Backbone:
-    name: ResNet_vd
+    class: ResNet_vd
     layers: 50
   Neck:
-    name: EASTFPN
+    class: EASTFPN
     model_name: large
   Head:
-    name: EASTHead
+    class: EASTHead
     model_name: large
 
 Loss:
-  name: EASTLoss
+  class: EASTLoss
 
 Optimizer:
-  name: Adam
+  class: Adam
   beta1: 0.9
   beta2: 0.999
   lr: 0.001
 LRScheduler:
-  name: ContantLR
+  class: ContantLR
   
   #  warmup_epoch: 0
 
 
 PostProcessor:
-  name: EASTPostProcess
+  class: EASTPostProcess
   score_thresh: 0.8
   cover_thresh: 0.1
   nms_thresh: 0.2
 
 Metric:
-  name: DetMetric
+  class: DetMetric
   main_indicator: hmean
 
 Train:
   Dataset:
-    name: SimpleDataSet
+    class: SimpleDataSet
     data_dir: ./train_data/icdar2015/text_localization/
     label_file_list:
       - ./train_data/icdar2015/text_localization/train_icdar2015_label.txt
     ratio_list: [ 1.0 ]
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: BGR
         channel_first: False
-      - name: DetLabelEncode # Class handling label
-      - name: EASTProcessTrain
+      - class: DetLabelEncode # Class handling label
+      - class: EASTProcessTrain
         image_shape: [ 512, 512 ]
         background_ratio: 0.125
         min_crop_side_ratio: 0.1
         min_text_size: 10
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ 'image', 'score_map', 'geo_map', 'training_mask' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
@@ -80,25 +80,25 @@ Train:
 
 Eval:
   Dataset:
-    name: SimpleDataSet
+    class: SimpleDataSet
     data_dir: ./train_data/icdar2015/text_localization/
     label_file_list:
       - ./train_data/icdar2015/text_localization/test_icdar2015_label.txt
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: BGR
         channel_first: False
-      - name: DetLabelEncode # Class handling label
-      - name: DetResizeForTest
+      - class: DetLabelEncode # Class handling label
+      - class: DetResizeForTest
         limit_side_len: 2400
         limit_type: max
-      - name: NormalizeImage
+      - class: NormalizeImage
         scale: 1./255.
         mean: [ 0.485, 0.456, 0.406 ]
         std: [ 0.229, 0.224, 0.225 ]
         order: 'hwc'
-      - name: ToCHWImage
-      - name: KeepKeys
+      - class: ToCHWImage
+      - class: KeepKeys
         keep_keys: [ 'image', 'shape', 'polys', 'ignore_tags' ]
   DataLoader:
     shuffle: False

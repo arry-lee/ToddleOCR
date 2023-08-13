@@ -21,13 +21,13 @@ Global:
   save_res_path: ./output/rec/predicts_nrtr.txt
 
 Optimizer:
-  name: Adam
+  class: Adam
   beta1: 0.9
   beta2: 0.99
   clip_norm: 5.0
   lr: 0.0005
 LRScheduler:
-  name: Cosine
+  class: Cosine
   
   warmup_epoch: 2
 
@@ -38,39 +38,39 @@ Model:
   in_channels: 1
   Transform:
   Backbone:
-    name: MTB
+    class: MTB
     cnn_num: 2
   Head:
-    name: Transformer
+    class: Transformer
     d_model: 512
     num_encoder_layers: 6
     beam_size: -1 # When Beam size is greater than 0, it means to use beam search when evaluation.
 
 
 Loss:
-  name: CELoss
+  class: CELoss
   smoothing: True
 
 PostProcessor:
-  name: NRTRLabelDecode
+  class: NRTRLabelDecode
 
 Metric:
-  name: RecMetric
+  class: RecMetric
   main_indicator: acc
 
 Train:
   Dataset:
-    name: LMDBDataSet
+    class: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/training/
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: BGR
         channel_first: False
-      - name: NRTRLabelEncode # Class handling label
-      - name: GrayRecResizeImg
+      - class: NRTRLabelEncode # Class handling label
+      - class: GrayRecResizeImg
         image_shape: [ 100, 32 ] # W H
         resize_type: PIL # PIL or OpenCV
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
@@ -80,17 +80,17 @@ Train:
 
 Eval:
   Dataset:
-    name: LMDBDataSet
+    class: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/evaluation/
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: BGR
         channel_first: False
-      - name: NRTRLabelEncode # Class handling label
-      - name: GrayRecResizeImg
+      - class: NRTRLabelEncode # Class handling label
+      - class: GrayRecResizeImg
         image_shape: [ 100, 32 ] # W H
         resize_type: PIL # PIL or OpenCV
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False

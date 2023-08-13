@@ -22,11 +22,11 @@ Global:
 
 
 Optimizer:
-  name: Adam
+  class: Adam
   beta1: 0.9
   beta2: 0.999
 LRScheduler:
-  name: Piecewise
+  class: Piecewise
   decay_epochs: [ 700 ]
   values: [ 0.001, 0.0001 ]
   warmup_epoch: 5
@@ -34,7 +34,7 @@ LRScheduler:
 
 Model:
   model_type: &model_type "rec"
-  name: DistillationModel
+  class: DistillationModel
   algorithm: Distillation
   Models:
     Teacher:
@@ -45,14 +45,14 @@ Model:
       algorithm: CRNN
       Transform:
       Backbone:
-        name: MobileNetV1Enhance
+        class: MobileNetV1Enhance
         scale: 0.5
       Neck:
-        name: SequenceEncoder
+        class: SequenceEncoder
         encoder_type: rnn
         hidden_size: 64
       Head:
-        name: CTCHead
+        class: CTCHead
         mid_channels: 96
         fc_decay: 0.00002
     Student:
@@ -63,20 +63,20 @@ Model:
       algorithm: CRNN
       Transform:
       Backbone:
-        name: MobileNetV1Enhance
+        class: MobileNetV1Enhance
         scale: 0.5
       Neck:
-        name: SequenceEncoder
+        class: SequenceEncoder
         encoder_type: rnn
         hidden_size: 64
       Head:
-        name: CTCHead
+        class: CTCHead
         mid_channels: 96
         fc_decay: 0.00002
 
 
 Loss:
-  name: CombinedLoss
+  class: CombinedLoss
   loss_config_list:
     - DistillationCTCLoss:
         weight: 1.0
@@ -97,31 +97,31 @@ Loss:
         key: backbone_out
 
 PostProcessor:
-  name: DistillationCTCLabelDecode
+  class: DistillationCTCLabelDecode
   model_name: [ "Student", "Teacher" ]
   key: head_out
 
 Metric:
-  name: DistillationMetric
+  class: DistillationMetric
   base_metric_name: RecMetric
   main_indicator: acc
   key: "Student"
 
 Train:
   Dataset:
-    name: SimpleDataSet
+    class: SimpleDataSet
     data_dir: ./train_data/
     label_file_list:
       - ./train_data/train_list.txt
     transforms:
-      - name: DecodeImage
+      - class: DecodeImage
         img_mode: BGR
         channel_first: false
-      - name: RecAug
-      - name: CTCLabelEncode
-      - name: RecResizeImg
+      - class: RecAug
+      - class: CTCLabelEncode
+      - class: RecResizeImg
         image_shape: [ 3, 32, 320 ]
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys:
           - image
           - label
@@ -134,18 +134,18 @@ Train:
     num_workers: 8
 Eval:
   Dataset:
-    name: SimpleDataSet
+    class: SimpleDataSet
     data_dir: ./train_data
     label_file_list:
       - ./train_data/val_list.txt
     transforms:
-      - name: DecodeImage
+      - class: DecodeImage
         img_mode: BGR
         channel_first: false
-      - name: CTCLabelEncode
-      - name: RecResizeImg
+      - class: CTCLabelEncode
+      - class: RecResizeImg
         image_shape: [ 3, 32, 320 ]
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys:
           - image
           - label

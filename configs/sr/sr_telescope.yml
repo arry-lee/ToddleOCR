@@ -21,7 +21,7 @@ Global:
   save_res_path: ./output/sr/predicts_telescope.txt
 
 Optimizer:
-  name: Adam
+  class: Adam
   beta1: 0.5
   beta2: 0.999
   clip_norm: 0.25
@@ -33,32 +33,32 @@ Model:
   model_type: sr
   algorithm: Telescope
   Transform:
-    name: TBSRN
+    class: TBSRN
     STN: True
     infer_mode: False
 
 Loss:
-  name: TelescopeLoss
+  class: TelescopeLoss
   confuse_dict_path: ./ppocr/utils/dict/confuse.pkl
 
 
 PostProcessor:
-  name: None
+  class: None
 
 Metric:
-  name: SRMetric
+  class: SRMetric
   main_indicator: all
 
 Train:
   Dataset:
-    name: LMDBDataSetSR
+    class: LMDBDataSetSR
     data_dir: ./train_data/TextZoom/train
     transforms:
-      - name: SRResize
+      - class: SRResize
         imgH: 32
         imgW: 128
         down_sample_scale: 2
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ 'img_lr', 'img_hr', 'label' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False
@@ -68,14 +68,14 @@ Train:
 
 Eval:
   Dataset:
-    name: LMDBDataSetSR
+    class: LMDBDataSetSR
     data_dir: ./train_data/TextZoom/test
     transforms:
-      - name: SRResize
+      - class: SRResize
         imgH: 32
         imgW: 128
         down_sample_scale: 2
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ 'img_lr', 'img_hr', 'label' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False

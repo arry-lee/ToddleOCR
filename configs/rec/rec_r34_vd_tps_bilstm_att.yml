@@ -22,7 +22,7 @@ Global:
 
 
 Optimizer:
-  name: Adam
+  class: Adam
   beta1: 0.9
   beta2: 0.999
   lr: 0.0005
@@ -34,44 +34,44 @@ Model:
   model_type: rec
   algorithm: RARE
   Transform:
-    name: TPS
+    class: TPS
     num_fiducial: 20
     loc_lr: 0.1
     model_name: large
   Backbone:
-    name: ResNet
+    class: ResNet
     layers: 34
   Neck:
-    name: SequenceEncoder
+    class: SequenceEncoder
     encoder_type: rnn
     hidden_size: 256 #96
   Head:
-    name: AttentionHead  # AttentionHead
+    class: AttentionHead  # AttentionHead
     hidden_size: 256 #
     l2_decay: 0.00001
 
 Loss:
-  name: AttentionLoss
+  class: AttentionLoss
 
 PostProcessor:
-  name: AttnLabelDecode
+  class: AttnLabelDecode
 
 Metric:
-  name: RecMetric
+  class: RecMetric
   main_indicator: acc
 
 Train:
   Dataset:
-    name: LMDBDataSet
+    class: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/training/
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: BGR
         channel_first: False
-      - name: AttnLabelEncode # Class handling label
-      - name: RecResizeImg
+      - class: AttnLabelEncode # Class handling label
+      - class: RecResizeImg
         image_shape: [ 3, 32, 100 ]
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
@@ -81,16 +81,16 @@ Train:
 
 Eval:
   Dataset:
-    name: LMDBDataSet
+    class: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/validation/
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: BGR
         channel_first: False
-      - name: AttnLabelEncode # Class handling label
-      - name: RecResizeImg
+      - class: AttnLabelEncode # Class handling label
+      - class: RecResizeImg
         image_shape: [ 3, 32, 100 ]
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False

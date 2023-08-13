@@ -22,11 +22,11 @@ Global:
 
 
 Optimizer:
-  name: Adadelta
+  class: Adadelta
   weight_deacy: 0.0
   momentum: 0.9
 LRScheduler:
-  name: Piecewise
+  class: Piecewise
   decay_epochs: [ 4, 5 ]
   values: [ 1.0, 0.1, 0.01 ]
 
@@ -36,47 +36,47 @@ Model:
   model_type: rec
   algorithm: SEED
   Transform:
-    name: STN_ON
+    class: STN_ON
     tps_inputsize: [ 32, 64 ]
     tps_outputsize: [ 32, 100 ]
     num_control_points: 20
     tps_margins: [ 0.05,0.05 ]
     stn_activation: none
   Backbone:
-    name: ResNet_ASTER
+    class: ResNet_ASTER
   Head:
-    name: AsterHead  # AttentionHead
+    class: AsterHead  # AttentionHead
     sDim: 512
     attDim: 512
     max_len_labels: 100
 
 Loss:
-  name: AsterLoss
+  class: AsterLoss
 
 PostProcessor:
-  name: SEEDLabelDecode
+  class: SEEDLabelDecode
 
 Metric:
-  name: RecMetric
+  class: RecMetric
   main_indicator: acc
   is_filter: True
 
 Train:
   Dataset:
-    name: LMDBDataSet
+    class: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/training/
     transforms:
-      - name: Fasttext
+      - class: Fasttext
         path: "./cc.en.300.bin"
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: BGR
         channel_first: False
-      - name: SEEDLabelEncode # Class handling label
-      - name: RecResizeImg
+      - class: SEEDLabelEncode # Class handling label
+      - class: RecResizeImg
         character_dict_path:
         image_shape: [ 3, 64, 256 ]
         padding: False
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ 'image', 'label', 'length', 'fast_label' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
@@ -86,18 +86,18 @@ Train:
 
 Eval:
   Dataset:
-    name: LMDBDataSet
+    class: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/evaluation/
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: BGR
         channel_first: False
-      - name: SEEDLabelEncode # Class handling label
-      - name: RecResizeImg
+      - class: SEEDLabelEncode # Class handling label
+      - class: RecResizeImg
         character_dict_path:
         image_shape: [ 3, 64, 256 ]
         padding: False
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False

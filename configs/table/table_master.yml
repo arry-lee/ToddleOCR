@@ -20,12 +20,12 @@ Global:
 
 
 Optimizer:
-  name: Adam
+  class: Adam
   beta1: 0.9
   beta2: 0.999
   lr: 0.001
 LRScheduler:
-  name: MultiStepDecay
+  class: MultiStepDecay
   
   milestones: [ 12, 15 ]
   gamma: 0.1
@@ -36,7 +36,7 @@ Model:
   model_type: table
   algorithm: TableMaster
   Backbone:
-    name: TableResNetExtra
+    class: TableResNetExtra
     gcb_config:
       ratio: 0.0625
       headers: 1
@@ -45,7 +45,7 @@ Model:
       layers: [ False, True, True, True ]
     layers: [ 1,2,5,3 ]
   Head:
-    name: TableMasterHead
+    class: TableMasterHead
     hidden_size: 512
     headers: 8
     dropout: 0
@@ -54,50 +54,50 @@ Model:
     loc_reg_num: &loc_reg_num 4
 
 Loss:
-  name: TableMasterLoss
+  class: TableMasterLoss
   ignore_index: 42 # set to len of dict + 3
 
 PostProcessor:
-  name: TableMasterLabelDecode
+  class: TableMasterLabelDecode
   box_shape: pad
   merge_no_span_structure: &merge_no_span_structure True
 
 Metric:
-  name: TableMetric
+  class: TableMetric
   main_indicator: acc
   compute_bbox_metric: False
   box_format: *box_format
 
 Train:
   Dataset:
-    name: PubTabDataSet
+    class: PubTabDataSet
     data_dir: train_data/table/pubtabnet/train/
     label_file_list: [ train_data/table/pubtabnet/PubTabNet_2.0.0_train.jsonl ]
     transforms:
-      - name: DecodeImage
+      - class: DecodeImage
         img_mode: BGR
         channel_first: False
-      - name: TableMasterLabelEncode
+      - class: TableMasterLabelEncode
         learn_empty_box: False
         merge_no_span_structure: *merge_no_span_structure
         replace_empty_cell_token: True
         loc_reg_num: *loc_reg_num
         max_text_length: *max_text_length
-      - name: ResizeTableImage
+      - class: ResizeTableImage
         max_len: 480
         resize_bboxes: True
-      - name: PaddingTableImage
+      - class: PaddingTableImage
         size: [ 480, 480 ]
-      - name: TableBoxEncode
+      - class: TableBoxEncode
         in_box_format: *box_format
         out_box_format: *box_format
-      - name: NormalizeImage
+      - class: NormalizeImage
         scale: 1./255.
         mean: [ 0.5, 0.5, 0.5 ]
         std: [ 0.5, 0.5, 0.5 ]
         order: hwc
-      - name: ToCHWImage
-      - name: KeepKeys
+      - class: ToCHWImage
+      - class: KeepKeys
         keep_keys: [ image, structure, bboxes, bbox_masks, shape ]
   DataLoader:
     shuffle: True
@@ -107,34 +107,34 @@ Train:
 
 Eval:
   Dataset:
-    name: PubTabDataSet
+    class: PubTabDataSet
     data_dir: train_data/table/pubtabnet/val/
     label_file_list: [ train_data/table/pubtabnet/PubTabNet_2.0.0_val.jsonl ]
     transforms:
-      - name: DecodeImage
+      - class: DecodeImage
         img_mode: BGR
         channel_first: False
-      - name: TableMasterLabelEncode
+      - class: TableMasterLabelEncode
         learn_empty_box: False
         merge_no_span_structure: *merge_no_span_structure
         replace_empty_cell_token: True
         loc_reg_num: *loc_reg_num
         max_text_length: *max_text_length
-      - name: ResizeTableImage
+      - class: ResizeTableImage
         max_len: 480
         resize_bboxes: True
-      - name: PaddingTableImage
+      - class: PaddingTableImage
         size: [ 480, 480 ]
-      - name: TableBoxEncode
+      - class: TableBoxEncode
         in_box_format: *box_format
         out_box_format: *box_format
-      - name: NormalizeImage
+      - class: NormalizeImage
         scale: 1./255.
         mean: [ 0.5, 0.5, 0.5 ]
         std: [ 0.5, 0.5, 0.5 ]
         order: hwc
-      - name: ToCHWImage
-      - name: KeepKeys
+      - class: ToCHWImage
+      - class: KeepKeys
         keep_keys: [ image, structure, bboxes, bbox_masks, shape ]
   DataLoader:
     shuffle: False

@@ -21,26 +21,26 @@ Model:
   algorithm: DRRG
   Transform:
   Backbone:
-    name: ResNet_vd
+    class: ResNet_vd
     layers: 50
   Neck:
-    name: FPN_UNet
+    class: FPN_UNet
     in_channels: [ 256, 512, 1024, 2048 ]
     out_channels: 32
   Head:
-    name: DRRGHead
+    class: DRRGHead
     in_channels: 32
     text_region_thr: 0.3
     center_region_thr: 0.4
 Loss:
-  name: DRRGLoss
+  class: DRRGLoss
 
 Optimizer:
-  name: Momentum
+  class: Momentum
   momentum: 0.9
   lr: 0.028
 LRScheduler:
-  name: DecayLearningRate
+  class: DecayLearningRate
   
   epochs: 1200
   factor: 0.9
@@ -48,52 +48,52 @@ LRScheduler:
   weight_decay: 0.0001
 
 PostProcessor:
-  name: DRRGPostprocess
+  class: DRRGPostprocess
   link_thr: 0.8
 
 Metric:
-  name: DetFCEMetric
+  class: DetFCEMetric
   main_indicator: hmean
 
 Train:
   Dataset:
-    name: SimpleDataSet
+    class: SimpleDataSet
     data_dir: ./train_data/ctw1500/imgs/
     label_file_list:
       - ./train_data/ctw1500/imgs/training.txt
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: BGR
         channel_first: False
         ignore_orientation: True
-      - name: DetLabelEncode # Class handling label
-      - name: ColorJitter
+      - class: DetLabelEncode # Class handling label
+      - class: ColorJitter
         brightness: 0.12549019607843137
         saturation: 0.5
-      - name: RandomScaling
-      - name: RandomCropFlip
+      - class: RandomScaling
+      - class: RandomCropFlip
         crop_ratio: 0.5
-      - name: RandomCropPolyInstances
+      - class: RandomCropPolyInstances
         crop_ratio: 0.8
         min_side_ratio: 0.3
-      - name: RandomRotatePolyInstances
+      - class: RandomRotatePolyInstances
         rotate_ratio: 0.5
         max_angle: 60
         pad_with_fixed_color: False
-      - name: SquareResizePad
+      - class: SquareResizePad
         target_size: 800
         pad_ratio: 0.6
-      - name: IaaAugment
+      - class: IaaAugment
         augmenter_args:
           - { 'type': Fliplr, 'args': { 'p': 0.5 } }
-      - name: DRRGTargets
-      - name: NormalizeImage
+      - class: DRRGTargets
+      - class: NormalizeImage
         scale: 1./255.
         mean: [ 0.485, 0.456, 0.406 ]
         std: [ 0.229, 0.224, 0.225 ]
         order: 'hwc'
-      - name: ToCHWImage
-      - name: KeepKeys
+      - class: ToCHWImage
+      - class: KeepKeys
         keep_keys: [ 'image', 'gt_text_mask', 'gt_center_region_mask', 'gt_mask',
                      'gt_top_height_map', 'gt_bot_height_map', 'gt_sin_map',
                      'gt_cos_map', 'gt_comp_attribs' ] # dataloader will return list in this order
@@ -105,27 +105,27 @@ Train:
 
 Eval:
   Dataset:
-    name: SimpleDataSet
+    class: SimpleDataSet
     data_dir: ./train_data/ctw1500/imgs/
     label_file_list:
       - ./train_data/ctw1500/imgs/test.txt
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: BGR
         channel_first: False
         ignore_orientation: True
-      - name: DetLabelEncode # Class handling label
-      - name: DetResizeForTest
+      - class: DetLabelEncode # Class handling label
+      - class: DetResizeForTest
         limit_type: 'min'
         limit_side_len: 640
-      - name: NormalizeImage
+      - class: NormalizeImage
         scale: 1./255.
         mean: [ 0.485, 0.456, 0.406 ]
         std: [ 0.229, 0.224, 0.225 ]
         order: 'hwc'
-      - name: Pad
-      - name: ToCHWImage
-      - name: KeepKeys
+      - class: Pad
+      - class: ToCHWImage
+      - class: KeepKeys
         keep_keys: [ 'image', 'shape', 'polys', 'ignore_tags' ]
   DataLoader:
     shuffle: False

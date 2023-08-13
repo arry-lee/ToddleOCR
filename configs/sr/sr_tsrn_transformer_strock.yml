@@ -21,43 +21,43 @@ Global:
   save_res_path: ./output/sr/predicts_gestalt.txt
 
 Optimizer:
-  name: Adam
+  class: Adam
   beta1: 0.5
   beta2: 0.999
   clip_norm: 0.25
 LRScheduler:
-  name: ConstantLR
+  class: ConstantLR
 
 Model:
   model_type: sr
   algorithm: Gestalt
   Transform:
-    name: TSRN
+    class: TSRN
     STN: True
     infer_mode: False
 
 Loss:
-  name: StrokeFocusLoss
+  class: StrokeFocusLoss
   character_dict_path: ./train_data/srdata/english_decomposition.txt
 
 PostProcessor:
-  name: None
+  class: None
 
 Metric:
-  name: SRMetric
+  class: SRMetric
   main_indicator: all
 
 Train:
   Dataset:
-    name: LMDBDataSetSR
+    class: LMDBDataSetSR
     data_dir: ./train_data/srdata/train
     transforms:
-      - name: SRResize
+      - class: SRResize
         imgH: 32
         imgW: 128
         down_sample_scale: 2
-      - name: SRLabelEncode # Class handling label
-      - name: KeepKeys
+      - class: SRLabelEncode # Class handling label
+      - class: KeepKeys
         keep_keys: [ 'img_lr', 'img_hr', 'length', 'input_tensor', 'label' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False
@@ -67,15 +67,15 @@ Train:
 
 Eval:
   Dataset:
-    name: LMDBDataSetSR
+    class: LMDBDataSetSR
     data_dir: ./train_data/srdata/test
     transforms:
-      - name: SRResize
+      - class: SRResize
         imgH: 32
         imgW: 128
         down_sample_scale: 2
-      - name: SRLabelEncode # Class handling label
-      - name: KeepKeys
+      - class: SRLabelEncode # Class handling label
+      - class: KeepKeys
         keep_keys: [ 'img_lr', 'img_hr','length', 'input_tensor', 'label' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False

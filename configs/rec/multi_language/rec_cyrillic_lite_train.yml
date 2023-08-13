@@ -19,12 +19,12 @@ Global:
   infer_mode: false
   use_space_char: true
 Optimizer:
-  name: Adam
+  class: Adam
   beta1: 0.9
   beta2: 0.999
   lr: 0.001
 LRScheduler:
-  name: Cosine
+  class: Cosine
 
 
 Model:
@@ -32,7 +32,7 @@ Model:
   algorithm: CRNN
   Transform: null
   Backbone:
-    name: MobileNetV3
+    class: MobileNetV3
     scale: 0.5
     model_name: small
     small_stride:
@@ -41,37 +41,37 @@ Model:
       - 2
       - 2
   Neck:
-    name: SequenceEncoder
+    class: SequenceEncoder
     encoder_type: rnn
     hidden_size: 48
   Head:
-    name: CTCHead
+    class: CTCHead
     fc_decay: 1.0e-05
 Loss:
-  name: CTCLoss
+  class: CTCLoss
 PostProcessor:
-  name: CTCLabelDecode
+  class: CTCLabelDecode
 Metric:
-  name: RecMetric
+  class: RecMetric
   main_indicator: acc
 Train:
   Dataset:
-    name: SimpleDataSet
+    class: SimpleDataSet
     data_dir: train_data/
     label_file_list:
       - train_data/cyrillic_train.txt
     transforms:
-      - name: DecodeImage
+      - class: DecodeImage
         img_mode: BGR
         channel_first: false
-      - name: RecAug null
-      - name: CTCLabelEncode null
-      - name: RecResizeImg
+      - class: RecAug null
+      - class: CTCLabelEncode null
+      - class: RecResizeImg
         image_shape:
           - 3
           - 32
           - 320
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys:
           - image
           - label
@@ -83,21 +83,21 @@ Train:
     num_workers: 8
 Eval:
   Dataset:
-    name: SimpleDataSet
+    class: SimpleDataSet
     data_dir: train_data/
     label_file_list:
       - train_data/cyrillic_val.txt
     transforms:
-      - name: DecodeImage
+      - class: DecodeImage
         img_mode: BGR
         channel_first: false
-      - name: CTCLabelEncode null
-      - name: RecResizeImg
+      - class: CTCLabelEncode null
+      - class: RecResizeImg
         image_shape:
           - 3
           - 32
           - 320
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys:
           - image
           - label

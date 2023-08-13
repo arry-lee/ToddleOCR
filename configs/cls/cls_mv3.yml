@@ -20,50 +20,50 @@ Model:
   algorithm: CLS
   Transform:
   Backbone:
-    name: MobileNetV3
+    class: MobileNetV3
     scale: 0.35
     model_name: small
   Neck:
   Head:
-    name: ClsHead
+    class: ClsHead
     class_dim: 2
 
 Loss:
-  name: ClsLoss
+  class: ClsLoss
 
 Optimizer:
-  name: Adam
+  class: Adam
   beta1: 0.9
   beta2: 0.999
   lr: 0.001
 
 LRScheduler:
-  name: Cosine
+  class: Cosine
 
 
 PostProcessor:
-  name: ClsPostProcess
+  class: ClsPostProcess
 
 Metric:
-  name: ClsMetric
+  class: ClsMetric
   main_indicator: acc
 
 Train:
   Dataset:
-    name: SimpleDataSet
+    class: SimpleDataSet
     data_dir: ./train_data/cls
     label_file_list:
       - ./train_data/cls/train.txt
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: BGR
         channel_first: False
-      - name: ClsLabelEncode # Class handling label
-      - name: BaseDataAugmentation
-      - name: RandAugment
-      - name: ClsResizeImg
+      - class: ClsLabelEncode # Class handling label
+      - class: BaseDataAugmentation
+      - class: RandAugment
+      - class: ClsResizeImg
         image_shape: [ 3, 48, 192 ]
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ 'image', 'label' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
@@ -73,18 +73,18 @@ Train:
 
 Eval:
   Dataset:
-    name: SimpleDataSet
+    class: SimpleDataSet
     data_dir: ./train_data/cls
     label_file_list:
       - ./train_data/cls/test.txt
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: BGR
         channel_first: False
-      - name: ClsLabelEncode # Class handling label
-      - name: ClsResizeImg
+      - class: ClsLabelEncode # Class handling label
+      - class: ClsResizeImg
         image_shape: [ 3, 48, 192 ]
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ 'image', 'label' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False

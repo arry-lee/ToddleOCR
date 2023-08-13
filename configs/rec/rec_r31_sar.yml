@@ -22,11 +22,11 @@ Global:
   save_res_path: ./output/rec/predicts_sar.txt
 
 Optimizer:
-  name: Adam
+  class: Adam
   beta1: 0.9
   beta2: 0.999
 LRScheduler:
-  name: Piecewise
+  class: Piecewise
   decay_epochs: [ 3, 4 ]
   values: [ 0.001, 0.0001, 0.00001 ]
 
@@ -36,35 +36,35 @@ Model:
   algorithm: SAR
   Transform:
   Backbone:
-    name: ResNet31
+    class: ResNet31
   Head:
-    name: SARHead
+    class: SARHead
 
 Loss:
-  name: SARLoss
+  class: SARLoss
 
 PostProcessor:
-  name: SARLabelDecode
+  class: SARLabelDecode
 
 Metric:
-  name: RecMetric
+  class: RecMetric
 
 
 Train:
   Dataset:
-    name: SimpleDataSet
+    class: SimpleDataSet
     label_file_list: [ './train_data/train_list.txt' ]
     data_dir: ./train_data/
     ratio_list: 1.0
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: BGR
         channel_first: False
-      - name: SARLabelEncode # Class handling label
-      - name: SARRecResizeImg
+      - class: SARLabelEncode # Class handling label
+      - class: SARRecResizeImg
         image_shape: [ 3, 48, 48, 160 ] # h:48 w:[48,160]
         width_downsample_ratio: 0.25
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ 'image', 'label', 'valid_ratio' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
@@ -75,17 +75,17 @@ Train:
 
 Eval:
   Dataset:
-    name: LMDBDataSet
+    class: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/evaluation/
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: BGR
         channel_first: False
-      - name: SARLabelEncode # Class handling label
-      - name: SARRecResizeImg
+      - class: SARLabelEncode # Class handling label
+      - class: SARRecResizeImg
         image_shape: [ 3, 48, 48, 160 ]
         width_downsample_ratio: 0.25
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ 'image', 'label', 'valid_ratio' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False

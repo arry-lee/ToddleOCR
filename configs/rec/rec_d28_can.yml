@@ -21,12 +21,12 @@ Global:
   save_res_path: ./output/rec/predicts_can.txt
 
 Optimizer:
-  name: Momentum
+  class: Momentum
   momentum: 0.9
   clip_norm_global: 100.0
   lr: 0.01
 LRScheduler:
-  name: TwoStepCosine
+  class: TwoStepCosine
   
   warmup_epoch: 1
   weight_decay: 0.0001
@@ -37,14 +37,14 @@ Model:
   in_channels: 1
   Transform:
   Backbone:
-    name: DenseNet
+    class: DenseNet
     growthRate: 24
     reduction: 0.5
     bottleneck: True
     use_dropout: True
     input_channel: 1
   Head:
-    name: CANHead
+    class: CANHead
     in_channel: 684
     out_channel: 111
     max_text_length: 36
@@ -63,32 +63,32 @@ Model:
         word_conv_kernel: 1
 
 Loss:
-  name: CANLoss
+  class: CANLoss
 
 PostProcessor:
-  name: CANLabelDecode
+  class: CANLabelDecode
 
 Metric:
-  name: CANMetric
+  class: CANMetric
   main_indicator: exp_rate
 
 Train:
   Dataset:
-    name: SimpleDataSet
+    class: SimpleDataSet
     data_dir: ./train_data/CROHME/training/images/
     label_file_list: [ "./train_data/CROHME/training/labels.txt" ]
     transforms:
-      - name: DecodeImage
+      - class: DecodeImage
         channel_first: False
-      - name: NormalizeImage
+      - class: NormalizeImage
         mean: [ 0,0,0 ]
         std: [ 1,1,1 ]
         order: 'hwc'
-      - name: GrayImageChannelFormat
+      - class: GrayImageChannelFormat
         inverse: True
-      - name: CANLabelEncode
+      - class: CANLabelEncode
         lower: False
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ 'image', 'label' ]
   DataLoader:
     shuffle: True
@@ -99,21 +99,21 @@ Train:
 
 Eval:
   Dataset:
-    name: SimpleDataSet
+    class: SimpleDataSet
     data_dir: ./train_data/CROHME/evaluation/images/
     label_file_list: [ "./train_data/CROHME/evaluation/labels.txt" ]
     transforms:
-      - name: DecodeImage
+      - class: DecodeImage
         channel_first: False
-      - name: NormalizeImage
+      - class: NormalizeImage
         mean: [ 0,0,0 ]
         std: [ 1,1,1 ]
         order: 'hwc'
-      - name: GrayImageChannelFormat
+      - class: GrayImageChannelFormat
         inverse: True
-      - name: CANLabelEncode
+      - class: CANLabelEncode
         lower: False
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ 'image', 'label' ]
   DataLoader:
     shuffle: False

@@ -27,20 +27,20 @@ Model:
   algorithm: SDMGR
   Transform:
   Backbone:
-    name: Kie_backbone
+    class: Kie_backbone
   Head:
-    name: SDMGRHead
+    class: SDMGRHead
 
 Loss:
-  name: SDMGRLoss
+  class: SDMGRLoss
 
 Optimizer:
-  name: Adam
+  class: Adam
   beta1: 0.9
   beta2: 0.999
   lr: 0.001
 LRScheduler:
-  name: Piecewise
+  class: Piecewise
   
   decay_epochs: [ 60, 80, 100 ]
   values: [ 0.001, 0.0001, 0.00001 ]
@@ -48,33 +48,33 @@ LRScheduler:
 
 
 PostProcessor:
-  name: None
+  class: None
 
 Metric:
-  name: KIEMetric
+  class: KIEMetric
   main_indicator: hmean
 
 Train:
   Dataset:
-    name: SimpleDataSet
+    class: SimpleDataSet
     data_dir: ./train_data/wildreceipt/
     label_file_list: [ './train_data/wildreceipt/wildreceipt_train.txt' ]
     ratio_list: [ 1.0 ]
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: RGB
         channel_first: False
-      - name: NormalizeImage
+      - class: NormalizeImage
         scale: 1
         mean: [ 123.675, 116.28, 103.53 ]
         std: [ 58.395, 57.12, 57.375 ]
         order: 'hwc'
-      - name: KieLabelEncode # Class handling label
+      - class: KieLabelEncode # Class handling label
         character_dict_path: ./train_data/wildreceipt/dict.txt
         class_path: *class_path
-      - name: KieResize
-      - name: ToCHWImage
-      - name: KeepKeys
+      - class: KieResize
+      - class: ToCHWImage
+      - class: KeepKeys
         keep_keys: [ 'image', 'relations', 'texts', 'points', 'labels', 'tag', 'shape' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
@@ -84,24 +84,24 @@ Train:
 
 Eval:
   Dataset:
-    name: SimpleDataSet
+    class: SimpleDataSet
     data_dir: ./train_data/wildreceipt
     label_file_list:
       - ./train_data/wildreceipt/wildreceipt_test.txt
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: RGB
         channel_first: False
-      - name: KieLabelEncode # Class handling label
+      - class: KieLabelEncode # Class handling label
         character_dict_path: ./train_data/wildreceipt/dict.txt
-      - name: KieResize
-      - name: NormalizeImage
+      - class: KieResize
+      - class: NormalizeImage
         scale: 1
         mean: [ 123.675, 116.28, 103.53 ]
         std: [ 58.395, 57.12, 57.375 ]
         order: 'hwc'
-      - name: ToCHWImage
-      - name: KeepKeys
+      - class: ToCHWImage
+      - class: KeepKeys
         keep_keys: [ 'image', 'relations', 'texts', 'points', 'labels', 'tag', 'ori_image', 'ori_boxes', 'shape' ]
   DataLoader:
     shuffle: False

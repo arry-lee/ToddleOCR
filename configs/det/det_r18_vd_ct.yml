@@ -20,62 +20,62 @@ Model:
   algorithm: CT
   Transform:
   Backbone:
-    name: ResNet_vd
+    class: ResNet_vd
     layers: 18
   Neck:
-    name: CTFPN
+    class: CTFPN
   Head:
-    name: CT_Head
+    class: CT_Head
     in_channels: 512
     hidden_dim: 128
     num_classes: 3
 
 Loss:
-  name: CTLoss
+  class: CTLoss
 
 Optimizer:
-  name: Adam
+  class: Adam
   lr: 0.001
 
 LRScheduler: #PolynomialDecay
-  name: Linear
+  class: Linear
   end_lr: 0.
   epochs: 600
   step_each_epoch: 1254
   power: 0.9
 
 PostProcessor:
-  name: CTPostProcess
+  class: CTPostProcess
   box_type: poly
 
 Metric:
-  name: CTMetric
+  class: CTMetric
   main_indicator: f_score
 
 Train:
   Dataset:
-    name: SimpleDataSet
+    class: SimpleDataSet
     data_dir: ./train_data/total_text/train
     label_file_list:
       - ./train_data/total_text/train/train.txt
     ratio_list: [ 1.0 ]
     transforms:
-      - name: DecodeImage
+      - class: DecodeImage
         img_mode: RGB
         channel_first: False
-      - name: CTLabelEncode # Class handling label
-      - name: RandomScale
-      - name: MakeShrink
-      - name: GroupRandomHorizontalFlip
-      - name: GroupRandomRotate
-      - name: GroupRandomCropPadding
-      - name: MakeCentripetalShift
-      - name: ColorJitter
+      - class: CTLabelEncode # Class handling label
+      - class: RandomScale
+      - class: MakeShrink
+      - class: GroupRandomHorizontalFlip
+      - class: GroupRandomRotate
+      - class: GroupRandomCropPadding
+      - class: MakeCentripetalShift
+      - class: ColorJitter
         brightness: 0.125
         saturation: 0.5
-      - name: ToCHWImage
-      - name: NormalizeImage
-      - name: KeepKeys
+      - class: ToCHWImage
+      - class: NormalizeImage
+      - class: KeepKeys
         keep_keys: [ 'image', 'gt_kernel', 'training_mask', 'gt_instance', 'gt_kernel_instance', 'training_mask_distance', 'gt_distance' ] # the order of the dataloader list
   DataLoader:
     shuffle: True
@@ -85,21 +85,21 @@ Train:
 
 Eval:
   Dataset:
-    name: SimpleDataSet
+    class: SimpleDataSet
     data_dir: ./train_data/total_text/test
     label_file_list:
       - ./train_data/total_text/test/test.txt
     ratio_list: [ 1.0 ]
     transforms:
-      - name: DecodeImage
+      - class: DecodeImage
         img_mode: RGB
         channel_first: False
-      - name: CTLabelEncode # Class handling label
-      - name: ScaleAlignedShort
-      - name: NormalizeImage
+      - class: CTLabelEncode # Class handling label
+      - class: ScaleAlignedShort
+      - class: NormalizeImage
         order: 'hwc'
-      - name: ToCHWImage
-      - name: KeepKeys
+      - class: ToCHWImage
+      - class: KeepKeys
         keep_keys: [ 'image', 'shape', 'polys', 'texts' ] # the order of the dataloader list
   DataLoader:
     shuffle: False

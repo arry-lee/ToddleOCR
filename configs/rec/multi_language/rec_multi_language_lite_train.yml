@@ -24,12 +24,12 @@ Global:
 
 
 Optimizer:
-  name: Adam
+  class: Adam
   beta1: 0.9
   beta2: 0.999
   lr: 0.001
 LRScheduler:
-  name: Cosine
+  class: Cosine
 
 
 
@@ -38,42 +38,42 @@ Model:
   algorithm: CRNN
   Transform:
   Backbone:
-    name: MobileNetV3
+    class: MobileNetV3
     scale: 0.5
     model_name: small
     small_stride: [ 1, 2, 2, 2 ]
   Neck:
-    name: SequenceEncoder
+    class: SequenceEncoder
     encoder_type: rnn
     hidden_size: 48
   Head:
-    name: CTCHead
+    class: CTCHead
     fc_decay: 0.00001
 
 Loss:
-  name: CTCLoss
+  class: CTCLoss
 
 PostProcessor:
-  name: CTCLabelDecode
+  class: CTCLabelDecode
 
 Metric:
-  name: RecMetric
+  class: RecMetric
   main_indicator: acc
 
 Train:
   Dataset:
-    name: SimpleDataSet
+    class: SimpleDataSet
     data_dir: train_data/
     label_file_list: [ "./train_data/train_list.txt" ]
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: BGR
         channel_first: False
-      - name: RecAug
-      - name: CTCLabelEncode # Class handling label
-      - name: RecResizeImg
+      - class: RecAug
+      - class: CTCLabelEncode # Class handling label
+      - class: RecResizeImg
         image_shape: [ 3, 32, 320 ]
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
@@ -83,17 +83,17 @@ Train:
 
 Eval:
   Dataset:
-    name: SimpleDataSet
+    class: SimpleDataSet
     data_dir: train_data/
     label_file_list: [ "./train_data/val_list.txt" ]
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: BGR
         channel_first: False
-      - name: CTCLabelEncode # Class handling label
-      - name: RecResizeImg
+      - class: CTCLabelEncode # Class handling label
+      - class: RecResizeImg
         image_shape: [ 3, 32, 320 ]
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False

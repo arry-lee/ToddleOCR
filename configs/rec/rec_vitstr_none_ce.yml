@@ -22,7 +22,7 @@ Global:
 
 
 Optimizer:
-  name: Adadelta
+  class: Adadelta
   epsilon: 1.e-8
   rho: 0.95
   clip_norm: 5.0
@@ -36,42 +36,42 @@ Model:
   in_channels: 1
   Transform:
   Backbone:
-    name: ViTSTR
+    class: ViTSTR
     scale: tiny
   Neck:
-    name: SequenceEncoder
+    class: SequenceEncoder
     encoder_type: reshape
   Head:
-    name: CTCHead
+    class: CTCHead
 
 Loss:
-  name: CELoss
+  class: CELoss
   with_all: True
   ignore_index: &ignore_index 0 # Must be zero or greater than the number of character classes
 
 PostProcessor:
-  name: ViTSTRLabelDecode
+  class: ViTSTRLabelDecode
 
 Metric:
-  name: RecMetric
+  class: RecMetric
   main_indicator: acc
 
 Train:
   Dataset:
-    name: LMDBDataSet
+    class: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/training/
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: BGR
         channel_first: False
-      - name: ViTSTRLabelEncode # Class handling label
+      - class: ViTSTRLabelEncode # Class handling label
         ignore_index: *ignore_index
-      - name: GrayRecResizeImg
+      - class: GrayRecResizeImg
         image_shape: [ 224, 224 ] # W H
         resize_type: PIL # PIL or OpenCV
         inter_type: 'Image.BICUBIC'
         scale: false
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
@@ -81,20 +81,20 @@ Train:
 
 Eval:
   Dataset:
-    name: LMDBDataSet
+    class: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/evaluation/
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: BGR
         channel_first: False
-      - name: ViTSTRLabelEncode # Class handling label
+      - class: ViTSTRLabelEncode # Class handling label
         ignore_index: *ignore_index
-      - name: GrayRecResizeImg
+      - class: GrayRecResizeImg
         image_shape: [ 224, 224 ] # W H
         resize_type: PIL # PIL or OpenCV
         inter_type: 'Image.BICUBIC'
         scale: false
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False

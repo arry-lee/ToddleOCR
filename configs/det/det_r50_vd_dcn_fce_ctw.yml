@@ -21,25 +21,25 @@ Model:
   algorithm: FCE
   Transform:
   Backbone:
-    name: ResNet_vd
+    class: ResNet_vd
     layers: 50
     dcn_stage: [ False, True, True, True ]
     out_indices: [ 1,2,3 ]
   Neck:
-    name: FCEFPN
+    class: FCEFPN
     out_channels: 256
     has_extra_convs: False
     extra_stage: 0
   Head:
-    name: FCEHead
+    class: FCEHead
     fourier_degree: 5
 Loss:
-  name: FCELoss
+  class: FCELoss
   fourier_degree: 5
   num_sample: 50
 
 Optimizer:
-  name: Adam
+  class: Adam
   beta1: 0.9
   beta2: 0.999
   lr: 0.0001
@@ -48,7 +48,7 @@ LRScheduler:
 
 
 PostProcessor:
-  name: FCEPostProcess
+  class: FCEPostProcess
   scales: [ 8, 16, 32 ]
   alpha: 1.0
   beta: 1.0
@@ -56,50 +56,50 @@ PostProcessor:
   box_type: 'poly'
 
 Metric:
-  name: DetFCEMetric
+  class: DetFCEMetric
   main_indicator: hmean
 
 Train:
   Dataset:
-    name: SimpleDataSet
+    class: SimpleDataSet
     data_dir: ./train_data/ctw1500/imgs/
     label_file_list:
       - ./train_data/ctw1500/imgs/training.txt
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: BGR
         channel_first: False
         ignore_orientation: True
-      - name: DetLabelEncode # Class handling label
-      - name: ColorJitter
+      - class: DetLabelEncode # Class handling label
+      - class: ColorJitter
         brightness: 0.142
         saturation: 0.5
         contrast: 0.5
-      - name: RandomScaling
-      - name: RandomCropFlip
+      - class: RandomScaling
+      - class: RandomCropFlip
         crop_ratio: 0.5
-      - name: RandomCropPolyInstances
+      - class: RandomCropPolyInstances
         crop_ratio: 0.8
         min_side_ratio: 0.3
-      - name: RandomRotatePolyInstances
+      - class: RandomRotatePolyInstances
         rotate_ratio: 0.5
         max_angle: 30
         pad_with_fixed_color: False
-      - name: SquareResizePad
+      - class: SquareResizePad
         target_size: 800
         pad_ratio: 0.6
-      - name: IaaAugment
+      - class: IaaAugment
         augmenter_args:
           - { 'type': Fliplr, 'args': { 'p': 0.5 } }
-      - name: FCENetTargets
+      - class: FCENetTargets
         fourier_degree: 5
-      - name: NormalizeImage
+      - class: NormalizeImage
         scale: 1./255.
         mean: [ 0.485, 0.456, 0.406 ]
         std: [ 0.229, 0.224, 0.225 ]
         order: 'hwc'
-      - name: ToCHWImage
-      - name: KeepKeys
+      - class: ToCHWImage
+      - class: KeepKeys
         keep_keys: [ 'image', 'p3_maps', 'p4_maps', 'p5_maps' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
@@ -109,27 +109,27 @@ Train:
 
 Eval:
   Dataset:
-    name: SimpleDataSet
+    class: SimpleDataSet
     data_dir: ./train_data/ctw1500/imgs/
     label_file_list:
       - ./train_data/ctw1500/imgs/test.txt
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: BGR
         channel_first: False
         ignore_orientation: True
-      - name: DetLabelEncode # Class handling label
-      - name: DetResizeForTest
+      - class: DetLabelEncode # Class handling label
+      - class: DetResizeForTest
         limit_type: 'min'
         limit_side_len: 736
-      - name: NormalizeImage
+      - class: NormalizeImage
         scale: 1./255.
         mean: [ 0.485, 0.456, 0.406 ]
         std: [ 0.229, 0.224, 0.225 ]
         order: 'hwc'
-      - name: Pad
-      - name: ToCHWImage
-      - name: KeepKeys
+      - class: Pad
+      - class: ToCHWImage
+      - class: KeepKeys
         keep_keys: [ 'image', 'shape', 'polys', 'ignore_tags' ]
   DataLoader:
     shuffle: False

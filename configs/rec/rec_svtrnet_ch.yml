@@ -20,7 +20,7 @@ Global:
   use_space_char: true
   save_res_path: ./output/rec/predicts_svtr_tiny_ch_all.txt
 Optimizer:
-  name: AdamW
+  class: AdamW
   beta1: 0.9
   beta2: 0.99
   epsilon: 1.0e-08
@@ -29,7 +29,7 @@ Optimizer:
   one_dim_param_no_weight_decay: true
   lr: 0.0005
 LRScheduler:
-  name: Cosine
+  class: Cosine
   
   warmup_epoch: 2
 Model:
@@ -37,7 +37,7 @@ Model:
   algorithm: SVTR
   Transform: null
   Backbone:
-    name: SVTRNet
+    class: SVTRNet
     img_size:
       - 32
       - 320
@@ -79,44 +79,44 @@ Model:
     last_stage: true
     prenorm: false
   Neck:
-    name: SequenceEncoder
+    class: SequenceEncoder
     encoder_type: reshape
   Head:
-    name: CTCHead
+    class: CTCHead
 Loss:
-  name: CTCLoss
+  class: CTCLoss
 PostProcessor:
-  name: CTCLabelDecode
+  class: CTCLabelDecode
 Metric:
-  name: RecMetric
+  class: RecMetric
   main_indicator: acc
 Train:
   Dataset:
-    name: SimpleDataSet
+    class: SimpleDataSet
     data_dir: ./train_data
     label_file_list:
       - ./train_data/train_list.txt
     ext_op_transform_idx: 1
     transforms:
-      - name: DecodeImage
+      - class: DecodeImage
         img_mode: BGR
         channel_first: false
-      - name: RecConAug
+      - class: RecConAug
         prob: 0.5
         ext_data_num: 2
         image_shape:
           - 32
           - 320
           - 3
-      - name: RecAug null
-      - name: CTCLabelEncode null
-      - name: SVTRRecResizeImg
+      - class: RecAug null
+      - class: CTCLabelEncode null
+      - class: SVTRRecResizeImg
         image_shape:
           - 3
           - 32
           - 320
         padding: true
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys:
           - image
           - label
@@ -128,22 +128,22 @@ Train:
     num_workers: 8
 Eval:
   Dataset:
-    name: SimpleDataSet
+    class: SimpleDataSet
     data_dir: ./train_data
     label_file_list:
       - ./train_data/val_list.txt
     transforms:
-      - name: DecodeImage
+      - class: DecodeImage
         img_mode: BGR
         channel_first: false
-      - name: CTCLabelEncode null
-      - name: SVTRRecResizeImg
+      - class: CTCLabelEncode null
+      - class: SVTRRecResizeImg
         image_shape:
           - 3
           - 32
           - 320
         padding: true
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys:
           - image
           - label

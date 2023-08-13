@@ -22,11 +22,11 @@ Global:
 
 
 Optimizer:
-  name: AdamW
+  class: AdamW
   beta1: 0.9
   beta2: 0.999
 LRScheduler:
-  name: Piecewise
+  class: Piecewise
   decay_epochs: [ 3, 4, 5 ]
   values: [ 0.001, 0.0003, 0.00009, 0.000027 ]
   clip_norm: 5
@@ -36,55 +36,55 @@ Model:
   algorithm: SPIN
   in_channels: 1
   Transform:
-    name: GA_SPIN
+    class: GA_SPIN
     offsets: True
     default_type: 6
     loc_lr: 0.1
     stn: True
   Backbone:
-    name: ResNet32
+    class: ResNet32
     out_channels: 512
   Neck:
-    name: SequenceEncoder
+    class: SequenceEncoder
     encoder_type: cascadernn
     hidden_size: 256
     out_channels: [ 256, 512 ]
     with_linear: True
   Head:
-    name: SPINAttentionHead
+    class: SPINAttentionHead
     hidden_size: 256
 
 
 Loss:
-  name: SPINAttentionLoss
+  class: SPINAttentionLoss
   ignore_index: 0
 
 PostProcessor:
-  name: SPINLabelDecode
+  class: SPINLabelDecode
   use_space_char: False
 
 
 Metric:
-  name: RecMetric
+  class: RecMetric
   main_indicator: acc
   is_filter: True
 
 Train:
   Dataset:
-    name: SimpleDataSet
+    class: SimpleDataSet
     data_dir: ./train_data/ic15_data/
     label_file_list: [ "./train_data/ic15_data/rec_gt_train.txt" ]
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: BGR
         channel_first: False
-      - name: SPINLabelEncode # Class handling label
-      - name: SPINRecResizeImg
+      - class: SPINLabelEncode # Class handling label
+      - class: SPINRecResizeImg
         image_shape: [ 100, 32 ]
         interpolation: 2
         mean: [ 127.5 ]
         std: [ 127.5 ]
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
@@ -94,20 +94,20 @@ Train:
 
 Eval:
   Dataset:
-    name: SimpleDataSet
+    class: SimpleDataSet
     data_dir: ./train_data/ic15_data
     label_file_list: [ "./train_data/ic15_data/rec_gt_test.txt" ]
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: BGR
         channel_first: False
-      - name: SPINLabelEncode # Class handling label
-      - name: SPINRecResizeImg
+      - class: SPINLabelEncode # Class handling label
+      - class: SPINRecResizeImg
         image_shape: [ 100, 32 ]
         interpolation: 2
         mean: [ 127.5 ]
         std: [ 127.5 ]
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ 'image', 'label', 'length' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False

@@ -20,12 +20,12 @@ Global:
   save_res_path: ./output/rec/predicts_chinese_lite_v2.0.txt
 
 Optimizer:
-  name: Adam
+  class: Adam
   beta1: 0.9
   beta2: 0.999
   lr: 0.001
 LRScheduler:
-  name: Cosine
+  class: Cosine
 
 
 
@@ -34,41 +34,41 @@ Model:
   algorithm: CLS
   Transform: null
   Backbone:
-    name: MobileNetV1Enhance
+    class: MobileNetV1Enhance
     scale: 0.5
     last_conv_stride: [ 1, 2 ]
     last_pool_type: avg
   Neck:
   Head:
-    name: ClsHead
+    class: ClsHead
     class_dim: 4
 
 Loss:
-  name: ClsLoss
+  class: ClsLoss
   main_indicator: acc
 
 PostProcessor:
-  name: ClsPostProcess
+  class: ClsPostProcess
 
 Metric:
-  name: ClsMetric
+  class: ClsMetric
   main_indicator: acc
 
 Train:
   Dataset:
-    name: SimpleDataSet
+    class: SimpleDataSet
     data_dir: ./train_data
     label_file_list:
       - ./train_data/train_list.txt
     transforms:
-      - name: DecodeImage
+      - class: DecodeImage
         img_mode: BGR
         channel_first: false
-      - name: BaseDataAugmentation
-      - name: RandAugment
-      - name: SSLRotateResize
+      - class: BaseDataAugmentation
+      - class: RandAugment
+      - class: SSLRotateResize
         image_shape: [ 3, 48, 320 ]
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ "image", "label" ]
   DataLoader:
     collate_fn: "SSLRotateCollate"
@@ -78,17 +78,17 @@ Train:
     num_workers: 8
 Eval:
   Dataset:
-    name: SimpleDataSet
+    class: SimpleDataSet
     data_dir: ./train_data
     label_file_list:
       - ./train_data/val_list.txt
     transforms:
-      - name: DecodeImage
+      - class: DecodeImage
         img_mode: BGR
         channel_first: false
-      - name: SSLRotateResize
+      - class: SSLRotateResize
         image_shape: [ 3, 48, 320 ]
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ "image", "label" ]
   DataLoader:
     collate_fn: "SSLRotateCollate"

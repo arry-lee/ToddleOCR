@@ -22,13 +22,13 @@ Global:
 
 
 Optimizer:
-  name: AdamW
+  class: AdamW
   beta1: 0.9
   beta2: 0.999
   weight_decay: 0.0
   clip_norm_global: 5.0
 LRScheduler:
-  name: Piecewise
+  class: Piecewise
   decay_epochs: [ 3, 4, 5 ]
   values: [ 0.001, 0.0003, 0.00009, 0.000027 ]
 
@@ -37,20 +37,20 @@ Model:
   algorithm: RFL
   in_channels: 1
   Transform:
-    name: TPS
+    class: TPS
     num_fiducial: 20
     loc_lr: 1.0
     model_name: large
   Backbone:
-    name: ResNetRFL
+    class: ResNetRFL
     use_cnt: True
     use_seq: False
   Neck:
-    name: RFAdaptor
+    class: RFAdaptor
     use_v2s: False
     use_s2v: False
   Head:
-    name: RFLHead
+    class: RFLHead
     in_channels: 512
     hidden_size: 256
     batch_max_legnth: 25
@@ -58,29 +58,29 @@ Model:
     use_cnt: True
     use_seq: False
 Loss:
-  name: RFLLoss
+  class: RFLLoss
 
 PostProcessor:
-  name: RFLLabelDecode
+  class: RFLLabelDecode
 
 Metric:
-  name: CNTMetric
+  class: CNTMetric
   main_indicator: acc
 
 Train:
   Dataset:
-    name: LMDBDataSet
+    class: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/training
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: BGR
         channel_first: False
-      - name: RFLLabelEncode # Class handling label
-      - name: RFLRecResizeImg
+      - class: RFLLabelEncode # Class handling label
+      - class: RFLRecResizeImg
         image_shape: [ 1, 32, 100 ]
         padding: false
         interpolation: 2
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ 'image', 'label', 'length', 'cnt_label' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
@@ -90,18 +90,18 @@ Train:
 
 Eval:
   Dataset:
-    name: LMDBDataSet
+    class: LMDBDataSet
     data_dir: ./train_data/data_lmdb_release/evaluation
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: BGR
         channel_first: False
-      - name: RFLLabelEncode # Class handling label
-      - name: RFLRecResizeImg
+      - class: RFLLabelEncode # Class handling label
+      - class: RFLRecResizeImg
         image_shape: [ 1, 32, 100 ]
         padding: false
         interpolation: 2
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ 'image', 'label', 'length', 'cnt_label' ] # dataloader will return list in this order
   DataLoader:
     shuffle: False

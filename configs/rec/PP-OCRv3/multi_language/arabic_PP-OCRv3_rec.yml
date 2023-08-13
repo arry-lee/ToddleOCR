@@ -22,12 +22,12 @@ Global:
 
 
 Optimizer:
-  name: Adam
+  class: Adam
   beta1: 0.9
   beta2: 0.999
   lr: 0.001
 LRScheduler:
-  name: Cosine
+  class: Cosine
   
   warmup_epoch: 5
 
@@ -38,60 +38,60 @@ Model:
   algorithm: SVTR
   Transform:
   Backbone:
-    name: MobileNetV1Enhance
+    class: MobileNetV1Enhance
     scale: 0.5
     last_conv_stride: [ 1, 2 ]
     last_pool_type: avg
   Head:
-    name: MultiHead
+    class: MultiHead
     head_list:
-      - name: CTCHead
+      - class: CTCHead
         Neck:
-          name: svtr
+          class: svtr
           dims: 64
           depth: 2
           hidden_dims: 120
           use_guide: True
         Head:
           fc_decay: 0.00001
-      - name: SARHead
+      - class: SARHead
         enc_dim: 512
         max_text_length: *max_text_length
 
 Loss:
-  name: MultiLoss
+  class: MultiLoss
   loss_config_list:
     - CTCLoss:
     - SARLoss:
 
 PostProcessor:
-  name: CTCLabelDecode
+  class: CTCLabelDecode
 
 Metric:
-  name: RecMetric
+  class: RecMetric
   main_indicator: acc
   ignore_space: False
 
 Train:
   Dataset:
-    name: SimpleDataSet
+    class: SimpleDataSet
     data_dir: ./train_data/
     ext_op_transform_idx: 1
     label_file_list:
       - ./train_data/train_list.txt
     transforms:
-      - name: DecodeImage
+      - class: DecodeImage
         img_mode: BGR
         channel_first: false
-      - name: RecConAug
+      - class: RecConAug
         prob: 0.5
         ext_data_num: 2
         image_shape: [ 48, 320, 3 ]
-      - name: RecAug
-      - name: MultiLabelEncode
-      - name: RecResizeImg
+      - class: RecAug
+      - class: MultiLabelEncode
+      - class: RecResizeImg
         image_shape: [ 3, 48, 320 ]
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys:
           - image
           - label_ctc
@@ -105,18 +105,18 @@ Train:
     num_workers: 4
 Eval:
   Dataset:
-    name: SimpleDataSet
+    class: SimpleDataSet
     data_dir: ./train_data
     label_file_list:
       - ./train_data/val_list.txt
     transforms:
-      - name: DecodeImage
+      - class: DecodeImage
         img_mode: BGR
         channel_first: false
-      - name: MultiLabelEncode
-      - name: RecResizeImg
+      - class: MultiLabelEncode
+      - class: RecResizeImg
         image_shape: [ 3, 48, 320 ]
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys:
           - image
           - label_ctc

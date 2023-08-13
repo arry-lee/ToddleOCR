@@ -27,40 +27,40 @@ Model:
   algorithm: PGNet
   Transform:
   Backbone:
-    name: ResNet
+    class: ResNet
     layers: 50
   Neck:
-    name: PGFPN
+    class: PGFPN
   Head:
-    name: PGHead
+    class: PGHead
     character_dict_path: ppocr/utils/ic15_dict.txt # the same as Global:character_dict_path
 
 Loss:
-  name: PGLoss
+  class: PGLoss
   tcl_bs: 64
   max_text_length: 50 # the same as Global: max_text_length
   max_text_nums: 30 # the same as Global：max_text_nums
   pad_num: 36 # the length of dict for pad
 
 Optimizer:
-  name: Adam
+  class: Adam
   beta1: 0.9
   beta2: 0.999
   lr: 0.001
 LRScheduler:
-  name: Cosine
+  class: Cosine
   
   warmup_epoch: 50
 
 
 PostProcessor:
-  name: PGPostProcess
+  class: PGPostProcess
   score_thresh: 0.5
   mode: fast   # fast or slow two ways
   point_gather_mode: align # same as PGProcessTrain: point_gather_mode
 
 Metric:
-  name: E2EMetric
+  class: E2EMetric
   mode: A   # two ways for eval, A: label from txt,  B: label from gt_mat
   gt_mat_dir: ./train_data/total_text/gt  # the dir of gt_mat
   character_dict_path: ppocr/utils/ic15_dict.txt
@@ -68,16 +68,16 @@ Metric:
 
 Train:
   Dataset:
-    name: PGDataSet
+    class: PGDataSet
     data_dir: ./train_data/total_text/train
     label_file_list: [ ./train_data/total_text/train/train.txt ]
     ratio_list: [ 1.0 ]
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: BGR
         channel_first: False
-      - name: E2ELabelEncodeTrain
-      - name: PGProcessTrain
+      - class: E2ELabelEncodeTrain
+      - class: PGProcessTrain
         batch_size: 14  # same as DataLoader: batch_size
         use_resize: True
         use_random_crop: False
@@ -85,7 +85,7 @@ Train:
         min_text_size: 4
         max_text_size: 512
         point_gather_mode: align # two mode: align and none, align mode is better than none mode
-      - name: KeepKeys
+      - class: KeepKeys
         keep_keys: [ 'images', 'tcl_maps', 'tcl_label_maps', 'border_maps','direction_maps', 'training_masks', 'label_list', 'pos_list', 'pos_mask' ] # dataloader will return list in this order
   DataLoader:
     shuffle: True
@@ -95,23 +95,23 @@ Train:
 
 Eval:
   Dataset:
-    name: PGDataSet
+    class: PGDataSet
     data_dir: ./train_data/total_text/test
     label_file_list: [ ./train_data/total_text/test/test.txt ]
     transforms:
-      - name: DecodeImage # load image
+      - class: DecodeImage # load image
         img_mode: BGR
         channel_first: False
-      - name: E2ELabelEncodeTest
-      - name: E2EResizeForTest
+      - class: E2ELabelEncodeTest
+      - class: E2EResizeForTest
         max_side_len: 768
-      - name: NormalizeImage
+      - class: NormalizeImage
         scale: 1./255.
         mean: [ 0.485, 0.456, 0.406 ]
         std: [ 0.229, 0.224, 0.225 ]
         order: 'hwc'
-      - name: ToCHWImage
-      - name: KeepKeys
+      - class: ToCHWImage
+      - class: KeepKeys
         keep_keys: [ 'image', 'shape', 'polys', 'texts', 'ignore_tags', 'img_id' ]
   DataLoader:
     shuffle: False
