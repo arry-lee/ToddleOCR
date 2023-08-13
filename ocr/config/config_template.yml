@@ -33,14 +33,14 @@ Model:
 Loss:
   class: ocr.models.det.east.EASTLoss
 
+
 Optimizer:
   class: torch.optim.Adam
   lr: 0.001
   betas: [0.9, 0.999]
 
-  lr_scheduler:
-    class: torch.optim.lr_scheduler.ConstantLR
-
+LRScheduler:
+  class: torch.optim.lr_scheduler.ConstantLR
 
 PostProcessor:
   class: ocr.models.det.east.EASTPostProcess

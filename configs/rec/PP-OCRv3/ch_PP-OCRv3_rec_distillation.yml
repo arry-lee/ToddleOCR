@@ -30,9 +30,7 @@ Optimizer:
     decay_epochs : [700]
     values : [0.0005, 0.00005]
     warmup_epoch: 5
-  regularizer:
-    name: L2
-    factor: 3.0e-05
+  
 
 
 Model:

@@ -18,6 +18,7 @@ Global:
   infer_mode: false
   use_space_char: true
   save_res_path: ./output/rec/predicts_chinese_lite_v2.0.txt
+  
 Optimizer:
   name: Adam
   beta1: 0.9
@@ -25,9 +26,8 @@ Optimizer:
   lr:
     name: Cosine
     learning_rate: 0.001
-  regularizer:
-    name: L2
-    factor: 1.0e-05
+  
+    
 Model:
   model_type: cls
   algorithm: CLS

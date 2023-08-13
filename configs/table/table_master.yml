@@ -29,9 +29,7 @@ Optimizer:
     milestones: [12, 15]
     gamma: 0.1
     warmup_epoch: 0.02
-  regularizer:
-    name: L2
-    factor: 0.0
+  
 
 Model:
   model_type: table

@@ -32,9 +32,7 @@ Optimizer:
     name: Piecewise
     decay_epochs: [6]
     values: [0.0001, 0.00001] 
-  regularizer:
-    name: 'L2'
-    factor: 0
+  
 
 Model:
   model_type: rec

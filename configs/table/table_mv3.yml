@@ -28,9 +28,7 @@ Optimizer:
   clip_norm: 5.0
   lr:
     learning_rate: 0.001
-  regularizer:
-    name: 'L2'
-    factor: 0.00000
+  
 
 Model:
   model_type: table

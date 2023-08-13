@@ -43,9 +43,7 @@ Optimizer:
   beta2: 0.999
   lr:
     learning_rate: 0.001
-  regularizer:
-    name: 'L2'
-    factor: 0
+  
 
 PostProcessor:
   name: DBPostProcess

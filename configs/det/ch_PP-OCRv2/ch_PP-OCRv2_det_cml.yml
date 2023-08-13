@@ -117,9 +117,7 @@ Optimizer:
     name: Cosine
     learning_rate: 0.001
     warmup_epoch: 2
-  regularizer:
-    name: 'L2'
-    factor: 0
+  
 
 PostProcessor:
   name: DistillationDBPostProcess

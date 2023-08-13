@@ -30,9 +30,7 @@ Optimizer:
     decay_epochs : [700]
     values : [0.001, 0.0001]
     warmup_epoch: 5
-  regularizer:
-    name: L2
-    factor: 2.0e-05
+  
 
 Model:
   model_type: &model_type "rec"

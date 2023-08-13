@@ -25,9 +25,7 @@ Optimizer:
   lr:
     name: Cosine
     learning_rate: 0.001
-  regularizer:
-    name: L2
-    factor: 1.0e-05
+  
 Model:
   model_type: rec
   algorithm: CRNN

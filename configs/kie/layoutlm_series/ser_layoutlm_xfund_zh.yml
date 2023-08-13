@@ -37,9 +37,7 @@ Optimizer:
     learning_rate: 0.00005
     epochs: *epoch_num
     warmup_epoch: 2
-  regularizer:
-    name: L2
-    factor: 0.00000
+  
     
 PostProcessor:
   name: VQASerTokenLayoutLMPostProcess
