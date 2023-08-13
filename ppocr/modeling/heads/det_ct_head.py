@@ -20,10 +20,8 @@ import math
 
 import torch.nn.functional as F
 from torch import nn
-from torch.nn.init import Constant, Normal
+from torch.nn.init import ones_, normal_,zeros_
 
-ones_ = Constant(value=1.0)
-zeros_ = Constant(value=0.0)
 
 
 class CT_Head(nn.Module):
@@ -38,8 +36,7 @@ class CT_Head(nn.Module):
         for m in self.sublayers():
             if isinstance(m, nn.Conv2d):
                 n = m._kernel_size[0] * m._kernel_size[1] * m._out_channels
-                normal_ = Normal(mean=0.0, std=math.sqrt(2.0 / n))
-                normal_(m.weight)
+                normal_(m.weight,mean=0.0, std=math.sqrt(2.0 / n))
             elif isinstance(m, nn.BatchNorm2d):
                 zeros_(m.bias)
                 ones_(m.weight)

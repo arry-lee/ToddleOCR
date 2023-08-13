@@ -250,7 +250,7 @@ class RecurrentResidualBlock(nn.Module):
 
         for p in self.parameters():
             if p.dim() > 1:
-                torch.nn.init.XavierUniform(p)
+                torch.nn.init.xavier_uniform_(p)
 
     def forward(self, x):
         residual = self.conv1(x)

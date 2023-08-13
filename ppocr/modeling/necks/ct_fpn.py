@@ -23,10 +23,7 @@ import sys
 import torch
 import torch.nn.functional as F
 from torch import nn
-from torch.nn.init import constant, normal
-
-ones_ = Constant(value=1.0)
-zeros_ = Constant(value=0.0)
+from torch.nn.init import ones_,zeros_,normal_
 
 __dir__ = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(__dir__)
@@ -45,7 +42,7 @@ class Conv_BN_ReLU(nn.Module):
         for m in self.sublayers():
             if isinstance(m, nn.Conv2d):
                 n = m._kernel_size[0] * m._kernel_size[1] * m._out_channels
-                normal_ = Normal(mean=0.0, std=math.sqrt(2.0 / n))
+                # normal_ = Normal(mean=0.0, std=math.sqrt(2.0 / n))
                 normal_(m.weight)
             elif isinstance(m, nn.BatchNorm2d):
                 zeros_(m.bias)

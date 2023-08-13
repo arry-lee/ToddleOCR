@@ -18,11 +18,9 @@ https://github.com/hikopensource/DAVAR-Lab-OCR/blob/main/davarocr/davar_rcg/mode
 
 import torch
 import torch.nn as nn
-from torch.nn.init import TruncatedNormal, Constant, Normal, KaimingNormal
+from torch.nn.init import ones_, zeros_, kaiming_normal_
 
-kaiming_normal_ = KaimingNormal()
-zeros_ = Constant(value=0.0)
-ones_ = Constant(value=1.0)
+
 
 
 class S2VAdaptor(nn.Module):

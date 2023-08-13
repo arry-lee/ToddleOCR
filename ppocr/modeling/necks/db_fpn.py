@@ -39,11 +39,11 @@ class DSConv(nn.Module):
         self.act = act
         self.conv1 = nn.Conv2d(in_channels=in_channels, out_channels=in_channels, kernel_size=kernel_size, stride=stride, padding=padding, groups=groups, bias=False)
 
-        self.bn1 = nn.BatchNorm2d(num_channels=in_channels, act=None)
+        self.bn1 = nn.BatchNorm2d(in_channels)
 
         self.conv2 = nn.Conv2d(in_channels=in_channels, out_channels=int(in_channels * 4), kernel_size=1, stride=1, bias=False)
 
-        self.bn2 = nn.BatchNorm2d(num_channels=int(in_channels * 4), act=None)
+        self.bn2 = nn.BatchNorm2d(int(in_channels * 4))
 
         self.conv3 = nn.Conv2d(in_channels=int(in_channels * 4), out_channels=out_channels, kernel_size=1, stride=1, bias=False)
         self._c = [in_channels, out_channels]
@@ -76,7 +76,6 @@ class DBFPN(nn.Module):
         super(DBFPN, self).__init__()
         self.out_channels = out_channels
         self.use_asf = use_asf
-        weight_attr = torch.nn.init.KaimingUniform()
 
         self.in2_conv = nn.Conv2d(in_channels=in_channels[0], out_channels=self.out_channels, kernel_size=1,  bias=False)
         self.in3_conv = nn.Conv2d(in_channels=in_channels[1], out_channels=self.out_channels, kernel_size=1,  bias=False)
@@ -121,7 +120,6 @@ class DBFPN(nn.Module):
 class RSELayer(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, shortcut=True):
         super(RSELayer, self).__init__()
-        weight_attr = torch.nn.init.KaimingUniform()
         self.out_channels = out_channels
         self.in_conv = nn.Conv2d(
             in_channels=in_channels, out_channels=self.out_channels, kernel_size=kernel_size, padding=int(kernel_size // 2),  bias=False
@@ -178,7 +176,6 @@ class LKPAN(nn.Module):
     def __init__(self, in_channels, out_channels, mode="large", **kwargs):
         super(LKPAN, self).__init__()
         self.out_channels = out_channels
-        weight_attr = torch.nn.init.KaimingUniform()
 
         self.ins_conv = nn.ModuleList()
         self.inp_conv = nn.ModuleList()
@@ -255,7 +252,6 @@ class ASFBlock(nn.Module):
             out_features_num: the number of fused stages
         """
         super(ASFBlock, self).__init__()
-        weight_attr = torch.nn.init.KaimingUniform()
         self.in_channels = in_channels
         self.inter_channels = inter_channels
         self.out_features_num = out_features_num
@@ -263,14 +259,14 @@ class ASFBlock(nn.Module):
 
         self.spatial_scale = nn.Sequential(
             # Nx1xHxW
-            nn.Conv2d(in_channels=1, out_channels=1, kernel_size=3, bias=False, padding=1, 
+            nn.Conv2d(in_channels=1, out_channels=1, kernel_size=3, bias=False, padding=1),
             nn.ReLU(),
-            nn.Conv2d(in_channels=1, out_channels=1, kernel_size=1, bias=False, 
+            nn.Conv2d(in_channels=1, out_channels=1, kernel_size=1, bias=False),
             nn.Sigmoid(),
         )
 
         self.channel_scale = nn.Sequential(
-            nn.Conv2d(in_channels=inter_channels, out_channels=out_features_num, kernel_size=1, bias=False,  nn.Sigmoid()
+            nn.Conv2d(in_channels=inter_channels, out_channels=out_features_num, kernel_size=1, bias=False),  nn.Sigmoid()
         )
 
     def forward(self, fuse_features, features_list):

@@ -254,19 +254,7 @@ class Embeddings(nn.Module):
         return embed
 
 
-class LayerNorm(nn.Module):
-    "Construct a layernorm module (See citation for details)."
 
-    def __init__(self, features, eps=1e-6):
-        super(LayerNorm, self).__init__()
-        self.a_2 = self.create_parameter(shape=[features], default_initializer=torch.nn.init.Constant(1.0))
-        self.b_2 = self.create_parameter(shape=[features], default_initializer=torch.nn.init.Constant(0.0))
-        self.eps = eps
-
-    def forward(self, x):
-        mean = x.mean(-1, keepdim=True)
-        std = x.std(-1, keepdim=True)
-        return self.a_2 * (x - mean) / (std + self.eps) + self.b_2
 
 
 class Decoder(nn.Module):
@@ -274,13 +262,13 @@ class Decoder(nn.Module):
         super(Decoder, self).__init__()
 
         self.mask_multihead = MultiHeadedAttention(h=16, d_model=1024, dropout=0.1)
-        self.mul_layernorm1 = LayerNorm(1024)
+        self.mul_layernorm1 = nn.LayerNorm(1024)
 
         self.multihead = MultiHeadedAttention(h=16, d_model=1024, dropout=0.1)
-        self.mul_layernorm2 = LayerNorm(1024)
+        self.mul_layernorm2 = nn.LayerNorm(1024)
 
         self.pff = PositionwiseFeedForward(1024, 2048)
-        self.mul_layernorm3 = LayerNorm(1024)
+        self.mul_layernorm3 = nn.LayerNorm(1024)
 
     def forward(self, text, conv_feature, attention_map=None):
         text_max_length = text.shape[1]

@@ -15,15 +15,10 @@
 This code is refer from: 
 https://github.com/hikopensource/DAVAR-Lab-OCR/blob/main/davarocr/davar_rcg/models/sequence_heads/counting_head.py
 """
-import torch
 import torch.nn as nn
-from torch.nn.init import trunc_normal_, constant_, normal_, kaiming_normal_
+from torch.nn.init import kaiming_normal_, zeros_
 
 from .rec_att_head import AttentionLSTM
-
-kaiming_normal_ = KaimingNormal()
-zeros_ = Constant(value=0.0)
-ones_ = Constant(value=1.0)
 
 
 class CNTHead(nn.Module):

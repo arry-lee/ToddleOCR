@@ -15,13 +15,15 @@
 This code is refer from:
 https://github.com/PaddlePaddle/PaddleDetection/blob/release/2.3/ppdet/modeling/necks/fpn.py
 """
+from functools import partial
 
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.nn.init import Normal
-from torch.nn.init import XavierUniform
+
 
 __all__ = ["FCEFPN"]
+
+from torch.nn.init import normal_, xavier_uniform, xavier_uniform_
 
 
 class ConvNormLayer(nn.Module):
@@ -37,7 +39,7 @@ class ConvNormLayer(nn.Module):
         norm_groups=32,
         lr_scale=1.0,
         freeze_norm=False,
-        initializer=Normal(mean=0.0, std=0.01),
+        initializer=partial(normal_,mean=0.0, std=0.01),
     ):
         super(ConvNormLayer, self).__init__()
         assert norm_type in ["bn", "sync_bn", "gn"]
@@ -148,7 +150,7 @@ class FCEFPN(nn.Module):
                         norm_type=self.norm_type,
                         norm_decay=self.norm_decay,
                         freeze_norm=self.freeze_norm,
-                        initializer=XavierUniform(fan_out=in_c),
+                        initializer=xavier_uniform_(fan_out=in_c),
                     ),
                 )
             else:
@@ -175,7 +177,7 @@ class FCEFPN(nn.Module):
                         norm_type=self.norm_type,
                         norm_decay=self.norm_decay,
                         freeze_norm=self.freeze_norm,
-                        initializer=XavierUniform(fan_out=fan),
+                        initializer=xavier_uniform,
                     ),
                 )
             else:
@@ -204,7 +206,7 @@ class FCEFPN(nn.Module):
                             norm_type=self.norm_type,
                             norm_decay=self.norm_decay,
                             freeze_norm=self.freeze_norm,
-                            initializer=XavierUniform(fan_out=fan),
+                            initializer=xavier_uniform_,
                         ),
                     )
                 else:

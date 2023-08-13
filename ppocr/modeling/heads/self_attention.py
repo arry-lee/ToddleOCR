@@ -13,16 +13,9 @@
 # limitations under the License.
 
 
-
-
-
-import math
-
 import torch
 from torch import nn
-from torch import nn
 from torch.nn import functional as F
-import numpy as np
 
 gradient_clip = 10
 
@@ -308,7 +301,6 @@ class PrePostProcessLayer(nn.Module):
                         "layer_norm_%d" % len(self.sublayers()),
                         torch.nn.LayerNorm(
                             normalized_shape=d_model,
-                            bias=torch.ParamAttr(initializer=torch.nn.init.Constant(0.0)),
                         ),
                     )
                 )

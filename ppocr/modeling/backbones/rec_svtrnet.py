@@ -16,12 +16,7 @@
 import numpy as np
 import torch
 import torch.nn as nn
-from torch.nn.init import Constant, Normal, TruncatedNormal
-
-trunc_normal_ = TruncatedNormal(std=0.02)
-normal_ = Normal
-zeros_ = Constant(value=0.0)
-ones_ = Constant(value=1.0)
+from torch.nn.init import ones_, trunc_normal_, zeros_
 
 
 def drop_path(x, drop_prob=0.0, training=False):
@@ -511,12 +506,12 @@ class SVTRNet(nn.Module):
             self.hardswish_len = nn.Hardswish()
             self.dropout_len = nn.Dropout(p=last_drop)
 
-        trunc_normal_(self.pos_embed)
+        trunc_normal_(self.pos_embed,std=0.02)
         self.apply(self._init_weights)
 
     def _init_weights(self, m):
         if isinstance(m, nn.Linear):
-            trunc_normal_(m.weight)
+            trunc_normal_(m.weight,std=0.02)
             if isinstance(m, nn.Linear) and m.bias is not None:
                 zeros_(m.bias)
         elif isinstance(m, nn.LayerNorm):

@@ -19,7 +19,6 @@ https://github.com/open-mmlab/mmocr/blob/main/mmocr/models/textdet/dense_heads/f
 from torch import nn
 
 import torch.nn.functional as F
-from torch.nn.init import Normal
 import torch
 from functools import partial
 
