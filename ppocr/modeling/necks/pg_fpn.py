@@ -75,7 +75,7 @@ class DeConvBNLayer(nn.Module):
             bias=False,
         )
         self.bn = nn.BatchNorm2d(
-            num_channels=out_channels,
+            num_features=out_channels,
             act=act,
             bias=True,
             moving_mean_name="bn_" + name + "_mean",

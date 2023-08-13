@@ -25,9 +25,9 @@ __all__ = ["Kie_backbone"]
 
 
 class Encoder(nn.Module):
-    def __init__(self, num_channels, num_filters):
+    def __init__(self, num_features, num_filters):
         super(Encoder, self).__init__()
-        self.conv1 = nn.Conv2d(num_channels, num_filters, kernel_size=3, stride=1, padding=1, bias=False)
+        self.conv1 = nn.Conv2d(num_features, num_filters, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn1 = nn.BatchNorm2d(num_filters, act="relu")
 
         self.conv2 = nn.Conv2d(num_filters, num_filters, kernel_size=3, stride=1, padding=1, bias=False)
@@ -45,16 +45,16 @@ class Encoder(nn.Module):
 
 
 class Decoder(nn.Module):
-    def __init__(self, num_channels, num_filters):
+    def __init__(self, num_features, num_filters):
         super(Decoder, self).__init__()
 
-        self.conv1 = nn.Conv2d(num_channels, num_filters, kernel_size=3, stride=1, padding=1, bias=False)
+        self.conv1 = nn.Conv2d(num_features, num_filters, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn1 = nn.BatchNorm2d(num_filters, act="relu")
 
         self.conv2 = nn.Conv2d(num_filters, num_filters, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn2 = nn.BatchNorm2d(num_filters, act="relu")
 
-        self.conv0 = nn.Conv2d(num_channels, num_filters, kernel_size=1, stride=1, padding=0, bias=False)
+        self.conv0 = nn.Conv2d(num_features, num_filters, kernel_size=1, stride=1, padding=0, bias=False)
         self.bn0 = nn.BatchNorm2d(num_filters, act="relu")
 
     def forward(self, inputs_prev, inputs):
@@ -72,11 +72,11 @@ class Decoder(nn.Module):
 class UNet(nn.Module):
     def __init__(self):
         super(UNet, self).__init__()
-        self.down1 = Encoder(num_channels=3, num_filters=16)
-        self.down2 = Encoder(num_channels=16, num_filters=32)
-        self.down3 = Encoder(num_channels=32, num_filters=64)
-        self.down4 = Encoder(num_channels=64, num_filters=128)
-        self.down5 = Encoder(num_channels=128, num_filters=256)
+        self.down1 = Encoder(num_features=3, num_filters=16)
+        self.down2 = Encoder(num_features=16, num_filters=32)
+        self.down3 = Encoder(num_features=32, num_filters=64)
+        self.down4 = Encoder(num_features=64, num_filters=128)
+        self.down5 = Encoder(num_features=128, num_filters=256)
 
         self.up1 = Decoder(32, 16)
         self.up2 = Decoder(64, 32)

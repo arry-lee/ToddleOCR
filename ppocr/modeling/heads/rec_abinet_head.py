@@ -98,20 +98,20 @@ def decoder_layer(in_c, out_c, k=3, s=1, p=1, mode="nearest", scale_factor=None,
 
 
 class PositionAttention(nn.Module):
-    def __init__(self, max_length, in_channels=512, num_channels=64, h=8, w=32, mode="nearest", **kwargs):
+    def __init__(self, max_length, in_channels=512, num_features=64, h=8, w=32, mode="nearest", **kwargs):
         super().__init__()
         self.max_length = max_length
         self.k_encoder = nn.Sequential(
-            encoder_layer(in_channels, num_channels, s=(1, 2)),
-            encoder_layer(num_channels, num_channels, s=(2, 2)),
-            encoder_layer(num_channels, num_channels, s=(2, 2)),
-            encoder_layer(num_channels, num_channels, s=(2, 2)),
+            encoder_layer(in_channels, num_features, s=(1, 2)),
+            encoder_layer(num_features, num_features, s=(2, 2)),
+            encoder_layer(num_features, num_features, s=(2, 2)),
+            encoder_layer(num_features, num_features, s=(2, 2)),
         )
         self.k_decoder = nn.Sequential(
-            decoder_layer(num_channels, num_channels, scale_factor=2, mode=mode),
-            decoder_layer(num_channels, num_channels, scale_factor=2, mode=mode),
-            decoder_layer(num_channels, num_channels, scale_factor=2, mode=mode),
-            decoder_layer(num_channels, in_channels, size=(h, w), mode=mode),
+            decoder_layer(num_features, num_features, scale_factor=2, mode=mode),
+            decoder_layer(num_features, num_features, scale_factor=2, mode=mode),
+            decoder_layer(num_features, num_features, scale_factor=2, mode=mode),
+            decoder_layer(num_features, in_channels, size=(h, w), mode=mode),
         )
 
         self.pos_encoder = PositionalEncoding(dropout=0, dim=in_channels, max_len=max_length)

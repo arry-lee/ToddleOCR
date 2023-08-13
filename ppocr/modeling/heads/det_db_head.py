@@ -37,7 +37,7 @@ class Head(nn.Module):
             padding=int(kernel_list[0] // 2),
             bias=False,
         )
-        self.conv_bn1 = nn.BatchNorm2d(num_channels=in_channels // 4, bias=True, act="relu")
+        self.conv_bn1 = nn.BatchNorm2d(num_features=in_channels // 4, bias=True, act="relu")
         self.conv2 = nn.ConvTranspose2d(
             in_channels=in_channels // 4,
             out_channels=in_channels // 4,
@@ -45,7 +45,7 @@ class Head(nn.Module):
             stride=2,
             bias=True,
         )
-        self.conv_bn2 = nn.BatchNorm2d(num_channels=in_channels // 4, bias=True, act="relu")
+        self.conv_bn2 = nn.BatchNorm2d(num_features=in_channels // 4, bias=True, act="relu")
         self.conv3 = nn.ConvTranspose2d(
             in_channels=in_channels // 4,
             out_channels=1,

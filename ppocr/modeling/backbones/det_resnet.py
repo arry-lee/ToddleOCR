@@ -25,11 +25,11 @@ from .det_resnet_vd import ConvBNLayer
 
 
 class BottleneckBlock(nn.Module):
-    def __init__(self, num_channels, num_filters, stride, shortcut=True, is_dcn=False):
+    def __init__(self, num_features, num_filters, stride, shortcut=True, is_dcn=False):
         super(BottleneckBlock, self).__init__()
 
         self.conv0 = ConvBNLayer(
-            in_channels=num_channels,
+            in_channels=num_features,
             out_channels=num_filters,
             kernel_size=1,
             act="relu",
@@ -52,7 +52,7 @@ class BottleneckBlock(nn.Module):
 
         if not shortcut:
             self.short = ConvBNLayer(
-                in_channels=num_channels,
+                in_channels=num_features,
                 out_channels=num_filters * 4,
                 kernel_size=1,
                 stride=stride,
@@ -78,16 +78,16 @@ class BottleneckBlock(nn.Module):
 
 
 class BasicBlock(nn.Module):
-    def __init__(self, num_channels, num_filters, stride, shortcut=True, name=None):
+    def __init__(self, num_features, num_filters, stride, shortcut=True, name=None):
         super(BasicBlock, self).__init__()
         self.stride = stride
         self.conv0 = ConvBNLayer(
-            in_channels=num_channels, out_channels=num_filters, kernel_size=3, stride=stride, act="relu"
+            in_channels=num_features, out_channels=num_filters, kernel_size=3, stride=stride, act="relu"
         )
         self.conv1 = ConvBNLayer(in_channels=num_filters, out_channels=num_filters, kernel_size=3, act=None)
 
         if not shortcut:
-            self.short = ConvBNLayer(in_channels=num_channels, out_channels=num_filters, kernel_size=1, stride=stride)
+            self.short = ConvBNLayer(in_channels=num_features, out_channels=num_filters, kernel_size=1, stride=stride)
 
         self.shortcut = shortcut
 
@@ -124,7 +124,7 @@ class ResNet(nn.Module):
             depth = [3, 4, 23, 3]
         elif layers == 152:
             depth = [3, 8, 36, 3]
-        num_channels = [64, 256, 512, 1024] if layers >= 50 else [64, 64, 128, 256]
+        num_features = [64, 256, 512, 1024] if layers >= 50 else [64, 64, 128, 256]
         num_filters = [64, 128, 256, 512]
 
         self.dcn_stage = dcn_stage if dcn_stage is not None else [False, False, False, False]
@@ -161,7 +161,7 @@ class ResNet(nn.Module):
                     bottleneck_block = self.add_module(
                         conv_name,
                         BottleneckBlock(
-                            num_channels=num_channels[block] if i == 0 else num_filters[block] * 4,
+                            num_features=num_features[block] if i == 0 else num_filters[block] * 4,
                             num_filters=num_filters[block],
                             stride=2 if i == 0 and block != 0 else 1,
                             shortcut=shortcut,
@@ -182,7 +182,7 @@ class ResNet(nn.Module):
                     basic_block = self.add_module(
                         conv_name,
                         BasicBlock(
-                            num_channels=num_channels[block] if i == 0 else num_filters[block],
+                            num_features=num_features[block] if i == 0 else num_filters[block],
                             num_filters=num_filters[block],
                             stride=2 if i == 0 and block != 0 else 1,
                             shortcut=shortcut,

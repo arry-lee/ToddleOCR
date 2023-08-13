@@ -54,7 +54,7 @@ class SDMGRHead(nn.Module):
         all_nums = torch.concat(char_nums)
         valid = torch.nonzero((all_nums > 0).astype(int))
         temp_all_nums = (torch.gather(all_nums, valid) - 1).unsqueeze(-1).unsqueeze(-1)
-        temp_all_nums = torch.unsqueeze(temp_all_nums, 0).repeat(temp_all_nums.shape[0], temp_all_nums.shape[1], rnn_nodes.shape[-1]])
+        temp_all_nums = torch.unsqueeze(temp_all_nums, 0).repeat(temp_all_nums.shape[0], temp_all_nums.shape[1], rnn_nodes.shape[-1])
         temp_all_nodes = torch.gather(rnn_nodes, valid)
         N, C, A = temp_all_nodes.shape
         one_hot = F.one_hot(temp_all_nums[:, 0, :], num_classes=C).transpose([0, 2, 1])
@@ -66,7 +66,7 @@ class SDMGRHead(nn.Module):
             nodes = self.fusion([x, nodes])
 
         all_edges = torch.concat([rel.reshape([-1, rel.shape[-1]]) for rel in relations])
-        embed_edges = self.edge_embed(all_edges.astype("float32"))
+        embed_edges = self.edge_embed(all_edges.to(dtype=torch.float32))
         embed_edges = F.normalize(embed_edges)
 
         for gnn_layer in self.gnn_layers:

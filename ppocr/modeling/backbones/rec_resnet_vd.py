@@ -176,7 +176,7 @@ class ResNet(nn.Module):
             depth = [3, 8, 36, 3]
         elif layers == 200:
             depth = [3, 12, 48, 3]
-        num_channels = [64, 256, 512, 1024] if layers >= 50 else [64, 64, 128, 256]
+        num_features = [64, 256, 512, 1024] if layers >= 50 else [64, 64, 128, 256]
         num_filters = [64, 128, 256, 512]
 
         self.conv1_1 = ConvBNLayer(
@@ -206,7 +206,7 @@ class ResNet(nn.Module):
                     bottleneck_block = self.add_module(
                         "bb_%d_%d" % (block, i),
                         BottleneckBlock(
-                            in_channels=num_channels[block] if i == 0 else num_filters[block] * 4,
+                            in_channels=num_features[block] if i == 0 else num_filters[block] * 4,
                             out_channels=num_filters[block],
                             stride=stride,
                             shortcut=shortcut,
@@ -230,7 +230,7 @@ class ResNet(nn.Module):
                     basic_block = self.add_module(
                         "bb_%d_%d" % (block, i),
                         BasicBlock(
-                            in_channels=num_channels[block] if i == 0 else num_filters[block],
+                            in_channels=num_features[block] if i == 0 else num_filters[block],
                             out_channels=num_filters[block],
                             stride=stride,
                             shortcut=shortcut,

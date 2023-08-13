@@ -71,11 +71,11 @@ def make_divisible(v, divisor=8, min_value=None):
 
 
 class ConvBNLayer(nn.Module):
-    def __init__(self, num_channels, filter_size, num_filters, stride, num_groups=1):
+    def __init__(self, num_features, filter_size, num_filters, stride, num_groups=1):
         super().__init__()
 
         self.conv = Conv2d(
-            in_channels=num_channels,
+            in_channels=num_features,
             out_channels=num_filters,
             kernel_size=filter_size,
             stride=stride,
@@ -95,19 +95,19 @@ class ConvBNLayer(nn.Module):
 
 
 class DepthwiseSeparable(nn.Module):
-    def __init__(self, num_channels, num_filters, stride, dw_size=3, use_se=False):
+    def __init__(self, num_features, num_filters, stride, dw_size=3, use_se=False):
         super().__init__()
         self.use_se = use_se
         self.dw_conv = ConvBNLayer(
-            num_channels=num_channels,
-            num_filters=num_channels,
+            num_features=num_features,
+            num_filters=num_features,
             filter_size=dw_size,
             stride=stride,
-            num_groups=num_channels,
+            num_groups=num_features,
         )
         if use_se:
-            self.se = SEModule(num_channels)
-        self.pw_conv = ConvBNLayer(num_channels=num_channels, filter_size=1, num_filters=num_filters, stride=1)
+            self.se = SEModule(num_features)
+        self.pw_conv = ConvBNLayer(num_features=num_features, filter_size=1, num_filters=num_filters, stride=1)
 
     def forward(self, x):
         x = self.dw_conv(x)
@@ -149,13 +149,13 @@ class PPLCNet(nn.Module):
         self.scale = scale
 
         self.conv1 = ConvBNLayer(
-            num_channels=in_channels, filter_size=3, num_filters=make_divisible(16 * scale), stride=2
+            num_features=in_channels, filter_size=3, num_filters=make_divisible(16 * scale), stride=2
         )
 
         self.blocks2 = nn.Sequential(
             *[
                 DepthwiseSeparable(
-                    num_channels=make_divisible(in_c * scale),
+                    num_features=make_divisible(in_c * scale),
                     num_filters=make_divisible(out_c * scale),
                     dw_size=k,
                     stride=s,
@@ -168,7 +168,7 @@ class PPLCNet(nn.Module):
         self.blocks3 = nn.Sequential(
             *[
                 DepthwiseSeparable(
-                    num_channels=make_divisible(in_c * scale),
+                    num_features=make_divisible(in_c * scale),
                     num_filters=make_divisible(out_c * scale),
                     dw_size=k,
                     stride=s,
@@ -181,7 +181,7 @@ class PPLCNet(nn.Module):
         self.blocks4 = nn.Sequential(
             *[
                 DepthwiseSeparable(
-                    num_channels=make_divisible(in_c * scale),
+                    num_features=make_divisible(in_c * scale),
                     num_filters=make_divisible(out_c * scale),
                     dw_size=k,
                     stride=s,
@@ -194,7 +194,7 @@ class PPLCNet(nn.Module):
         self.blocks5 = nn.Sequential(
             *[
                 DepthwiseSeparable(
-                    num_channels=make_divisible(in_c * scale),
+                    num_features=make_divisible(in_c * scale),
                     num_filters=make_divisible(out_c * scale),
                     dw_size=k,
                     stride=s,
@@ -207,7 +207,7 @@ class PPLCNet(nn.Module):
         self.blocks6 = nn.Sequential(
             *[
                 DepthwiseSeparable(
-                    num_channels=make_divisible(in_c * scale),
+                    num_features=make_divisible(in_c * scale),
                     num_filters=make_divisible(out_c * scale),
                     dw_size=k,
                     stride=s,
