@@ -95,8 +95,23 @@ class BalanceLoss(nn.Module):
 
 
 class DiceLoss(nn.Module):
+    """
+    Dice Loss是一种用于图像分割任务的损失函数，它衡量了预测分割结果与真实分割结果之间的重叠程度。
+    Dice Loss的全称是Sørensen–Dice系数损失（Sørensen–Dice Coefficient Loss），也被称为F1 Score Loss。
+    Dice Loss的背景可以追溯到医学图像分割领域，用于评估算法在分割任务中的性能。
+    在图像分割中，常常需要将图像中的不同物体或区域进行准确的定位和分割。
+    Dice Loss通过计算预测的分割结果与真实的分割结果之间的重叠程度，提供了一种评估分割准确性的指标。
+    具体而言，Dice Loss使用预测分割结果、真实分割结果和一个掩码（用于标记感兴趣的区域）来计算重叠度，并将其转化为损失值。
+    Dice Loss的取值范围为0到1，其中0表示完全不重叠，1表示完全重叠。
+    因此，Dice Loss的目标是最小化损失值，以使预测分割结果与真实分割结果尽可能接近。
+    Dice Loss相比于其他常用的损失函数如交叉熵损失函数，更加适合于处理不平衡的类别分割问题，因为它对类别之间的重叠区域更加敏感。
+    Dice Loss的应用不仅限于医学图像分割，还可以用于其他图像分割任务，如语义分割、实例分割等。
+    它在深度学习模型训练中被广泛使用，并且经常与其他损失函数结合使用来提高分割模型的性能。
+    总而言之，Dice Loss是一种用于图像分割任务的损失函数，通过衡量预测分割结果与真实分割结果之间的重叠程度来评估分割准确性。
+    它在医学图像分割和其他相关领域中被广泛应用。
+    """
     def __init__(self, eps=1e-6):
-        super(DiceLoss, self).__init__()
+        super().__init__()
         self.eps = eps
 
     def forward(self, pred, gt, mask, weights=None):
@@ -119,7 +134,7 @@ class DiceLoss(nn.Module):
 
 class MaskL1Loss(nn.Module):
     def __init__(self, eps=1e-6):
-        super(MaskL1Loss, self).__init__()
+        super().__init__()
         self.eps = eps
 
     def forward(self, pred, gt, mask):
@@ -131,11 +146,12 @@ class MaskL1Loss(nn.Module):
         return loss
 
 
+
 class BCELoss(nn.Module):
     def __init__(self, reduction="mean"):
-        super(BCELoss, self).__init__()
+        super().__init__()
         self.reduction = reduction
 
-    def forward(self, input, label, mask=None, weight=None, name=None):
+    def forward(self, input, label, mask=None, weight=None, name=None): # for mask
         loss = F.binary_cross_entropy(input, label, reduction=self.reduction)
         return loss

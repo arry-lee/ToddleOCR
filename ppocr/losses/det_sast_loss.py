@@ -1,17 +1,8 @@
-# copyright (c) 2019 PaddlePaddle Authors. All Rights Reserve.
+# SAST是一种文本检测和识别的技术，全称为Spatial Attention-based Scene Text Detection and Recognition。它是用于自然场景文本检测和识别的端到端模型，可以同时完成文本行的检测和字符识别任务。
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+# SAST模型基于空间注意力机制，能够有效地解决自然场景中的复杂背景、低分辨率、遮挡等问题，实现准确、鲁棒的文本检测和识别。该模型通过融合多尺度特征、设计多通道自适应卷积模块和使用超参数预测器等技术，达到了优秀的检测和识别性能。
 #
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
+# SAST可应用于多个场景，如自动驾驶、图像翻译、图像检索、文档分析等领域，可以提供高效、准确的文本检测和识别能力，对于自然场景中的文字信息提取具有重要的应用价值。
 
 
 
@@ -20,15 +11,13 @@ import numpy as np
 import torch
 from torch import nn
 
-from .det_basic_loss import DiceLoss
-
 
 class SASTLoss(nn.Module):
     """ """
 
     def __init__(self, eps=1e-6, **kwargs):
         super(SASTLoss, self).__init__()
-        self.dice_loss = DiceLoss(eps=eps)
+        # self.dice_loss = DiceLoss(eps=eps)
 
     def forward(self, predicts, labels):
         """

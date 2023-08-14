@@ -1,16 +1,12 @@
-# copyright (c) 2021 PaddlePaddle Authors. All Rights Reserve.
+# CT代表Connectionist Temporal Classification，是一种用于序列标注任务的算法。它常被用于语音识别和光学字符识别（OCR）等领域。
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+# 在传统的序列标注任务中，通常使用隐马尔可夫模型（HMM）进行建模和推断。然而，HMM对于输入和输出序列长度不匹配的情况处理起来并不方便。
 #
-#    http://www.apache.org/licenses/LICENSE-2.0
+# CT算法通过使用一个中间的"blank"标签来进行扩展，将输入序列映射到输出序列的对应位置上。这样，可以实现输入和输出序列长度不一致的情况下的标注。具体而言，CT算法会对输入序列的每个时间步进行预测，并将结果映射到输出序列中的对应位置。同时，它还会考虑到"blank"标签的存在，以处理多个连续的相同字符或连续空白的情况。
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# CT算法的训练过程通常使用梯度下降优化算法进行，目标是最大化正确标签的概率，并最小化其它非正确标签的概率。这样可以提高模型在序列标注任务中的表现。
+#
+# 总而言之，CT算法是一种用于序列标注任务的算法，通过引入"blank"标签和特定的映射方式，解决了输入和输出序列长度不一致的问题。它在语音识别和OCR等领域有着广泛的应用
 """
 This code is refer from:
 https://github.com/shengtao96/CentripetalText/tree/main/models/loss
@@ -144,44 +140,36 @@ class SmoothL1Loss(nn.Module):
                 np_coord[i, j, 1] = i
         np_coord = np_coord.reshape((-1, 2))
 
-        self.coord = self.create_parameter(
-            shape=[640 * 640, 2], dtype="int32", default_initializer=nn.initializer.Assign(value=np_coord)
-        )  # NOTE: not support "int64" before paddle 2.3.1
-        self.coord.stop_gradient = True
+        self.coord = nn.Parameter(torch.tensor(np_coord, dtype=torch.int32), requires_grad=False)  # Note: In PyTorch, int32 type is supported by default
+        self.register_buffer('eps', torch.tensor(1e-6))
 
-    def forward_single(self, input, target, mask, beta=1.0, eps=1e-6):
+    def forward_single(self, input, target, mask, beta=1.0):
         batch_size = input.shape[0]
 
         diff = torch.abs(input - target) * mask.unsqueeze(1)
         loss = torch.where(diff < beta, 0.5 * diff * diff / beta, diff - 0.5 * beta)
-        loss = loss.reshape((batch_size, -1)).type(dtype=torch.float32)
-        mask = mask.reshape((batch_size, -1)).type(dtype=torch.float32)
+        loss = loss.reshape((batch_size, -1)).float()
+        mask = mask.reshape((batch_size, -1)).float()
         loss = torch.sum(loss, dim=-1)
-        loss = loss / (mask.sum(axis=-1) + eps)
+        loss = loss / (mask.sum(dim=-1) + self.eps)
 
         return loss
 
     def select_single(self, distance, gt_instance, gt_kernel_instance, training_mask):
         with torch.no_grad():
-            # paddle 2.3.1, paddle.slice not support:
-            # distance[:, self.coord[:, 1], self.coord[:, 0]]
             select_distance_list = []
             for i in range(2):
                 tmp1 = distance[i, :]
                 tmp2 = tmp1[self.coord[:, 1], self.coord[:, 0]]
                 select_distance_list.append(tmp2.unsqueeze(0))
-            select_distance = torch.concat(select_distance_list, dim=0)
+            select_distance = torch.cat(select_distance_list, dim=0)
 
-            off_points = self.coord.type(dtype=torch.float32) + 10 * select_distance.transpose((1, 0))
+            off_points = self.coord.float() + 10 * select_distance.transpose(1, 0)
+            off_points = off_points.long().clamp(0, distance.shape[-1] - 1)
 
-            off_points = off_points.type(dtype=torch.int64)
-            off_points = torch.clip(off_points, 0, distance.shape[-1] - 1)
-
-            selected_mask = (
-                gt_instance[self.coord[:, 1], self.coord[:, 0]]
-                != gt_kernel_instance[off_points[:, 1], off_points[:, 0]]
-            )
-            selected_mask = selected_mask.reshape((1, -1, distance.shape[-1])).type(dtype=torch.int64)
+            selected_mask = (gt_instance[self.coord[:, 1], self.coord[:, 0]] !=
+                             gt_kernel_instance[off_points[:, 1], off_points[:, 0]])
+            selected_mask = selected_mask.reshape((1, -1, distance.shape[-1])).long()
             selected_training_mask = selected_mask * training_mask
 
             return selected_training_mask
@@ -190,22 +178,19 @@ class SmoothL1Loss(nn.Module):
         selected_training_masks = []
         for i in range(distances.shape[0]):
             selected_training_masks.append(
-                self.select_single(
-                    distances[i, :, :, :], gt_instances[i, :, :], gt_kernel_instances[i, :, :], training_masks[i, :, :]
-                )
+                self.select_single(distances[i, :, :, :], gt_instances[i, :, :], gt_kernel_instances[i, :, :],
+                                   training_masks[i, :, :])
             )
-        selected_training_masks = torch.concat(selected_training_masks, 0).type(dtype=torch.float32)
+        selected_training_masks = torch.cat(selected_training_masks, 0).float()
 
         loss = self.forward_single(distances, gt_distances, selected_training_masks, self.beta)
         loss = self.loss_weight * loss
 
         with torch.no_grad():
             batch_size = distances.shape[0]
-            false_num = selected_training_masks.reshape((batch_size, -1))
-            false_num = false_num.sum(axis=-1)
-            total_num = training_masks.reshape((batch_size, -1)).type(dtype=torch.float32)
-            total_num = total_num.sum(axis=-1)
-            iou_text = (total_num - false_num) / (total_num + 1e-6)
+            false_num = selected_training_masks.reshape((batch_size, -1)).sum(dim=-1)
+            total_num = training_masks.reshape((batch_size, -1)).float().sum(dim=-1)
+            iou_text = (total_num - false_num) / (total_num + self.eps)
 
         if reduce:
             loss = torch.mean(loss)

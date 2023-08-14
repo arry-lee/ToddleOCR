@@ -1,47 +1,29 @@
-# copyright (c) 2021 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-# This code is refer from: https://github.com/viig99/LS-ACELoss
-
-
-
-
-
 import torch
 import torch.nn as nn
 
 
+
 class ACELoss(nn.Module):
+    """聚合交叉熵 ACE（Aggregated Cross-Entropy）损失"""
     def __init__(self, **kwargs):
         super().__init__()
-        self.loss_func = nn.CrossEntropyLoss(weight=None, ignore_index=0, reduction="none", soft_label=True, axis=-1)
+        self.loss_func = nn.CrossEntropyLoss(weight=None, ignore_index=0, reduction="none")
 
-    def __call__(self, predicts, batch):
+    def forward(self, predicts, batch):
         if isinstance(predicts, (list, tuple)):
             predicts = predicts[-1]
 
-        B, N = predicts.shape[:2]
-        div = torch.Tensor([N]).astype("float32")
+        B, N = predicts.shape[:2]  # 获取输入 predicts 的形状，B 表示 batch size，N 表示序列长度
+        div = torch.tensor([N], dtype=torch.float32)  # 用于进行归一化的除数
 
-        predicts = nn.functional.softmax(predicts, dim=-1)
-        aggregation_preds = torch.sum(predicts, dim=1)
-        aggregation_preds = torch.divide(aggregation_preds, div)
+        predicts = nn.functional.softmax(predicts, dim=-1)  # 对输入的预测进行 softmax 归一化
+        aggregation_preds = torch.sum(predicts, dim=1)  # 对 softmax 归一化后的预测结果进行求和，得到聚合预测
+        aggregation_preds = torch.divide(aggregation_preds, div)  # 将聚合预测结果除以除数进行归一化操作
 
-        length = batch[2].astype("float32")
-        batch = batch[3].astype("float32")
-        batch[:, 0] = torch.subtract(div, length)
-        batch = torch.divide(batch, div)
+        length = batch[2].float()  # 获取 batch 中的长度信息，转换为 float 类型
+        batch = batch[3].float()  # 获取 batch 数据的一部分，转换为 float 类型
+        batch[:, 0] = torch.sub(div, length)  # 将除数减去长度信息，并赋值给 batch 的第一列
+        batch = torch.divide(batch, div)  # 对 batch 进行归一化操作
 
-        loss = self.loss_func(aggregation_preds, batch)
-        return {"loss_ace": loss}
+        loss = self.loss_func(aggregation_preds, batch)  # 计算 ACE 损失
+        return {"loss_ace": loss}  # 返回包含 ACE 损失的字典形式的输出

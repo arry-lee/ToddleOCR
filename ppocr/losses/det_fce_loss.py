@@ -64,11 +64,11 @@ class FCELoss(nn.Module):
 
         losses = multi_apply(self.forward_single, preds, gts)
 
-        loss_tr = torch.Tensor(0.0).astype("float32")
-        loss_tcl = torch.Tensor(0.0).astype("float32")
-        loss_reg_x = torch.Tensor(0.0).astype("float32")
-        loss_reg_y = torch.Tensor(0.0).astype("float32")
-        loss_all = torch.Tensor(0.0).astype("float32")
+        loss_tr = torch.Tensor(0.0).type(torch.float32)
+        loss_tcl = torch.Tensor(0.0).type(torch.float32)
+        loss_reg_x = torch.Tensor(0.0).type(torch.float32)
+        loss_reg_y = torch.Tensor(0.0).type(torch.float32)
+        loss_all = torch.Tensor(0.0).type(torch.float32)
 
         for idx, loss in enumerate(losses):
             loss_all += sum(loss)
@@ -107,32 +107,32 @@ class FCELoss(nn.Module):
         x_map = torch.reshape(gt[:, :, :, 3 : 3 + k], (-1, k))
         y_map = torch.reshape(gt[:, :, :, 3 + k :], (-1, k))
 
-        tr_train_mask = (train_mask * tr_mask).astype("bool")
+        tr_train_mask = (train_mask * tr_mask).type(torch.bool)
         tr_train_mask2 = torch.concat([tr_train_mask.unsqueeze(1), tr_train_mask.unsqueeze(1)], dim=1)
         # tr loss
         loss_tr = self.ohem(tr_pred, tr_mask, train_mask)
         # tcl loss
-        loss_tcl = torch.Tensor(0.0).astype("float32")
+        loss_tcl = torch.Tensor(0.0).type(torch.float32)
         tr_neg_mask = tr_train_mask.logical_not()
         tr_neg_mask2 = torch.concat([tr_neg_mask.unsqueeze(1), tr_neg_mask.unsqueeze(1)], dim=1)
         if tr_train_mask.sum().item() > 0:
             loss_tcl_pos = F.cross_entropy(
                 tcl_pred.masked_select(tr_train_mask2).reshape([-1, 2]),
-                tcl_mask.masked_select(tr_train_mask).astype("int64"),
+                tcl_mask.masked_select(tr_train_mask).type(torch.int64),
             )
             loss_tcl_neg = F.cross_entropy(
                 tcl_pred.masked_select(tr_neg_mask2).reshape([-1, 2]),
-                tcl_mask.masked_select(tr_neg_mask).astype("int64"),
+                tcl_mask.masked_select(tr_neg_mask).type(torch.int64),
             )
             loss_tcl = loss_tcl_pos + 0.5 * loss_tcl_neg
 
         # regression loss
-        loss_reg_x = torch.Tensor(0.0).astype("float32")
-        loss_reg_y = torch.Tensor(0.0).astype("float32")
+        loss_reg_x = torch.Tensor(0.0).type(torch.float32)
+        loss_reg_y = torch.Tensor(0.0).type(torch.float32)
         if tr_train_mask.sum().item() > 0:
             weight = (
-                tr_mask.masked_select(tr_train_mask.astype("bool")).astype("float32")
-                + tcl_mask.masked_select(tr_train_mask.astype("bool")).astype("float32")
+                tr_mask.masked_select(tr_train_mask.type(torch.bool)).type(torch.float32)
+                + tcl_mask.masked_select(tr_train_mask.type(torch.bool)).type(torch.float32)
             ) / 2
             weight = weight.reshape([-1, 1])
 
@@ -163,36 +163,36 @@ class FCELoss(nn.Module):
         return loss_tr, loss_tcl, loss_reg_x, loss_reg_y
 
     def ohem(self, predict, target, train_mask):
-        pos = (target * train_mask).astype("bool")
-        neg = ((1 - target) * train_mask).astype("bool")
+        pos = (target * train_mask).type(torch.bool)
+        neg = ((1 - target) * train_mask).type(torch.bool)
 
         pos2 = torch.concat([pos.unsqueeze(1), pos.unsqueeze(1)], dim=1)
         neg2 = torch.concat([neg.unsqueeze(1), neg.unsqueeze(1)], dim=1)
 
-        n_pos = pos.astype("float32").sum()
+        n_pos = pos.type(torch.float32).sum()
 
         if n_pos.item() > 0:
             loss_pos = F.cross_entropy(
-                predict.masked_select(pos2).reshape([-1, 2]), target.masked_select(pos).astype("int64"), reduction="sum"
+                predict.masked_select(pos2).reshape([-1, 2]), target.masked_select(pos).type(torch.int64), reduction="sum"
             )
             loss_neg = F.cross_entropy(
                 predict.masked_select(neg2).reshape([-1, 2]),
-                target.masked_select(neg).astype("int64"),
+                target.masked_select(neg).type(torch.int64),
                 reduction="none",
             )
-            n_neg = min(int(neg.astype("float32").sum().item()), int(self.ohem_ratio * n_pos.astype("float32")))
+            n_neg = min(int(neg.type(torch.float32).sum().item()), int(self.ohem_ratio * n_pos.astype("float32")))
         else:
             loss_pos = torch.Tensor(0.0)
             loss_neg = F.cross_entropy(
                 predict.masked_select(neg2).reshape([-1, 2]),
-                target.masked_select(neg).astype("int64"),
+                target.masked_select(neg).type(torch.int64),
                 reduction="none",
             )
             n_neg = 100
         if len(loss_neg) > n_neg:
             loss_neg, _ = torch.topk(loss_neg, n_neg)
 
-        return (loss_pos + loss_neg.sum()) / (n_pos + n_neg).astype("float32")
+        return (loss_pos + loss_neg.sum()) / (n_pos + n_neg).type(torch.float32)
 
     def fourier2poly(self, real_maps, imag_maps):
         """Transform Fourier coefficient maps to polygon maps.
