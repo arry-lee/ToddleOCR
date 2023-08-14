@@ -1,17 +1,3 @@
-# copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 from torch import nn
 import torch
 
@@ -27,20 +13,19 @@ class MTB(nn.Module):
                 self.block.add_module(
                     "conv_{}".format(i),
                     nn.Conv2d(
-                        in_channels=in_channels if i == 0 else 32 * (2 ** (i - 1)),
-                        out_channels=32 * (2**i),
+                        in_channels=in_channels if i == 0 else 32 * 2 ** (i - 1),
+                        out_channels=32 * 2**i,
                         kernel_size=3,
                         stride=2,
                         padding=1,
                     ),
                 )
                 self.block.add_module("relu_{}".format(i), nn.ReLU())
-                self.block.add_module("bn_{}".format(i), nn.BatchNorm2d(32 * (2**i)))
+                self.block.add_module("bn_{}".format(i), nn.BatchNorm2d(32 * 2**i))
 
     def forward(self, images):
         x = self.block(images)
         if self.cnn_num == 2:
-            # (b, w, h, c)
             x = x.permute(0, 3, 2, 1)
             x_shape = x.shape
             x = torch.reshape(x, [x_shape[0], x_shape[1], x_shape[2] * x_shape[3]])

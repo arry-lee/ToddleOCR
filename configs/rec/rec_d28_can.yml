@@ -35,7 +35,7 @@ Model:
   Transform: null
   Backbone:
     class: DenseNet
-    growthRate: 24
+    grow_rate: 24
     reduction: 0.5
     bottleneck: true
     use_dropout: true

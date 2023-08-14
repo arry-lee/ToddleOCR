@@ -142,7 +142,7 @@ class ConvBNLayer(nn.Module):
             bias=False,
         )
 
-        self.bn = nn.BatchNorm2d(num_features=out_channels)
+        self.bn = nn.BatchNorm2d(out_channels)
 
     def forward(self, x):
         x = self.conv(x)

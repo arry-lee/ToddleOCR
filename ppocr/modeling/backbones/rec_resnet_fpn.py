@@ -1,21 +1,3 @@
-# copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-
-
-
-
 from torch import nn
 from torch.nn import functional as F
 import torch
@@ -26,7 +8,7 @@ __all__ = ["ResNetFPN"]
 
 class ResNetFPN(nn.Module):
     def __init__(self, in_channels=1, layers=50, **kwargs):
-        super(ResNetFPN, self).__init__()
+        super().__init__()
         supported_layers = {
             18: {"depth": [2, 2, 2, 2], "block_class": BasicBlock},
             34: {"depth": [3, 4, 6, 3], "block_class": BasicBlock},
@@ -106,6 +88,7 @@ class ResNetFPN(nn.Module):
         for i in range(len(self.depth)):
             fpn_list.append(np.sum(self.depth[: i + 1]))
 
+        block: BasicBlock
         for i, block in enumerate(self.block_list):
             x = block(x)
             for number in fpn_list:
@@ -130,7 +113,7 @@ class ResNetFPN(nn.Module):
 
 class ConvBNLayer(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, stride=1, groups=1, act=None, name=None):
-        super(ConvBNLayer, self).__init__()
+        super().__init__()
         self.conv = nn.Conv2d(
             in_channels=in_channels,
             out_channels=out_channels,
@@ -139,7 +122,6 @@ class ConvBNLayer(nn.Module):
             stride=stride,
             padding=(kernel_size - 1) // 2,
             groups=groups,
-            
             bias=False,
         )
 
@@ -149,17 +131,23 @@ class ConvBNLayer(nn.Module):
             bn_name = "bn" + name[3:]
         self.bn = nn.BatchNorm2d(
             num_features=out_channels,
-            act=act,
-            
-            bias=True,
-            moving_mean_name=bn_name + "_mean",
-            moving_variance_name=bn_name + "_variance",
         )
+        self.bn.register_buffer(bn_name + "_mean",self._batch_norm.running_mean)
+        self.bn.register_buffer(bn_name + "_variance",self._batch_norm.running_var)
+
+        if act:
+            self._act = getattr(F,act)
+        else:
+            self._act = None
 
     def __call__(self, x):
         x = self.conv(x)
         x = self.bn(x)
+        if self._act:
+            x = self._act(x)
         return x
+
+
 
 
 class ShortCut(nn.Module):

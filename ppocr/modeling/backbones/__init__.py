@@ -39,7 +39,7 @@ def build_backbone(config, model_type):
         from .rec_resnet_45 import ResNet45
         from .rec_resnet_aster import ResNet_ASTER
         from .rec_micronet import MicroNet
-        from .rec_efficientb3_pren import EfficientNetb3_PREN
+        from .rec_efficientb3_pren import EfficientNetB3_PREN
         from .rec_svtrnet import SVTRNet
         from .rec_vitstr import ViTSTR
         from .rec_resnet_rfl import ResNetRFL
@@ -55,7 +55,7 @@ def build_backbone(config, model_type):
             "ResNet45",
             "ResNet_ASTER",
             "MicroNet",
-            "EfficientNetb3_PREN",
+            "EfficientNetB3_PREN",
             "SVTRNet",
             "ViTSTR",
             "ResNet32",

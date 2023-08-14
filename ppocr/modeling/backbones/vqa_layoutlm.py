@@ -13,16 +13,10 @@
 # limitations under the License.
 
 
-
-
-
-import os
+from paddlenlp.transformers import LayoutLMForTokenClassification, LayoutLMModel
+from paddlenlp.transformers import LayoutLMv2ForRelationExtraction, LayoutLMv2ForTokenClassification, LayoutLMv2Model
+from paddlenlp.transformers import LayoutXLMForRelationExtraction, LayoutXLMForTokenClassification, LayoutXLMModel
 from torch import nn
-
-from paddlenlp.transformers import LayoutXLMModel, LayoutXLMForTokenClassification, LayoutXLMForRelationExtraction
-from paddlenlp.transformers import LayoutLMModel, LayoutLMForTokenClassification
-from paddlenlp.transformers import LayoutLMv2Model, LayoutLMv2ForTokenClassification, LayoutLMv2ForRelationExtraction
-from paddlenlp.transformers import AutoModel
 
 __all__ = ["LayoutXLMForSer", "LayoutLMForSer"]
 

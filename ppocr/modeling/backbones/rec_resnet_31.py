@@ -1,32 +1,9 @@
-# copyright (c) 2021 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-"""
-This code is refer from: 
-https://github.com/open-mmlab/mmocr/blob/main/mmocr/models/textrecog/layers/conv_layer.py
-https://github.com/open-mmlab/mmocr/blob/main/mmocr/models/textrecog/backbones/resnet31_ocr.py
-"""
-
-
-
-
-
 import torch.nn as nn
 
 __all__ = ["ResNet31"]
 
 
-def conv3x3(in_channel, out_channel, stride=1, conv_weight_attr=None):
+def conv3x3(in_channel, out_channel, stride=1):
     return nn.Conv2d(in_channel, out_channel, kernel_size=3, stride=stride, padding=1, bias=False)
 
 
@@ -35,10 +12,10 @@ class BasicBlock(nn.Module):
 
     def __init__(self, in_channels, channels, stride=1, downsample=False, conv_weight_attr=None, bn_weight_attr=None):
         super().__init__()
-        self.conv1 = conv3x3(in_channels, channels, stride, conv_weight_attr=conv_weight_attr)
+        self.conv1 = conv3x3(in_channels, channels, stride)
         self.bn1 = nn.BatchNorm2d(channels)
         self.relu = nn.ReLU()
-        self.conv2 = conv3x3(channels, channels, conv_weight_attr=conv_weight_attr)
+        self.conv2 = conv3x3(channels, channels)
         self.bn2 = nn.BatchNorm2d(channels)
         self.downsample = downsample
         if downsample:
@@ -49,7 +26,13 @@ class BasicBlock(nn.Module):
         else:
             self.downsample = nn.Sequential()
         self.stride = stride
-
+        
+        for model in self.modules():
+            if isinstance(model,nn.Conv2d):
+                model.weight = conv_weight_attr(model.weight)
+            elif isinstance(model,nn.BatchNorm2d):
+                model.weight = bn_weight_attr(model.weight)
+                
     def forward(self, x):
         residual = x
 
@@ -83,8 +66,8 @@ class ResNet31(nn.Module):
     def __init__(
         self,
         in_channels=3,
-        layers=[1, 2, 5, 3],
-        channels=[64, 128, 256, 256, 512, 512, 512],
+        layers=(1, 2, 5, 3),
+        channels=(64, 128, 256, 256, 512, 512, 512),
         out_indices=None,
         last_stage_pool=False,
         init_type=None,
@@ -102,7 +85,7 @@ class ResNet31(nn.Module):
         if init_type is not None:
             support_dict = ["KaimingNormal"]
             assert init_type in support_dict, Exception("resnet31 only support {}".format(support_dict))
-            conv_weight_attr = nn.init.KaimingNormal()
+            conv_weight_attr = nn.init.kaiming_normal_
 
         # conv 1 (Conv Conv)
         self.conv1_1 = nn.Conv2d(in_channels, channels[0], kernel_size=3, stride=1, padding=1)

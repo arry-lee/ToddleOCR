@@ -37,7 +37,7 @@ Model:
   algorithm: PREN
   in_channels: 3
   Backbone:
-    class: EfficientNetb3_PREN
+    class: EfficientNetB3_PREN
   Neck:
     class: PRENFPN
     n_r: 5

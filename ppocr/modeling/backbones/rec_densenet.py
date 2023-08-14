@@ -1,16 +1,3 @@
-# copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 """
 This code is refer from:
 https://github.com/LBH1024/CAN/models/densenet.py
@@ -28,13 +15,13 @@ import torch.nn.functional as F
 
 
 class Bottleneck(nn.Module):
-    def __init__(self, nChannels, growthRate, use_dropout):
-        super(Bottleneck, self).__init__()
-        interChannels = 4 * growthRate
+    def __init__(self, in_channels, grow_rate, use_dropout):
+        super().__init__()
+        interChannels = 4 * grow_rate
         self.bn1 = nn.BatchNorm2d(interChannels)
-        self.conv1 = nn.Conv2d(nChannels, interChannels, kernel_size=1, bias=None)  # Xavier initialization
-        self.bn2 = nn.BatchNorm2d(growthRate)
-        self.conv2 = nn.Conv2d(interChannels, growthRate, kernel_size=3, padding=1, bias=None)  # Xavier initialization
+        self.conv1 = nn.Conv2d(in_channels, interChannels, kernel_size=1, bias=False)  # Xavier initialization
+        self.bn2 = nn.BatchNorm2d(grow_rate)
+        self.conv2 = nn.Conv2d(interChannels, grow_rate, kernel_size=3, padding=1, bias=False)  # Xavier initialization
         self.use_dropout = use_dropout
         self.dropout = nn.Dropout(p=0.2)
 
@@ -50,13 +37,14 @@ class Bottleneck(nn.Module):
 
 
 class SingleLayer(nn.Module):
-    def __init__(self, nChannels, growthRate, use_dropout):
-        super(SingleLayer, self).__init__()
-        self.bn1 = nn.BatchNorm2d(nChannels)
-        self.conv1 = nn.Conv2d(nChannels, growthRate, kernel_size=3, padding=1, bias=False)
+    def __init__(self, in_channels, grow_rate, use_dropout):
+        super().__init__()
+        self.bn1 = nn.BatchNorm2d(in_channels)
+        self.conv1 = nn.Conv2d(in_channels, grow_rate, kernel_size=3, padding=1, bias=False)
 
         self.use_dropout = use_dropout
-        self.dropout = nn.Dropout(p=0.2)
+        if use_dropout:
+            self.dropout = nn.Dropout(p=0.2)
 
     def forward(self, x):
         out = self.conv1(F.relu(x))
@@ -68,12 +56,13 @@ class SingleLayer(nn.Module):
 
 
 class Transition(nn.Module):
-    def __init__(self, nChannels, out_channels, use_dropout):
+    def __init__(self, in_channels, out_channels, use_dropout):
         super(Transition, self).__init__()
+        self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=1, bias=False)
         self.bn1 = nn.BatchNorm2d(out_channels)
-        self.conv1 = nn.Conv2d(nChannels, out_channels, kernel_size=1, bias=False)
         self.use_dropout = use_dropout
-        self.dropout = nn.Dropout(p=0.2)
+        if use_dropout:
+            self.dropout = nn.Dropout(p=0.2)
 
     def forward(self, x):
         out = F.relu(self.bn1(self.conv1(x)))
@@ -84,36 +73,36 @@ class Transition(nn.Module):
 
 
 class DenseNet(nn.Module):
-    def __init__(self, growthRate, reduction, bottleneck, use_dropout, input_channel, **kwargs):
+    def __init__(self, grow_rate, reduction, bottleneck, use_dropout, input_channel, **kwargs):
         super(DenseNet, self).__init__()
 
         nDenseBlocks = 16
-        nChannels = 2 * growthRate
+        in_channels = 2 * grow_rate
 
-        self.conv1 = nn.Conv2d(input_channel, nChannels, kernel_size=7, padding=3, stride=2, bias=False)
-        self.dense1 = self._make_dense(nChannels, growthRate, nDenseBlocks, bottleneck, use_dropout)
-        nChannels += nDenseBlocks * growthRate
-        out_channels = int(math.floor(nChannels * reduction))
-        self.trans1 = Transition(nChannels, out_channels, use_dropout)
+        self.conv1 = nn.Conv2d(input_channel, in_channels, kernel_size=7, padding=3, stride=2, bias=False)
+        self.dense1 = self._make_dense(in_channels, grow_rate, nDenseBlocks, bottleneck, use_dropout)
+        in_channels += nDenseBlocks * grow_rate
+        out_channels = int(math.floor(in_channels * reduction))
+        self.trans1 = Transition(in_channels, out_channels, use_dropout)
 
-        nChannels = out_channels
-        self.dense2 = self._make_dense(nChannels, growthRate, nDenseBlocks, bottleneck, use_dropout)
-        nChannels += nDenseBlocks * growthRate
-        out_channels = int(math.floor(nChannels * reduction))
-        self.trans2 = Transition(nChannels, out_channels, use_dropout)
+        in_channels = out_channels
+        self.dense2 = self._make_dense(in_channels, grow_rate, nDenseBlocks, bottleneck, use_dropout)
+        in_channels += nDenseBlocks * grow_rate
+        out_channels = int(math.floor(in_channels * reduction))
+        self.trans2 = Transition(in_channels, out_channels, use_dropout)
 
-        nChannels = out_channels
-        self.dense3 = self._make_dense(nChannels, growthRate, nDenseBlocks, bottleneck, use_dropout)
+        in_channels = out_channels
+        self.dense3 = self._make_dense(in_channels, grow_rate, nDenseBlocks, bottleneck, use_dropout)
         self.out_channels = out_channels
 
-    def _make_dense(self, nChannels, growthRate, nDenseBlocks, bottleneck, use_dropout):
+    def _make_dense(self, in_channels, grow_rate, nDenseBlocks, bottleneck, use_dropout):
         layers = []
         for i in range(int(nDenseBlocks)):
             if bottleneck:
-                layers.append(Bottleneck(nChannels, growthRate, use_dropout))
+                layers.append(Bottleneck(in_channels, grow_rate, use_dropout))
             else:
-                layers.append(SingleLayer(nChannels, growthRate, use_dropout))
-            nChannels += growthRate
+                layers.append(SingleLayer(in_channels, grow_rate, use_dropout))
+            in_channels += grow_rate
         return nn.Sequential(*layers)
 
     def forward(self, inputs):

@@ -1,16 +1,3 @@
-# copyright (c) 2022 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 """
 This code is refer from: 
 https://github.com/hikopensource/DAVAR-Lab-OCR/blob/main/davarocr/davar_rcg/models/backbones/ResNetRFL.py
@@ -21,11 +8,6 @@ https://github.com/hikopensource/DAVAR-Lab-OCR/blob/main/davarocr/davar_rcg/mode
 
 
 import torch.nn as nn
-from torch.nn.init import zeros_, ones_, kaiming_normal_
-
-# kaiming_normal_ = KaimingNormal()
-# zeros_ = Constant(value=0.0)
-# ones_ = Constant(value=1.0)
 
 
 class BasicBlock(nn.Module):
@@ -43,7 +25,7 @@ class BasicBlock(nn.Module):
             norm_type (str): type of the normalization
             **kwargs (None): backup parameter
         """
-        super(BasicBlock, self).__init__()
+        super().__init__()
         self.conv1 = self._conv3x3(inplanes, planes)
         self.bn1 = nn.BatchNorm2d(planes)
         self.conv2 = self._conv3x3(planes, planes)

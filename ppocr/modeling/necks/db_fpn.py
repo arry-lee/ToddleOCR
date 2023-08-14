@@ -27,7 +27,7 @@ __dir__ = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(__dir__)
 sys.path.insert(0, os.path.abspath(os.path.join(__dir__, "../../..")))
 
-from ppocr.modeling.backbones.det_mobilenet_v3 import SEModule
+from ppocr.modeling.backbones.det_mobilenet_v3 import SqueezeExcitation
 
 
 class DSConv(nn.Module):
@@ -124,7 +124,7 @@ class RSELayer(nn.Module):
         self.in_conv = nn.Conv2d(
             in_channels=in_channels, out_channels=self.out_channels, kernel_size=kernel_size, padding=int(kernel_size // 2),  bias=False
         )
-        self.se_block = SEModule(self.out_channels)
+        self.se_block = SqueezeExcitation(self.out_channels)
         self.shortcut = shortcut
 
     def forward(self, ins):

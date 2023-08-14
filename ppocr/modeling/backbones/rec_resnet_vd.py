@@ -1,21 +1,3 @@
-# copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-
-
-
-
 import torch
 
 import torch.nn as nn
@@ -55,17 +37,27 @@ class ConvBNLayer(nn.Module):
             bn_name = "bn" + name[3:]
         self._batch_norm = nn.BatchNorm2d(
             out_channels,
-            act=act,
-            bias=True,
-            moving_mean_name=bn_name + "_mean",
-            moving_variance_name=bn_name + "_variance",
+            # act=act,
+            # bias=True,
+            # moving_mean_name=bn_name + "_mean",
+            # moving_variance_name=bn_name + "_variance",
         )
+        # todo what is this?
+        self._batch_norm.register_buffer(bn_name + "_mean", self._batch_norm.running_mean)
+        self._batch_norm.register_buffer(bn_name + "_variance", self._batch_norm.running_var)
+
+        if act:
+            self._act = getattr(F, act)
+        else:
+            self._act = None
 
     def forward(self, inputs):
         if self.is_vd_mode:
             inputs = self._pool2d_avg(inputs)
         y = self._conv(inputs)
         y = self._batch_norm(y)
+        if self._act:
+            y = self._act(y)
         return y
 
 
@@ -110,7 +102,7 @@ class BottleneckBlock(nn.Module):
             short = inputs
         else:
             short = self.short(inputs)
-        y = torch.add(x=short, y=conv2)
+        y = torch.add(short, conv2)
         y = F.relu(y)
         return y
 
@@ -151,7 +143,7 @@ class BasicBlock(nn.Module):
             short = inputs
         else:
             short = self.short(inputs)
-        y = torch.add(x=short, y=conv1)
+        y = torch.add(short, conv1)
         y = F.relu(y)
         return y
 

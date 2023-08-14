@@ -13,13 +13,13 @@
 # limitations under the License.
 
 
-
 import os
 
 import torch
 import torch.nn as nn
+from torch.hub import download_url_to_file
 from torch.nn import AdaptiveAvgPool2d, BatchNorm2d, Conv2d
-from torch.utils.download import get_path_from_url
+
 
 MODEL_URLS = {
     "PPLCNet_x0.25": "https://paddle-imagenet-models-name.bj.bcebos.com/dygraph/legendary_models/PPLCNet_x0_25_pretrained.pdparams",
@@ -71,20 +71,20 @@ def make_divisible(v, divisor=8, min_value=None):
 
 
 class ConvBNLayer(nn.Module):
-    def __init__(self, num_features, filter_size, num_filters, stride, num_groups=1):
+    def __init__(self, in_channels, out_channels, kernel_size, stride, groups=1):
         super().__init__()
 
-        self.conv = Conv2d(
-            in_channels=num_features,
-            out_channels=num_filters,
-            kernel_size=filter_size,
+        self.conv = nn.Conv2d(
+            in_channels=in_channels,
+            out_channels=out_channels,
+            kernel_size=kernel_size,
             stride=stride,
-            padding=(filter_size - 1) // 2,
-            groups=num_groups,
+            padding=(kernel_size - 1) // 2,
+            groups=groups,
             bias=False,
         )
 
-        self.bn = BatchNorm2d(num_filters, bias=True)
+        self.bn = nn.BatchNorm2d(out_channels)
         self.hardswish = nn.Hardswish()
 
     def forward(self, x):
@@ -94,20 +94,18 @@ class ConvBNLayer(nn.Module):
         return x
 
 
-class DepthwiseSeparable(nn.Module):
+class DepthWiseSeparable(nn.Module):
+    """深度可分离卷积"""
+
     def __init__(self, num_features, num_filters, stride, dw_size=3, use_se=False):
         super().__init__()
         self.use_se = use_se
         self.dw_conv = ConvBNLayer(
-            num_features=num_features,
-            num_filters=num_features,
-            filter_size=dw_size,
-            stride=stride,
-            num_groups=num_features,
+            in_channels=num_features, out_channels=num_features, kernel_size=dw_size, stride=stride, groups=num_features
         )
         if use_se:
             self.se = SEModule(num_features)
-        self.pw_conv = ConvBNLayer(num_features=num_features, filter_size=1, num_filters=num_filters, stride=1)
+        self.pw_conv = ConvBNLayer(in_channels=num_features, out_channels=num_filters, kernel_size=1, stride=1)
 
     def forward(self, x):
         x = self.dw_conv(x)
@@ -120,10 +118,14 @@ class DepthwiseSeparable(nn.Module):
 class SEModule(nn.Module):
     def __init__(self, channel, reduction=4):
         super().__init__()
-        self.avg_pool = AdaptiveAvgPool2d(1)
-        self.conv1 = Conv2d(in_channels=channel, out_channels=channel // reduction, kernel_size=1, stride=1, padding=0)
+        self.avg_pool = nn.AdaptiveAvgPool2d(1)
+        self.conv1 = nn.Conv2d(
+            in_channels=channel, out_channels=channel // reduction, kernel_size=1, stride=1, padding=0
+        )
         self.relu = nn.ReLU()
-        self.conv2 = Conv2d(in_channels=channel // reduction, out_channels=channel, kernel_size=1, stride=1, padding=0)
+        self.conv2 = nn.Conv2d(
+            in_channels=channel // reduction, out_channels=channel, kernel_size=1, stride=1, padding=0
+        )
         self.hardsigmoid = nn.Hardsigmoid()
 
     def forward(self, x):
@@ -133,7 +135,7 @@ class SEModule(nn.Module):
         x = self.relu(x)
         x = self.conv2(x)
         x = self.hardsigmoid(x)
-        x = torch.multiply(x=identity, y=x)
+        x = torch.multiply(identity, x)
         return x
 
 
@@ -149,12 +151,12 @@ class PPLCNet(nn.Module):
         self.scale = scale
 
         self.conv1 = ConvBNLayer(
-            num_features=in_channels, filter_size=3, num_filters=make_divisible(16 * scale), stride=2
+            in_channels=in_channels, out_channels=make_divisible(16 * scale), kernel_size=3, stride=2
         )
 
         self.blocks2 = nn.Sequential(
             *[
-                DepthwiseSeparable(
+                DepthWiseSeparable(
                     num_features=make_divisible(in_c * scale),
                     num_filters=make_divisible(out_c * scale),
                     dw_size=k,
@@ -167,7 +169,7 @@ class PPLCNet(nn.Module):
 
         self.blocks3 = nn.Sequential(
             *[
-                DepthwiseSeparable(
+                DepthWiseSeparable(
                     num_features=make_divisible(in_c * scale),
                     num_filters=make_divisible(out_c * scale),
                     dw_size=k,
@@ -180,7 +182,7 @@ class PPLCNet(nn.Module):
 
         self.blocks4 = nn.Sequential(
             *[
-                DepthwiseSeparable(
+                DepthWiseSeparable(
                     num_features=make_divisible(in_c * scale),
                     num_filters=make_divisible(out_c * scale),
                     dw_size=k,
@@ -193,7 +195,7 @@ class PPLCNet(nn.Module):
 
         self.blocks5 = nn.Sequential(
             *[
-                DepthwiseSeparable(
+                DepthWiseSeparable(
                     num_features=make_divisible(in_c * scale),
                     num_filters=make_divisible(out_c * scale),
                     dw_size=k,
@@ -206,7 +208,7 @@ class PPLCNet(nn.Module):
 
         self.blocks6 = nn.Sequential(
             *[
-                DepthwiseSeparable(
+                DepthWiseSeparable(
                     num_features=make_divisible(in_c * scale),
                     num_filters=make_divisible(out_c * scale),
                     dw_size=k,
@@ -238,7 +240,8 @@ class PPLCNet(nn.Module):
         if use_ssld:
             pretrained_url = pretrained_url.replace("_pretrained", "_ssld_pretrained")
         print(pretrained_url)
-        local_weight_path = get_path_from_url(pretrained_url, os.path.expanduser("~/.paddleclas/weights"))
+        local_weight_path = download_url_to_file(pretrained_url, os.path.expanduser("~/.paddleclas/weights"))
+        # todo convert to paddle model
         param_state_dict = torch.load(local_weight_path)
-        self.set_dict(param_state_dict)
+        self.load_state_dict(param_state_dict)
         return

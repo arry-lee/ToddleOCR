@@ -24,7 +24,7 @@ import torch.nn as nn
 
 __all__ = ["ResNet32"]
 
-conv_weight_attr = nn.init.KaimingNormal()
+conv_weight_attr = nn.init.kaiming_normal_
 
 
 class ResNet32(nn.Module):
@@ -41,7 +41,7 @@ class ResNet32(nn.Module):
             in_channels (int): input channel
             output_channel (int): output channel
         """
-        super(ResNet32, self).__init__()
+        super().__init__()
         self.out_channels = out_channels
         self.ConvNet = ResNet(in_channels, out_channels, BasicBlock, [1, 2, 5, 3])
 
@@ -122,7 +122,7 @@ class ResNet(nn.Module):
         Args:
             input_channel (int): input channel
             output_channel (int): output channel
-            block (BasicBlock): convolution block
+            block (type): convolution block
             layers (list): layers of the block
         """
         super(ResNet, self).__init__()
@@ -155,7 +155,7 @@ class ResNet(nn.Module):
             kernel_size=3,
             stride=1,
             padding=1,
-            weight_attr=conv_weight_attr,
+            # weight_attr=conv_weight_attr,
             bias=False,
         )
         self.bn2 = nn.BatchNorm2d(self.output_channel_block[1])
@@ -182,6 +182,9 @@ class ResNet(nn.Module):
         )
         self.bn4_2 = nn.BatchNorm2d(self.output_channel_block[3])
 
+        for model in self.modules():
+            if isinstance(model,nn.Conv2d):
+                model.weight = conv_weight_attr(model.weight)
     def _make_layer(self, block, planes, blocks, stride=1):
         """
 
@@ -205,7 +208,7 @@ class ResNet(nn.Module):
         layers = list()
         layers.append(block(self.inplanes, planes, stride, downsample))
         self.inplanes = planes * block.expansion
-        for _ in range(1, blocks):
+        for _ in range(1, len(blocks)):
             layers.append(block(self.inplanes, planes))
 
         return nn.Sequential(*layers)

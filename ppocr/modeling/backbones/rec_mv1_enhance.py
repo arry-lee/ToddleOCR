@@ -51,11 +51,11 @@ class ConvBNLayer(nn.Module):
         return y
 
 
-class DepthwiseSeparable(nn.Module):
+class DepthWiseSeparable(nn.Module):
     def __init__(
         self, num_features, num_filters1, num_filters2, num_groups, stride, scale, dw_size=3, padding=1, use_se=False
     ):
-        super(DepthwiseSeparable, self).__init__()
+        super(DepthWiseSeparable, self).__init__()
         self.use_se = use_se
         self._depthwise_conv = ConvBNLayer(
             num_features=num_features,
@@ -93,22 +93,22 @@ class MobileNetV1Enhance(nn.Module):
             num_features=3, filter_size=3, channels=3, num_filters=int(32 * scale), stride=2, padding=1
         )
 
-        conv2_1 = DepthwiseSeparable(
+        conv2_1 = DepthWiseSeparable(
             num_features=int(32 * scale), num_filters1=32, num_filters2=64, num_groups=32, stride=1, scale=scale
         )
         self.block_list.append(conv2_1)
 
-        conv2_2 = DepthwiseSeparable(
+        conv2_2 = DepthWiseSeparable(
             num_features=int(64 * scale), num_filters1=64, num_filters2=128, num_groups=64, stride=1, scale=scale
         )
         self.block_list.append(conv2_2)
 
-        conv3_1 = DepthwiseSeparable(
+        conv3_1 = DepthWiseSeparable(
             num_features=int(128 * scale), num_filters1=128, num_filters2=128, num_groups=128, stride=1, scale=scale
         )
         self.block_list.append(conv3_1)
 
-        conv3_2 = DepthwiseSeparable(
+        conv3_2 = DepthWiseSeparable(
             num_features=int(128 * scale),
             num_filters1=128,
             num_filters2=256,
@@ -118,12 +118,12 @@ class MobileNetV1Enhance(nn.Module):
         )
         self.block_list.append(conv3_2)
 
-        conv4_1 = DepthwiseSeparable(
+        conv4_1 = DepthWiseSeparable(
             num_features=int(256 * scale), num_filters1=256, num_filters2=256, num_groups=256, stride=1, scale=scale
         )
         self.block_list.append(conv4_1)
 
-        conv4_2 = DepthwiseSeparable(
+        conv4_2 = DepthWiseSeparable(
             num_features=int(256 * scale),
             num_filters1=256,
             num_filters2=512,
@@ -134,7 +134,7 @@ class MobileNetV1Enhance(nn.Module):
         self.block_list.append(conv4_2)
 
         for _ in range(5):
-            conv5 = DepthwiseSeparable(
+            conv5 = DepthWiseSeparable(
                 num_features=int(512 * scale),
                 num_filters1=512,
                 num_filters2=512,
@@ -147,7 +147,7 @@ class MobileNetV1Enhance(nn.Module):
             )
             self.block_list.append(conv5)
 
-        conv5_6 = DepthwiseSeparable(
+        conv5_6 = DepthWiseSeparable(
             num_features=int(512 * scale),
             num_filters1=512,
             num_filters2=1024,
@@ -160,7 +160,7 @@ class MobileNetV1Enhance(nn.Module):
         )
         self.block_list.append(conv5_6)
 
-        conv6 = DepthwiseSeparable(
+        conv6 = DepthWiseSeparable(
             num_features=int(1024 * scale),
             num_filters1=1024,
             num_filters2=1024,

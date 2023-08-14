@@ -84,7 +84,7 @@ class SpectralNorm:
         delattr(module, self.name + "_v")
         delattr(module, self.name + "_orig")
 
-        module.add_parameter(self.name, weight.detach())
+        module.register_parameter(self.name, weight.detach())
 
     def __call__(self, module, inputs):
         setattr(module, self.name, self.compute_weight(module, do_power_iteration=module.training))
@@ -112,7 +112,7 @@ class SpectralNorm:
 
         # delete fn.name form parameters, otherwise you can not set attribute
         del module._parameters[fn.name]
-        module.add_parameter(fn.name + "_orig", weight)
+        module.register_parameter(fn.name + "_orig", weight)
         # still need to assign weight back as fn.name because all sorts of
         # things may assume that it exists, e.g., when initializing weights.
         # However, we can't directly assign as it could be an Parameter and

@@ -1,31 +1,9 @@
-# copyright (c) 2021 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-"""
-This code is refer from: 
-https://github.com/FangShancheng/ABINet/tree/main/modules
-"""
-
-
-
-
-
 import torch.nn as nn
 
 __all__ = ["ResNet45"]
 
 
-def conv1x1(in_planes, out_planes, stride=1):
+def conv1x1(in_planes, out_planes):
     return nn.Conv2d(in_planes, out_planes, kernel_size=1, stride=1,  bias=False)
 
 
@@ -65,7 +43,7 @@ class BasicBlock(nn.Module):
 
 
 class ResNet45(nn.Module):
-    def __init__(self, in_channels=3, block=BasicBlock, layers=[3, 4, 6, 6, 3], strides=[2, 1, 2, 1, 1]):
+    def __init__(self, in_channels=3, block=BasicBlock, layers=(3, 4, 6, 6, 3), strides=(2, 1, 2, 1, 1)):
         self.inplanes = 32
         super(ResNet45, self).__init__()
         self.conv1 = nn.Conv2d(in_channels, 32, kernel_size=3, stride=1, padding=1,  bias=False)

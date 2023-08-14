@@ -1,23 +1,7 @@
-# copyright (c) 2022 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 """
 Code is refer from:
 https://github.com/RuijieJ/pren/blob/main/Nets/EfficientNet.py
 """
-
-
-
 
 
 import collections
@@ -28,7 +12,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-__all__ = ["EfficientNetb3"]
+__all__ = ["EfficientNetB3_PREN"]
 
 GlobalParams = collections.namedtuple(
     "GlobalParams",
@@ -148,6 +132,15 @@ class EffUtils:
         return int(math.ceil(multiplier * repeats))
 
 
+class Swish(nn.Module):
+    def __init__(self, beta=1.0):
+        super(Swish, self).__init__()
+        self.beta = beta
+
+    def forward(self, x):
+        return x * torch.sigmoid(self.beta * x)
+
+
 class MbConvBlock(nn.Module):
     def __init__(self, block_args):
         super(MbConvBlock, self).__init__()
@@ -180,7 +173,7 @@ class MbConvBlock(nn.Module):
         self.final_oup = self._block_args.output_filters
         self._project_conv = nn.Conv2d(oup, self.final_oup, 1, bias=False)
         self._bn2 = nn.BatchNorm2d(self.final_oup)
-        self._swish = nn.Swish()
+        self._swish = Swish()
 
     def _drop_connect(self, inputs, p, training):
         if not training:
@@ -216,9 +209,9 @@ class MbConvBlock(nn.Module):
         return x
 
 
-class EfficientNetb3_PREN(nn.Module):
+class EfficientNetB3_PREN(nn.Module):
     def __init__(self, in_channels):
-        super(EfficientNetb3_PREN, self).__init__()
+        super(EfficientNetB3_PREN, self).__init__()
         """
         the fllowing are efficientnetb3's superparams,
         they means efficientnetb3 network's width, depth, resolution and 
@@ -258,11 +251,12 @@ class EfficientNetb3_PREN(nn.Module):
                 if _concerned_idx in self._concerned_block_idxes:
                     self.out_channels.append(block_args.output_filters)
 
-        self._swish = nn.Swish()
+        self._swish = Swish()
 
     def forward(self, inputs):
         outs = []
         x = self._swish(self._bn0(self._conv_stem(inputs)))
+        block: MbConvBlock
         for idx, block in enumerate(self._blocks):
             drop_connect_rate = self._global_params.drop_connect_rate
             if drop_connect_rate:
