@@ -26,7 +26,7 @@ import torch
 from shapely.geometry import Polygon
 
 
-class DBPostProcess(object):
+class DBPostProcess:
     """
     The post process for Differentiable Binarization (DB).
     """
@@ -233,7 +233,7 @@ class DBPostProcess(object):
         return boxes_batch
 
 
-class DistillationDBPostProcess(object):
+class DistillationDBPostProcess:
     def __init__(
         self,
         model_name=["student"],

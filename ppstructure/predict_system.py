@@ -39,7 +39,7 @@ from ppstructure.utility import parse_args, draw_structure_result
 logger = get_logger()
 
 
-class StructureSystem(object):
+class StructureSystem:
     def __init__(self, args):
         self.mode = args.mode
         self.recovery = args.recovery

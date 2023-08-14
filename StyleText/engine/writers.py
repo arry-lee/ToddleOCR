@@ -18,7 +18,7 @@ import glob
 from utils.logging import get_logger
 
 
-class SimpleWriter(object):
+class SimpleWriter:
     def __init__(self, config, tag):
         self.logger = get_logger()
         self.output_dir = config["Global"]["output_dir"]

@@ -28,7 +28,7 @@ import six
 from PIL import Image
 
 
-class DecodeImage(object):
+class DecodeImage:
     """decode image"""
 
     def __init__(self, img_mode="RGB", channel_first=False, ignore_orientation=False, **kwargs):
@@ -58,7 +58,7 @@ class DecodeImage(object):
         return data
 
 
-class NormalizeImage(object):
+class NormalizeImage:
     """normalize image such as substract mean, divide std"""
 
     def __init__(self, scale=None, mean=None, std=None, order="chw", **kwargs):
@@ -83,7 +83,7 @@ class NormalizeImage(object):
         return data
 
 
-class ToCHWImage(object):
+class ToCHWImage:
     """convert hwc image to chw image"""
 
     def __init__(self, **kwargs):
@@ -99,7 +99,7 @@ class ToCHWImage(object):
         return data
 
 
-class Fasttext(object):
+class Fasttext:
     def __init__(self, path="None", **kwargs):
         import fasttext
 
@@ -112,7 +112,7 @@ class Fasttext(object):
         return data
 
 
-class KeepKeys(object):
+class KeepKeys:
     def __init__(self, keep_keys, **kwargs):
         self.keep_keys = keep_keys
 
@@ -123,7 +123,7 @@ class KeepKeys(object):
         return data_list
 
 
-class Pad(object):
+class Pad:
     def __init__(self, size=None, size_div=32, **kwargs):
         if size is not None and not isinstance(size, (int, list, tuple)):
             raise TypeError("Type of target_size is invalid. Now is {}".format(type(size)))
@@ -148,7 +148,7 @@ class Pad(object):
         return data
 
 
-class Resize(object):
+class Resize:
     def __init__(self, size=(640, 640), **kwargs):
         self.size = size
 
@@ -178,7 +178,7 @@ class Resize(object):
         return data
 
 
-class DetResizeForTest(object):
+class DetResizeForTest:
     def __init__(self, **kwargs):
         super(DetResizeForTest, self).__init__()
         self.resize_type = 0
@@ -308,7 +308,7 @@ class DetResizeForTest(object):
         return img, [ratio_h, ratio_w]
 
 
-class E2EResizeForTest(object):
+class E2EResizeForTest:
     def __init__(self, **kwargs):
         super(E2EResizeForTest, self).__init__()
         self.max_side_len = kwargs["max_side_len"]
@@ -374,7 +374,7 @@ class E2EResizeForTest(object):
         return im, (ratio_h, ratio_w)
 
 
-class KieResize(object):
+class KieResize:
     def __init__(self, **kwargs):
         super(KieResize, self).__init__()
         self.max_side, self.min_side = kwargs["img_scale"][0], kwargs["img_scale"][1]
@@ -419,7 +419,7 @@ class KieResize(object):
         return points
 
 
-class SRResize(object):
+class SRResize:
     def __init__(
         self,
         imgH=32,
@@ -457,7 +457,7 @@ class SRResize(object):
         return data
 
 
-class ResizeNormalize(object):
+class ResizeNormalize:
     def __init__(self, size, interpolation=Image.BICUBIC):
         self.size = size
         self.interpolation = interpolation
@@ -469,7 +469,7 @@ class ResizeNormalize(object):
         return img_numpy
 
 
-class GrayImageChannelFormat(object):
+class GrayImageChannelFormat:
     """
     format gray scale image's channel: (3,h,w) -> (1,h,w)
     Args:

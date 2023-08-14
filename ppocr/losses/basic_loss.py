@@ -85,7 +85,7 @@ class CELoss(nn.Module):
         return loss
 
 
-class KLJSLoss(object):
+class KLJSLoss:
     """用于计算 KL 散度（Kullback-Leibler Divergence）和 JS 散度（Jensen-Shannon Divergence）的损失函数"""
     def __init__(self, mode="kl"):
         assert mode in ["kl", "js", "KL", "JS"], "mode can only be one of ['kl', 'KL', 'js', 'JS']"

@@ -25,7 +25,7 @@ sys.path.append(os.path.join(__dir__, ".."))
 from ppocr.utils.e2e_utils.pgnet_pp_utils import PGNet_PostProcess
 
 
-class PGPostProcess(object):
+class PGPostProcess:
     """
     The post process for PGNet.
     """

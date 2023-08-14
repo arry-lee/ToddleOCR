@@ -22,7 +22,7 @@ from lanms import merge_quadrangle_n9 as la_nms
 from numpy.linalg import norm
 
 
-class DRRGTargets(object):
+class DRRGTargets:
     def __init__(
         self,
         orientation_thr=2.0,

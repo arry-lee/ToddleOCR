@@ -25,7 +25,7 @@ import imgaug.augmenters as iaa
 import numpy as np
 
 
-class AugmenterBuilder(object):
+class AugmenterBuilder:
     def __init__(self):
         pass
 

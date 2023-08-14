@@ -34,7 +34,7 @@ from ppocr.postprocess import build_post_process
 logger = get_logger()
 
 
-class TextE2E(object):
+class TextE2E:
     def __init__(self, args):
         self.args = args
         self.e2e_algorithm = args.e2e_algorithm

@@ -83,7 +83,7 @@ class SSIM(nn.Module):
         return self._ssim(img1, img2, window, self.window_size, channel, self.size_average)
 
 
-class SRMetric(object):
+class SRMetric:
     def __init__(self, main_indicator="all", **kwargs):
         self.main_indicator = main_indicator
         self.eps = 1e-5

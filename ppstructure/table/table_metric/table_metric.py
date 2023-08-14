@@ -94,7 +94,7 @@ class CustomConfig_del_block(Config):
         return 0.0
 
 
-class TEDS(object):
+class TEDS:
     """Tree Edit Distance basead Similarity"""
 
     def __init__(self, structure_only=False, n_jobs=1, ignore_nodes=None):

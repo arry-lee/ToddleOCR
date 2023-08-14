@@ -22,7 +22,7 @@ import numpy as np
 __all__ = ["KIEMetric"]
 
 
-class KIEMetric(object):
+class KIEMetric:
     def __init__(self, main_indicator="hmean", **kwargs):
         self.main_indicator = main_indicator
         self.reset()

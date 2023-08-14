@@ -23,7 +23,7 @@ from ppocr.data.imaug.random_crop_data import is_poly_outside_rect
 from tools.infer.utility import get_rotate_crop_image
 
 
-class CopyPaste(object):
+class CopyPaste:
     def __init__(self, objects_paste_ratio=0.2, limit_paste=True, **kwargs):
         self.ext_data_num = 1
         self.objects_paste_ratio = objects_paste_ratio

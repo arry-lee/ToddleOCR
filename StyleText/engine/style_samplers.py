@@ -16,7 +16,7 @@ import random
 import cv2
 
 
-class DatasetSampler(object):
+class DatasetSampler:
     def __init__(self, config):
         self.image_home = config["StyleSampler"]["image_home"]
         label_file = config["StyleSampler"]["label_file"]

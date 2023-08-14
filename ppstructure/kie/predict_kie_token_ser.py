@@ -38,7 +38,7 @@ from paddleocr import PaddleOCR
 logger = get_logger()
 
 
-class SerPredictor(object):
+class SerPredictor:
     def __init__(self, args):
         self.ocr_engine = PaddleOCR(
             use_angle_cls=args.use_angle_cls,

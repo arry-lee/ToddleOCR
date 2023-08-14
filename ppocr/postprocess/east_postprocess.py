@@ -23,7 +23,7 @@ import torch
 from .locality_aware_nms import nms_locality
 
 
-class EASTPostProcess(object):
+class EASTPostProcess:
     """
     The post process for EAST.
     """

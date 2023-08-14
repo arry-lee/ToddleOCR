@@ -19,7 +19,7 @@ import numpy as np
 import torch
 
 
-class DictCollator(object):
+class DictCollator:
     """
     data batch
     """
@@ -39,7 +39,7 @@ class DictCollator(object):
         return data_dict
 
 
-class ListCollator(object):
+class ListCollator:
     """
     data batch
     """
@@ -59,7 +59,7 @@ class ListCollator(object):
         return list(data_dict.values())
 
 
-class SSLRotateCollate(object):
+class SSLRotateCollate:
     """
     bach: [
         [(4*3xH*W), (4,)]
@@ -73,7 +73,7 @@ class SSLRotateCollate(object):
         return output
 
 
-class DyMaskCollator(object):
+class DyMaskCollator:
     """
     batch: [
         image [batch_size, channel, maxHinbatch, maxWinbatch]

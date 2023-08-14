@@ -30,7 +30,7 @@ import cv2
 import time
 
 
-class SASTPostProcess(object):
+class SASTPostProcess:
     """
     The post process for SAST.
     """

@@ -16,7 +16,7 @@ import random
 from utils.logging import get_logger
 
 
-class FileCorpus(object):
+class FileCorpus:
     def __init__(self, config):
         self.logger = get_logger()
         self.logger.info("using FileCorpus")
@@ -45,7 +45,7 @@ class FileCorpus(object):
         return self.language, corpus
 
 
-class EnNumCorpus(object):
+class EnNumCorpus:
     def __init__(self, config):
         self.logger = get_logger()
         self.logger.info("using NumberCorpus")

@@ -23,7 +23,7 @@ from ppocr.utils.e2e_utils.extract_textpoint_fast import sort_and_expand_with_di
 __all__ = ["PGProcessTrain"]
 
 
-class PGProcessTrain(object):
+class PGProcessTrain:
     def __init__(
         self,
         character_dict_path,

@@ -55,7 +55,7 @@ def expand(pix, det_box, shape):
     return x0_, y0_, x1_, y1_
 
 
-class TableSystem(object):
+class TableSystem:
     def __init__(self, args, text_detector=None, text_recognizer=None):
         self.args = args
         if not args.show_log:

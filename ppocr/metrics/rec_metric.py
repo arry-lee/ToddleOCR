@@ -19,7 +19,7 @@ import numpy as np
 from rapidfuzz.distance import Levenshtein
 
 
-class RecMetric(object):
+class RecMetric:
     def __init__(self, main_indicator="acc", is_filter=False, ignore_space=True, **kwargs):
         self.main_indicator = main_indicator
         self.is_filter = is_filter
@@ -70,7 +70,7 @@ class RecMetric(object):
         self.norm_edit_dis = 0
 
 
-class CNTMetric(object):
+class CNTMetric:
     def __init__(self, main_indicator="acc", **kwargs):
         self.main_indicator = main_indicator
         self.eps = 1e-5
@@ -105,7 +105,7 @@ class CNTMetric(object):
         self.all_num = 0
 
 
-class CANMetric(object):
+class CANMetric:
     def __init__(self, main_indicator="exp_rate", **kwargs):
         self.main_indicator = main_indicator
         self.word_right = []

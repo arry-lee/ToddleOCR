@@ -28,7 +28,7 @@ from torch.nn import functional as F
 from ppocr.postprocess.pse_postprocess.pse import pse
 
 
-class PSEPostProcess(object):
+class PSEPostProcess:
     """
     The post process for PSE.
     """

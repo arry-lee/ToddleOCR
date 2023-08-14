@@ -25,7 +25,7 @@ import cv2
 import numpy as np
 
 
-class GenTableMask(object):
+class GenTableMask:
     """gen table mask"""
 
     def __init__(self, shrink_h_max, shrink_w_max, mask_type=0, **kwargs):
@@ -180,7 +180,7 @@ class GenTableMask(object):
         return data
 
 
-class ResizeTableImage(object):
+class ResizeTableImage:
     def __init__(self, max_len, resize_bboxes=False, infer_mode=False, **kwargs):
         super(ResizeTableImage, self).__init__()
         self.max_len = max_len
@@ -203,7 +203,7 @@ class ResizeTableImage(object):
         return data
 
 
-class PaddingTableImage(object):
+class PaddingTableImage:
     def __init__(self, size, **kwargs):
         super(PaddingTableImage, self).__init__()
         self.size = size

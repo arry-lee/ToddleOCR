@@ -15,7 +15,7 @@ import torch
 import numpy as np
 
 
-class VQATokenPad(object):
+class VQATokenPad:
     def __init__(
         self,
         max_seq_len=512,

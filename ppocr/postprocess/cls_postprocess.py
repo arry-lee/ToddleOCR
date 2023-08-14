@@ -14,7 +14,7 @@
 import torch
 
 
-class ClsPostProcess(object):
+class ClsPostProcess:
     """Convert between text-label and text-index"""
 
     def __init__(self, label_list=None, key=None, **kwargs):

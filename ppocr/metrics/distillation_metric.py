@@ -23,7 +23,7 @@ from .vqa_token_ser_metric import VQASerTokenMetric
 from .vqa_token_re_metric import VQAReTokenMetric
 
 
-class DistillationMetric(object):
+class DistillationMetric:
     def __init__(self, key=None, base_metric_name=None, main_indicator=None, **kwargs):
         self.main_indicator = main_indicator
         self.key = key

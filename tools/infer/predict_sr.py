@@ -34,7 +34,7 @@ from ppocr.utils.utility import get_image_file_list, check_and_read
 logger = get_logger()
 
 
-class TextSR(object):
+class TextSR:
     def __init__(self, args):
         self.sr_image_shape = [int(v) for v in args.sr_image_shape.split(",")]
         self.sr_batch_num = args.sr_batch_num

@@ -1,7 +1,7 @@
 from .wandb_logger import WandbLogger
 
 
-class Loggers(object):
+class Loggers:
     def __init__(self, loggers):
         super().__init__()
         self.loggers = loggers

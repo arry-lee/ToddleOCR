@@ -35,7 +35,7 @@ from ppocr.utils.utility import get_image_file_list, check_and_read
 logger = get_logger()
 
 
-class TextClassifier(object):
+class TextClassifier:
     def __init__(self, args):
         self.cls_image_shape = [int(v) for v in args.cls_image_shape.split(",")]
         self.cls_batch_num = args.cls_batch_num

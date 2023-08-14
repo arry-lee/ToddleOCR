@@ -24,7 +24,7 @@ import six
 from PIL import Image, ImageEnhance, ImageOps
 
 
-class RawRandAugment(object):
+class RawRandAugment:
     def __init__(self, num_layers=2, magnitude=5, fillcolor=(128, 128, 128), **kwargs):
         self.num_layers = num_layers
         self.magnitude = magnitude

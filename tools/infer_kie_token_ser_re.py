@@ -114,7 +114,7 @@ def make_input(ser_inputs, ser_results):
     return ser_inputs, entity_idx_dict_batch
 
 
-class SerRePredictor(object):
+class SerRePredictor:
     def __init__(self, config, ser_config):
         global_config = config["Global"]
         if "infer_mode" in global_config:

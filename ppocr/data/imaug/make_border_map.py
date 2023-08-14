@@ -34,7 +34,7 @@ warnings.simplefilter("ignore")
 __all__ = ["MakeBorderMap"]
 
 
-class MakeBorderMap(object):
+class MakeBorderMap:
     def __init__(self, shrink_ratio=0.4, thresh_min=0.3, thresh_max=0.7, **kwargs):
         self.shrink_ratio = shrink_ratio
         self.thresh_min = thresh_min

@@ -22,7 +22,7 @@ from ppocr.utils.e2e_metric.Deteval import combine_results, get_socre_A, get_soc
 from ppocr.utils.e2e_utils.extract_textpoint_slow import get_dict
 
 
-class E2EMetric(object):
+class E2EMetric:
     def __init__(self, mode, gt_mat_dir, character_dict_path, main_indicator="f_score_e2e", **kwargs):
         self.mode = mode
         self.gt_mat_dir = gt_mat_dir

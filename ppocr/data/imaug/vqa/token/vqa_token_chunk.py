@@ -15,7 +15,7 @@
 from collections import defaultdict
 
 
-class VQASerTokenChunk(object):
+class VQASerTokenChunk:
     def __init__(self, max_seq_len=512, infer_mode=False, **kwargs):
         self.max_seq_len = max_seq_len
         self.infer_mode = infer_mode
@@ -42,7 +42,7 @@ class VQASerTokenChunk(object):
         return encoded_inputs_all[0]
 
 
-class VQAReTokenChunk(object):
+class VQAReTokenChunk:
     def __init__(self, max_seq_len=512, entities_labels=None, infer_mode=False, **kwargs):
         self.max_seq_len = max_seq_len
         self.entities_labels = {"HEADER": 0, "QUESTION": 1, "ANSWER": 2} if entities_labels is None else entities_labels

@@ -13,7 +13,7 @@
 # limitations under the License.
 
 
-class VQAReTokenRelation(object):
+class VQAReTokenRelation:
     def __init__(self, **kwargs):
         pass
 

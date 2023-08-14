@@ -15,7 +15,7 @@ import numpy as np
 from ppocr.metrics.det_metric import DetMetric
 
 
-class TableStructureMetric(object):
+class TableStructureMetric:
     def __init__(self, main_indicator="acc", eps=1e-6, del_thead_tbody=False, **kwargs):
         self.main_indicator = main_indicator
         self.eps = eps
@@ -68,7 +68,7 @@ class TableStructureMetric(object):
         self.anys_dict = dict()
 
 
-class TableMetric(object):
+class TableMetric:
     def __init__(
         self, main_indicator="acc", compute_bbox_metric=False, box_format="xyxy", del_thead_tbody=False, **kwargs
     ):

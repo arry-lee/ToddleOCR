@@ -25,7 +25,7 @@ import os
 __all__ = ["SASTProcessTrain"]
 
 
-class SASTProcessTrain(object):
+class SASTProcessTrain:
     def __init__(
         self,
         image_shape=[512, 512],

@@ -19,7 +19,7 @@ import datetime
 __all__ = ["TrainingStats", "Time"]
 
 
-class SmoothedValue(object):
+class SmoothedValue:
     """Track a series of values and provide access to smoothed values over a
     window or the global series average.
     """
@@ -38,7 +38,7 @@ def Time():
     return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
 
 
-class TrainingStats(object):
+class TrainingStats:
     def __init__(self, window_size, stats_keys):
         self.window_size = window_size
         self.smoothed_losses_and_metrics = {key: SmoothedValue(window_size) for key in stats_keys}

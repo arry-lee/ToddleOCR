@@ -34,7 +34,7 @@ from ppstructure.utility import parse_args
 logger = get_logger()
 
 
-class LayoutPredictor(object):
+class LayoutPredictor:
     def __init__(self, args):
         pre_process_list = [
             {"Resize": {"size": [800, 608]}},

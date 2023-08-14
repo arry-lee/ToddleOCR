@@ -16,7 +16,7 @@ from torchvision.transforms import ColorJitter as pp_ColorJitter
 __all__ = ["ColorJitter"]
 
 
-class ColorJitter(object):
+class ColorJitter:
     def __init__(self, brightness=0, contrast=0, saturation=0, hue=0, **kwargs):
         self.aug = pp_ColorJitter(brightness, contrast, saturation, hue)
 

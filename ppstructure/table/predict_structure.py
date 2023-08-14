@@ -60,7 +60,7 @@ def build_pre_process_list(args):
     return pre_process_list
 
 
-class TableStructurer(object):
+class TableStructurer:
     def __init__(self, args):
         self.args = args
         self.use_onnx = args.use_onnx

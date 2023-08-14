@@ -36,7 +36,7 @@ from ppstructure.kie.predict_kie_token_ser import SerPredictor
 logger = get_logger()
 
 
-class SerRePredictor(object):
+class SerRePredictor:
     def __init__(self, args):
         self.use_visual_backbone = args.use_visual_backbone
         self.ser_engine = SerPredictor(args)

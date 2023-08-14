@@ -28,7 +28,7 @@ from extract_textpoint_slow import *
 from extract_textpoint_fast import generate_pivot_list_fast, restore_poly
 
 
-class PGNet_PostProcess(object):
+class PGNet_PostProcess:
     # two different post-process
     def __init__(self, character_dict_path, valid_set, score_thresh, outs_dict, shape_list, point_gather_mode=None):
         self.Lexicon_Table = get_dict(character_dict_path)

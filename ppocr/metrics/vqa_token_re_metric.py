@@ -22,7 +22,7 @@ import torch
 __all__ = ["KIEMetric"]
 
 
-class VQAReTokenMetric(object):
+class VQAReTokenMetric:
     def __init__(self, main_indicator="hmean", **kwargs):
         self.main_indicator = main_indicator
         self.reset()

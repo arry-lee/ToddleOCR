@@ -24,7 +24,7 @@ from .abinet_aug import CVColorJitter, CVDeterioration, CVGeometry, SVTRDeterior
 from .text_image_aug import tia_distort, tia_perspective, tia_stretch
 
 
-class RecAug(object):
+class RecAug:
     def __init__(
         self,
         tia_prob=0.4,
@@ -56,7 +56,7 @@ class RecAug(object):
         return data
 
 
-class BaseDataAugmentation(object):
+class BaseDataAugmentation:
     def __init__(
         self,
         crop_prob=0.4,
@@ -100,7 +100,7 @@ class BaseDataAugmentation(object):
         return data
 
 
-class ABINetRecAug(object):
+class ABINetRecAug:
     def __init__(self, geometry_p=0.5, deterioration_p=0.25, colorjitter_p=0.25, **kwargs):
         self.transforms = Compose(
             [
@@ -119,7 +119,7 @@ class ABINetRecAug(object):
         return data
 
 
-class RecConAug(object):
+class RecConAug:
     def __init__(self, prob=0.5, image_shape=(32, 320, 3), max_text_length=25, ext_data_num=1, **kwargs):
         self.ext_data_num = ext_data_num
         self.prob = prob
@@ -154,7 +154,7 @@ class RecConAug(object):
         return data
 
 
-class SVTRRecAug(object):
+class SVTRRecAug:
     def __init__(self, aug_type=0, geometry_p=0.5, deterioration_p=0.25, colorjitter_p=0.25, **kwargs):
         self.transforms = Compose(
             [
@@ -179,7 +179,7 @@ class SVTRRecAug(object):
         return data
 
 
-class ClsResizeImg(object):
+class ClsResizeImg:
     def __init__(self, image_shape, **kwargs):
         self.image_shape = image_shape
 
@@ -190,7 +190,7 @@ class ClsResizeImg(object):
         return data
 
 
-class RecResizeImg(object):
+class RecResizeImg:
     def __init__(
         self,
         image_shape,
@@ -215,7 +215,7 @@ class RecResizeImg(object):
         return data
 
 
-class VLRecResizeImg(object):
+class VLRecResizeImg:
     def __init__(
         self,
         image_shape,
@@ -248,7 +248,7 @@ class VLRecResizeImg(object):
         return data
 
 
-class RFLRecResizeImg(object):
+class RFLRecResizeImg:
     def __init__(self, image_shape, padding=True, interpolation=1, **kwargs):
         self.image_shape = image_shape
         self.padding = padding
@@ -274,7 +274,7 @@ class RFLRecResizeImg(object):
         return data
 
 
-class SRNRecResizeImg(object):
+class SRNRecResizeImg:
     def __init__(self, image_shape, num_heads, max_text_length, **kwargs):
         self.image_shape = image_shape
         self.num_heads = num_heads
@@ -295,7 +295,7 @@ class SRNRecResizeImg(object):
         return data
 
 
-class SARRecResizeImg(object):
+class SARRecResizeImg:
     def __init__(self, image_shape, width_downsample_ratio=0.25, **kwargs):
         self.image_shape = image_shape
         self.width_downsample_ratio = width_downsample_ratio
@@ -312,7 +312,7 @@ class SARRecResizeImg(object):
         return data
 
 
-class PRENResizeImg(object):
+class PRENResizeImg:
     def __init__(self, image_shape, **kwargs):
         """
         Accroding to original paper's realization, it's a hard resize method here.
@@ -330,7 +330,7 @@ class PRENResizeImg(object):
         return data
 
 
-class SPINRecResizeImg(object):
+class SPINRecResizeImg:
     def __init__(self, image_shape, interpolation=2, mean=(127.5, 127.5, 127.5), std=(127.5, 127.5, 127.5), **kwargs):
         self.image_shape = image_shape
 
@@ -370,7 +370,7 @@ class SPINRecResizeImg(object):
         return data
 
 
-class GrayRecResizeImg(object):
+class GrayRecResizeImg:
     def __init__(self, image_shape, resize_type, inter_type="Image.ANTIALIAS", scale=True, padding=False, **kwargs):
         self.image_shape = image_shape
         self.resize_type = resize_type
@@ -415,7 +415,7 @@ class GrayRecResizeImg(object):
         return data
 
 
-class ABINetRecResizeImg(object):
+class ABINetRecResizeImg:
     def __init__(self, image_shape, **kwargs):
         self.image_shape = image_shape
 
@@ -427,7 +427,7 @@ class ABINetRecResizeImg(object):
         return data
 
 
-class SVTRRecResizeImg(object):
+class SVTRRecResizeImg:
     def __init__(self, image_shape, padding=True, **kwargs):
         self.image_shape = image_shape
         self.padding = padding
@@ -441,7 +441,7 @@ class SVTRRecResizeImg(object):
         return data
 
 
-class RobustScannerRecResizeImg(object):
+class RobustScannerRecResizeImg:
     def __init__(self, image_shape, max_text_length, width_downsample_ratio=0.25, **kwargs):
         self.image_shape = image_shape
         self.width_downsample_ratio = width_downsample_ratio

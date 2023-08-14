@@ -39,7 +39,7 @@ from tools.infer.utility import draw_ocr_box_txt, get_rotate_crop_image, get_min
 logger = get_logger()
 
 
-class TextSystem(object):
+class TextSystem:
     def __init__(self, args):
         if not args.show_log:
             logger.setLevel(logging.INFO)

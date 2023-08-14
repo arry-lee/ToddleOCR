@@ -28,7 +28,7 @@ from ppocr.data.imaug.vqa.augment import order_by_tbyx
 from ppocr.utils.logging import get_logger
 
 
-class ClsLabelEncode(object):
+class ClsLabelEncode:
     def __init__(self, label_list, **kwargs):
         self.label_list = label_list
 
@@ -41,7 +41,7 @@ class ClsLabelEncode(object):
         return data
 
 
-class DetLabelEncode(object):
+class DetLabelEncode:
     def __init__(self, **kwargs):
         pass
 
@@ -93,7 +93,7 @@ class DetLabelEncode(object):
         return ex_boxes
 
 
-class BaseRecLabelEncode(object):
+class BaseRecLabelEncode:
     """Convert between text-label and text-index"""
 
     def __init__(self, max_text_length, character_dict_path=None, use_space_char=False, lower=False):
@@ -216,7 +216,7 @@ class E2ELabelEncodeTest(BaseRecLabelEncode):
         return data
 
 
-class E2ELabelEncodeTrain(object):
+class E2ELabelEncodeTrain:
     def __init__(self, **kwargs):
         pass
 
@@ -245,7 +245,7 @@ class E2ELabelEncodeTrain(object):
         return data
 
 
-class KieLabelEncode(object):
+class KieLabelEncode:
     def __init__(self, character_dict_path, class_path, norm=10, directed=False, **kwargs):
         super(KieLabelEncode, self).__init__()
         self.dict = dict({"": 0})
@@ -749,7 +749,7 @@ class TableMasterLabelEncode(TableLabelEncode):
         return dict_character
 
 
-class TableBoxEncode(object):
+class TableBoxEncode:
     def __init__(self, in_box_format="xyxy", out_box_format="xyxy", **kwargs):
         assert out_box_format in ["xywh", "xyxy", "xyxyxyxy"]
         self.in_box_format = in_box_format
@@ -867,7 +867,7 @@ class PRENLabelEncode(BaseRecLabelEncode):
         return data
 
 
-class VQATokenLabelEncode(object):
+class VQATokenLabelEncode:
     """
     Label encode for NLP VQA methods
     """
@@ -1333,7 +1333,7 @@ class VLLabelEncode(BaseRecLabelEncode):
         return data
 
 
-class CTLabelEncode(object):
+class CTLabelEncode:
     def __init__(self, **kwargs):
         pass
 

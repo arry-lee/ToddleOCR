@@ -18,7 +18,7 @@ from torch.nn import functional as F
 import re
 
 
-class BaseRecLabelDecode(object):
+class BaseRecLabelDecode:
     """Convert between text-label and text-index"""
 
     def __init__(self, character_dict_path=None, use_space_char=False):

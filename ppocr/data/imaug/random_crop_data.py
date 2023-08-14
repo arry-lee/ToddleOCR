@@ -123,7 +123,7 @@ def crop_area(im, text_polys, min_crop_side_ratio, max_tries):
     return 0, 0, w, h
 
 
-class EastRandomCropData(object):
+class EastRandomCropData:
     def __init__(self, size=(640, 640), max_tries=10, min_crop_side_ratio=0.1, keep_ratio=True, **kwargs):
         self.size = size
         self.max_tries = max_tries
@@ -167,7 +167,7 @@ class EastRandomCropData(object):
         return data
 
 
-class RandomCropImgMask(object):
+class RandomCropImgMask:
     def __init__(self, size, main_key, crop_keys, p=3 / 8, **kwargs):
         self.size = size
         self.main_key = main_key

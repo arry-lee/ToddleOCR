@@ -4,7 +4,7 @@ import cv2
 from utils.logging import get_logger
 
 
-class StdTextDrawer(object):
+class StdTextDrawer:
     def __init__(self, config):
         self.logger = get_logger()
         self.max_width = config["Global"]["image_width"]

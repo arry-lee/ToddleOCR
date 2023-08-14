@@ -20,7 +20,7 @@ from utils.logging import get_logger
 from engine import style_samplers, corpus_generators, text_drawers, predictors, writers
 
 
-class ImageSynthesiser(object):
+class ImageSynthesiser:
     def __init__(self):
         self.FLAGS = ArgsParser().parse_args()
         self.config = load_config(self.FLAGS.config)

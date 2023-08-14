@@ -23,7 +23,7 @@ import numpy as np
 __all__ = ["EASTProcessTrain"]
 
 
-class EASTProcessTrain(object):
+class EASTProcessTrain:
     def __init__(
         self, image_shape=[512, 512], background_ratio=0.125, min_crop_side_ratio=0.1, min_text_size=10, **kwargs
     ):

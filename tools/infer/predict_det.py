@@ -35,7 +35,7 @@ import json
 logger = get_logger()
 
 
-class TextDetector(object):
+class TextDetector:
     def __init__(self, args):
         self.args = args
         self.det_algorithm = args.det_algorithm

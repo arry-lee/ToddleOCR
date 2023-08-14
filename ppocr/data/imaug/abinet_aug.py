@@ -53,7 +53,7 @@ def get_interpolation(type="random"):
     return interpolation
 
 
-class CVRandomRotation(object):
+class CVRandomRotation:
     def __init__(self, degrees=15):
         assert isinstance(degrees, numbers.Number), "degree should be a single number."
         assert degrees >= 0, "degree must be positive."
@@ -77,7 +77,7 @@ class CVRandomRotation(object):
         return cv2.warpAffine(img, M, (dst_w, dst_h), flags=flags, borderMode=cv2.BORDER_REPLICATE)
 
 
-class CVRandomAffine(object):
+class CVRandomAffine:
     def __init__(self, degrees, translate=None, scale=None, shear=None):
         assert isinstance(degrees, numbers.Number), "degree should be a single number."
         assert degrees >= 0, "degree must be positive."
@@ -210,7 +210,7 @@ class CVRandomAffine(object):
         return cv2.warpAffine(img, M, (dst_w, dst_h), flags=flags, borderMode=cv2.BORDER_REPLICATE)
 
 
-class CVRandomPerspective(object):
+class CVRandomPerspective:
     def __init__(self, distortion=0.5):
         self.distortion = distortion
 
@@ -244,7 +244,7 @@ class CVRandomPerspective(object):
         return img
 
 
-class CVRescale(object):
+class CVRescale:
     def __init__(self, factor=4, base_size=(128, 512)):
         """Define image scales using gaussian pyramid and rescale image to target scale.
 
@@ -273,7 +273,7 @@ class CVRescale(object):
         return scale_img
 
 
-class CVGaussianNoise(object):
+class CVGaussianNoise:
     def __init__(self, mean=0, var=20):
         self.mean = mean
         if isinstance(var, numbers.Number):
@@ -289,7 +289,7 @@ class CVGaussianNoise(object):
         return img
 
 
-class CVMotionBlur(object):
+class CVMotionBlur:
     def __init__(self, degrees=12, angle=90):
         if isinstance(degrees, numbers.Number):
             self.degree = max(int(sample_asym(degrees)), 1)
@@ -310,7 +310,7 @@ class CVMotionBlur(object):
         return img
 
 
-class CVGeometry(object):
+class CVGeometry:
     def __init__(self, degrees=15, translate=(0.3, 0.3), scale=(0.5, 2.0), shear=(45, 15), distortion=0.5, p=0.5):
         self.p = p
         type_p = random.random()
@@ -328,7 +328,7 @@ class CVGeometry(object):
             return img
 
 
-class CVDeterioration(object):
+class CVDeterioration:
     def __init__(self, var, degrees, factor, p=0.5):
         self.p = p
         transforms = []
@@ -350,7 +350,7 @@ class CVDeterioration(object):
             return img
 
 
-class CVColorJitter(object):
+class CVColorJitter:
     def __init__(self, brightness=0.5, contrast=0.5, saturation=0.5, hue=0.1, p=0.5):
         self.p = p
         self.transforms = ColorJitter(brightness=brightness, contrast=contrast, saturation=saturation, hue=hue)
@@ -362,7 +362,7 @@ class CVColorJitter(object):
             return img
 
 
-class SVTRDeterioration(object):
+class SVTRDeterioration:
     def __init__(self, var, degrees, factor, p=0.5):
         self.p = p
         transforms = []
@@ -383,7 +383,7 @@ class SVTRDeterioration(object):
             return img
 
 
-class SVTRGeometry(object):
+class SVTRGeometry:
     def __init__(
         self, aug_type=0, degrees=15, translate=(0.3, 0.3), scale=(0.5, 2.0), shear=(45, 15), distortion=0.5, p=0.5
     ):

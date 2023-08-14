@@ -21,7 +21,7 @@ from utils.logging import get_logger
 from utils.sys_funcs import check_gpu
 
 
-class StyleTextRecPredictor(object):
+class StyleTextRecPredictor:
     def __init__(self, config):
         algorithm = config["Predictor"]["algorithm"]
         assert algorithm in ["StyleTextRec"], "Generator {} not supported.".format(algorithm)

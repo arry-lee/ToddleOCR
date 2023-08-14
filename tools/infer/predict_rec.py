@@ -36,7 +36,7 @@ from ppocr.utils.utility import get_image_file_list, check_and_read
 logger = get_logger()
 
 
-class TextRecognizer(object):
+class TextRecognizer:
     def __init__(self, args):
         self.rec_image_shape = [int(v) for v in args.rec_image_shape.split(",")]
         self.rec_batch_num = args.rec_batch_num

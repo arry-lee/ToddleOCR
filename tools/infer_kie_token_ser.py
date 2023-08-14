@@ -56,7 +56,7 @@ def to_tensor(data):
     return list(data_dict.values())
 
 
-class SerPredictor(object):
+class SerPredictor:
     def __init__(self, config):
         global_config = config["Global"]
         self.algorithm = config["Model"]["algorithm"]

@@ -78,7 +78,7 @@ def area_of(left_top, right_bottom):
     return hw[..., 0] * hw[..., 1]
 
 
-class PicoDetPostProcess(object):
+class PicoDetPostProcess:
     """
     Args:
         input_shape (int): network input image size

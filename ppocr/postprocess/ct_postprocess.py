@@ -28,7 +28,7 @@ import torch
 import pyclipper
 
 
-class CTPostProcess(object):
+class CTPostProcess:
     """
     The post process for Centripetal Text (CT).
     """

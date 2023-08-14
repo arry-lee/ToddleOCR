@@ -153,7 +153,7 @@ class StyleDict(dict):
         return color
 
 
-class Element(object):
+class Element:
     """
     Our base class for representing an html element along with a cascading style.
     The element is created along with a parent so that the StyleDict that we store

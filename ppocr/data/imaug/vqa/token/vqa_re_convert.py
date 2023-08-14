@@ -15,7 +15,7 @@
 import numpy as np
 
 
-class TensorizeEntitiesRelations(object):
+class TensorizeEntitiesRelations:
     def __init__(self, max_seq_len=512, infer_mode=False, **kwargs):
         self.max_seq_len = max_seq_len
         self.infer_mode = infer_mode

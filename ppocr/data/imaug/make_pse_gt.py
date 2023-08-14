@@ -25,7 +25,7 @@ from shapely.geometry import Polygon
 __all__ = ["MakePseGt"]
 
 
-class MakePseGt(object):
+class MakePseGt:
     def __init__(self, kernel_num=7, size=640, min_shrink_ratio=0.4, **kwargs):
         self.kernel_num = kernel_num
         self.min_shrink_ratio = min_shrink_ratio

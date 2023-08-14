@@ -61,7 +61,7 @@ def fourier2poly(fourier_coeff, num_reconstr_points=50):
     return polygon.astype("int32").reshape((len(fourier_coeff), -1))
 
 
-class FCEPostProcess(object):
+class FCEPostProcess:
     """
     The post process for FCENet.
     """

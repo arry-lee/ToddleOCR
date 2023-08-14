@@ -29,7 +29,7 @@ import pyclipper
 __all__ = ["MakeShrinkMap"]
 
 
-class MakeShrinkMap(object):
+class MakeShrinkMap:
     r"""
     Making binary mask from detection data with ICDAR format.
     Typically following the process of class `MakeICDARData`.

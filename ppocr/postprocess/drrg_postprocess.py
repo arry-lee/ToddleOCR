@@ -248,7 +248,7 @@ def comps2boundaries(text_comps, comp_pred_labels):
     return boundaries
 
 
-class DRRGPostprocess(object):
+class DRRGPostprocess:
     """Merge text components and construct boundaries of text instances.
 
     Args:

@@ -16,7 +16,7 @@ import torch
 from ppocr.utils.utility import load_vqa_bio_label_maps
 
 
-class VQASerTokenLayoutLMPostProcess(object):
+class VQASerTokenLayoutLMPostProcess:
     """Convert between text-label and text-index"""
 
     def __init__(self, class_path, **kwargs):

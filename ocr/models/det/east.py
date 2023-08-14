@@ -457,7 +457,7 @@ class MobileNetV3(nn.Module):
         return out_list
 
 
-class EASTPostProcess(object):
+class EASTPostProcess:
     """
     The post process for EAST.
     """

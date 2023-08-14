@@ -14,7 +14,7 @@
 import torch
 
 
-class VQAReTokenLayoutLMPostProcess(object):
+class VQAReTokenLayoutLMPostProcess:
     """Convert between text-label and text-index"""
 
     def __init__(self, **kwargs):
