@@ -1,26 +1,15 @@
-# copyright (c) 2021 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 """
 This code is refer from:
 https://github.com/whai362/PSENet/blob/python3/models/neck/fpn.py
 """
-
 import math
+
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+
+__all__ = ["FPN", "Conv_BN_ReLU"]
 
 
 class Conv_BN_ReLU(nn.Module):
@@ -31,22 +20,13 @@ class Conv_BN_ReLU(nn.Module):
         )
         self.bn = nn.BatchNorm2d(out_planes, momentum=0.1)
         self.relu = nn.ReLU()
-
         for m in self.children():
             if isinstance(m, nn.Conv2d):
                 n = m._kernel_size[0] * m._kernel_size[1] * m._out_channels
-                m.weight = torch.create_parameter(
-                    shape=m.weight.shape,
-                    dtype="float32",
-                    default_initializer=torch.nn.init.Normal(0, math.sqrt(2.0 / n)),
-                )
+                nn.init.normal_(m.weight, 0, math.sqrt(2.0 / n))
             elif isinstance(m, nn.BatchNorm2d):
-                m.weight = torch.create_parameter(
-                    shape=m.weight.shape, dtype="float32", default_initializer=torch.nn.init.Constant(1.0)
-                )
-                m.bias = torch.create_parameter(
-                    shape=m.bias.shape, dtype="float32", default_initializer=torch.nn.init.Constant(0.0)
-                )
+                nn.init.ones_(m.weight)
+                nn.init.zeros_(m.bias)
 
     def forward(self, x):
         return self.relu(self.bn(self.conv(x)))
@@ -55,39 +35,21 @@ class Conv_BN_ReLU(nn.Module):
 class FPN(nn.Module):
     def __init__(self, in_channels, out_channels):
         super(FPN, self).__init__()
-
-        # Top layer
         self.toplayer_ = Conv_BN_ReLU(in_channels[3], out_channels, kernel_size=1, stride=1, padding=0)
-        # Lateral layers
         self.latlayer1_ = Conv_BN_ReLU(in_channels[2], out_channels, kernel_size=1, stride=1, padding=0)
-
         self.latlayer2_ = Conv_BN_ReLU(in_channels[1], out_channels, kernel_size=1, stride=1, padding=0)
-
         self.latlayer3_ = Conv_BN_ReLU(in_channels[0], out_channels, kernel_size=1, stride=1, padding=0)
-
-        # Smooth layers
         self.smooth1_ = Conv_BN_ReLU(out_channels, out_channels, kernel_size=3, stride=1, padding=1)
-
         self.smooth2_ = Conv_BN_ReLU(out_channels, out_channels, kernel_size=3, stride=1, padding=1)
-
         self.smooth3_ = Conv_BN_ReLU(out_channels, out_channels, kernel_size=3, stride=1, padding=1)
-
         self.out_channels = out_channels * 4
         for m in self.children():
             if isinstance(m, nn.Conv2d):
                 n = m._kernel_size[0] * m._kernel_size[1] * m._out_channels
-                m.weight = torch.create_parameter(
-                    shape=m.weight.shape,
-                    dtype="float32",
-                    default_initializer=torch.nn.init.Normal(0, math.sqrt(2.0 / n)),
-                )
+                nn.init.normal_(m.weight, 0, math.sqrt(2.0 / n))
             elif isinstance(m, nn.BatchNorm2d):
-                m.weight = torch.create_parameter(
-                    shape=m.weight.shape, dtype="float32", default_initializer=torch.nn.init.Constant(1.0)
-                )
-                m.bias = torch.create_parameter(
-                    shape=m.bias.shape, dtype="float32", default_initializer=torch.nn.init.Constant(0.0)
-                )
+                nn.init.ones_(m.weight)
+                nn.init.zeros_(m.bias)
 
     def _upsample(self, x, scale=1):
         return F.upsample(x, scale_factor=scale, mode="bilinear")
@@ -96,24 +58,19 @@ class FPN(nn.Module):
         return F.upsample(x, scale_factor=scale, mode="bilinear") + y
 
     def forward(self, x):
-        f2, f3, f4, f5 = x
+        (f2, f3, f4, f5) = x
         p5 = self.toplayer_(f5)
-
         f4 = self.latlayer1_(f4)
         p4 = self._upsample_add(p5, f4, 2)
         p4 = self.smooth1_(p4)
-
         f3 = self.latlayer2_(f3)
         p3 = self._upsample_add(p4, f3, 2)
         p3 = self.smooth2_(p3)
-
         f2 = self.latlayer3_(f2)
         p2 = self._upsample_add(p3, f2, 2)
         p2 = self.smooth3_(p2)
-
         p3 = self._upsample(p3, 2)
         p4 = self._upsample(p4, 4)
         p5 = self._upsample(p5, 8)
-
         fuse = torch.concat([p2, p3, p4, p5], dim=1)
         return fuse

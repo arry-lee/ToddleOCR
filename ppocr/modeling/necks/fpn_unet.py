@@ -1,16 +1,3 @@
-# copyright (c) 2022 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 """
 This code is refer from:
 https://github.com/open-mmlab/mmocr/blob/main/mmocr/models/textdet/necks/fpn_unet.py
@@ -47,11 +34,11 @@ class FPN_UNet(nn.Module):
         assert isinstance(out_channels, int)
         self.out_channels = out_channels
 
-        blocks_out_channels = [out_channels] + [min(out_channels * 2**i, 256) for i in range(4)]
+        blocks_out_channels = [out_channels] + [min(out_channels * 2 ** i, 256) for i in range(4)]
         blocks_in_channels = (
-            [blocks_out_channels[1]]
-            + [in_channels[i] + blocks_out_channels[i + 2] for i in range(3)]
-            + [in_channels[3]]
+                [blocks_out_channels[1]]
+                + [in_channels[i] + blocks_out_channels[i + 2] for i in range(3)]
+                + [in_channels[3]]
         )
 
         self.up4 = nn.ConvTranspose2d(blocks_in_channels[4], blocks_out_channels[4], kernel_size=4, stride=2, padding=1)

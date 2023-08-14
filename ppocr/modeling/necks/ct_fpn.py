@@ -13,17 +13,13 @@
 # limitations under the License.
 
 
-
-
-
-import math
 import os
 import sys
 
 import torch
 import torch.nn.functional as F
 from torch import nn
-from torch.nn.init import ones_,zeros_,normal_
+from torch.nn.init import normal_, ones_, zeros_
 
 __dir__ = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(__dir__)
@@ -43,7 +39,7 @@ class Conv_BN_ReLU(nn.Module):
             if isinstance(m, nn.Conv2d):
                 n = m._kernel_size[0] * m._kernel_size[1] * m._out_channels
                 # normal_ = Normal(mean=0.0, std=math.sqrt(2.0 / n))
-                normal_(m.weight)
+                normal_(m.weight,mean=0.0, std=math.sqrt(2.0 / n))
             elif isinstance(m, nn.BatchNorm2d):
                 zeros_(m.bias)
                 ones_(m.weight)

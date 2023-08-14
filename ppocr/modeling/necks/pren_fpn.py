@@ -1,28 +1,14 @@
-# copyright (c) 2022 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 """
 Code is refer from:
 https://github.com/RuijieJ/pren/blob/main/Nets/Aggregation.py
 """
-
-
-
-
+from collections import OrderedDict
 
 import torch
 from torch import nn
 import torch.nn.functional as F
+
+from ppocr.modeling.backbones.rec_efficientb3_pren import Swish
 
 
 class PoolAggregate(nn.Module):
@@ -36,7 +22,7 @@ class PoolAggregate(nn.Module):
         self.d_in = d_in
         self.d_middle = d_middle
         self.d_out = d_out
-        self.act = nn.Swish()
+        self.act = Swish()
 
         self.n_r = n_r
         self.aggs = self._build_aggs()
@@ -47,13 +33,13 @@ class PoolAggregate(nn.Module):
             aggs.append(
                 self.add_module(
                     "{}".format(i),
-                    nn.Sequential(
+                    nn.Sequential(OrderedDict([
                         ("conv1", nn.Conv2d(self.d_in, self.d_middle, 3, 2, 1, bias=False)),
                         ("bn1", nn.BatchNorm2d(self.d_middle)),
                         ("act", self.act),
                         ("conv2", nn.Conv2d(self.d_middle, self.d_out, 3, 2, 1, bias=False)),
                         ("bn2", nn.BatchNorm2d(self.d_out)),
-                    ),
+                    ])),
                 )
             )
         return aggs
@@ -79,23 +65,23 @@ class WeightAggregate(nn.Module):
 
         self.n_r = n_r
         self.d_out = d_out
-        self.act = nn.Swish()
+        self.act = Swish()
 
-        self.conv_n = nn.Sequential(
+        self.conv_n = nn.Sequential(OrderedDict([
             ("conv1", nn.Conv2d(d_in, d_in, 3, 1, 1, bias=False)),
             ("bn1", nn.BatchNorm2d(d_in)),
             ("act1", self.act),
             ("conv2", nn.Conv2d(d_in, n_r, 1, bias=False)),
             ("bn2", nn.BatchNorm2d(n_r)),
             ("act2", nn.Sigmoid()),
-        )
-        self.conv_d = nn.Sequential(
+        ]))
+        self.conv_d = nn.Sequential(OrderedDict([
             ("conv1", nn.Conv2d(d_in, d_middle, 3, 1, 1, bias=False)),
             ("bn1", nn.BatchNorm2d(d_middle)),
             ("act1", self.act),
             ("conv2", nn.Conv2d(d_middle, d_out, 1, bias=False)),
             ("bn2", nn.BatchNorm2d(d_out)),
-        )
+        ]))
 
     def forward(self, x):
         b, _, h, w = x.shape
@@ -117,7 +103,7 @@ class GCN(nn.Module):
         self.conv_n = nn.Conv1d(n_in, n_out, 1)
         self.linear = nn.Linear(d_in, d_out)
         self.dropout = nn.Dropout(dropout)
-        self.act = nn.Swish()
+        self.act = Swish()
 
     def forward(self, x):
         x = self.conv_n(x)

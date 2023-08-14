@@ -1,16 +1,3 @@
-# copyright (c) 2022 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 """
 This code is refer from:
 https://github.com/PaddlePaddle/PaddleDetection/blob/release/2.3/ppdet/modeling/necks/fpn.py
@@ -23,7 +10,7 @@ import torch.nn.functional as F
 
 __all__ = ["FCEFPN"]
 
-from torch.nn.init import normal_, xavier_uniform, xavier_uniform_
+from torch.nn.init import normal_, xavier_uniform_
 
 
 class ConvNormLayer(nn.Module):
@@ -55,7 +42,7 @@ class ConvNormLayer(nn.Module):
             groups=groups,
             bias=True,
         )
-
+        initializer(self.conv.weight)
         norm_lr = 0.0 if freeze_norm else 1.0
 
         if norm_type == "bn":
@@ -63,7 +50,7 @@ class ConvNormLayer(nn.Module):
         elif norm_type == "sync_bn":
             self.norm = nn.SyncBatchNorm(ch_out)
         elif norm_type == "gn":
-            self.norm = nn.GroupNorm(num_groups=norm_groups, num_features=ch_out)
+            self.norm = nn.GroupNorm(num_groups=norm_groups, num_channels=ch_out)
 
     def forward(self, inputs):
         out = self.conv(inputs)
@@ -150,7 +137,7 @@ class FCEFPN(nn.Module):
                         norm_type=self.norm_type,
                         norm_decay=self.norm_decay,
                         freeze_norm=self.freeze_norm,
-                        initializer=xavier_uniform_(fan_out=in_c),
+                        initializer=xavier_uniform_,
                     ),
                 )
             else:
@@ -177,7 +164,7 @@ class FCEFPN(nn.Module):
                         norm_type=self.norm_type,
                         norm_decay=self.norm_decay,
                         freeze_norm=self.freeze_norm,
-                        initializer=xavier_uniform,
+                        initializer=xavier_uniform_,
                     ),
                 )
             else:

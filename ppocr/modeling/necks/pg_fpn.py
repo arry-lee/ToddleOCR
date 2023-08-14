@@ -1,24 +1,7 @@
-# copyright (c) 2021 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-
-
-
-
 import torch
 import torch.nn.functional as F
 from torch import nn
+__all__ = ['DeConvBNLayer', 'PGFPN']
 
 
 class ConvBNLayer(nn.Module):
@@ -26,7 +9,6 @@ class ConvBNLayer(nn.Module):
         self, in_channels, out_channels, kernel_size, stride=1, groups=1, is_vd_mode=False, act=None, name=None
     ):
         super(ConvBNLayer, self).__init__()
-
         self.is_vd_mode = is_vd_mode
         self._pool2d_avg = nn.AvgPool2d(kernel_size=2, stride=2, padding=0, ceil_mode=True)
         self._conv = nn.Conv2d(
@@ -42,29 +24,25 @@ class ConvBNLayer(nn.Module):
             bn_name = "bn_" + name
         else:
             bn_name = "bn" + name[3:]
-        self._batch_norm = nn.BatchNorm2d(
-            out_channels,
-            act=act,
-            bias=True,
-            moving_mean_name=bn_name + "_mean",
-            moving_variance_name=bn_name + "_variance",
-            use_global_stats=False,
-        )
+        self._batch_norm = nn.BatchNorm2d(out_channels, track_running_stats=False)
+        self._batch_norm.register_buffer(bn_name + "_mean", self._batch_norm.running_mean)
+        self._batch_norm.register_buffer(bn_name + "_variance", self._batch_norm.running_var)
+        if act:
+            self._act = getattr(F, act)
+        else:
+            self._act = None
 
     def forward(self, inputs):
         y = self._conv(inputs)
         y = self._batch_norm(y)
+        if self._act:
+            y = self._act(y)
         return y
 
 
 class DeConvBNLayer(nn.Module):
-    def __init__(
-        self, in_channels, out_channels, kernel_size=4, stride=2, padding=1, groups=1, if_act=True, act=None, name=None
-    ):
+    def __init__(self, in_channels, out_channels, kernel_size=4, stride=2, padding=1, groups=1, act=None, name=None):
         super(DeConvBNLayer, self).__init__()
-
-        self.if_act = if_act
-        self.act = act
         self.deconv = nn.ConvTranspose2d(
             in_channels=in_channels,
             out_channels=out_channels,
@@ -74,18 +52,19 @@ class DeConvBNLayer(nn.Module):
             groups=groups,
             bias=False,
         )
-        self.bn = nn.BatchNorm2d(
-            num_features=out_channels,
-            act=act,
-            bias=True,
-            moving_mean_name="bn_" + name + "_mean",
-            moving_variance_name="bn_" + name + "_variance",
-            use_global_stats=False,
-        )
+        self.bn = nn.BatchNorm2d(num_features=out_channels, track_running_stats=False)
+        self._batch_norm.register_buffer("bn_" + name + "_mean", self._batch_norm.running_mean)
+        self._batch_norm.register_buffer("bn_" + name + "_variance", self._batch_norm.running_var)
+        if act:
+            self._act = getattr(F, act)
+        else:
+            self._act = None
 
     def forward(self, x):
         x = self.deconv(x)
         x = self.bn(x)
+        if self._act:
+            x = self._act(x)
         return x
 
 
@@ -119,7 +98,6 @@ class PGFPN(nn.Module):
         self.conv_bn_layer_8 = ConvBNLayer(
             in_channels=128, out_channels=128, kernel_size=1, stride=1, act=None, name="FPN_d8"
         )
-
         self.conv_h0 = ConvBNLayer(
             in_channels=num_inputs[0],
             out_channels=num_outputs[0],
@@ -160,7 +138,6 @@ class PGFPN(nn.Module):
             act=None,
             name="conv_h{}".format(4),
         )
-
         self.dconv0 = DeConvBNLayer(
             in_channels=num_outputs[0], out_channels=num_outputs[0 + 1], name="dconv_{}".format(0)
         )
@@ -215,27 +192,22 @@ class PGFPN(nn.Module):
         )
 
     def forward(self, x):
-        c0, c1, c2, c3, c4, c5, c6 = x
-        # FPN_Down_Fusion
+        (c0, c1, c2, c3, c4, c5, c6) = x
         f = [c0, c1, c2]
         g = [None, None, None]
         h = [None, None, None]
         h[0] = self.conv_bn_layer_1(f[0])
         h[1] = self.conv_bn_layer_2(f[1])
         h[2] = self.conv_bn_layer_3(f[2])
-
         g[0] = self.conv_bn_layer_4(h[0])
         g[1] = torch.add(g[0], h[1])
         g[1] = F.relu(g[1])
         g[1] = self.conv_bn_layer_5(g[1])
         g[1] = self.conv_bn_layer_6(g[1])
-
         g[2] = torch.add(g[1], h[2])
         g[2] = F.relu(g[2])
         g[2] = self.conv_bn_layer_7(g[2])
         f_down = self.conv_bn_layer_8(g[2])
-
-        # FPN UP Fusion
         f1 = [c6, c5, c4, c3, c2]
         g = [None, None, None, None, None]
         h = [None, None, None, None, None]
@@ -244,24 +216,20 @@ class PGFPN(nn.Module):
         h[2] = self.conv_h2(f1[2])
         h[3] = self.conv_h3(f1[3])
         h[4] = self.conv_h4(f1[4])
-
         g[0] = self.dconv0(h[0])
         g[1] = torch.add(g[0], h[1])
         g[1] = F.relu(g[1])
         g[1] = self.conv_g1(g[1])
         g[1] = self.dconv1(g[1])
-
         g[2] = torch.add(g[1], h[2])
         g[2] = F.relu(g[2])
         g[2] = self.conv_g2(g[2])
         g[2] = self.dconv2(g[2])
-
         g[3] = torch.add(g[2], h[3])
         g[3] = F.relu(g[3])
         g[3] = self.conv_g3(g[3])
         g[3] = self.dconv3(g[3])
-
-        g[4] = torch.add(x=g[3], y=h[4])
+        g[4] = torch.add(g[3], h[4])
         g[4] = F.relu(g[4])
         g[4] = self.conv_g4(g[4])
         f_up = self.convf(g[4])

@@ -1,25 +1,7 @@
-# copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-
-
-
-
 import torch
 from torch import nn
 
-
+from ppocr.modeling.backbones.rec_efficientb3_pren import Swish
 from ppocr.modeling.backbones.rec_svtrnet import Block, ConvBNLayer, trunc_normal_, zeros_, ones_
 
 
@@ -106,7 +88,7 @@ class EncoderWithFC(nn.Module):
         super(EncoderWithFC, self).__init__()
         self.out_channels = hidden_size
 
-        self.fc = nn.Linear(in_channels, hidden_size, bias=True, name="reduce_encoder_fea")
+        self.fc = nn.Linear(in_channels, hidden_size, bias=True)
 
     def forward(self, x):
         x = self.fc(x)
@@ -132,8 +114,8 @@ class EncoderWithSVTR(nn.Module):
         super(EncoderWithSVTR, self).__init__()
         self.depth = depth
         self.use_guide = use_guide
-        self.conv1 = ConvBNLayer(in_channels, in_channels // 8, padding=1, act=nn.Swish)
-        self.conv2 = ConvBNLayer(in_channels // 8, hidden_dims, kernel_size=1, act=nn.Swish)
+        self.conv1 = ConvBNLayer(in_channels, in_channels // 8, padding=1, act=Swish)
+        self.conv2 = ConvBNLayer(in_channels // 8, hidden_dims, kernel_size=1, act=Swish)
 
         self.svtr_block = nn.ModuleList(
             [

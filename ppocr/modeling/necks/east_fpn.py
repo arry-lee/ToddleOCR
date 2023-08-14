@@ -1,32 +1,11 @@
-# copyright (c) 2019 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-
-
-
-
 import torch
 from torch import nn
+import torch.nn.functional as F
 
 
 class ConvBNLayer(nn.Module):
-    def __init__(
-        self, in_channels, out_channels, kernel_size, stride, padding, groups=1, if_act=True, act=None, name=None
-    ):
+    def __init__(self, in_channels, out_channels, kernel_size, stride, padding, groups=1, act=None, name=None):
         super(ConvBNLayer, self).__init__()
-        self.if_act = if_act
-        self.act = act
         self.conv = nn.Conv2d(
             in_channels=in_channels,
             out_channels=out_channels,
@@ -36,27 +15,25 @@ class ConvBNLayer(nn.Module):
             groups=groups,
             bias=False,
         )
-
-        self.bn = nn.BatchNorm2d(
-            num_features=out_channels,
-            act=act,
-            bias=True,
-            moving_mean_name="bn_" + name + "_mean",
-            moving_variance_name="bn_" + name + "_variance",
-        )
+        self.bn = nn.BatchNorm2d(num_features=out_channels)
+        self.bn.register_buffer("bn_" + name + "_mean", self.bn.running_mean)
+        self.bn.register_buffer("bn_" + name + "_variance", self.bn.running_var)
+        if act is not None:
+            self.act = getattr(F, act)
+        else:
+            self.act = None
 
     def forward(self, x):
         x = self.conv(x)
         x = self.bn(x)
+        if self.act is not None:
+            x = self.act(x)
         return x
 
 
 class DeConvBNLayer(nn.Module):
-    def __init__(
-        self, in_channels, out_channels, kernel_size, stride, padding, groups=1, if_act=True, act=None, name=None
-    ):
+    def __init__(self, in_channels, out_channels, kernel_size, stride, padding, groups=1, act=None, name=None):
         super(DeConvBNLayer, self).__init__()
-        self.if_act = if_act
         self.act = act
         self.deconv = nn.ConvTranspose2d(
             in_channels=in_channels,
@@ -67,17 +44,19 @@ class DeConvBNLayer(nn.Module):
             groups=groups,
             bias=False,
         )
-        self.bn = nn.BatchNorm2d(
-            num_features=out_channels,
-            act=act,
-            bias=True,
-            moving_mean_name="bn_" + name + "_mean",
-            moving_variance_name="bn_" + name + "_variance",
-        )
+        self.bn = nn.BatchNorm2d(num_features=out_channels)
+        self.bn.register_buffer("bn_" + name + "_mean", self.bn.running_mean)
+        self.bn.register_buffer("bn_" + name + "_variance", self.bn.running_var)
+        if act is not None:
+            self.act = getattr(F, act)
+        else:
+            self.act = None
 
     def forward(self, x):
         x = self.deconv(x)
         x = self.bn(x)
+        if self.act is not None:
+            x = self.act(x)
         return x
 
 
@@ -96,7 +75,6 @@ class EASTFPN(nn.Module):
             kernel_size=3,
             stride=1,
             padding=1,
-            if_act=True,
             act="relu",
             name="unet_h_1",
         )
@@ -106,7 +84,6 @@ class EASTFPN(nn.Module):
             kernel_size=3,
             stride=1,
             padding=1,
-            if_act=True,
             act="relu",
             name="unet_h_2",
         )
@@ -116,7 +93,6 @@ class EASTFPN(nn.Module):
             kernel_size=3,
             stride=1,
             padding=1,
-            if_act=True,
             act="relu",
             name="unet_h_3",
         )
@@ -126,7 +102,6 @@ class EASTFPN(nn.Module):
             kernel_size=4,
             stride=2,
             padding=1,
-            if_act=True,
             act="relu",
             name="unet_g_0",
         )
@@ -136,7 +111,6 @@ class EASTFPN(nn.Module):
             kernel_size=4,
             stride=2,
             padding=1,
-            if_act=True,
             act="relu",
             name="unet_g_1",
         )
@@ -146,7 +120,6 @@ class EASTFPN(nn.Module):
             kernel_size=4,
             stride=2,
             padding=1,
-            if_act=True,
             act="relu",
             name="unet_g_2",
         )
@@ -156,14 +129,12 @@ class EASTFPN(nn.Module):
             kernel_size=3,
             stride=1,
             padding=1,
-            if_act=True,
             act="relu",
             name="unet_g_3",
         )
 
     def forward(self, x):
         f = x[::-1]
-
         h = f[0]
         g = self.g0_deconv(h)
         h = torch.concat([g, f[1]], dim=1)
@@ -175,5 +146,4 @@ class EASTFPN(nn.Module):
         h = torch.concat([g, f[3]], dim=1)
         h = self.h3_conv(h)
         g = self.g3_conv(h)
-
         return g

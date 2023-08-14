@@ -1,21 +1,3 @@
-# copyright (c) 2019 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-
-
-
-
 import torch
 from torch import nn
 import torch.nn.functional as F
@@ -113,6 +95,9 @@ class DBFPN(nn.Module):
 
         if self.use_asf is True:
             fuse = self.asf(fuse, [p5, p4, p3, p2])
+        for m in self.children():
+            if isinstance(m,nn.Conv2d):
+                nn.init.kaiming_uniform_(m.weight)
 
         return fuse
 
@@ -124,6 +109,7 @@ class RSELayer(nn.Module):
         self.in_conv = nn.Conv2d(
             in_channels=in_channels, out_channels=self.out_channels, kernel_size=kernel_size, padding=int(kernel_size // 2),  bias=False
         )
+        nn.init.kaiming_uniform_(self.in_conv.weight)
         self.se_block = SqueezeExcitation(self.out_channels)
         self.shortcut = shortcut
 
@@ -268,6 +254,9 @@ class ASFBlock(nn.Module):
         self.channel_scale = nn.Sequential(
             nn.Conv2d(in_channels=inter_channels, out_channels=out_features_num, kernel_size=1, bias=False),  nn.Sigmoid()
         )
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_uniform_(m.weight)
 
     def forward(self, fuse_features, features_list):
         fuse_features = self.conv(fuse_features)

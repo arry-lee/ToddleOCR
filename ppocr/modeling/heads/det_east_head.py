@@ -24,8 +24,8 @@ class ConvBNLayer(nn.Module):
             # moving_mean_name="bn_" + name + "_mean",
             # moving_variance_name="bn_" + name + "_variance",
         )
-        self.bn.register_buffer("bn_" + name + "_mean", self._batch_norm.running_mean)
-        self.bn.register_buffer("bn_" + name + "_variance", self._batch_norm.running_var)
+        self.bn.register_buffer("bn_" + name + "_mean", self.bn.running_mean)
+        self.bn.register_buffer("bn_" + name + "_variance", self.bn.running_var)
         if act is not None:
             self.act = getattr(F, act)
         else:

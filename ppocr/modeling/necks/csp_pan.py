@@ -19,14 +19,12 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-
 __all__ = ["CSPPAN"]
 
 
 class ConvBNLayer(nn.Module):
     def __init__(self, in_channel=96, out_channel=96, kernel_size=3, stride=1, groups=1, act="leaky_relu"):
         super(ConvBNLayer, self).__init__()
-        initializer = nn.init.KaimingUniform()
         self.act = act
         assert self.act in ["leaky_relu", "hard_swish"]
         self.conv = nn.Conv2d(
@@ -38,6 +36,8 @@ class ConvBNLayer(nn.Module):
             stride=stride,
             bias=False,
         )
+        nn.init.kaiming_uniform_(self.conv.weight)
+
         self.bn = nn.BatchNorm2d(out_channel)
 
     def forward(self, x):
@@ -63,7 +63,7 @@ class DPModule(nn.Module):
 
     def __init__(self, in_channel=96, out_channel=96, kernel_size=3, stride=1, act="leaky_relu"):
         super(DPModule, self).__init__()
-        initializer = nn.init.KaimingUniform()
+        # initializer = nn.init.KaimingUniform()
         self.act = act
         self.dwconv = nn.Conv2d(
             in_channels=in_channel,
@@ -74,10 +74,12 @@ class DPModule(nn.Module):
             stride=stride,
             bias=False,
         )
+        nn.init.kaiming_uniform_(self.dwconv.weight)
         self.bn1 = nn.BatchNorm2d(out_channel)
         self.pwconv = nn.Conv2d(
             in_channels=out_channel, out_channels=out_channel, kernel_size=1, groups=1, padding=0, bias=False
         )
+        nn.init.kaiming_uniform_(self.pwconv.weight)
         self.bn2 = nn.BatchNorm2d(out_channel)
 
     def act_func(self, x):
@@ -110,14 +112,14 @@ class DarknetBottleneck(nn.Module):
     """
 
     def __init__(
-        self,
-        in_channels,
-        out_channels,
-        kernel_size=3,
-        expansion=0.5,
-        add_identity=True,
-        use_depthwise=False,
-        act="leaky_relu",
+            self,
+            in_channels,
+            out_channels,
+            kernel_size=3,
+            expansion=0.5,
+            add_identity=True,
+            use_depthwise=False,
+            act="leaky_relu",
     ):
         super(DarknetBottleneck, self).__init__()
         hidden_channels = int(out_channels * expansion)
@@ -154,15 +156,15 @@ class CSPLayer(nn.Module):
     """
 
     def __init__(
-        self,
-        in_channels,
-        out_channels,
-        kernel_size=3,
-        expand_ratio=0.5,
-        num_blocks=1,
-        add_identity=True,
-        use_depthwise=False,
-        act="leaky_relu",
+            self,
+            in_channels,
+            out_channels,
+            kernel_size=3,
+            expand_ratio=0.5,
+            num_blocks=1,
+            add_identity=True,
+            use_depthwise=False,
+            act="leaky_relu",
     ):
         super().__init__()
         mid_channels = int(out_channels * expand_ratio)
@@ -188,7 +190,7 @@ class CSPLayer(nn.Module):
 
 
 class Channel_T(nn.Module):
-    def __init__(self, in_channels=[116, 232, 464], out_channels=96, act="leaky_relu"):
+    def __init__(self, in_channels=(116, 232, 464), out_channels=96, act="leaky_relu"):
         super(Channel_T, self).__init__()
         self.convs = nn.ModuleList()
         for i in range(len(in_channels)):
@@ -211,7 +213,7 @@ class CSPPAN(nn.Module):
     """
 
     def __init__(
-        self, in_channels, out_channels, kernel_size=5, num_csp_blocks=1, use_depthwise=True, act="hard_swish"
+            self, in_channels, out_channels, kernel_size=5, num_csp_blocks=1, use_depthwise=True, act="hard_swish"
     ):
         super(CSPPAN, self).__init__()
         self.in_channels = in_channels
