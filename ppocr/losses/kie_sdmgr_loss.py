@@ -72,10 +72,10 @@ class SDMGRLoss(nn.Module):
             return accu[0] if return_single else accu
         pred_value, pred_label = torch.topk(pred, maxk, dim=1)
         pred_label = pred_label.transpose([1, 0])  # transpose to shape (maxk, N)
-        correct = torch.equal(pred_label, (target.reshape([1, -1]).expand_as(pred_label)))
+        correct = torch.eq(pred_label, (target.reshape([1, -1]).expand_as(pred_label)))
         res = []
         for k in topk:
-            correct_k = torch.sum(correct[:k].reshape([-1]).astype("float32"), dim=0, keepdim=True)
+            correct_k = torch.sum(correct[:k].reshape([-1]).type(torch.float32), dim=0, keepdim=True)
             res.append(torch.multiply(correct_k, torch.Tensor(100.0 / pred.shape[0])))
         return res[0] if return_single else res
 
@@ -99,6 +99,6 @@ class SDMGRLoss(nn.Module):
             loss=loss,
             loss_node=loss_node,
             loss_edge=loss_edge,
-            acc_node=self.accuracy(torch.gather(node_preds, node_valids), torch.gather(node_gts, node_valids)),
-            acc_edge=self.accuracy(torch.gather(edge_preds, edge_valids), torch.gather(edge_gts, edge_valids)),
+            acc_node=self.accuracy(torch.gather(node_preds,None, node_valids), torch.gather(node_gts,None, node_valids)),
+            acc_edge=self.accuracy(torch.gather(edge_preds,None,edge_valids), torch.gather(edge_gts,None, edge_valids)),
         )

@@ -33,7 +33,7 @@ class PGLoss(nn.Module):
         self.dice_loss = DiceLoss(eps=eps)
 
     def border_loss(self, f_border, l_border, l_score, l_mask):
-        l_border_split, l_border_norm = torch.tensor.split(l_border, [4, 1], dim=1)
+        l_border_split, l_border_norm = torch.split(l_border, [4, 1], dim=1)
         f_border_split = f_border
         b, c, h, w = l_border_norm.shape
         l_border_norm_split = torch.unsqueeze(l_border_norm, 0).repeat(b, 4 * c, h, w)
@@ -56,7 +56,7 @@ class PGLoss(nn.Module):
         return border_loss
 
     def direction_loss(self, f_direction, l_direction, l_score, l_mask):
-        l_direction_split, l_direction_norm = torch.tensor.split(l_direction, [2, 1], dim=1)
+        l_direction_split, l_direction_norm = torch.split(l_direction, [2, 1], dim=1)
         f_direction_split = f_direction
         b, c, h, w = l_direction_norm.shape
         l_direction_norm_split = torch.unsqueeze(l_direction_norm, 0).repeat(b, 2 * c, h, w)
@@ -82,7 +82,7 @@ class PGLoss(nn.Module):
         f_char = f_char.permute(0, 2, 3, 1)
         tcl_pos = torch.reshape(tcl_pos, [-1, 3])
         tcl_pos = tcl_pos.type(torch.int)
-        f_tcl_char = torch.gather_nd(f_char, tcl_pos)
+        f_tcl_char = torch.gather(f_char,None, tcl_pos)
         f_tcl_char = torch.reshape(f_tcl_char, [-1, 64, self.pad_num + 1])  # len(Lexicon_Table)+1
         f_tcl_char_fg, f_tcl_char_bg = torch.split(f_tcl_char, [self.pad_num, 1], dim=2)
         f_tcl_char_bg = f_tcl_char_bg * tcl_mask + (1.0 - tcl_mask) * 20.0
@@ -96,9 +96,9 @@ class PGLoss(nn.Module):
         input_lengths = torch.Tensor([N] * B, dtype=torch.int64)
         cost = torch.nn.functional.ctc_loss(
             log_probs=f_tcl_char_ld,
-            labels=tcl_label,
+            targets=tcl_label,
             input_lengths=input_lengths,
-            label_lengths=label_t,
+            target_lengths=label_t,
             blank=self.pad_num,
             reduction="none",
         )

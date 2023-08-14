@@ -21,6 +21,7 @@ from torch import nn
 
 
 class CosineEmbeddingLoss(nn.Module):
+    """余弦嵌入损失函数"""
     def __init__(self, margin=0.0):
         super(CosineEmbeddingLoss, self).__init__()
         self.margin = margin
@@ -31,7 +32,7 @@ class CosineEmbeddingLoss(nn.Module):
         one_list = torch.full_like(target, fill_value=1)
         out = torch.mean(
             torch.where(
-                torch.equal(target, one_list),
+                torch.eq(target, one_list),
                 1.0 - similarity,
                 torch.maximum(torch.zeros_like(similarity), similarity - self.margin),
             )
@@ -97,3 +98,10 @@ class AsterLoss(nn.Module):
 
         loss = output + sem_loss * 0.1
         return {"loss": loss}
+
+c = CosineEmbeddingLoss()
+a = torch.tensor([1.0,2,3])
+b = torch.tensor([1.0,2,3])
+targets = torch.tensor([1.0,2,3])
+l = c(a,b,targets)
+print(l)

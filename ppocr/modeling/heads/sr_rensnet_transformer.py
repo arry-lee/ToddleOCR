@@ -30,7 +30,7 @@ def subsequent_mask(size):
     mask = torch.ones([1, size, size], dtype=torch.float32)
     mask_inf = torch.triu(torch.full([1, size, size],-torch.inf, dtype=torch.float32), diagonal=1)
     mask = mask + mask_inf
-    padding_mask = torch.equal(mask, torch.Tensor(1, dtype=mask.dtype))
+    padding_mask = torch.eq(mask, torch.Tensor(1, dtype=mask.dtype))
     return padding_mask
 
 
