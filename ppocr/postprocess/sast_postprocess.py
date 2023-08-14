@@ -1,21 +1,3 @@
-# Copyright (c) 2020 PaddlePaddle Authors. All Rights Reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-
-
-
-
 import os
 import sys
 
@@ -24,10 +6,8 @@ sys.path.append(__dir__)
 sys.path.append(os.path.join(__dir__, ".."))
 
 import numpy as np
-from .locality_aware_nms import nms_locality
+from ppocr.utils.locality_aware_nms import nms_locality
 import torch
-import cv2
-import time
 
 
 class SASTPostProcess:
@@ -36,14 +16,14 @@ class SASTPostProcess:
     """
 
     def __init__(
-        self,
-        score_thresh=0.5,
-        nms_thresh=0.2,
-        sample_pts_num=2,
-        shrink_ratio_of_width=0.3,
-        expand_scale=1.0,
-        tcl_map_thresh=0.5,
-        **kwargs
+            self,
+            score_thresh=0.5,
+            nms_thresh=0.2,
+            sample_pts_num=2,
+            shrink_ratio_of_width=0.3,
+            expand_scale=1.0,
+            tcl_map_thresh=0.5,
+            **kwargs
     ):
         self.score_thresh = score_thresh
         self.nms_thresh = nms_thresh
@@ -85,9 +65,9 @@ class SASTPostProcess:
         point_num = poly.shape[0]
         left_quad = np.array([poly[0], poly[1], poly[-2], poly[-1]], dtype=np.float32)
         left_ratio = (
-            -shrink_ratio_of_width
-            * np.linalg.norm(left_quad[0] - left_quad[3])
-            / (np.linalg.norm(left_quad[0] - left_quad[1]) + 1e-6)
+                -shrink_ratio_of_width
+                * np.linalg.norm(left_quad[0] - left_quad[3])
+                / (np.linalg.norm(left_quad[0] - left_quad[1]) + 1e-6)
         )
         left_quad_expand = self.shrink_quad_along_width(left_quad, left_ratio, 1.0)
         right_quad = np.array(
@@ -95,7 +75,7 @@ class SASTPostProcess:
             dtype=np.float32,
         )
         right_ratio = 1.0 + shrink_ratio_of_width * np.linalg.norm(right_quad[0] - right_quad[3]) / (
-            np.linalg.norm(right_quad[0] - right_quad[1]) + 1e-6
+                np.linalg.norm(right_quad[0] - right_quad[1]) + 1e-6
         )
         right_quad_expand = self.shrink_quad_along_width(right_quad, 0.0, right_ratio)
         poly[0] = left_quad_expand[0]
@@ -192,19 +172,19 @@ class SASTPostProcess:
         return sample_pts_num
 
     def detect_sast(
-        self,
-        tcl_map,
-        tvo_map,
-        tbo_map,
-        tco_map,
-        ratio_w,
-        ratio_h,
-        src_w,
-        src_h,
-        shrink_ratio_of_width=0.3,
-        tcl_map_thresh=0.5,
-        offset_expand=1.0,
-        out_strid=4.0,
+            self,
+            tcl_map,
+            tvo_map,
+            tbo_map,
+            tco_map,
+            ratio_w,
+            ratio_h,
+            src_w,
+            src_h,
+            shrink_ratio_of_width=0.3,
+            tcl_map_thresh=0.5,
+            offset_expand=1.0,
+            out_strid=4.0,
     ):
         """
         first resize the tcl_map, tvo_map and tbo_map to the input_size, then restore the polys
@@ -256,7 +236,7 @@ class SASTPostProcess:
             left_center_pt = np.array([[(quad[0, 0] + quad[-1, 0]) / 2.0, (quad[0, 1] + quad[-1, 1]) / 2.0]])  # (1, 2)
             right_center_pt = np.array([[(quad[1, 0] + quad[2, 0]) / 2.0, (quad[1, 1] + quad[2, 1]) / 2.0]])  # (1, 2)
             proj_unit_vec = (right_center_pt - left_center_pt) / (
-                np.linalg.norm(right_center_pt - left_center_pt) + 1e-6
+                    np.linalg.norm(right_center_pt - left_center_pt) + 1e-6
             )
             proj_value = np.sum(xy_text * proj_unit_vec, axis=1)
             xy_text = xy_text[np.argsort(proj_value)]
