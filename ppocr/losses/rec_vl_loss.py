@@ -1,16 +1,3 @@
-# copyright (c) 2022 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 """
 This code is refer from: 
 https://github.com/wangyuxin87/VisionLAN
@@ -27,7 +14,7 @@ from torch import nn
 class VLLoss(nn.Module):
     def __init__(self, mode="LF_1", weight_res=0.5, weight_mas=0.5, **kwargs):
         super(VLLoss, self).__init__()
-        self.loss_func = torch.nn.loss.CrossEntropyLoss(reduction="mean")
+        self.loss_func = nn.CrossEntropyLoss()
         assert mode in ["LF_1", "LF_2", "LA"]
         self.mode = mode
         self.weight_res = weight_res
@@ -57,8 +44,8 @@ class VLLoss(nn.Module):
         else:
             text_rem = predicts[1]
             text_mas = predicts[2]
-            target_res = batch[2].astype("int64")
-            target_sub = batch[3].astype("int64")
+            target_res = batch[2].type(torch.int64)
+            target_sub = batch[3].type(torch.int64)
             label_flatten_res, length_res = self.flatten_label(target_res)
             label_flatten_sub, length_sub = self.flatten_label(target_sub)
             text_rem = self._flatten(text_rem, length_res)

@@ -1,16 +1,3 @@
-# copyright (c) 2021 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 """
 This code is refer from:
 https://github.com/LBH1024/CAN/models/can.py
@@ -20,12 +7,19 @@ import numpy as np
 import torch
 import torch.nn as nn
 
+__all__ = ["CANLoss"]
+
 
 class CANLoss(nn.Module):
     """
-    CANLoss is consist of two part:
-        word_average_loss: average accuracy of the symbol
-        counting_loss: counting loss of every symbol
+    CANLoss 包含两部分损失函数：
+
+    word_average_loss：用于计算符号（symbol）的平均准确率损失。它使用交叉熵损失函数（CrossEntropyLoss）。
+    平均准确率损失衡量了模型对每个符号的分类准确性。
+
+    counting_loss：用于计算每个符号的计数损失。它使用平滑的 L1 损失函数（SmoothL1Loss）。
+    计数损失衡量了模型对每个符号数量的预测准确性。
+
     """
 
     def __init__(self):
@@ -46,9 +40,9 @@ class CANLoss(nn.Module):
         labels_mask = batch[3]
         counting_labels = gen_counting_label(labels, self.out_channel, True)
         counting_loss = (
-            self.counting_loss(counting_preds1, counting_labels)
-            + self.counting_loss(counting_preds2, counting_labels)
-            + self.counting_loss(counting_preds, counting_labels)
+                self.counting_loss(counting_preds1, counting_labels)
+                + self.counting_loss(counting_preds2, counting_labels)
+                + self.counting_loss(counting_preds, counting_labels)
         )
 
         word_loss = self.cross(torch.reshape(word_probs, [-1, word_probs.shape[-1]]), torch.reshape(labels, [-1]))
@@ -76,5 +70,5 @@ def gen_counting_label(labels, channel, tag):
                 continue
             else:
                 counting_labels[i][k] += 1
-    counting_labels = torch.Tensor(counting_labels, dtype=torch.float32)
+    counting_labels = torch.tensor(counting_labels, dtype=torch.float32)
     return counting_labels

@@ -24,13 +24,13 @@ from torch.nn import functional as F
 class TableAttentionLoss(nn.Module):
     def __init__(self, structure_weight, loc_weight, **kwargs):
         super(TableAttentionLoss, self).__init__()
-        self.loss_func = nn.CrossEntropyLoss(weight=None, reduction="none")
+        self.loss_func = nn.CrossEntropyLoss(reduction="none")
         self.structure_weight = structure_weight
         self.loc_weight = loc_weight
 
     def forward(self, predicts, batch):
         structure_probs = predicts["structure_probs"]
-        structure_targets = batch[1].astype("int64")
+        structure_targets = batch[1].type(torch.int64)
         structure_targets = structure_targets[:, 1:]
         structure_probs = torch.reshape(structure_probs, [-1, structure_probs.shape[-1]])
         structure_targets = torch.reshape(structure_targets, [-1])
@@ -39,8 +39,8 @@ class TableAttentionLoss(nn.Module):
         structure_loss = torch.mean(structure_loss) * self.structure_weight
 
         loc_preds = predicts["loc_preds"]
-        loc_targets = batch[2].astype("float32")
-        loc_targets_mask = batch[3].astype("float32")
+        loc_targets = batch[2].type(torch.float32)
+        loc_targets_mask = batch[3].type(torch.float32)
         loc_targets = loc_targets[:, 1:, :]
         loc_targets_mask = loc_targets_mask[:, 1:, :]
         loc_loss = F.mse_loss(loc_preds * loc_targets_mask, loc_targets) * self.loc_weight
@@ -52,7 +52,7 @@ class TableAttentionLoss(nn.Module):
 class SLALoss(nn.Module):
     def __init__(self, structure_weight, loc_weight, loc_loss="mse", **kwargs):
         super(SLALoss, self).__init__()
-        self.loss_func = nn.CrossEntropyLoss(weight=None, reduction="mean")
+        self.loss_func = nn.CrossEntropyLoss()
         self.structure_weight = structure_weight
         self.loc_weight = loc_weight
         self.loc_loss = loc_loss
@@ -60,7 +60,7 @@ class SLALoss(nn.Module):
 
     def forward(self, predicts, batch):
         structure_probs = predicts["structure_probs"]
-        structure_targets = batch[1].astype("int64")
+        structure_targets = batch[1].type(torch.int64)
         structure_targets = structure_targets[:, 1:]
 
         structure_loss = self.loss_func(structure_probs, structure_targets)
@@ -68,8 +68,8 @@ class SLALoss(nn.Module):
         structure_loss = torch.mean(structure_loss) * self.structure_weight
 
         loc_preds = predicts["loc_preds"]
-        loc_targets = batch[2].astype("float32")
-        loc_targets_mask = batch[3].astype("float32")
+        loc_targets = batch[2].type(torch.float32)
+        loc_targets_mask = batch[3].type(torch.float32)
         loc_targets = loc_targets[:, 1:, :]
         loc_targets_mask = loc_targets_mask[:, 1:, :]
 

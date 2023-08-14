@@ -1,24 +1,7 @@
-# copyright (c) 2021 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-
-
-
-
 import torch
 from torch import nn
 
+__all__ = ['AsterLoss']
 
 class CosineEmbeddingLoss(nn.Module):
     """余弦嵌入损失函数"""
@@ -42,6 +25,18 @@ class CosineEmbeddingLoss(nn.Module):
 
 
 class AsterLoss(nn.Module):
+    """AsterLoss 是一个自定义的损失函数，用于目标检测或文本识别任务中。
+    AsterLoss 通过结合两个子损失函数来计算总体损失：semantic loss（语义损失）和recognition loss（识别损失）。
+
+    该损失函数的主要目的是在训练过程中通过最小化损失来优化模型的性能。下面是 AsterLoss 类的主要属性和方法：
+
+    属性：
+
+    weight：权重参数，用于控制不同损失之间的相对重要性。
+    size_average：布尔值，确定是否将损失归一化为标量。
+    ignore_index：指定要忽略的目标索引。
+    sequence_normalize：布尔值，确定是否对序列进行归一化。
+    sample_normalize：布尔值，确定是否对样本进行归一化。"""
     def __init__(
         self,
         weight=None,
@@ -58,17 +53,17 @@ class AsterLoss(nn.Module):
         self.sequence_normalize = sequence_normalize
         self.sample_normalize = sample_normalize
         self.loss_sem = CosineEmbeddingLoss()
-        self.is_cosin_loss = True
-        self.loss_func_rec = nn.CrossEntropyLoss(weight=None, reduction="none")
+        self.is_cosine_loss = True
+        self.loss_func_rec = nn.CrossEntropyLoss(reduction="none")
 
     def forward(self, predicts, batch):
-        targets = batch[1].astype("int64")
-        label_lengths = batch[2].astype("int64")
-        sem_target = batch[3].astype("float32")
+        targets = batch[1].type(torch.int64)
+        label_lengths = batch[2].type(torch.int64)
+        sem_target = batch[3].type(torch.float32)
         embedding_vectors = predicts["embedding_vectors"]
         rec_pred = predicts["rec_pred"]
 
-        if not self.is_cosin_loss:
+        if not self.is_cosine_loss:
             sem_loss = torch.sum(self.loss_sem(embedding_vectors, sem_target))
         else:
             label_target = torch.ones([embedding_vectors.shape[0]])
@@ -89,7 +84,7 @@ class AsterLoss(nn.Module):
         input = nn.functional.log_softmax(rec_pred, dim=1)
         targets = torch.reshape(targets, [-1, 1])
         mask = torch.reshape(mask, [-1, 1])
-        output = -torch.index_sample(input, index=targets) * mask
+        output = -torch.gather(input,1, index=targets) * mask
         output = torch.sum(output)
         if self.sequence_normalize:
             output = output / torch.sum(mask)
@@ -98,10 +93,3 @@ class AsterLoss(nn.Module):
 
         loss = output + sem_loss * 0.1
         return {"loss": loss}
-
-c = CosineEmbeddingLoss()
-a = torch.tensor([1.0,2,3])
-b = torch.tensor([1.0,2,3])
-targets = torch.tensor([1.0,2,3])
-l = c(a,b,targets)
-print(l)
