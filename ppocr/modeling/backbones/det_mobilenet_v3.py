@@ -1,21 +1,3 @@
-# copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-
-
-
-
 import torch
 import torch.nn.functional as F
 from torch import nn
@@ -39,7 +21,7 @@ class MobileNetV3(nn.Module):
         Args:
             params(dict): the super parameters for build network
         """
-        super(MobileNetV3, self).__init__()
+        super().__init__()
 
         self.disable_se = disable_se
 
@@ -80,12 +62,12 @@ class MobileNetV3(nn.Module):
             ]
             cls_ch_squeeze = 576
         else:
-            raise NotImplementedError("mode[" + model_name + "_model] is not implemented!")
+            raise NotImplementedError(f"mode[{model_name}_model] is not implemented!")
 
         supported_scale = [0.35, 0.5, 0.75, 1.0, 1.25]
         assert scale in supported_scale, "supported scale are {} but input scale is {}".format(supported_scale, scale)
         inplanes = 16
-        # conv1
+        # conv1B
         self.conv = ConvBNLayer(
             in_channels=in_channels,
             out_channels=make_divisible(inplanes * scale),
@@ -93,7 +75,6 @@ class MobileNetV3(nn.Module):
             stride=2,
             padding=1,
             groups=1,
-            if_act=True,
             act="hardswish",
         )
 
@@ -110,7 +91,7 @@ class MobileNetV3(nn.Module):
                 self.stages.append(nn.Sequential(*block_list))
                 block_list = []
             block_list.append(
-                ResidualUnit(
+                InvertedResidual(
                     in_channels=inplanes,
                     mid_channels=make_divisible(scale * exp),
                     out_channels=make_divisible(scale * c),
@@ -130,14 +111,13 @@ class MobileNetV3(nn.Module):
                 stride=1,
                 padding=0,
                 groups=1,
-                if_act=True,
                 act="hardswish",
             )
         )
         self.stages.append(nn.Sequential(*block_list))
         self.out_channels.append(make_divisible(scale * cls_ch_squeeze))
         for i, stage in enumerate(self.stages):
-            self.add_module(sublayer=stage, name="stage{}".format(i))
+            self.add_module("stage{}".format(i), stage)
 
     def forward(self, x):
         x = self.conv(x)
@@ -149,9 +129,8 @@ class MobileNetV3(nn.Module):
 
 
 class ConvBNLayer(nn.Module):
-    def __init__(self, in_channels, out_channels, kernel_size, stride, padding, groups=1, if_act=True, act=None):
-        super(ConvBNLayer, self).__init__()
-        self.if_act = if_act
+    def __init__(self, in_channels, out_channels, kernel_size, stride, padding, groups=1, act=None):
+        super().__init__()
         self.act = act
         self.conv = nn.Conv2d(
             in_channels=in_channels,
@@ -163,31 +142,30 @@ class ConvBNLayer(nn.Module):
             bias=False,
         )
 
-        self.bn = nn.BatchNorm2d(num_features=out_channels, act=None)
+        self.bn = nn.BatchNorm2d(num_features=out_channels)
 
     def forward(self, x):
         x = self.conv(x)
         x = self.bn(x)
-        if self.if_act:
+        if self.act is not None:
             if self.act == "relu":
                 x = F.relu(x)
             elif self.act == "hardswish":
                 x = F.hardswish(x)
             else:
-                print("The activation function({}) is selected incorrectly.".format(self.act))
-                exit()
+                raise ValueError("The activation function({}) is selected incorrectly.".format(self.act))
         return x
 
 
-class ResidualUnit(nn.Module):
+class InvertedResidual(nn.Module):
     def __init__(self, in_channels, mid_channels, out_channels, kernel_size, stride, use_se, act=None):
-        super(ResidualUnit, self).__init__()
-        self.if_shortcut = stride == 1 and in_channels == out_channels
-        self.if_se = use_se
+        super().__init__()
+        self.use_shortcut = stride == 1 and in_channels == out_channels
+        self.use_se = use_se
 
         self.expand_conv = ConvBNLayer(
-            in_channels=in_channels, out_channels=mid_channels, kernel_size=1, stride=1, padding=0, if_act=True, act=act
-        )
+            in_channels=in_channels, out_channels=mid_channels, kernel_size=1, stride=1, padding=0, act=act
+        ) # 扩张卷积
         self.bottleneck_conv = ConvBNLayer(
             in_channels=mid_channels,
             out_channels=mid_channels,
@@ -195,35 +173,28 @@ class ResidualUnit(nn.Module):
             stride=stride,
             padding=int((kernel_size - 1) // 2),
             groups=mid_channels,
-            if_act=True,
             act=act,
         )
-        if self.if_se:
-            self.mid_se = SEModule(mid_channels)
+        if self.use_se:
+            self.mid_se = SqueezeExcitation(mid_channels)
         self.linear_conv = ConvBNLayer(
-            in_channels=mid_channels,
-            out_channels=out_channels,
-            kernel_size=1,
-            stride=1,
-            padding=0,
-            if_act=False,
-            act=None,
+            in_channels=mid_channels, out_channels=out_channels, kernel_size=1, stride=1, padding=0, act=None
         )
 
     def forward(self, inputs):
         x = self.expand_conv(inputs)
         x = self.bottleneck_conv(x)
-        if self.if_se:
+        if self.use_se:
             x = self.mid_se(x)
         x = self.linear_conv(x)
-        if self.if_shortcut:
+        if self.use_shortcut:
             x = torch.add(inputs, x)
         return x
 
 
-class SEModule(nn.Module):
+class SqueezeExcitation(nn.Module):
     def __init__(self, in_channels, reduction=4):
-        super(SEModule, self).__init__()
+        super().__init__()
         self.avg_pool = nn.AdaptiveAvgPool2d(1)
         self.conv1 = nn.Conv2d(
             in_channels=in_channels, out_channels=in_channels // reduction, kernel_size=1, stride=1, padding=0
@@ -232,10 +203,17 @@ class SEModule(nn.Module):
             in_channels=in_channels // reduction, out_channels=in_channels, kernel_size=1, stride=1, padding=0
         )
 
+    def hardsigmoid(self, x, slope=0.2, offset=0.5):
+        return torch.clamp((x * slope + offset).clamp(min=0, max=1), 0, 1)
+
     def forward(self, inputs):
         outputs = self.avg_pool(inputs)
         outputs = self.conv1(outputs)
         outputs = F.relu(outputs)
         outputs = self.conv2(outputs)
-        outputs = F.hardsigmoid(outputs, slope=0.2, offset=0.5)
+        outputs = self.hardsigmoid(outputs, slope=0.2, offset=0.5)
         return inputs * outputs
+
+if __name__ == '__main__':
+    mb = MobileNetV3()
+    print(mb)
