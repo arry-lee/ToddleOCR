@@ -17,7 +17,7 @@ Global:
   character_dict_path: ppocr/utils/dict/table_structure_dict_ch.txt
   character_type: en
   max_text_length: 500
-  box_format: xyxyxyxy
+  box_format: xy4
   infer_mode: false
   use_sync_bn: true
   save_res_path: output/infer
@@ -58,7 +58,7 @@ Metric:
   main_indicator: acc
   compute_bbox_metric: false
   loc_reg_num: 8
-  box_format: xyxyxyxy
+  box_format: xy4
   del_thead_tbody: true
 Train:
   Dataset:
@@ -77,8 +77,8 @@ Train:
         loc_reg_num: 8
         max_text_length: 500
       - class: TableBoxEncode
-        in_box_format: xyxyxyxy
-        out_box_format: xyxyxyxy
+        in_box_format: xy4
+        out_box_format: xy4
       - class: ResizeTableImage
         max_len: 488
       - class: NormalizeImage
@@ -126,8 +126,8 @@ Eval:
         loc_reg_num: 8
         max_text_length: 500
       - class: TableBoxEncode
-        in_box_format: xyxyxyxy
-        out_box_format: xyxyxyxy
+        in_box_format: xy4
+        out_box_format: xy4
       - class: ResizeTableImage
         max_len: 488
       - class: NormalizeImage
