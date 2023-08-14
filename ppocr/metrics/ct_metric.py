@@ -1,4 +1,5 @@
 from ppocr.utils.e2e_metric.Deteval import combine_results, get_score_C
+__all__ = ['CTMetric']
 
 class CTMetric:
 

@@ -1,3 +1,6 @@
+__all__ = ['ClsMetric']
+
+
 class ClsMetric:
 
     def __init__(self, main_indicator='acc', **kwargs):

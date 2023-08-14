@@ -1,6 +1,6 @@
-__all__ = ["DetMetric", "DetFCEMetric"]
-
 from .eval_det_iou import DetectionIoUEvaluator
+
+__all__ = ["DetMetric", "DetFCEMetric"]
 
 
 class DetMetric:
