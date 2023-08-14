@@ -1,29 +1,6 @@
-# copyright (c) 2019 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-
-
-
-
-import math
-
 import torch
 import torch.nn.functional as F
 from torch import nn
-
-
-
 
 
 class Head(nn.Module):
@@ -37,7 +14,7 @@ class Head(nn.Module):
             padding=int(kernel_list[0] // 2),
             bias=False,
         )
-        self.conv_bn1 = nn.BatchNorm2d(num_features=in_channels // 4, bias=True, act="relu")
+        self.conv_bn1 = nn.BatchNorm2d(num_features=in_channels // 4)
         self.conv2 = nn.ConvTranspose2d(
             in_channels=in_channels // 4,
             out_channels=in_channels // 4,
@@ -45,7 +22,7 @@ class Head(nn.Module):
             stride=2,
             bias=True,
         )
-        self.conv_bn2 = nn.BatchNorm2d(num_features=in_channels // 4, bias=True, act="relu")
+        self.conv_bn2 = nn.BatchNorm2d(num_features=in_channels // 4)
         self.conv3 = nn.ConvTranspose2d(
             in_channels=in_channels // 4,
             out_channels=1,
@@ -56,9 +33,9 @@ class Head(nn.Module):
 
     def forward(self, x):
         x = self.conv1(x)
-        x = self.conv_bn1(x)
+        x = F.relu(self.conv_bn1(x))
         x = self.conv2(x)
-        x = self.conv_bn2(x)
+        x = F.relu(self.conv_bn2(x))
         x = self.conv3(x)
         x = F.sigmoid(x)
         return x

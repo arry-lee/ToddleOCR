@@ -1,31 +1,10 @@
-# copyright (c) 2019 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-
-
-
-
-import math
-import torch
-from torch import nn
 import torch.nn.functional as F
+from torch import nn
 
 
 class ConvBNLayer(nn.Module):
-    def __init__(self, in_channels, out_channels, kernel_size, stride, groups=1, if_act=True, act=None, name=None):
+    def __init__(self, in_channels, out_channels, kernel_size, stride, groups=1, act=None, name=None):
         super(ConvBNLayer, self).__init__()
-        self.if_act = if_act
         self.act = act
         self.conv = nn.Conv2d(
             in_channels=in_channels,
@@ -36,24 +15,25 @@ class ConvBNLayer(nn.Module):
             groups=groups,
             bias=False,
         )
-
-        self.bn = nn.BatchNorm2d(
-            num_features=out_channels,
-            act=act,
-            bias=True,
-            moving_mean_name="bn_" + name + "_mean",
-            moving_variance_name="bn_" + name + "_variance",
-        )
+        self.bn = nn.BatchNorm2d(num_features=out_channels)
+        self.bn.register_buffer("bn_" + name + "_mean", self.bn.running_mean)
+        self.bn.register_buffer("bn_" + name + "_variance", self.bn.running_var)
+        if act:
+            self.act = getattr(F, act)
+        else:
+            self.act = None
 
     def forward(self, x):
         x = self.conv(x)
         x = self.bn(x)
+        if self.act:
+            x = self.act(x)
         return x
 
 
-class SAST_Header1(nn.Module):
+class SASTHeader1(nn.Module):
     def __init__(self, in_channels, **kwargs):
-        super(SAST_Header1, self).__init__()
+        super(SASTHeader1, self).__init__()
         out_channels = [64, 64, 128]
         self.score_conv = nn.Sequential(
             ConvBNLayer(in_channels, out_channels[0], 1, 1, act="relu", name="f_score1"),
@@ -72,12 +52,12 @@ class SAST_Header1(nn.Module):
         f_score = self.score_conv(x)
         f_score = F.sigmoid(f_score)
         f_border = self.border_conv(x)
-        return f_score, f_border
+        return (f_score, f_border)
 
 
-class SAST_Header2(nn.Module):
+class SASTHeader2(nn.Module):
     def __init__(self, in_channels, **kwargs):
-        super(SAST_Header2, self).__init__()
+        super(SASTHeader2, self).__init__()
         out_channels = [64, 64, 128]
         self.tvo_conv = nn.Sequential(
             ConvBNLayer(in_channels, out_channels[0], 1, 1, act="relu", name="f_tvo1"),
@@ -95,22 +75,18 @@ class SAST_Header2(nn.Module):
     def forward(self, x):
         f_tvo = self.tvo_conv(x)
         f_tco = self.tco_conv(x)
-        return f_tvo, f_tco
+        return (f_tvo, f_tco)
 
 
 class SASTHead(nn.Module):
-    """ """
-
     def __init__(self, in_channels, **kwargs):
         super(SASTHead, self).__init__()
-
-        self.head1 = SAST_Header1(in_channels)
-        self.head2 = SAST_Header2(in_channels)
+        self.head1 = SASTHeader1(in_channels)
+        self.head2 = SASTHeader2(in_channels)
 
     def forward(self, x, targets=None):
-        f_score, f_border = self.head1(x)
-        f_tvo, f_tco = self.head2(x)
-
+        (f_score, f_border) = self.head1(x)
+        (f_tvo, f_tco) = self.head2(x)
         predicts = {}
         predicts["f_score"] = f_score
         predicts["f_border"] = f_border

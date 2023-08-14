@@ -114,7 +114,7 @@ class GCN(nn.Module):
         if not n_out:
             n_out = d_in
 
-        self.conv_n = nn.Conv1D(n_in, n_out, 1)
+        self.conv_n = nn.Conv1d(n_in, n_out, 1)
         self.linear = nn.Linear(d_in, d_out)
         self.dropout = nn.Dropout(dropout)
         self.act = nn.Swish()

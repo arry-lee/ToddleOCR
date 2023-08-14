@@ -1,30 +1,11 @@
-# copyright (c) 2022 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-
-
-
-
 import math
 import torch
-
 import torch.nn as nn
 import torch.nn.functional as F
-
 from ppocr.modeling.necks.rnn import Im2Seq, EncoderWithRNN, EncoderWithFC, SequenceEncoder, EncoderWithSVTR
 from .rec_ctc_head import CTCHead
 from .rec_sar_head import SARHead
+__all__ = ['MultiHead']
 
 
 class MultiHead(nn.Module):
@@ -36,19 +17,16 @@ class MultiHead(nn.Module):
         for idx, head_name in enumerate(self.head_list):
             name = list(head_name)[0]
             if name == "SARHead":
-                # sar head
                 sar_args = self.head_list[idx][name]
                 self.sar_head = eval(name)(
                     in_channels=in_channels, out_channels=out_channels_list["SARLabelDecode"], **sar_args
                 )
             elif name == "CTCHead":
-                # ctc neck
                 self.encoder_reshape = Im2Seq(in_channels)
                 neck_args = self.head_list[idx][name]["Neck"]
                 encoder_type = neck_args.pop("name")
                 self.encoder = encoder_type
                 self.ctc_encoder = SequenceEncoder(in_channels=in_channels, encoder_type=encoder_type, **neck_args)
-                # ctc head
                 head_args = self.head_list[idx][name]["Head"]
                 self.ctc_head = eval(name)(
                     in_channels=self.ctc_encoder.out_channels,
@@ -64,7 +42,6 @@ class MultiHead(nn.Module):
         head_out = dict()
         head_out["ctc"] = ctc_out
         head_out["ctc_neck"] = ctc_encoder
-        # eval mode
         if not self.training:
             return ctc_out
         if self.gtc_head == "sar":

@@ -26,7 +26,7 @@ __all__ = ["CSPPAN"]
 class ConvBNLayer(nn.Module):
     def __init__(self, in_channel=96, out_channel=96, kernel_size=3, stride=1, groups=1, act="leaky_relu"):
         super(ConvBNLayer, self).__init__()
-        initializer = nn.initializer.KaimingUniform()
+        initializer = nn.init.KaimingUniform()
         self.act = act
         assert self.act in ["leaky_relu", "hard_swish"]
         self.conv = nn.Conv2d(
@@ -63,7 +63,7 @@ class DPModule(nn.Module):
 
     def __init__(self, in_channel=96, out_channel=96, kernel_size=3, stride=1, act="leaky_relu"):
         super(DPModule, self).__init__()
-        initializer = nn.initializer.KaimingUniform()
+        initializer = nn.init.KaimingUniform()
         self.act = act
         self.dwconv = nn.Conv2d(
             in_channels=in_channel,

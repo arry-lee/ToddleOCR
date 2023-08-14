@@ -1,23 +1,7 @@
-# copyright (c) 2022 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 """
 This code is refer from: 
 https://github.com/wangyuxin87/VisionLAN
 """
-
-
-
 
 
 import numpy as np
@@ -131,8 +115,8 @@ class MultiHeadAttention(nn.Module):
 class PositionwiseFeedForward(nn.Module):
     def __init__(self, d_in, d_hid, dropout=0.1):
         super(PositionwiseFeedForward, self).__init__()
-        self.w_1 = nn.Conv1D(d_in, d_hid, 1)  # position-wise
-        self.w_2 = nn.Conv1D(d_hid, d_in, 1)  # position-wise
+        self.w_1 = nn.Conv1d(d_in, d_hid, 1)  # position-wise
+        self.w_2 = nn.Conv1d(d_hid, d_in, 1)  # position-wise
         self.layer_norm = nn.LayerNorm(d_in)
         self.dropout = nn.Dropout(dropout)
 
@@ -179,7 +163,7 @@ class Transformer_Encoder(nn.Module):
         self.layer_stack = nn.ModuleList(
             [EncoderLayer(d_model, d_inner, n_head, d_k, d_v, dropout=dropout) for _ in range(n_layers)]
         )
-        self.layer_norm = nn.LayerNorm(d_model, epsilon=1e-6)
+        self.layer_norm = nn.LayerNorm(d_model, eps=1e-6)
 
     def forward(self, enc_output, src_mask, return_attns=False):
         enc_output = self.dropout(self.position_enc(enc_output))  # position embeding
@@ -211,7 +195,7 @@ class PP_layer(nn.Module):
         t = self.w0(reading_order)  # b,512,256
         t = self.active(t.permute(0, 2, 1) + self.wv(enc_output))  # b,256,512
         t = self.we(t)  # b,256,25
-        t = self.softmax(torch.transpose(t, perm=[0, 2, 1]))  # b,25,256
+        t = self.softmax(t.permute(0, 2, 1))  # b,25,256
         g_output = torch.bmm(t, enc_output)  # b,25,512
         return g_output
 

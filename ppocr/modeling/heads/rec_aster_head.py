@@ -1,23 +1,7 @@
-# copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 """
 This code is refer from:
 https://github.com/ayumiymk/aster.pytorch/blob/master/lib/models/attention_recognition_head.py
 """
-
-
-
 
 import torch
 from torch import nn
@@ -310,10 +294,12 @@ class DecoderUnit(nn.Module):
 
         self.attention_unit = AttentionUnit(sDim, xDim, attDim)
         self.tgt_embedding = nn.Embedding(
-            yDim + 1, self.emdDim, weight_attr=nn.initializer.Normal(std=0.01)
+            yDim + 1, self.emdDim
         )  # the last is used for <BOS>
+        nn.init.normal_(self.tgt_embedding.weight, std=0.01)
         self.gru = nn.GRUCell(input_size=xDim + self.emdDim, hidden_size=sDim)
-        self.fc = nn.Linear(sDim, yDim, bias=nn.initializer.Constant(value=0))
+        self.fc = nn.Linear(sDim, yDim)
+        nn.init.zeros_(self.fc.bias)
         self.embed_fc = nn.Linear(300, self.sDim)
 
     def get_initial_state(self, embed, tile_times=1):
@@ -322,7 +308,7 @@ class DecoderUnit(nn.Module):
         if tile_times != 1:
             state = state.unsqueeze(1)
             trans_state = state.permute(1, 0, 2)
-            state = torch.tile(trans_state, repeat_times=[tile_times, 1, 1])
+            state = torch.tile(trans_state, [tile_times, 1, 1])
             trans_state = state.permute(1, 0, 2)
             state = torch.reshape(trans_state, shape=[-1, self.sDim])
         state = state.unsqueeze(0)  # 1 * N * sDim

@@ -25,15 +25,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class BatchNorm1d(nn.BatchNorm1d):
-    def __init__(self, num_features, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True):
-        momentum = 1 - momentum
-        weight_attr = None
-        bias = None
-        if not affine:
-            weight_attr = torch.ParamAttr(learning_rate=0.0)
-            bias = torch.ParamAttr(learning_rate=0.0)
-        super().__init__(num_features, momentum=momentum, epsilon=eps, bias=True, use_global_stats=track_running_stats)
 
 
 class MeanAggregator(nn.Module):
@@ -47,9 +38,9 @@ class GraphConv(nn.Module):
         super().__init__()
         self.in_dim = in_dim
         self.out_dim = out_dim
-        self.weight = self.create_parameter([in_dim * 2, out_dim], default_initializer=nn.initializer.XavierUniform())
+        self.weight = self.create_parameter([in_dim * 2, out_dim], default_initializer=nn.init.XavierUniform())
         self.bias = self.create_parameter(
-            [out_dim], is_bias=True, default_initializer=nn.initializer.Assign([0] * out_dim)
+            [out_dim], is_bias=True, default_initializer=nn.init.Assign([0] * out_dim)
         )
 
         self.aggregator = MeanAggregator()
@@ -67,7 +58,7 @@ class GraphConv(nn.Module):
 class GCN(nn.Module):
     def __init__(self, feat_len):
         super(GCN, self).__init__()
-        self.bn0 = BatchNorm1d(feat_len, affine=False)
+        self.bn0 = nn.BatchNorm1d(feat_len, affine=False)
         self.conv1 = GraphConv(feat_len, 512)
         self.conv2 = GraphConv(512, 256)
         self.conv3 = GraphConv(256, 128)

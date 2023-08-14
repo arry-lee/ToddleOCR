@@ -1,31 +1,11 @@
-# copyright (c) 2019 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-
-
-
-
 import torch.nn.functional as F
 from torch import nn
 
 
 class ConvBNLayer(nn.Module):
-    def __init__(
-        self, in_channels, out_channels, kernel_size, stride, padding, groups=1, if_act=True, act=None, name=None
-    ):
+    def __init__(self, in_channels, out_channels, kernel_size, stride, padding, groups=1, act=None, name=None):
         super(ConvBNLayer, self).__init__()
-        self.if_act = if_act
+        # self.if_act = if_act
         self.act = act
         self.conv = nn.Conv2d(
             in_channels=in_channels,
@@ -39,21 +19,27 @@ class ConvBNLayer(nn.Module):
 
         self.bn = nn.BatchNorm2d(
             num_features=out_channels,
-            act=act,
-            bias=True,
-            moving_mean_name="bn_" + name + "_mean",
-            moving_variance_name="bn_" + name + "_variance",
+            # act=act,
+            # bias=True,
+            # moving_mean_name="bn_" + name + "_mean",
+            # moving_variance_name="bn_" + name + "_variance",
         )
+        self.bn.register_buffer("bn_" + name + "_mean", self._batch_norm.running_mean)
+        self.bn.register_buffer("bn_" + name + "_variance", self._batch_norm.running_var)
+        if act is not None:
+            self.act = getattr(F, act)
+        else:
+            self.act = None
 
     def forward(self, x):
         x = self.conv(x)
         x = self.bn(x)
+        if self.act is not None:
+            x = self.act(x)
         return x
 
 
 class EASTHead(nn.Module):
-    """ """
-
     def __init__(self, in_channels, model_name, **kwargs):
         super(EASTHead, self).__init__()
         self.model_name = model_name
@@ -68,7 +54,6 @@ class EASTHead(nn.Module):
             kernel_size=3,
             stride=1,
             padding=1,
-            if_act=True,
             act="relu",
             name="det_head1",
         )
@@ -78,7 +63,6 @@ class EASTHead(nn.Module):
             kernel_size=3,
             stride=1,
             padding=1,
-            if_act=True,
             act="relu",
             name="det_head2",
         )
@@ -88,7 +72,6 @@ class EASTHead(nn.Module):
             kernel_size=1,
             stride=1,
             padding=0,
-            if_act=False,
             act=None,
             name="f_score",
         )
@@ -98,7 +81,6 @@ class EASTHead(nn.Module):
             kernel_size=1,
             stride=1,
             padding=0,
-            if_act=False,
             act=None,
             name="f_geo",
         )

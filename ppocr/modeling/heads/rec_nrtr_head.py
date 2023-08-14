@@ -146,7 +146,7 @@ class Transformer(nn.Module):
             dec_output = dec_output[:, -1, :]
             word_prob = F.softmax(self.tgt_word_prj(dec_output),dim=-1)
             preds_idx = torch.argmax(word_prob, dim=-1)
-            if torch.equal_all(preds_idx, torch.full(preds_idx.shape, 3, dtype=torch.int64)):
+            if torch.eq(preds_idx, torch.full(preds_idx.shape, 3, dtype=torch.int64)):
                 break
             preds_prob = torch.max(word_prob, dim=-1)
             dec_seq = torch.concat([dec_seq, torch.reshape(preds_idx, [-1, 1])], dim=1)

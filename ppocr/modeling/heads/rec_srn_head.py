@@ -1,32 +1,11 @@
-# copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+from collections import OrderedDict
 
-
-
-
-
-import math
 import torch
 from torch import nn
 from torch.nn import functional as F
-import numpy as np
-from .self_attention import WrapEncoderForFeature
-from .self_attention import WrapEncoder
-from torch.static import Program
-from ppocr.modeling.backbones.rec_resnet_fpn import ResNetFPN
 
-from collections import OrderedDict
+from .self_attention import WrapEncoder
+from .self_attention import WrapEncoderForFeature
 
 gradient_clip = 10
 
@@ -60,13 +39,13 @@ class PVAM(nn.Module):
         )
 
         # PVAM
-        self.flatten0 = torch.nn.Flatten(start_axis=0, stop_dim=1)
+        self.flatten0 = torch.nn.Flatten(start_dim=0, end_dim=1)
         self.fc0 = torch.nn.Linear(
             in_features=in_channels,
             out_features=in_channels,
         )
         self.emb = torch.nn.Embedding(num_embeddings=self.max_length, embedding_dim=in_channels)
-        self.flatten1 = torch.nn.Flatten(start_axis=0, stop_dim=2)
+        self.flatten1 = torch.nn.Flatten(start_dim=0, end_dim=2)
         self.fc1 = torch.nn.Linear(in_features=in_channels, out_features=1, bias=False)
 
     def forward(self, inputs, encoder_word_pos, gsrm_word_pos):
@@ -143,7 +122,7 @@ class GSRM(nn.Module):
             weight_sharing=True,
         )
 
-        self.mul = lambda x: torch.matmul(x, self.wrap_encoder0.prepare_decoder.emb0.weight, transpose_y=True)
+        self.mul = lambda x: torch.matmul(x, self.wrap_encoder0.prepare_decoder.emb0.weight.t())
 
     def forward(self, inputs, gsrm_word_pos, gsrm_slf_attn_bias1, gsrm_slf_attn_bias2):
         # ===== GSRM Visual-to-semantic embedding block =====
@@ -161,7 +140,7 @@ class GSRM(nn.Module):
         pad_idx = self.char_num
 
         word1 = word_ids.type(dtype=torch.float32)
-        word1 = F.pad(word1, [1, 0], value=1.0 * pad_idx, data_format="NLC")
+        word1 = F.pad(word1, [1, 0], value=1.0 * pad_idx, mode="NLC")
         word1 = word1.type(dtype=torch.int64)
         word1 = word1[:, :-1, :]
         word2 = word_ids
@@ -172,7 +151,7 @@ class GSRM(nn.Module):
         gsrm_feature1 = self.wrap_encoder0(enc_inputs_1)
         gsrm_feature2 = self.wrap_encoder1(enc_inputs_2)
 
-        gsrm_feature2 = F.pad(gsrm_feature2, [0, 1], value=0.0, data_format="NLC")
+        gsrm_feature2 = F.pad(gsrm_feature2, [0, 1], value=0.0, mode="NLC")
         gsrm_feature2 = gsrm_feature2[
             :,
             1:,

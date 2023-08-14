@@ -132,7 +132,7 @@ class GridGenerator(nn.Module):
         self.F = num_fiducial
 
         name = "ex_fc"
-        initializer = nn.initializer.Constant(value=0.0)
+        initializer = nn.init.Constant(value=0.0)
 
         self.fc = nn.Linear(in_channels, 6, bias=True, name=name)
 

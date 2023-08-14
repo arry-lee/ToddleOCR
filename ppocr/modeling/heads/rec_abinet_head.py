@@ -1,16 +1,3 @@
-# copyright (c) 2021 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 """
 This code is refer from: 
 https://github.com/FangShancheng/ABINet/tree/main/modules
@@ -266,7 +253,7 @@ def _get_mask(length, max_length):
     grid = torch.arange(0, max_length).unsqueeze(0).tile([B, 1])
     zero_mask = torch.zeros([B, max_length], dtype=torch.float32)
     inf_mask = torch.full([B, max_length], -torch.inf, dtype=torch.float32)
-    diag_mask = torch.diag(torch.full([max_length], -torch.inf, dtype=torch.float32), offset=0, name=None)
+    diag_mask = torch.diag(torch.full([max_length], -torch.inf, dtype=torch.float32))
     mask = torch.where(grid >= length, inf_mask, zero_mask)
     mask = mask.unsqueeze(1) + diag_mask
     return mask.unsqueeze(1)

@@ -1,24 +1,7 @@
-# copyright (c) 2022 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 """
 This code is refer from:
 https://github.com/open-mmlab/mmocr/blob/main/mmocr/models/textdet/dense_heads/drrg_head.py
 """
-
-
-
-
 
 import numpy as np
 import torch
@@ -32,43 +15,43 @@ from .proposal_local_graph import ProposalLocalGraphs
 
 class DRRGHead(nn.Module):
     def __init__(
-        self,
-        in_channels,
-        k_at_hops=(8, 4),
-        num_adjacent_linkages=3,
-        node_geo_feat_len=120,
-        pooling_scale=1.0,
-        pooling_output_size=(4, 3),
-        nms_thr=0.3,
-        min_width=8.0,
-        max_width=24.0,
-        comp_shrink_ratio=1.03,
-        comp_ratio=0.4,
-        comp_score_thr=0.3,
-        text_region_thr=0.2,
-        center_region_thr=0.2,
-        center_region_area_thr=50,
-        local_graph_thr=0.7,
-        **kwargs
+            self,
+            in_channels,
+            k_at_hops=(8, 4),
+            num_adjacent_linkages=3,
+            node_geo_feat_len=120,
+            pooling_scale=1.0,
+            pooling_output_size=(4, 3),
+            nms_thr=0.3,
+            min_width=8.0,
+            max_width=24.0,
+            comp_shrink_ratio=1.03,
+            comp_ratio=0.4,
+            comp_score_thr=0.3,
+            text_region_thr=0.2,
+            center_region_thr=0.2,
+            center_region_area_thr=50,
+            local_graph_thr=0.7,
+            **kwargs
     ):
         super().__init__()
 
-        assert isinstance(in_channels, int)
-        assert isinstance(k_at_hops, tuple)
-        assert isinstance(num_adjacent_linkages, int)
-        assert isinstance(node_geo_feat_len, int)
-        assert isinstance(pooling_scale, float)
-        assert isinstance(pooling_output_size, tuple)
-        assert isinstance(comp_shrink_ratio, float)
-        assert isinstance(nms_thr, float)
-        assert isinstance(min_width, float)
-        assert isinstance(max_width, float)
-        assert isinstance(comp_ratio, float)
-        assert isinstance(comp_score_thr, float)
-        assert isinstance(text_region_thr, float)
-        assert isinstance(center_region_thr, float)
-        assert isinstance(center_region_area_thr, int)
-        assert isinstance(local_graph_thr, float)
+        # assert isinstance(in_channels, int)
+        # assert isinstance(k_at_hops, tuple)
+        # assert isinstance(num_adjacent_linkages, int)
+        # assert isinstance(node_geo_feat_len, int)
+        # assert isinstance(pooling_scale, float)
+        # assert isinstance(pooling_output_size, tuple)
+        # assert isinstance(comp_shrink_ratio, float)
+        # assert isinstance(nms_thr, float)
+        # assert isinstance(min_width, float)
+        # assert isinstance(max_width, float)
+        # assert isinstance(comp_ratio, float)
+        # assert isinstance(comp_score_thr, float)
+        # assert isinstance(text_region_thr, float)
+        # assert isinstance(center_region_thr, float)
+        # assert isinstance(center_region_area_thr, int)
+        # assert isinstance(local_graph_thr, float)
 
         self.in_channels = in_channels
         self.out_channels = 6

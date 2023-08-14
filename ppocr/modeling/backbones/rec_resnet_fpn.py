@@ -132,8 +132,8 @@ class ConvBNLayer(nn.Module):
         self.bn = nn.BatchNorm2d(
             num_features=out_channels,
         )
-        self.bn.register_buffer(bn_name + "_mean",self._batch_norm.running_mean)
-        self.bn.register_buffer(bn_name + "_variance",self._batch_norm.running_var)
+        self.bn.register_buffer(bn_name + "_mean",self.bn.running_mean)
+        self.bn.register_buffer(bn_name + "_variance",self.bn.running_var)
 
         if act:
             self._act = getattr(F,act)

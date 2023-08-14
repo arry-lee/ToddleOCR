@@ -1,18 +1,3 @@
-# copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-
 import torch
 from torch import nn
 from torch.nn import functional as F
@@ -22,22 +7,22 @@ gradient_clip = 10
 
 class WrapEncoderForFeature(nn.Module):
     def __init__(
-        self,
-        src_vocab_size,
-        max_length,
-        n_layer,
-        n_head,
-        d_key,
-        d_value,
-        d_model,
-        d_inner_hid,
-        prepostprocess_dropout,
-        attention_dropout,
-        relu_dropout,
-        preprocess_cmd,
-        postprocess_cmd,
-        weight_sharing,
-        bos_idx=0,
+            self,
+            src_vocab_size,
+            max_length,
+            n_layer,
+            n_head,
+            d_key,
+            d_value,
+            d_model,
+            d_inner_hid,
+            prepostprocess_dropout,
+            attention_dropout,
+            relu_dropout,
+            preprocess_cmd,
+            postprocess_cmd,
+            weight_sharing,
+            bos_idx=0,
     ):
         super(WrapEncoderForFeature, self).__init__()
 
@@ -76,22 +61,22 @@ class WrapEncoder(nn.Module):
     """
 
     def __init__(
-        self,
-        src_vocab_size,
-        max_length,
-        n_layer,
-        n_head,
-        d_key,
-        d_value,
-        d_model,
-        d_inner_hid,
-        prepostprocess_dropout,
-        attention_dropout,
-        relu_dropout,
-        preprocess_cmd,
-        postprocess_cmd,
-        weight_sharing,
-        bos_idx=0,
+            self,
+            src_vocab_size,
+            max_length,
+            n_layer,
+            n_head,
+            d_key,
+            d_value,
+            d_model,
+            d_inner_hid,
+            prepostprocess_dropout,
+            attention_dropout,
+            relu_dropout,
+            preprocess_cmd,
+            postprocess_cmd,
+            weight_sharing,
+            bos_idx=0,
     ):
         super(WrapEncoder, self).__init__()
 
@@ -125,18 +110,18 @@ class Encoder(nn.Module):
     """
 
     def __init__(
-        self,
-        n_layer,
-        n_head,
-        d_key,
-        d_value,
-        d_model,
-        d_inner_hid,
-        prepostprocess_dropout,
-        attention_dropout,
-        relu_dropout,
-        preprocess_cmd="n",
-        postprocess_cmd="da",
+            self,
+            n_layer,
+            n_head,
+            d_key,
+            d_value,
+            d_model,
+            d_inner_hid,
+            prepostprocess_dropout,
+            attention_dropout,
+            relu_dropout,
+            preprocess_cmd="n",
+            postprocess_cmd="da",
     ):
         super(Encoder, self).__init__()
 
@@ -175,17 +160,17 @@ class EncoderLayer(nn.Module):
     """
 
     def __init__(
-        self,
-        n_head,
-        d_key,
-        d_value,
-        d_model,
-        d_inner_hid,
-        prepostprocess_dropout,
-        attention_dropout,
-        relu_dropout,
-        preprocess_cmd="n",
-        postprocess_cmd="da",
+            self,
+            n_head,
+            d_key,
+            d_value,
+            d_model,
+            d_inner_hid,
+            prepostprocess_dropout,
+            attention_dropout,
+            relu_dropout,
+            preprocess_cmd="n",
+            postprocess_cmd="da",
     ):
         super(EncoderLayer, self).__init__()
         self.preprocesser1 = PrePostProcessLayer(preprocess_cmd, d_model, prepostprocess_dropout)
@@ -264,8 +249,8 @@ class MultiHeadAttention(nn.Module):
         q, k, v = self._prepare_qkv(queries, keys, values, cache)
 
         # scale dot product attention
-        product = torch.matmul(q, k, transpose_y=True)
-        product = product * self.d_model**-0.5
+        product = torch.matmul(q, k.t())
+        product = product * self.d_model ** -0.5
         if attn_bias is not None:
             product += attn_bias
         weights = F.softmax(product)
@@ -298,7 +283,7 @@ class PrePostProcessLayer(nn.Module):
             elif cmd == "n":  # add layer normalization
                 self.functors.append(
                     self.add_module(
-                        "layer_norm_%d" % len(self.children()),
+                        "layer_norm_%d" % len(list(self.children())),
                         torch.nn.LayerNorm(
                             normalized_shape=d_model,
                         ),
@@ -318,14 +303,14 @@ class PrePostProcessLayer(nn.Module):
 
 class PrepareEncoder(nn.Module):
     def __init__(
-        self,
-        src_vocab_size,
-        src_emb_dim,
-        src_max_len,
-        dropout_rate=0,
-        bos_idx=0,
-        word_emb_param_name=None,
-        pos_enc_param_name=None,
+            self,
+            src_vocab_size,
+            src_emb_dim,
+            src_max_len,
+            dropout_rate=0,
+            bos_idx=0,
+            word_emb_param_name=None,
+            pos_enc_param_name=None,
     ):
         super(PrepareEncoder, self).__init__()
         self.src_emb_dim = src_emb_dim
@@ -336,7 +321,11 @@ class PrepareEncoder(nn.Module):
     def forward(self, src_word, src_pos):
         src_word_emb = src_word
         src_word_emb = src_word_emb.type(dtype=torch.float32)
-        src_word_emb = torch.scale(x=src_word_emb, scale=self.src_emb_dim**0.5)
+
+        scale = self.src_emb_dim ** 0.5
+        src_word_emb = torch.mul(src_word_emb, scale)
+
+
         src_pos = torch.squeeze(src_pos, dim=-1)
         src_pos_enc = self.emb(src_pos)
         src_pos_enc.stop_gradient = True
@@ -350,14 +339,14 @@ class PrepareEncoder(nn.Module):
 
 class PrepareDecoder(nn.Module):
     def __init__(
-        self,
-        src_vocab_size,
-        src_emb_dim,
-        src_max_len,
-        dropout_rate=0,
-        bos_idx=0,
-        word_emb_param_name=None,
-        pos_enc_param_name=None,
+            self,
+            src_vocab_size,
+            src_emb_dim,
+            src_max_len,
+            dropout_rate=0,
+            bos_idx=0,
+            word_emb_param_name=None,
+            pos_enc_param_name=None,
     ):
         super(PrepareDecoder, self).__init__()
         self.src_emb_dim = src_emb_dim
@@ -369,12 +358,14 @@ class PrepareDecoder(nn.Module):
             num_embeddings=src_vocab_size,
             embedding_dim=self.src_emb_dim,
             padding_idx=bos_idx,
-            initializer=nn.initializer.Normal(0.0, src_emb_dim**-0.5),
+            # initializer=nn.init.Normal(0.0, src_emb_dim ** -0.5),
         )
+        nn.init.normal_(self.emb0.weight, 0.0, src_emb_dim ** -0.5)
+
         self.emb1 = torch.nn.Embedding(
             num_embeddings=src_max_len,
             embedding_dim=self.src_emb_dim,
-            weight_attr=torch.ParamAttr(name=pos_enc_param_name),
+            # weight_attr=torch.ParamAttr(name=pos_enc_param_name),
         )
         self.dropout_rate = dropout_rate
 
@@ -382,7 +373,8 @@ class PrepareDecoder(nn.Module):
         src_word = src_word.type(dtype=torch.int64)
         src_word = torch.squeeze(src_word, dim=-1)
         src_word_emb = self.emb0(src_word)
-        src_word_emb = torch.scale(x=src_word_emb, scale=self.src_emb_dim**0.5)
+        scale = self.src_emb_dim ** 0.5
+        src_word_emb = torch.mul(src_word_emb, scale)
         src_pos = torch.squeeze(src_pos, dim=-1)
         src_pos_enc = self.emb1(src_pos)
         src_pos_enc.stop_gradient = True

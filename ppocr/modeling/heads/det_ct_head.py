@@ -1,32 +1,13 @@
-# copyright (c) 2019 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-
-
-
-
 import math
 
 import torch.nn.functional as F
 from torch import nn
-from torch.nn.init import ones_, normal_,zeros_
+from torch.nn.init import ones_, normal_, zeros_
 
 
-
-class CT_Head(nn.Module):
+class CTHead(nn.Module):
     def __init__(self, in_channels, hidden_dim, num_classes, loss_kernel=None, loss_loc=None):
-        super(CT_Head, self).__init__()
+        super().__init__()
         self.conv1 = nn.Conv2d(in_channels, hidden_dim, kernel_size=3, stride=1, padding=1)
         self.bn1 = nn.BatchNorm2d(hidden_dim)
         self.relu1 = nn.ReLU()
@@ -36,7 +17,7 @@ class CT_Head(nn.Module):
         for m in self.children():
             if isinstance(m, nn.Conv2d):
                 n = m._kernel_size[0] * m._kernel_size[1] * m._out_channels
-                normal_(m.weight,mean=0.0, std=math.sqrt(2.0 / n))
+                normal_(m.weight, mean=0.0, std=math.sqrt(2.0 / n))
             elif isinstance(m, nn.BatchNorm2d):
                 zeros_(m.bias)
                 ones_(m.weight)
