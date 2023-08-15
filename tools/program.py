@@ -669,7 +669,7 @@ def preprocess(is_train=False):
         device = "gpu:{}".format(dist.ParallelEnv().dev_id) if use_gpu else "cpu"
     check_device(use_gpu, use_xpu, use_npu, use_mlu)
 
-    device = torch.set_device(device)
+    device = torch.device(device)
 
     config["Global"]["distributed"] = dist.get_world_size() != 1
 

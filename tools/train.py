@@ -16,7 +16,7 @@ from torch.nn.parallel import DistributedDataParallel
 from torch.utils.data import BatchSampler, DataLoader, DistributedSampler, RandomSampler, SequentialSampler
 from tqdm import tqdm
 
-from ocr.save_load import load_model, save_model
+from ppocr.utils.save_load import load_model, save_model
 from ppocr import hub as dynamic_import
 from ppocr.utils.stats import TrainingStats
 from ppocr.utils.utility import AverageMeter
@@ -326,8 +326,12 @@ class Pipeline:
         optim_config = copy.deepcopy(self.config['Optimizer'])
         optim_name = optim_config.pop('class')
 
-        lr_config = optim_config.pop('lr_scheduler')
-        lr_scheduler_name = lr_config.pop('class')
+        lr_config = copy.deepcopy(self.config['LRScheduler'])
+        if lr_config:
+            lr_scheduler_name = lr_config.pop('class')
+        else:
+            lr_config = {}
+            lr_scheduler_name = 'ConstantLR'
         # torch.optim.Adam
         optimizer = dynamic_import(optim_name)(model.parameters(), **optim_config)
         lr_scheduler = dynamic_import(lr_scheduler_name)(optimizer, **lr_config)

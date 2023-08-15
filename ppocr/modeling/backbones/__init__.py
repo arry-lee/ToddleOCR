@@ -1,6 +1,12 @@
 __all__ = ["build_backbone"]
 
+from torchvision.models import resnet50
 
+
+def build_backbone(config, model_type):
+    """Build backbone."""
+    if model_type == "det":
+        from .det_mobilenet_v3 import MobileNetV3
 def build_backbone(config, model_type):
     if model_type == "det" or model_type == "table":
         from .det_mobilenet_v3 import MobileNetV3

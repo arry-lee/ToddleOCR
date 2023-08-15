@@ -3,6 +3,7 @@ import importlib
 import os
 from collections import defaultdict
 
+import torch
 import yaml
 
 
@@ -65,9 +66,11 @@ class Hub:
         return class_
 
     def __call__(self, name, model_type=None):
-        if "." in name:
+        if "." in name: # 详细导入
             class_ = dynamic_import(name)
-        else:
+        elif name in torch.nn.modules.__all__: # torch.nn.modules 内置模型
+            class_ = getattr(torch.nn.modules, name)
+        else:  # 自定义模型
             if len(self.module_dict[name]) == 1:
                 module = importlib.import_module(self.module_dict[name][0])
                 class_ = getattr(module, name)
