@@ -64,9 +64,6 @@ class BaseModel(nn.Module):
 
         self.return_all_feats = config.get("return_all_feats", False)
 
-        # for k,v in model_components.items():
-        #     setattr(self, k.lower(), v)
-
     def build_component(self, config):
         component_class_name = config['class']
         component_params = config.copy()

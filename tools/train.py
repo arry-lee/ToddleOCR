@@ -44,7 +44,7 @@ dist.get_world_size()
 def main(config, device, logger, vdl_writer):
     # init dist environment
     if config["Global"]["distributed"]:
-        dist.init_parallel_env()
+        dist.init_process_group(backend="hccl")
 
     global_config = config["Global"]
 

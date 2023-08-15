@@ -15,13 +15,12 @@
 import copy
 import importlib
 
-from torch.jit import to_static
-from torch.static import InputSpec
+
 
 from .base_model import BaseModel
 from .distillation_model import DistillationModel
 
-__all__ = ["build_model", "apply_to_static"]
+__all__ = ["build_model"]
 
 
 def build_model(config):
@@ -33,33 +32,3 @@ def build_model(config):
         mod = importlib.import_module(__name__)
         arch = getattr(mod, name)(config)
     return arch
-
-
-def apply_to_static(model, config, logger):
-    if config["Global"].get("to_static", False) is not True:
-        return model
-    assert "image_shape" in config["Global"], "image_shape must be assigned for static training mode..."
-    supported_list = ["DB", "SVTR"]
-    if config["Model"]["algorithm"] in ["Distillation"]:
-        algo = list(config["Model"]["Models"].values())[0]["algorithm"]
-    else:
-        algo = config["Model"]["algorithm"]
-    assert (
-        algo in supported_list
-    ), f"algorithms that supports static training must in in {supported_list} but got {algo}"
-
-    specs = [InputSpec([None] + config["Global"]["image_shape"], dtype="float32")]
-
-    if algo == "SVTR":
-        specs.append(
-            [
-                InputSpec([None, config["Global"]["max_text_length"]], dtype="int64"),
-                InputSpec([None, config["Global"]["max_text_length"]], dtype="int64"),
-                InputSpec([None], dtype="int64"),
-                InputSpec([None], dtype="float64"),
-            ]
-        )
-
-    model = to_static(model, input_spec=specs)
-    logger.info("Successfully to apply @to_static with specs: {}".format(specs))
-    return model
