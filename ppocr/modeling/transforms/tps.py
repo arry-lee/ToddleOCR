@@ -1,16 +1,3 @@
-# copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 """
 This code is refer from:
 https://github.com/clovaai/deep-text-recognition-benchmark/blob/master/modules/transformation.py
@@ -39,18 +26,27 @@ class ConvBNLayer(nn.Module):
             groups=groups,
             bias=False,
         )
-        bn_name = "bn_" + name
+        # bn_name = "bn_" + name
         self.bn = nn.BatchNorm2d(
             out_channels,
-            act=act,
-            bias=True,
-            moving_mean_name=bn_name + "_mean",
-            moving_variance_name=bn_name + "_variance",
+            # act=act,
+            # bias=True,
+            # moving_mean_name=bn_name + "_mean",
+            # moving_variance_name=bn_name + "_variance",
         )
+        self.bn = nn.BatchNorm2d(num_features=out_channels)
+        self.bn.register_buffer("bn_" + name + "_mean", self.bn.running_mean)
+        self.bn.register_buffer("bn_" + name + "_variance", self.bn.running_var)
+        if act is not None:
+            self.act = getattr(F, act)
+        else:
+            self.act = None
 
     def forward(self, x):
         x = self.conv(x)
         x = self.bn(x)
+        if self.act is not None:
+            x = self.act(x)
         return x
 
 
@@ -83,14 +79,14 @@ class LocalizationNetwork(nn.Module):
             self.block_list.append(pool)
         name = "loc_fc1"
         stdv = 1.0 / math.sqrt(num_filters_list[-1] * 1.0)
-        self.fc1 = nn.Linear(in_channels, fc_dim, name=name)
+        self.fc1 = nn.Linear(in_channels, fc_dim)
 
         # Init fc2 in LocalizationNetwork
         initial_bias = self.get_initial_fiducials()
         initial_bias = initial_bias.reshape(-1)
         name = "loc_fc2"
 
-        self.fc2 = nn.Linear(fc_dim, F * 2, bias=True, name=name)
+        self.fc2 = nn.Linear(fc_dim, F * 2, bias=True)
         self.out_channels = F * 2
 
     def forward(self, x):
@@ -132,9 +128,9 @@ class GridGenerator(nn.Module):
         self.F = num_fiducial
 
         name = "ex_fc"
-        initializer = nn.init.Constant(value=0.0)
+        # initializer = nn.init.Constant(value=0.0)
 
-        self.fc = nn.Linear(in_channels, 6, bias=True, name=name)
+        self.fc = nn.Linear(in_channels, 6, bias=True)
 
     def forward(self, batch_C_prime, I_r_size):
         """
@@ -245,5 +241,5 @@ class TPS(nn.Module):
         batch_C_prime = self.loc_net(image)
         batch_P_prime = self.grid_generator(batch_C_prime, image.shape[2:])
         batch_P_prime = batch_P_prime.reshape([-1, image.shape[2], image.shape[3], 2])
-        batch_I_r = F.grid_sample(x=image, grid=batch_P_prime)
+        batch_I_r = F.grid_sample(image, grid=batch_P_prime)
         return batch_I_r

@@ -37,7 +37,7 @@ Predictor:
     module_name: text_generator
     generator_type: TextGenerator
     encode_dim: 64
-    norm_layer: InstanceNorm2D
+    norm_layer: InstanceNorm2d
     conv_block_num: 4
     conv_block_dropout: false
     conv_block_dilation: true

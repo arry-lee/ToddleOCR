@@ -1,16 +1,3 @@
-# copyright (c) 2022 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 """
 This code is refer from:
 https://github.com/FudanVI/FudanOCR/blob/main/scene-text-telescope/model/tbsrn.py
@@ -23,6 +10,8 @@ import torch
 from torch import nn
 import string
 
+from torch.nn import LayerNorm
+
 warnings.filterwarnings("ignore")
 
 from .tps_spatial_transformer import TPSSpatialTransformer
@@ -30,7 +19,7 @@ from .stn import STN as STNHead
 from .tsrn import GruBlock, mish, UpsampleBLock
 from ppocr.modeling.heads.sr_rensnet_transformer import (
     Transformer,
-    LayerNorm,
+    # LayerNorm,
     PositionwiseFeedForward,
     MultiHeadedAttention,
 )
@@ -65,10 +54,10 @@ class FeatureEnhancer(nn.Module):
         super(FeatureEnhancer, self).__init__()
 
         self.multihead = MultiHeadedAttention(h=4, d_model=128, dropout=0.1)
-        self.mul_layernorm1 = LayerNorm(features=128)
+        self.mul_layernorm1 = LayerNorm(128)
 
         self.pff = PositionwiseFeedForward(128, 128)
-        self.mul_layernorm3 = LayerNorm(features=128)
+        self.mul_layernorm3 = LayerNorm(128)
 
         self.linear = nn.Linear(128, 64)
 
@@ -79,7 +68,7 @@ class FeatureEnhancer(nn.Module):
         conv_feature: (batch, channel, H, W)
         """
         batch = conv_feature.shape[0]
-        position2d = positionalencoding2d(64, 16, 64).cast("float32").unsqueeze(0).reshape([1, 64, 1024])
+        position2d = positionalencoding2d(64, 16, 64).type(torch.float32).unsqueeze(0).reshape([1, 64, 1024])
         position2d = position2d.tile([batch, 1, 1])
         conv_feature = torch.concat([conv_feature, position2d], 1)  # batch, 128(64+64), 32, 128
         result = conv_feature.transpose([0, 2, 1])

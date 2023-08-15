@@ -1,21 +1,3 @@
-# copyright (c) 2022 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-
-
-
-
 import functools
 
 import numpy as np
@@ -45,7 +27,7 @@ class SP_TransformerNetwork(nn.Module):
         super(SP_TransformerNetwork, self).__init__()
         self.power_list = self.cal_K(default_type)
         self.sigmoid = nn.Sigmoid()
-        self.bn = nn.InstanceNorm2D(nc)
+        self.bn = nn.InstanceNorm2d(nc)
 
     def cal_K(self, k=5):
         """
@@ -131,9 +113,9 @@ class GA_SPIN_Transformer(nn.Module):
         self.I_r_size = I_r_size
         self.out_channels = in_channels
         if norm_type == "BN":
-            norm_layer = functools.partial(nn.BatchNorm2d, use_global_stats=True)
+            norm_layer = functools.partial(nn.BatchNorm2d, track_running_stats=True)
         elif norm_type == "IN":
-            norm_layer = functools.partial(nn.InstanceNorm2D, use_global_stats=False)
+            norm_layer = functools.partial(nn.InstanceNorm2d, track_running_stats=False)
         else:
             raise NotImplementedError("normalization layer [%s] is not found" % norm_type)
 

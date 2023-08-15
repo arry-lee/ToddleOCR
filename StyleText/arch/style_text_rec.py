@@ -66,7 +66,7 @@ class TextGenerator(nn.Module):
         conv_block_dropout = config["conv_block_dropout"]
         conv_block_num = config["conv_block_num"]
         conv_block_dilation = config["conv_block_dilation"]
-        if norm_layer == "InstanceNorm2D":
+        if norm_layer == "InstanceNorm2d":
             use_bias = True
         else:
             use_bias = False
@@ -151,7 +151,7 @@ class BgGeneratorWithMask(nn.Module):
         conv_block_dilation = config["conv_block_dilation"]
         self.output_factor = config.get("output_factor", 1.0)
 
-        if norm_layer == "InstanceNorm2D":
+        if norm_layer == "InstanceNorm2d":
             use_bias = True
         else:
             use_bias = False
@@ -229,7 +229,7 @@ class FusionGeneratorSimple(nn.Module):
         norm_layer = config["norm_layer"]
         conv_block_dropout = config["conv_block_dropout"]
         conv_block_dilation = config["conv_block_dilation"]
-        if norm_layer == "InstanceNorm2D":
+        if norm_layer == "InstanceNorm2d":
             use_bias = True
         else:
             use_bias = False

@@ -1,16 +1,3 @@
-# copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 """
 This code is refer from:
 https://github.com/ayumiymk/aster.pytorch/blob/master/lib/models/stn_head.py
@@ -32,8 +19,9 @@ def conv3x3_block(in_channels, out_channels, stride=1):
     n = 3 * 3 * out_channels
     w = math.sqrt(2.0 / n)
     conv_layer = nn.Conv2d(
-        in_channels, out_channels, kernel_size=3, stride=stride, padding=1, bias=nn.init.Constant(0)
+        in_channels, out_channels, kernel_size=3, stride=stride, padding=1, bias=True
     )
+    nn.init.zeros_(conv_layer.bias)
     block = nn.Sequential(conv_layer, nn.BatchNorm2d(out_channels), nn.ReLU())
     return block
 
@@ -58,10 +46,13 @@ class STN(nn.Module):
             conv3x3_block(256, 256),
         )  # 1*2
         self.stn_fc1 = nn.Sequential(
-            nn.Linear(2 * 256, 512, bias=nn.init.Constant(0)), nn.BatchNorm1d(512), nn.ReLU()
+            nn.Linear(2 * 256, 512, bias=True), nn.BatchNorm1d(512), nn.ReLU()
         )
+        nn.init.zeros_(self.stn_fc1[0].bias)
+
         fc2_bias = self.init_stn()
-        self.stn_fc2 = nn.Linear(512, num_ctrlpoints * 2, bias=nn.init.Assign(fc2_bias))
+        self.stn_fc2 = nn.Linear(512, num_ctrlpoints * 2, bias=True)
+        self.stn_fc2.bias = fc2_bias
 
     def init_stn(self):
         margin = 0.01
