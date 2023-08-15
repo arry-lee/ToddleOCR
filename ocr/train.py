@@ -2,7 +2,6 @@
 # 角色:
 import copy
 import datetime
-import importlib
 import os
 import platform
 import sys
@@ -18,15 +17,9 @@ from torch.utils.data import BatchSampler, DataLoader, DistributedSampler, Rando
 from tqdm import tqdm
 
 from ocr.save_load import load_model, save_model
+from ppocr import hub as dynamic_import
 from ppocr.utils.stats import TrainingStats
 from ppocr.utils.utility import AverageMeter
-
-
-def dynamic_import(module_path):
-    module_name, _, class_name = module_path.rpartition('.')
-    module = importlib.import_module(module_name)
-    class_ = getattr(module, class_name)
-    return class_
 
 
 def build_object(config, section):
