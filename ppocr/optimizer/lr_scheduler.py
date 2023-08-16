@@ -14,7 +14,7 @@
 
 import math
 from bisect import bisect_right
-from functools import wraps
+from functools import partial, wraps
 
 from torch.optim.lr_scheduler import LRScheduler
 
@@ -117,3 +117,7 @@ class TwoStepCosineLR(LRScheduler):
                 self.eta_min + (base_lr - self.eta_min) * (1 + math.cos(math.pi * self.last_epoch / self.T_max2)) / 2
                 for base_lr in self.base_lrs
             ]
+
+a = partial(TwoStepCosineLR,eta_min=0)
+print(a.func.__name__,a.args,a.keywords)
+# print(a.__name__)

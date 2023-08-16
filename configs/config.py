@@ -91,26 +91,24 @@ class ConfigModel:
     model_type: str  # = "det"
     algorithm: str  # = "EAST"
 
-    Backbone: Type[nn.Module]  # = _(MobileNetV3, scale=0.5, model_name="large")
-    Neck: Type[nn.Module]  # = _(EASTFPN, model_name="small")
-    Head: Type[nn.Module]  # = _(EASTHead, model_name="small")
+    Backbone: Type[nn.Module]|partial  # = _(MobileNetV3, scale=0.5, model_name="large")
+    Neck: Type[nn.Module]|partial  # = _(EASTFPN, model_name="small")
+    Head: Type[nn.Module]|partial  # = _(EASTHead, model_name="small")
     loss: nn.Module  # = EASTLoss()
-    Optimizer: Type[torch.optim.Optimizer]  # = _(Adam, lr=0.01, betas=(0.9, 0.999))
-    Scheduler: Type[
-        torch.optim.lr_scheduler.LRScheduler
-    ]  # = _(ConstantLR, factor=1.0 / 3, total_iters=5, last_epoch=-1)
+    Optimizer: Type[torch.optim.Optimizer]|partial  # = _(Adam, lr=0.01, betas=(0.9, 0.999))
+    Scheduler: Type[torch.optim.lr_scheduler.LRScheduler]|partial  # = _(ConstantLR, factor=1.0 / 3, total_iters=5, last_epoch=-1)
     postprocessor: Callable  # = EASTPostProcess(score_thresh=0.8, cover_thresh=0.1, nms_thresh=0.2)
     metric: Callable  # = DetMetric(main_indicator="hmean")
 
     class Train:
-        Dataset: Type[VisionDataset]  # = _(FolderDataset,root="E:/00IT/P/uniform/data/bank")
+        Dataset: Type[VisionDataset]|partial  # = _(FolderDataset,root="E:/00IT/P/uniform/data/bank")
         transforms: Optional[
             Callable
         ] = None  # = _[EASTProcessTrain(image_shape=[512, 512], background_ratio=0, min_crop_side_ratio=0.0, min_text_size=10),KeepKeys(keep_keys=["image", "score_map", "geo_map", "training_mask"]),]
         DATALOADER: dict  # = _(shuffle=False, drop_last=False, batch_size=16, num_workers=4, pin_memory=False)
 
     class Eval:
-        Dataset: Type[VisionDataset]  # = _(FolderDataset,root="E:/00IT/P/uniform/data/banktest",)
+        Dataset: Type[VisionDataset]|partial  # = _(FolderDataset,root="E:/00IT/P/uniform/data/banktest",)
         transforms: Optional[
             Callable
         ] = None  # = _[DetResizeForTest(limit_side_len=2400, limit_type=max),NormalizeImage(scale=1.0 / 255.0, mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], order="hwc"),ToCHWImage(),KeepKeys(keep_keys=["image", "shape", "polys", "ignore_tags"])]
@@ -205,7 +203,11 @@ class ConfigModel:
         model = self.model
         loss_ = self.loss
         optimizer = self.Optimizer(model.parameters())
-        lr_scheduler = self.Scheduler(optimizer)
+
+        # step_each_epoch = len(train_dataloader)
+        # max_epochs = self.epoch_num
+
+        lr_scheduler = self._build_scheduler(optimizer, self.epoch_num, len(train_dataloader))
         post_processor = self.postprocessor
         metric_ = self.metric
 
@@ -458,6 +460,18 @@ class ConfigModel:
         if self.use_dist:
             dist.destroy_process_group()
         return
+
+    def _build_scheduler(self, optimizer, max_epochs, step_each_epoch):
+        if self.Scheduler.func.__name__ == 'CosineAnnealingLR':
+            kwargs = {'T_max': step_each_epoch * max_epochs}
+        elif self.Scheduler.func.__name__ == 'CosineAnnealingWarmRestarts':
+            kwargs = {'T_0': step_each_epoch * max_epochs}
+        elif self.Scheduler.func.__name__ == 'TwoStepCosineLR':
+            kwargs = {'T_max1': step_each_epoch * 200, 'T_max2': step_each_epoch * max_epochs}
+        else:
+            kwargs = {}
+        lr_scheduler = self.Scheduler(optimizer, **kwargs)
+        return lr_scheduler
 
     def is_rank0(self):
         if self.use_dist:
