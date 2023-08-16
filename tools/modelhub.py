@@ -77,7 +77,7 @@ class Hub:
             else:
                 if model_type is not None:
                     for one in self.module_dict[name]:
-                        if one.startswith(model_type.lower()):
+                        if one.rsplit('.',1)[1].startswith(model_type.lower()):
                             module = importlib.import_module(one)
                             class_ = getattr(module, name)
                             break
