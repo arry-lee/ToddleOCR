@@ -27,7 +27,8 @@ Optimizer:
     - 0.999
   clip_norm: 5.0
   lr: 0.001
-LRScheduler: null
+LRScheduler:
+  class: ConstantLR
 Model:
   model_type: table
   algorithm: TableAttn

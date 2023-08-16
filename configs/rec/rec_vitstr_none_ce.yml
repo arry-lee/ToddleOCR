@@ -25,7 +25,8 @@ Optimizer:
   rho: 0.95
   clip_norm: 5.0
   lr: 1.0
-LRScheduler: null
+LRScheduler:
+  class: ConstantLR
 Model:
   model_type: rec
   algorithm: ViTSTR
