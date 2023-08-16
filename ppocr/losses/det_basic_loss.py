@@ -84,7 +84,7 @@ class BalanceLoss(nn.Module):
         if negative_count > 0:
             sort_loss = negative_loss.sort(descending=True)
             negative_loss = sort_loss[:negative_count]
-            # negative_loss, _ = paddle.topk(negative_loss, k=negative_count_int)
+            # negative_loss, _ = torch.topk(negative_loss, k=negative_count_int)
             balance_loss = (positive_loss.sum() + negative_loss.sum()) / (positive_count + negative_count + self.eps)
         else:
             balance_loss = positive_loss.sum() / (positive_count + self.eps)

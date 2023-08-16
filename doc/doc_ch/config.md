@@ -59,28 +59,28 @@
 |        factor      |     正则化系数     |       0.00001        |  \        |
 
 
-### Architecture ([ppocr/modeling](../../ppocr/modeling))
+### Architecture ([ppocr/modeling](../../ppocr/models))
 在PaddleOCR中，网络被划分为Transform,Backbone,Neck和Head四个阶段
 
 |         字段             |            用途            |      默认值        |            备注             |
 | :---------------------: |  :---------------------:   | :--------------:  |   :--------------------:   |
 |      model_type        |         网络类型          |  rec  |  目前支持`rec`,`det`,`cls`  |
 |      algorithm           |    模型名称  |       CRNN         |               支持列表见[algorithm_overview](./algorithm_overview.md)             |
-|      **Transform**           |    设置变换方式  |       -       |               目前仅rec类型的算法支持, 具体见[ppocr/modeling/transforms](../../ppocr/modeling/transforms)              |
+|      **Transform**           |    设置变换方式  |       -       |               目前仅rec类型的算法支持, 具体见[ppocr/modeling/transforms](../../ppocr/models/transforms)              |
 |        name    |      变换方式类名   |         TPS       | 目前支持`TPS` |
 |        num_fiducial      |    TPS控制点数        |       20      |  上下边各十个       |
 |        loc_lr      |    定位网络学习率        |       0.1      |  \      |
 |        model_name      |    定位网络大小        |       small      |  目前支持`small`,`large`       |
-|      **Backbone**      |  设置网络backbone类名        |       -      | 具体见[ppocr/modeling/backbones](../../ppocr/modeling/backbones)        |
+|      **Backbone**      |  设置网络backbone类名        |       -      | 具体见[ppocr/modeling/backbones](../../ppocr/models/backbones)        |
 |        name      |    backbone类名       |       ResNet     | 目前支持`MobileNetV3`,`ResNet`        |
 |        layers      |    resnet层数       |       34     |  支持18,34,50,101,152,200       |
 |        model_name      |    MobileNetV3 网络大小       |       small     |  支持`small`,`large`       |
-|      **Neck**      |  设置网络neck        |       -      | 具体见[ppocr/modeling/necks](../../ppocr/modeling/necks)        |
+|      **Neck**      |  设置网络neck        |       -      | 具体见[ppocr/modeling/necks](../../ppocr/models/necks)        |
 |        name      |    neck类名       |       SequenceEncoder     | 目前支持`SequenceEncoder`,`DBFPN`        |
 |        encoder_type      |    SequenceEncoder编码器类型       |       rnn     |  支持`reshape`,`fc`,`rnn`       |
 |        hidden_size      |   rnn内部单元数       |       48     |  \      |
 |        out_channels      |   DBFPN输出通道数       |       256     |  \      |
-|      **Head**      |  设置网络Head        |       -      | 具体见[ppocr/modeling/heads](../../ppocr/modeling/heads)        |
+|      **Head**      |  设置网络Head        |       -      | 具体见[ppocr/modeling/heads](../../ppocr/models/heads)        |
 |        name      |    head类名       |       CTCHead     | 目前支持`CTCHead`,`DBHead`,`ClsHead`        |
 |        fc_decay      |    CTCHead正则化系数       |       0.0004     |  \      |
 |        k      |   DBHead二值化系数       |       50     |  \      |

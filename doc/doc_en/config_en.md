@@ -60,28 +60,28 @@ Take rec_chinese_lite_train_v2.0.yml as an example
 |        factor      |    Regularizer coefficient       |       0.00001     |  \        |
 
 
-### Architecture ([ppocr/modeling](../../ppocr/modeling))
+### Architecture ([ppocr/modeling](../../ppocr/models))
 In PaddleOCR, the network is divided into four stages: Transform, Backbone, Neck and Head
 
 |         Parameter             |            Use            |      Defaults        |            Note             |
 | :---------------------: |  :---------------------:   | :--------------:  |   :--------------------:   |
 |      model_type        |         Network Type          |  rec  |  Currently support`rec`,`det`,`cls`  |
 |      algorithm           |    Model name  |       CRNN         |               See [algorithm_overview](./algorithm_overview_en.md) for the support list             |
-|      **Transform**           |    Set the transformation method  |       -       |               Currently only recognition algorithms are supported, see [ppocr/modeling/transform](../../ppocr/modeling/transforms) for details            |
+|      **Transform**           |    Set the transformation method  |       -       |               Currently only recognition algorithms are supported, see [ppocr/modeling/transform](../../ppocr/models/transforms) for details            |
 |        name    |      Transformation class name   |         TPS       | Currently supports `TPS` |
 |        num_fiducial      |   Number of TPS control points        |       20      |  Ten on the top and bottom       |
 |        loc_lr      |    Localization network learning rate        |       0.1      |  \      |
 |        model_name      |    Localization network size        |       small      |  Currently support`small`,`large`       |
-|      **Backbone**      |  Set the network backbone class name        |       -      | see [ppocr/modeling/backbones](../../ppocr/modeling/backbones)        |
+|      **Backbone**      |  Set the network backbone class name        |       -      | see [ppocr/modeling/backbones](../../ppocr/models/backbones)        |
 |        name      |    backbone class name       |       ResNet     | Currently support`MobileNetV3`,`ResNet`        |
 |        layers      |    resnet layers       |       34     |  Currently support18,34,50,101,152,200       |
 |        model_name      |    MobileNetV3 network size       |       small     |  Currently support`small`,`large`       |
-|      **Neck**      |  Set network neck        |       -      | see[ppocr/modeling/necks](../../ppocr/modeling/necks)        |
+|      **Neck**      |  Set network neck        |       -      | see[ppocr/modeling/necks](../../ppocr/models/necks)        |
 |        name      |    neck class name       |       SequenceEncoder     | Currently support`SequenceEncoder`,`DBFPN`        |
 |        encoder_type      |    SequenceEncoder encoder type       |       rnn     |  Currently support`reshape`,`fc`,`rnn`       |
 |        hidden_size      |   rnn number of internal units       |       48     |  \      |
 |        out_channels      |   Number of DBFPN output channels       |       256     |  \      |
-|      **Head**      |  Set the network head        |       -      | see[ppocr/modeling/heads](../../ppocr/modeling/heads)        |
+|      **Head**      |  Set the network head        |       -      | see[ppocr/modeling/heads](../../ppocr/models/heads)        |
 |        name      |    head class name       |       CTCHead     | Currently support`CTCHead`,`DBHead`,`ClsHead`        |
 |        fc_decay      |    CTCHead regularization coefficient       |       0.0004     |  \      |
 |        k      |   DBHead binarization coefficient       |       50     |  \      |

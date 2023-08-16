@@ -325,7 +325,7 @@ python3 tools/train.py -c configs/rec/PP-OCRv3/en_PP-OCRv3_rec.yml -o Global.che
 
 ## 2.3. 更换Backbone 训练
 
-PaddleOCR将网络划分为四部分，分别在[ppocr/modeling](../../ppocr/modeling)下。 进入网络的数据将按照顺序(transforms->backbones->necks->heads)依次通过这四个部分。
+PaddleOCR将网络划分为四部分，分别在[ppocr/modeling](../../ppocr/models)下。 进入网络的数据将按照顺序(transforms->backbones->necks->heads)依次通过这四个部分。
 
 ```bash
 ├── architectures # 网络的组网代码
@@ -338,7 +338,7 @@ PaddleOCR将网络划分为四部分，分别在[ppocr/modeling](../../ppocr/mod
 
 如果要使用新的Backbone，更换backbones的例子如下:
 
-1. 在 [ppocr/modeling/backbones](../../ppocr/modeling/backbones) 文件夹下新建文件，如my_backbone.py。
+1. 在 [ppocr/modeling/backbones](../../ppocr/models/backbones) 文件夹下新建文件，如my_backbone.py。
 2. 在 my_backbone.py 文件内添加相关代码，示例代码如下:
 
 ```python
@@ -359,7 +359,7 @@ class MyBackbone(nn.Layer):
         return y
 ```
 
-3. 在 [ppocr/modeling/backbones/\__init\__.py](../../ppocr/modeling/backbones/__init__.py)文件内导入添加的`MyBackbone`模块，然后修改配置文件中Backbone进行配置即可使用，格式如下:
+3. 在 [ppocr/modeling/backbones/\__init\__.py](../../ppocr/models/backbones/__init__.py)文件内导入添加的`MyBackbone`模块，然后修改配置文件中Backbone进行配置即可使用，格式如下:
 
 ```yaml
 Backbone:

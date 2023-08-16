@@ -7,7 +7,7 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 
-from ppocr.modeling.heads.rec_nrtr_head import PositionalEncoding, TransformerBlock
+from ppocr.models.heads.rec_nrtr_head import PositionalEncoding, TransformerBlock
 
 
 class BCNLanguage(nn.Module):

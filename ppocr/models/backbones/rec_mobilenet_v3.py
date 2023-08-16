@@ -1,6 +1,6 @@
 from torch import nn
 
-from ppocr.modeling.backbones.det_mobilenet_v3 import ConvBNLayer, InvertedResidual, make_divisible
+from ppocr.models.backbones.det_mobilenet_v3 import ConvBNLayer, InvertedResidual, make_divisible
 
 __all__ = ["MobileNetV3"]
 

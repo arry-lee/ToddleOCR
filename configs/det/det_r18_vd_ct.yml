@@ -25,7 +25,7 @@ Model:
   Neck:
     class: CTFPN
   Head:
-    class: CT_Head
+    class: CTHead
     in_channels: 512
     hidden_dim: 128
     num_classes: 3

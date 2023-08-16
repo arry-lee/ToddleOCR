@@ -25,7 +25,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(__dir__, "..")))
 
 import torch
 from ppocr.data import build_dataloader
-from ppocr.modeling.architectures import build_model
+from ppocr.models.architectures import build_model
 from ppocr.postprocess import build_post_process
 from ppocr.metrics import build_metric
 from ppocr.utils.save_load import load_model

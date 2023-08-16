@@ -33,11 +33,11 @@ from ppocr.data.imaug import (
 )
 from ppocr.losses import DBLoss, EASTLoss
 from ppocr.metrics import DetMetric
-from ppocr.modeling.backbones.det_mobilenet_v3 import MobileNetV3
-from ppocr.modeling.heads.det_db_head import DBHead
-from ppocr.modeling.heads.det_east_head import EASTHead
-from ppocr.modeling.necks.db_fpn import DBFPN
-from ppocr.modeling.necks.east_fpn import EASTFPN
+from ppocr.models.backbones.det_mobilenet_v3 import MobileNetV3
+from ppocr.models.heads.det_db_head import DBHead
+from ppocr.models.heads.det_east_head import EASTHead
+from ppocr.models.necks.db_fpn import DBFPN
+from ppocr.models.necks.east_fpn import EASTFPN
 from ppocr.postprocess import DBPostProcess, EASTPostProcess
 from ppocr.utils.save_load import _mkdir_if_not_exist, load_pretrained_params
 from ppocr.utils.stats import TrainingStats

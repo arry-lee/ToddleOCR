@@ -489,7 +489,7 @@ A：可以在命令中加入 --det_db_unclip_ratio ，参数定义位置，这�
 
 #### Q: DB文本检测，特征提取网络金字塔构建的部分代码在哪儿？
 
-**A**：特征提取网络金字塔构建的部分:[代码位置](../../ppocr/modeling/necks/db_fpn.py)。ppocr/modeling文件夹里面是组网相关的代码，其中architectures是文本检测或者文本识别整体流程代码；backbones是骨干网络相关代码；necks是类似与FPN的颈函数代码；heads是提取文本检测或者文本识别预测结果相关的头函数；transforms是类似于TPS特征预处理模块。更多的信息可以参考[代码组织结构](./tree.md)。
+**A**：特征提取网络金字塔构建的部分:[代码位置](../../ppocr/models/necks/db_fpn.py)。ppocr/modeling文件夹里面是组网相关的代码，其中architectures是文本检测或者文本识别整体流程代码；backbones是骨干网络相关代码；necks是类似与FPN的颈函数代码；heads是提取文本检测或者文本识别预测结果相关的头函数；transforms是类似于TPS特征预处理模块。更多的信息可以参考[代码组织结构](./tree.md)。
 
 #### Q：PaddleOCR如何做到横排和竖排同时支持的？
 

@@ -6,7 +6,7 @@ https://github.com/roatienza/deep-text-recognition-benchmark/blob/master/modules
 import numpy as np
 import torch
 import torch.nn as nn
-from ppocr.modeling.backbones.rec_svtrnet import Block, PatchEmbed, zeros_, trunc_normal_, ones_
+from ppocr.models.backbones.rec_svtrnet import Block, PatchEmbed, zeros_, trunc_normal_, ones_
 
 scale_dim_heads = {"tiny": [192, 3], "small": [384, 6], "Global": [768, 12]}
 

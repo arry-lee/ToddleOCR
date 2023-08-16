@@ -1,8 +1,8 @@
 import torch
 from torch import nn
 
-from ppocr.modeling.backbones.rec_efficientb3_pren import Swish
-from ppocr.modeling.backbones.rec_svtrnet import Block, ConvBNLayer, trunc_normal_, zeros_, ones_
+from ppocr.models.backbones.rec_efficientb3_pren import Swish
+from ppocr.models.backbones.rec_svtrnet import Block, ConvBNLayer, trunc_normal_, zeros_, ones_
 
 
 class Im2Seq(nn.Module):

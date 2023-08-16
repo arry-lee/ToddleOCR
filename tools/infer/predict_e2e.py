@@ -70,7 +70,7 @@ class TextE2E:
         self.postprocess_op = build_post_process(postprocess_params)
         self.predictor, self.input_tensor, self.output_tensors, _ = utility.create_predictor(
             args, "e2e", logger
-        )  # paddle.jit.load(args.det_model_dir)
+        )  # torch.jit.load(args.det_model_dir)
         # self.predictor.eval()
 
     def clip_det_res(self, points, img_height, img_width):

@@ -31,7 +31,7 @@ import json
 import torch
 import torch.distributed as dist
 
-from ppocr.modeling.architectures import build_model
+from ppocr.models.architectures import build_model
 from ppocr.postprocess import build_post_process
 from ppocr.utils.save_load import load_model
 from ppocr.utils.visual import draw_re_results
@@ -167,7 +167,7 @@ def preprocess():
     logger.info("\n")
     logger.info("{} ser config {}".format("*" * 10, "*" * 10))
     print_dict(ser_config, logger)
-    logger.info("train with paddle {} and device {}".format(torch.__version__, device))
+    logger.info("train with torch {} and device {}".format(torch.__version__, device))
     return config, ser_config, device, logger
 
 

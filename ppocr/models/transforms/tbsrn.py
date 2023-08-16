@@ -17,7 +17,7 @@ warnings.filterwarnings("ignore")
 from .tps_spatial_transformer import TPSSpatialTransformer
 from .stn import STN as STNHead
 from .tsrn import GruBlock, mish, UpsampleBLock
-from ppocr.modeling.heads.sr_rensnet_transformer import (
+from ppocr.models.heads.sr_rensnet_transformer import (
     Transformer,
     # LayerNorm,
     PositionwiseFeedForward,

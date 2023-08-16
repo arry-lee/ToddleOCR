@@ -182,6 +182,7 @@ def convert_yml_to_yaml(folder_path):
 
 if __name__ == "__main__":
     convert_yml_to_yaml(".")
+
 # load D:\dev\github\PaddleOCR\ppocr\module_map.yml
 # 'Backbone'
 # .\det\ch_PP-OCRv2\ch_PP-OCRv2_det_cml.yml

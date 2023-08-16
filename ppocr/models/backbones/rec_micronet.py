@@ -20,7 +20,7 @@ https://github.com/liyunsheng13/micronet/blob/main/backbone/activation.py
 import torch
 import torch.nn as nn
 
-from ppocr.modeling.backbones.det_mobilenet_v3 import make_divisible
+from ppocr.models.backbones.det_mobilenet_v3 import make_divisible
 
 M0_cfgs = [
     # s, n, c, ks, c1, c2, g1, g2, c3, g3, g4, y1, y2, y3, r

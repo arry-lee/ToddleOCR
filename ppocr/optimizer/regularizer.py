@@ -1,5 +1,5 @@
 """
-criterion = paddle.nn.CrossEntropyLoss()
+criterion = torch.nn.CrossEntropyLoss()
 l1_decay = L1Decay(weight_decay=0.01)
 l2_decay = L2Decay(weight_decay=0.01)
 parameters = model.parameters()

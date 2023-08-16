@@ -67,7 +67,7 @@ transforms:
 
 ## Network
 
-The network part completes the construction of the network, and PaddleOCR divides the network into four parts, which are under [ppocr/modeling](../../ppocr/modeling). The data entering the network will pass through these four parts in sequence(transforms->backbones->
+The network part completes the construction of the network, and PaddleOCR divides the network into four parts, which are under [ppocr/modeling](../../ppocr/models). The data entering the network will pass through these four parts in sequence(transforms->backbones->
 necks->heads).
 
 ```bash
@@ -80,7 +80,7 @@ necks->heads).
 
 PaddleOCR has built-in commonly used modules related to algorithms such as DB, EAST, SAST, CRNN and Attention. For modules that do not have built-in, you can add them through the following steps, the four parts are added in the same steps, take backbones as an example:
 
-1. Create a new file under the [ppocr/modeling/backbones](../../ppocr/modeling/backbones) folder, such as my_backbone.py.
+1. Create a new file under the [ppocr/modeling/backbones](../../ppocr/models/backbones) folder, such as my_backbone.py.
 2. Add code in the my_backbone.py file, the sample code is as follows:
 
 ```python
@@ -101,7 +101,7 @@ class MyBackbone(nn.Layer):
         return y
 ```
 
-3. Import the added module in the [ppocr/modeling/backbones/\__init\__.py](../../ppocr/modeling/backbones/__init__.py) file.
+3. Import the added module in the [ppocr/modeling/backbones/\__init\__.py](../../ppocr/models/backbones/__init__.py) file.
 
 After adding the four-part modules of the network, you only need to configure them in the configuration file to use, such as:
 

@@ -23,8 +23,8 @@ from torch.utils.cpp_extension import load
 custom_ops = load(
     name="custom_jit_ops",
     sources=[
-        "ppocr/ext_op/roi_align_rotated/roi_align_rotated.cc",
-        "ppocr/ext_op/roi_align_rotated/roi_align_rotated.cu",
+        "roi_align_rotated.cc",
+        "roi_align_rotated.cu",
     ],
 )
 

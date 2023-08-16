@@ -19,7 +19,7 @@ import torch.nn.functional as F
 from torch.nn import ModuleList
 from torch.nn import Dropout, Linear, LayerNorm
 import numpy as np
-from ppocr.modeling.backbones.rec_svtrnet import Mlp, zeros_, ones_
+from ppocr.models.backbones.rec_svtrnet import Mlp, zeros_, ones_
 from torch.nn.init import xavier_normal_
 
 

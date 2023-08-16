@@ -114,7 +114,7 @@ def check_device(use_gpu, use_xpu=False, use_npu=False, use_mlu=False):
     cpu version.
     """
     err = (
-        "Config {} cannot be set as true while your paddle "
+        "Config {} cannot be set as true while your torch "
         "is not compiled with {} ! \nPlease try: \n"
         "\t1. Install paddlepaddle to run model on {} \n"
         "\t2. Set {} as false in config file to run "
@@ -699,5 +699,5 @@ def preprocess(is_train=False):
     else:
         log_writer = None
 
-    logger.info("train with paddle {} and device {}".format(torch.__version__, device))
+    logger.info("train with torch {} and device {}".format(torch.__version__, device))
     return config, device, logger, log_writer

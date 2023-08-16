@@ -8,7 +8,7 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 
-from ppocr.modeling.backbones.rec_efficientb3_pren import Swish
+from ppocr.models.backbones.rec_efficientb3_pren import Swish
 
 
 class PoolAggregate(nn.Module):

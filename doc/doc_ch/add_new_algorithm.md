@@ -70,7 +70,7 @@ transforms:
 
 ## 2. 网络
 
-网络部分完成了网络的组网操作，PaddleOCR将网络划分为四部分，这一部分在[ppocr/modeling](../../ppocr/modeling)下。 进入网络的数据将按照顺序(transforms->backbones->
+网络部分完成了网络的组网操作，PaddleOCR将网络划分为四部分，这一部分在[ppocr/modeling](../../ppocr/models)下。 进入网络的数据将按照顺序(transforms->backbones->
 necks->heads)依次通过这四个部分。
 
 ```bash
@@ -83,7 +83,7 @@ necks->heads)依次通过这四个部分。
 
 PaddleOCR内置了DB,EAST,SAST,CRNN和Attention等算法相关的常用模块，对于没有内置的模块可通过如下步骤添加，四个部分添加步骤一致，以backbones为例:
 
-1. 在 [ppocr/modeling/backbones](../../ppocr/modeling/backbones) 文件夹下新建文件，如my_backbone.py。
+1. 在 [ppocr/modeling/backbones](../../ppocr/models/backbones) 文件夹下新建文件，如my_backbone.py。
 2. 在 my_backbone.py 文件内添加相关代码，示例代码如下:
 
 ```python
@@ -104,7 +104,7 @@ class MyBackbone(nn.Layer):
         return y
 ```
 
-3. 在 [ppocr/modeling/backbones/\__init\__.py](../../ppocr/modeling/backbones/__init__.py)文件内导入添加的模块。
+3. 在 [ppocr/modeling/backbones/\__init\__.py](../../ppocr/models/backbones/__init__.py)文件内导入添加的模块。
 
 在完成网络的四部分模块添加之后，只需要配置文件中进行配置即可使用，如:
 
