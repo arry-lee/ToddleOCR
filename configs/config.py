@@ -13,7 +13,7 @@ from loguru import logger
 from torch import nn
 from torch.nn.parallel import DistributedDataParallel
 from torch.optim import Adam
-from torch.optim.lr_scheduler import ConstantLR
+from torch.optim.lr_scheduler import LRScheduler
 from torch.utils.data import BatchSampler, DataLoader, DistributedSampler, RandomSampler, SequentialSampler
 from torchvision.datasets import VisionDataset
 from torchvision.transforms import Compose
@@ -43,6 +43,7 @@ from ppocr.utils.save_load import _mkdir_if_not_exist, load_pretrained_params
 from ppocr.utils.stats import TrainingStats
 from ppocr.utils.utility import AverageMeter
 from tools.train import valid
+from ppocr.optimizer.lr_scheduler import warmup_scheduler
 
 
 class _:
@@ -51,12 +52,15 @@ class _:
     def __new__(cls, class_=None, /, **kwargs):
         if class_ is None:
             return kwargs
-        if isinstance(class_, type):
-            return partial(class_, **kwargs)
+        # 如果是字符串，则从hub加载
         if isinstance(class_, str):
-            return partial(hub(class_), **kwargs)
-        else:
-            raise NotImplementedError
+            class_ = hub(class_)
+        # 预热装饰器用于装饰调度器
+        if issubclass(class_, LRScheduler) and 'warmup_epoch' in kwargs:
+            warmup_epochs = kwargs.pop('warmup_epoch')
+            class_ = warmup_scheduler(class_, warmup_epochs)
+        #
+        return partial(class_, **kwargs)
 
     def __class_getitem__(cls, item):
         """方便实现Compose"""
@@ -336,7 +340,7 @@ class ConfigModel:
                     log_writer.log_metrics(metrics=train_stats.get(), prefix="TRAIN", step=global_step)
 
                 if self.is_rank0() and (
-                    (global_step > 0 and global_step % log_batch_step == 0) or (idx >= len(train_dataloader) - 1)
+                        (global_step > 0 and global_step % log_batch_step == 0) or (idx >= len(train_dataloader) - 1)
                 ):
                     logs = train_stats.log()
                     # eta_sec表示预计剩余时间（以秒为单位）
@@ -367,9 +371,9 @@ class ConfigModel:
                 # eval
                 # 超过开始评估的步数且固定长度且是主进程
                 if (
-                    global_step > start_eval_step
-                    and (global_step - start_eval_step) % eval_batch_step == 0
-                    and self.is_rank0()
+                        global_step > start_eval_step
+                        and (global_step - start_eval_step) % eval_batch_step == 0
+                        and self.is_rank0()
                 ):
                     cur_metric = valid(
                         model, valid_dataloader, post_processor, metric_, model_type, extra_input=extra_input

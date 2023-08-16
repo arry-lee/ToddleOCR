@@ -35,10 +35,11 @@ Optimizer:
   class: Adam
   lr: 0.001
 LRScheduler:
-  class: LinearLR
-  end_lr: 0.0
-  epochs: 600
-  step_each_epoch: 1254
+  class: PolynomialLR
+#  end_lr: 0.0
+  total_iters: 600*1254
+#  epochs: 600
+#  step_each_epoch: 1254
   power: 0.9
 PostProcessor:
   class: CTPostProcess

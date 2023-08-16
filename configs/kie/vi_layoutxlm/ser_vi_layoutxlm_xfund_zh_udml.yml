@@ -85,8 +85,8 @@ Optimizer:
   beta2: 0.999
   lr: 5.0e-05
 LRScheduler:
-  class: LinearLR
-  epochs: 200
+  class: PolynomialLR
+  total_iters: 200
   warmup_epoch: 10
 PostProcessor:
   class: DistillationSerPostProcess

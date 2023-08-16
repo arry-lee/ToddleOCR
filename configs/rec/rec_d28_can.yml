@@ -24,10 +24,14 @@ Optimizer:
   momentum: 0.9
   clip_norm_global: 100.0
   lr: 0.01
-LRScheduler:
-  class: TwoStepCosine
-  warmup_epoch: 1
   weight_decay: 0.0001
+
+LRScheduler:
+  class: TwoStepCosineLR #有问题
+#  T_max1: 240*200
+#  T_max2: step_each_epoch * epochs
+  warmup_epoch: 1
+
 Model:
   model_type: rec
   algorithm: CAN

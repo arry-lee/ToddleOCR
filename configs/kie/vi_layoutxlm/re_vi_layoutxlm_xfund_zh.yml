@@ -36,6 +36,7 @@ Optimizer:
   clip_norm: 10
   lr: 5.0e-05
 LRScheduler:
+  class: ConstantLR
   warmup_epoch: 10
 PostProcessor:
   class: VQAReTokenLayoutLMPostProcess

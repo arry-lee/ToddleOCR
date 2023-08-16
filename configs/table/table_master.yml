@@ -26,7 +26,7 @@ Optimizer:
     - 0.999
   lr: 0.001
 LRScheduler:
-  class: MultiStepDecay
+  class: MultiStepLR
   milestones:
     - 12
     - 15
