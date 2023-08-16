@@ -193,7 +193,7 @@ def merge_config(config):
         else:
             sub_keys = key.split(".")
             assert (
-                    sub_keys[0] in global_config
+                sub_keys[0] in global_config
             ), "the sub_keys can only be one of global_config: {}, but get: {}, please check your running command".format(
                 global_config.keys(), sub_keys[0]
             )

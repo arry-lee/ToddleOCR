@@ -93,20 +93,23 @@ class ConfigModel:
     loss: nn.Module  # = EASTLoss()
     Optimizer: Type[torch.optim.Optimizer]  # = _(Adam, lr=0.01, betas=(0.9, 0.999))
     Scheduler: Type[
-        torch.optim.lr_scheduler.LRScheduler]  # = _(ConstantLR, factor=1.0 / 3, total_iters=5, last_epoch=-1)
+        torch.optim.lr_scheduler.LRScheduler
+    ]  # = _(ConstantLR, factor=1.0 / 3, total_iters=5, last_epoch=-1)
     postprocessor: Callable  # = EASTPostProcess(score_thresh=0.8, cover_thresh=0.1, nms_thresh=0.2)
     metric: Callable  # = DetMetric(main_indicator="hmean")
 
     class Train:
         Dataset: Type[VisionDataset]  # = _(FolderDataset,root="E:/00IT/P/uniform/data/bank")
         transforms: Optional[
-            Callable] = None  # = _[EASTProcessTrain(image_shape=[512, 512], background_ratio=0, min_crop_side_ratio=0.0, min_text_size=10),KeepKeys(keep_keys=["image", "score_map", "geo_map", "training_mask"]),]
+            Callable
+        ] = None  # = _[EASTProcessTrain(image_shape=[512, 512], background_ratio=0, min_crop_side_ratio=0.0, min_text_size=10),KeepKeys(keep_keys=["image", "score_map", "geo_map", "training_mask"]),]
         DATALOADER: dict  # = _(shuffle=False, drop_last=False, batch_size=16, num_workers=4, pin_memory=False)
 
     class Eval:
         Dataset: Type[VisionDataset]  # = _(FolderDataset,root="E:/00IT/P/uniform/data/banktest",)
         transforms: Optional[
-            Callable] = None  # = _[DetResizeForTest(limit_side_len=2400, limit_type=max),NormalizeImage(scale=1.0 / 255.0, mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], order="hwc"),ToCHWImage(),KeepKeys(keep_keys=["image", "shape", "polys", "ignore_tags"])]
+            Callable
+        ] = None  # = _[DetResizeForTest(limit_side_len=2400, limit_type=max),NormalizeImage(scale=1.0 / 255.0, mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], order="hwc"),ToCHWImage(),KeepKeys(keep_keys=["image", "shape", "polys", "ignore_tags"])]
         DATALOADER: dict  # = _(shuffle=False, drop_last=False, batch_size=1, num_workers=4, pin_memory=False)
 
     def __init__(self):
@@ -333,7 +336,7 @@ class ConfigModel:
                     log_writer.log_metrics(metrics=train_stats.get(), prefix="TRAIN", step=global_step)
 
                 if self.is_rank0() and (
-                        (global_step > 0 and global_step % log_batch_step == 0) or (idx >= len(train_dataloader) - 1)
+                    (global_step > 0 and global_step % log_batch_step == 0) or (idx >= len(train_dataloader) - 1)
                 ):
                     logs = train_stats.log()
                     # eta_sec表示预计剩余时间（以秒为单位）
@@ -364,9 +367,9 @@ class ConfigModel:
                 # eval
                 # 超过开始评估的步数且固定长度且是主进程
                 if (
-                        global_step > start_eval_step
-                        and (global_step - start_eval_step) % eval_batch_step == 0
-                        and self.is_rank0()
+                    global_step > start_eval_step
+                    and (global_step - start_eval_step) % eval_batch_step == 0
+                    and self.is_rank0()
                 ):
                     cur_metric = valid(
                         model, valid_dataloader, post_processor, metric_, model_type, extra_input=extra_input
