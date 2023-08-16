@@ -44,51 +44,51 @@ Take rec_chinese_lite_train_v2.0.yml as an example
 |      label_list          |    Set the angle supported by the direction classifier       |    ['0','180']    |     Only valid in angle classifier model |
 |      save_res_path          |    Set the save address of the test model results       |    ./output/det_db/predicts_db.txt    |     Only valid in the text detection model |
 
-### Optimizer ([ppocr/optimizer](../../ppocr/optimizer))
+### Optimizer ([ppocr/optimizer](../../ptocr/optim))
 
 |         Parameter             |            Use            |      Defaults        |            Note             |
 | :---------------------: |  :---------------------:   | :--------------:  |   :--------------------:   |
-|      name        |         Optimizer class name          |  Adam  |  Currently supports`Momentum`,`Adam`,`RMSProp`, see [ppocr/optimizer/optimizer.py](../../ppocr/optimizer/optimizer.py)  |
+|      name        |         Optimizer class name          |  Adam  |  Currently supports`Momentum`,`Adam`,`RMSProp`, see [ppocr/optimizer/optimizer.py](../../ptocr/optim/optimizer.py)  |
 |      beta1           |    Set the exponential decay rate for the 1st moment estimates  |       0.9         |               \             |
 |      beta2           |    Set the exponential decay rate for the 2nd moment estimates  |     0.999         |               \             |
 |      clip_norm           |    The maximum norm value  |    -         |               \             |
 |      **lr**                |         Set the learning rate decay method       |   -    |       \  |
-|        name    |      Learning rate decay class name   |         Cosine       | Currently supports`Linear`,`Cosine`,`Step`,`Piecewise`, see[ppocr/optimizer/learning_rate.py](../../ppocr/optimizer/learning_rate.py) |
+|        name    |      Learning rate decay class name   |         Cosine       | Currently supports`Linear`,`Cosine`,`Step`,`Piecewise`, see[ppocr/optimizer/learning_rate.py](../../ptocr/optim/learning_rate.py) |
 |        learning_rate      |    Set the base learning rate        |       0.001      |  \        |
 |      **regularizer**      |  Set network regularization method        |       -      | \        |
-|        name      |    Regularizer class name      |       L2     |  Currently support`L1`,`L2`, see[ppocr/optimizer/regularizer.py](../../ppocr/optimizer/regularizer.py)        |
+|        name      |    Regularizer class name      |       L2     |  Currently support`L1`,`L2`, see[ppocr/optimizer/regularizer.py](../../ptocr/optim/regularizer.py)        |
 |        factor      |    Regularizer coefficient       |       0.00001     |  \        |
 
 
-### Architecture ([ppocr/modeling](../../ppocr/models))
+### Architecture ([ppocr/modeling](../../ptocr/modules))
 In PaddleOCR, the network is divided into four stages: Transform, Backbone, Neck and Head
 
 |         Parameter             |            Use            |      Defaults        |            Note             |
 | :---------------------: |  :---------------------:   | :--------------:  |   :--------------------:   |
 |      model_type        |         Network Type          |  rec  |  Currently support`rec`,`det`,`cls`  |
 |      algorithm           |    Model name  |       CRNN         |               See [algorithm_overview](./algorithm_overview_en.md) for the support list             |
-|      **Transform**           |    Set the transformation method  |       -       |               Currently only recognition algorithms are supported, see [ppocr/modeling/transform](../../ppocr/models/transforms) for details            |
+|      **Transform**           |    Set the transformation method  |       -       |               Currently only recognition algorithms are supported, see [ppocr/modeling/transform](../../ptocr/modules/transforms) for details            |
 |        name    |      Transformation class name   |         TPS       | Currently supports `TPS` |
 |        num_fiducial      |   Number of TPS control points        |       20      |  Ten on the top and bottom       |
 |        loc_lr      |    Localization network learning rate        |       0.1      |  \      |
 |        model_name      |    Localization network size        |       small      |  Currently support`small`,`large`       |
-|      **Backbone**      |  Set the network backbone class name        |       -      | see [ppocr/modeling/backbones](../../ppocr/models/backbones)        |
+|      **Backbone**      |  Set the network backbone class name        |       -      | see [ppocr/modeling/backbones](../../ptocr/modules/backbones)        |
 |        name      |    backbone class name       |       ResNet     | Currently support`MobileNetV3`,`ResNet`        |
 |        layers      |    resnet layers       |       34     |  Currently support18,34,50,101,152,200       |
 |        model_name      |    MobileNetV3 network size       |       small     |  Currently support`small`,`large`       |
-|      **Neck**      |  Set network neck        |       -      | see[ppocr/modeling/necks](../../ppocr/models/necks)        |
+|      **Neck**      |  Set network neck        |       -      | see[ppocr/modeling/necks](../../ptocr/modules/necks)        |
 |        name      |    neck class name       |       SequenceEncoder     | Currently support`SequenceEncoder`,`DBFPN`        |
 |        encoder_type      |    SequenceEncoder encoder type       |       rnn     |  Currently support`reshape`,`fc`,`rnn`       |
 |        hidden_size      |   rnn number of internal units       |       48     |  \      |
 |        out_channels      |   Number of DBFPN output channels       |       256     |  \      |
-|      **Head**      |  Set the network head        |       -      | see[ppocr/modeling/heads](../../ppocr/models/heads)        |
+|      **Head**      |  Set the network head        |       -      | see[ppocr/modeling/heads](../../ptocr/modules/heads)        |
 |        name      |    head class name       |       CTCHead     | Currently support`CTCHead`,`DBHead`,`ClsHead`        |
 |        fc_decay      |    CTCHead regularization coefficient       |       0.0004     |  \      |
 |        k      |   DBHead binarization coefficient       |       50     |  \      |
 |        class_dim      |   ClsHead output category number       |       2     |  \      |
 
 
-### Loss ([ppocr/losses](../../ppocr/losses))
+### Loss ([ppocr/losses](../../ptocr/loss))
 
 |         Parameter             |            Use            |      Defaults        |            Note             |
 | :---------------------: |  :---------------------:   | :--------------:  |   :--------------------:   |
@@ -99,7 +99,7 @@ In PaddleOCR, the network is divided into four stages: Transform, Backbone, Neck
 |      alpha        |        The coefficient of shrink_map_loss in DBLossloss       |  5  |  \  |
 |      beta        |        The coefficient of threshold_map_loss in DBLossloss       |  10  |  \  |
 
-### PostProcess ([ppocr/postprocess](../../ppocr/postprocess))
+### PostProcess ([ppocr/postprocess](../../ptocr/postprocess))
 
 |         Parameter             |            Use            |      Defaults        |            Note             |
 | :---------------------: |  :---------------------:   | :--------------:  |   :--------------------:   |
@@ -109,14 +109,14 @@ In PaddleOCR, the network is divided into four stages: Transform, Backbone, Neck
 |      max_candidates        |        The maximum number of text boxes output in DBPostProcess        |  1000  |   |
 |      unclip_ratio        |        The unclip ratio of the text box in DBPostProcess       |  2.0  |  \  |
 
-### Metric ([ppocr/metrics](../../ppocr/metrics))
+### Metric ([ppocr/metrics](../../ptocr/metrics))
 
 |         Parameter             |            Use            |      Defaults        |            Note             |
 | :---------------------: |  :---------------------:   | :--------------:  |   :--------------------:   |
 |      name        |         Metric method name          |  CTCLabelDecode  |  Currently support`DetMetric`,`RecMetric`,`ClsMetric`  |
 |      main_indicator        |        Main indicators, used to select the best model        |  acc |  For the detection method is hmean, the recognition and classification method is acc  |
 
-### Dataset  ([ppocr/data](../../ppocr/data))
+### Dataset  ([ppocr/data](../../ptocr/datasets))
 |         Parameter             |            Use            |      Defaults        |            Note             |
 | :---------------------: |  :---------------------:   | :--------------:  |   :--------------------:   |
 |      **dataset**        |         Return one sample per iteration          |  -  |  -  |
@@ -124,14 +124,14 @@ In PaddleOCR, the network is divided into four stages: Transform, Backbone, Neck
 |      data_dir        |        Image folder path        |  ./train_data |  \  |
 |      label_file_list        |        Groundtruth file path         |  ["./train_data/train_list.txt"] | This parameter is not required when dataset is LMDBDataSet   |
 |      ratio_list        |        Ratio of data set         |  [1.0] | If there are two train_lists in label_file_list and ratio_list is [0.4,0.6], 40% will be sampled from train_list1, and 60% will be sampled from train_list2 to combine the entire dataset   |
-|      transforms        |        List of methods to transform images and labels         |  [DecodeImage,CTCLabelEncode,RecResizeImg,KeepKeys] |   see[ppocr/data/imaug](../../ppocr/data/imaug)  |
+|      transforms        |        List of methods to transform images and labels         |  [DecodeImage,CTCLabelEncode,RecResizeImg,KeepKeys] |   see[ppocr/data/imaug](../../ptocr/datasets/imaug)  |
 |      **loader**        |        dataloader related         |  - |   |
 |      shuffle        |        Does each epoch disrupt the order of the data set         |  True | \  |
 |      batch_size_per_card        |        Single card batch size during training         |  256 | \  |
 |      drop_last        |        Whether to discard the last incomplete mini-batch because the number of samples in the data set cannot be divisible by batch_size        |  True | \  |
 |      num_workers        |        The number of sub-processes used to load data, if it is 0, the sub-process is not started, and the data is loaded in the main process       |  8 | \  |
 
-### Weights & Biases ([W&B](../../ppocr/utils/loggers/wandb_logger.py))
+### Weights & Biases ([W&B](../../ptocr/utils/loggers/wandb_logger.py))
 |         Parameter             |            Use            |      Defaults        |            Note             |
 | :---------------------: |  :---------------------:   | :--------------:  |   :--------------------:   |
 |          project              |     Project to which the run is to be logged | uncategorized | \

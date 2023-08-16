@@ -19,9 +19,9 @@ from torchvision.datasets import VisionDataset
 from torchvision.transforms import Compose
 
 from ocr.datasets.ocr_dataset import FolderDataset
-from ppocr import hub
-from ppocr.data import SimpleDataSet
-from ppocr.data.imaug import (
+from ptocr import hub
+from ptocr.datasets import SimpleDataSet
+from ptocr.datasets.imaug import (
     DecodeImage,
     DetLabelEncode,
     DetResizeForTest,
@@ -31,19 +31,19 @@ from ppocr.data.imaug import (
     NormalizeImage,
     ToCHWImage,
 )
-from ppocr.losses import DBLoss, EASTLoss
-from ppocr.metrics import DetMetric
-from ppocr.models.backbones.det_mobilenet_v3 import MobileNetV3
-from ppocr.models.heads.det_db_head import DBHead
-from ppocr.models.heads.det_east_head import EASTHead
-from ppocr.models.necks.db_fpn import DBFPN
-from ppocr.models.necks.east_fpn import EASTFPN
-from ppocr.postprocess import DBPostProcess, EASTPostProcess
-from ppocr.utils.save_load import _mkdir_if_not_exist, load_pretrained_params
-from ppocr.utils.stats import TrainingStats
-from ppocr.utils.utility import AverageMeter
+from ptocr.loss import DBLoss, EASTLoss
+from ptocr.metrics import DetMetric
+from ptocr.modules.backbones.det_mobilenet_v3 import MobileNetV3
+from ptocr.modules.heads.det_db_head import DBHead
+from ptocr.modules.heads.det_east_head import EASTHead
+from ptocr.modules.necks.db_fpn import DBFPN
+from ptocr.modules.necks.east_fpn import EASTFPN
+from ptocr.postprocess import DBPostProcess, EASTPostProcess
+from ptocr.utils.save_load import _mkdir_if_not_exist, load_pretrained_params
+from ptocr.utils.stats import TrainingStats
+from ptocr.utils.utility import AverageMeter
 from tools.train import valid
-from ppocr.optimizer.lr_scheduler import warmup_scheduler
+from ptocr.optim.lr_scheduler import warmup_scheduler
 
 
 class _:

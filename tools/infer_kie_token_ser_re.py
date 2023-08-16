@@ -31,12 +31,12 @@ import json
 import torch
 import torch.distributed as dist
 
-from ppocr.models.architectures import build_model
-from ppocr.postprocess import build_post_process
-from ppocr.utils.save_load import load_model
-from ppocr.utils.visual import draw_re_results
-from ppocr.utils.logging import get_logger
-from ppocr.utils.utility import get_image_file_list, print_dict
+from ptocr.modules.architectures import build_model
+from ptocr.postprocess import build_post_process
+from ptocr.utils.save_load import load_model
+from ptocr.utils.visual import draw_re_results
+from ptocr.utils.logging import get_logger
+from ptocr.utils.utility import get_image_file_list, print_dict
 from tools.program import ArgsParser, load_config, merge_config
 from tools.infer_kie_token_ser import SerPredictor
 

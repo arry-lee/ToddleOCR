@@ -31,11 +31,11 @@ import cv2
 import json
 import torch
 
-from ppocr.data import create_operators, transform
-from ppocr.models.architectures import build_model
-from ppocr.postprocess import build_post_process
-from ppocr.utils.save_load import load_model
-from ppocr.utils.utility import get_image_file_list
+from ptocr.datasets import create_operators, transform
+from ptocr.modules.architectures import build_model
+from ptocr.postprocess import build_post_process
+from ptocr.utils.save_load import load_model
+from ptocr.utils.utility import get_image_file_list
 import tools.program as program
 from PIL import Image, ImageDraw, ImageFont
 

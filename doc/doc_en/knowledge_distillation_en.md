@@ -231,7 +231,7 @@ Architecture:
 
 When the model is finally trained, it contains 3 sub-networks: `Teacher`, `Student`, `Student2`.
 
-The specific implementation code of the `DistillationModel` class can refer to [distillation_model.py](../../ppocr/models/architectures/distillation_model.py).
+The specific implementation code of the `DistillationModel` class can refer to [distillation_model.py](../../ptocr/modules/architectures/distillation_model.py).
 The final model output is a dictionary, the key is the name of all the sub-networks, for example, here are `Student` and `Teacher`, and the value is the output of the corresponding sub-network,
 which can be `Tensor` (only the last layer of the network is returned) and `dict` (also returns the characteristic information in the middle).
 In the recognition task, in order to add more loss functions and ensure the scalability of the distillation method, the output of each sub-network is saved as a `dict`, which contains the sub-module output.
@@ -308,8 +308,8 @@ Taking the above configuration as an example, the final distillation training lo
 - DML loss between SAR branch of `Student` and `Teacher`'s final output `head_out` (loss weight equals 0.5).
 - L2 loss between `Student` and `Teacher`'s backbone network output `backbone_out` (loss weight equals 1.0).
 
-For more specific implementation of `CombinedLoss`, please refer to: [combined_loss.py](../../ppocr/losses/combined_loss.py#L23).
-For more specific implementations of distillation loss functions such as `DistillationCTCLoss`, please refer to [distillation_loss.py](../../ppocr/losses/distillation_loss.py)
+For more specific implementation of `CombinedLoss`, please refer to: [combined_loss.py](../../ptocr/loss/combined_loss.py#L23).
+For more specific implementations of distillation loss functions such as `DistillationCTCLoss`, please refer to [distillation_loss.py](../../ptocr/loss/distillation_loss.py)
 
 
 <a name="213"></a>
@@ -328,7 +328,7 @@ PostProcess:
 Taking the above configuration as an example, the CTC decoding output of the two sub-networks `Student` and `Teahcer` will be calculated at the same time.
 Among them, `key` is the name of the subnet, and `value` is the list of subnets.
 
-For more specific implementation of `DistillationCTCLabelDecode`, please refer to: [rec_postprocess.py](../../ppocr/postprocess/rec_postprocess.py#L128)
+For more specific implementation of `DistillationCTCLabelDecode`, please refer to: [rec_postprocess.py](../../ptocr/postprocess/rec_postprocess.py#L128)
 
 
 <a name="214"></a>
@@ -348,7 +348,7 @@ Metric:
 Taking the above configuration as an example, the accuracy metric of the `Student` subnet will be used as the judgment metric for saving the best model.
 At the same time, the accuracy metric of all subnets will be printed out in the log.
 
-For more specific implementation of `DistillationMetric`, please refer to: [distillation_metric.py](../../ppocr/metrics/distillation_metric.py#L24).
+For more specific implementation of `DistillationMetric`, please refer to: [distillation_metric.py](../../ptocr/metrics/distillation_metric.py#L24).
 
 
 <a name="215"></a>
@@ -506,7 +506,7 @@ Architecture:
 
 ```
 
-The specific implementation code of the distillation model `DistillationModel` class can refer to [distillation_model.py](../../ppocr/models/architectures/distillation_model.py).
+The specific implementation code of the distillation model `DistillationModel` class can refer to [distillation_model.py](../../ptocr/modules/architectures/distillation_model.py).
 
 The final model output is a dictionary, the key is the name of all the sub-networks, for example, here are `Student` and `Teacher`, and the value is the output of the corresponding sub-network,
 which can be `Tensor` (only the last layer of the network is returned) and `dict` (also returns the characteristic information in the middle).
@@ -584,7 +584,7 @@ PostProcess:
 
 Taking the above configuration as an example, the output of the three subnets `Student`, `Student2` and `Teacher` will be calculated at the same time for post-processing calculations.
 Since there are multiple inputs, there are also multiple outputs returned by post-processing.
-For a more specific implementation of `DistillationDBPostProcess`, please refer to: [db_postprocess.py](../../ppocr/postprocess/db_postprocess.py#L195)
+For a more specific implementation of `DistillationDBPostProcess`, please refer to: [db_postprocess.py](../../ptocr/postprocess/db_postprocess.py#L195)
 
 <a name="224"></a>
 #### 2.2.4 Metric Calculation

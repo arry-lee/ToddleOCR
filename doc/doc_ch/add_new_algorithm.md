@@ -15,7 +15,7 @@ PaddleOCR将一个算法分解为以下几个部分，并对各部分进行模�
 
 ## 1. 数据加载和处理
 
-数据加载和处理由不同的模块(module)组成，其完成了图片的读取、数据增强和label的制作。这一部分在[ppocr/data](../../ppocr/data)下。 各个文件及文件夹作用说明如下:
+数据加载和处理由不同的模块(module)组成，其完成了图片的读取、数据增强和label的制作。这一部分在[ppocr/data](../../ptocr/datasets)下。 各个文件及文件夹作用说明如下:
 
 ```bash
 ppocr/data/
@@ -30,7 +30,7 @@ ppocr/data/
 
 PaddleOCR内置了大量图像操作相关模块，对于没有没有内置的模块可通过如下步骤添加:
 
-1. 在 [ppocr/data/imaug](../../ppocr/data/imaug) 文件夹下新建文件，如my_module.py。
+1. 在 [ppocr/data/imaug](../../ptocr/datasets/imaug) 文件夹下新建文件，如my_module.py。
 2. 在 my_module.py 文件内添加相关代码，示例代码如下:
 
 ```python
@@ -49,7 +49,7 @@ class MyModule:
         return data
 ```
 
-3. 在 [ppocr/data/imaug/\__init\__.py](../../ppocr/data/imaug/__init__.py) 文件内导入添加的模块。
+3. 在 [ppocr/data/imaug/\__init\__.py](../../ptocr/datasets/imaug/__init__.py) 文件内导入添加的模块。
 
 数据处理的所有处理步骤由不同的模块顺序执行而成，在config文件中按照列表的形式组合并执行。如:
 
@@ -70,7 +70,7 @@ transforms:
 
 ## 2. 网络
 
-网络部分完成了网络的组网操作，PaddleOCR将网络划分为四部分，这一部分在[ppocr/modeling](../../ppocr/models)下。 进入网络的数据将按照顺序(transforms->backbones->
+网络部分完成了网络的组网操作，PaddleOCR将网络划分为四部分，这一部分在[ppocr/modeling](../../ptocr/modules)下。 进入网络的数据将按照顺序(transforms->backbones->
 necks->heads)依次通过这四个部分。
 
 ```bash
@@ -83,7 +83,7 @@ necks->heads)依次通过这四个部分。
 
 PaddleOCR内置了DB,EAST,SAST,CRNN和Attention等算法相关的常用模块，对于没有内置的模块可通过如下步骤添加，四个部分添加步骤一致，以backbones为例:
 
-1. 在 [ppocr/modeling/backbones](../../ppocr/models/backbones) 文件夹下新建文件，如my_backbone.py。
+1. 在 [ppocr/modeling/backbones](../../ptocr/modules/backbones) 文件夹下新建文件，如my_backbone.py。
 2. 在 my_backbone.py 文件内添加相关代码，示例代码如下:
 
 ```python
@@ -104,7 +104,7 @@ class MyBackbone(nn.Layer):
         return y
 ```
 
-3. 在 [ppocr/modeling/backbones/\__init\__.py](../../ppocr/models/backbones/__init__.py)文件内导入添加的模块。
+3. 在 [ppocr/modeling/backbones/\__init\__.py](../../ptocr/modules/backbones/__init__.py)文件内导入添加的模块。
 
 在完成网络的四部分模块添加之后，只需要配置文件中进行配置即可使用，如:
 
@@ -131,10 +131,10 @@ Architecture:
 
 ## 3. 后处理
 
-后处理实现解码网络输出获得文本框或者识别到的文字。这一部分在[ppocr/postprocess](../../ppocr/postprocess)下。
+后处理实现解码网络输出获得文本框或者识别到的文字。这一部分在[ppocr/postprocess](../../ptocr/postprocess)下。
 PaddleOCR内置了DB,EAST,SAST,CRNN和Attention等算法相关的后处理模块，对于没有内置的组件可通过如下步骤添加:
 
-1. 在 [ppocr/postprocess](../../ppocr/postprocess) 文件夹下新建文件，如 my_postprocess.py。
+1. 在 [ppocr/postprocess](../../ptocr/postprocess) 文件夹下新建文件，如 my_postprocess.py。
 2. 在 my_postprocess.py 文件内添加相关代码，示例代码如下:
 
 ```python
@@ -166,7 +166,7 @@ class MyPostProcess:
         pass
 ```
 
-3. 在 [ppocr/postprocess/\__init\__.py](../../ppocr/postprocess/__init__.py)文件内导入添加的模块。
+3. 在 [ppocr/postprocess/\__init\__.py](../../ptocr/postprocess/__init__.py)文件内导入添加的模块。
 
 在后处理模块添加之后，只需要配置文件中进行配置即可使用，如:
 
@@ -181,10 +181,10 @@ PostProcess:
 
 ## 4. 损失函数
 
-损失函数用于计算网络输出和label之间的距离。这一部分在[ppocr/losses](../../ppocr/losses)下。
+损失函数用于计算网络输出和label之间的距离。这一部分在[ppocr/losses](../../ptocr/loss)下。
 PaddleOCR内置了DB,EAST,SAST,CRNN和Attention等算法相关的损失函数模块，对于没有内置的模块可通过如下步骤添加:
 
-1. 在 [ppocr/losses](../../ppocr/losses) 文件夹下新建文件，如 my_loss.py。
+1. 在 [ppocr/losses](../../ptocr/loss) 文件夹下新建文件，如 my_loss.py。
 2. 在 my_loss.py 文件内添加相关代码，示例代码如下:
 
 ```python
@@ -205,7 +205,7 @@ class MyLoss(nn.Layer):
         return {'loss': loss}
 ```
 
-3. 在 [ppocr/losses/\__init\__.py](../../ppocr/losses/__init__.py)文件内导入添加的模块。
+3. 在 [ppocr/losses/\__init\__.py](../../ptocr/loss/__init__.py)文件内导入添加的模块。
 
 在损失函数添加之后，只需要配置文件中进行配置即可使用，如:
 
@@ -220,9 +220,9 @@ Loss:
 
 ## 5. 指标评估
 
-指标评估用于计算网络在当前batch上的性能。这一部分在[ppocr/metrics](../../ppocr/metrics)下。 PaddleOCR内置了检测，分类和识别等算法相关的指标评估模块，对于没有内置的模块可通过如下步骤添加:
+指标评估用于计算网络在当前batch上的性能。这一部分在[ppocr/metrics](../../ptocr/metrics)下。 PaddleOCR内置了检测，分类和识别等算法相关的指标评估模块，对于没有内置的模块可通过如下步骤添加:
 
-1. 在 [ppocr/metrics](../../ppocr/metrics) 文件夹下新建文件，如my_metric.py。
+1. 在 [ppocr/metrics](../../ptocr/metrics) 文件夹下新建文件，如my_metric.py。
 2. 在 my_metric.py 文件内添加相关代码，示例代码如下:
 
 ```python
@@ -262,7 +262,7 @@ class MyMetric(object):
 
 ```
 
-3. 在 [ppocr/metrics/\__init\__.py](../../ppocr/metrics/__init__.py)文件内导入添加的模块。
+3. 在 [ppocr/metrics/\__init\__.py](../../ptocr/metrics/__init__.py)文件内导入添加的模块。
 
 在指标评估模块添加之后，只需要配置文件中进行配置即可使用，如:
 
@@ -276,11 +276,11 @@ Metric:
 
 ## 6. 优化器
 
-优化器用于训练网络。优化器内部还包含了网络正则化和学习率衰减模块。 这一部分在[ppocr/optimizer](../../ppocr/optimizer)下。 PaddleOCR内置了`Momentum`,`Adam`
+优化器用于训练网络。优化器内部还包含了网络正则化和学习率衰减模块。 这一部分在[ppocr/optimizer](../../ptocr/optim)下。 PaddleOCR内置了`Momentum`,`Adam`
 和`RMSProp`等常用的优化器模块，`Linear`,`Cosine`,`Step`和`Piecewise`等常用的正则化模块与`L1Decay`和`L2Decay`等常用的学习率衰减模块。
 对于没有内置的模块可通过如下步骤添加，以`optimizer`为例:
 
-1. 在 [ppocr/optimizer/optimizer.py](../../ppocr/optimizer/optimizer.py) 文件内创建自己的优化器，示例代码如下:
+1. 在 [ppocr/optimizer/optimizer.py](../../ptocr/optim/optimizer.py) 文件内创建自己的优化器，示例代码如下:
 
 ```python
 from paddle import optimizer as optim

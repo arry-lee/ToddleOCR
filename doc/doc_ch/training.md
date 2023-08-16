@@ -46,7 +46,7 @@ Optimizer:
 ```
 
 Piecewise 代表分段常数衰减，在不同的学习阶段指定不同的学习率，在每段内学习率相同。
-warmup_epoch 代表在前5个epoch中，学习率将逐渐从0增加到base_lr。全部策略可以参考代码[learning_rate.py](../../ppocr/optimizer/learning_rate.py) 。
+warmup_epoch 代表在前5个epoch中，学习率将逐渐从0增加到base_lr。全部策略可以参考代码[learning_rate.py](../../ptocr/optim/learning_rate.py) 。
 
 <a name="正则化"></a>
 ### 2.2 正则化

@@ -28,9 +28,9 @@ import time
 import traceback
 
 import tools.infer.utility as utility
-from ppocr.postprocess import build_post_process
-from ppocr.utils.logging import get_logger
-from ppocr.utils.utility import get_image_file_list, check_and_read
+from ptocr.postprocess import build_post_process
+from ptocr.utils.logging import get_logger
+from ptocr.utils.utility import get_image_file_list, check_and_read
 
 logger = get_logger()
 

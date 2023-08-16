@@ -37,7 +37,7 @@ Combining the idea of Focal Loss, assigning larger weights to difficult samples 
 
 
 
-In the experiment, the value of &gamma; is 2, &alpha; = 1, see this for specific implementation: [rec_ctc_loss.py](../../ppocr/losses/rec_ctc_loss.py)
+In the experiment, the value of &gamma; is 2, &alpha; = 1, see this for specific implementation: [rec_ctc_loss.py](../../ptocr/loss/rec_ctc_loss.py)
 
 
 
@@ -63,7 +63,7 @@ A_CTC Loss is defined as follows:
 
 
 
-In the experiment, λ = 0.1. See the ACE loss implementation code: [ace_loss.py](../../ppocr/losses/ace_loss.py)
+In the experiment, λ = 0.1. See the ACE loss implementation code: [ace_loss.py](../../ptocr/loss/ace_loss.py)
 
 
 
@@ -79,7 +79,7 @@ By trying Arcmargin, Cosmargin and other methods, we finally found that Centerlo
 <img src="./equation_c_ctc.png" width = "300" /> 
 </div>
 
-In the experiment, we set λ=0.25. See the center_loss implementation code: [center_loss.py](../../ppocr/losses/center_loss.py)
+In the experiment, we set λ=0.25. See the center_loss implementation code: [center_loss.py](../../ptocr/loss/center_loss.py)
 
 It is worth mentioning that in C-CTC Loss, choosing to initialize the Center randomly does not bring significant improvement. Our Center initialization method is as follows:
 + Based on the original CTCLoss, a network N is obtained by training
@@ -107,4 +107,4 @@ For the above three solutions, we conducted training and evaluation based on Bai
 
 Based on the above experimental conclusions, we adopted the C-CTC strategy in PP-OCRv2. It is worth mentioning that, because PP-OCRv2 deals with the recognition task of 6625 Chinese characters, the character set is relatively large and there are many similar characters, so the C-CTC solution brings a significant improvement on this task. But if you switch to other OCR recognition tasks, the conclusion may be different. You can try Focal-CTC, A-CTC, C-CTC, and the combined solution EnhancedCTC. We believe it will bring different degrees of improvement.
 
-The unified combined plan is shown in the following file: [rec_enhanced_ctc_loss.py](../../ppocr/losses/rec_enhanced_ctc_loss.py)
+The unified combined plan is shown in the following file: [rec_enhanced_ctc_loss.py](../../ptocr/loss/rec_enhanced_ctc_loss.py)

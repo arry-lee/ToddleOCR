@@ -17,9 +17,9 @@ from torch.utils.data import BatchSampler, DataLoader, DistributedSampler, Rando
 from tqdm import tqdm
 
 from ocr.save_load import load_model, save_model
-from ppocr import hub as dynamic_import
-from ppocr.utils.stats import TrainingStats
-from ppocr.utils.utility import AverageMeter
+from ptocr import hub as dynamic_import
+from ptocr.utils.stats import TrainingStats
+from ptocr.utils.utility import AverageMeter
 
 
 def build_object(config, section):

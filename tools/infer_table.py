@@ -30,12 +30,12 @@ os.environ["FLAGS_allocator_strategy"] = "auto_growth"
 
 import torch
 
-from ppocr.data import create_operators, transform
-from ppocr.models.architectures import build_model
-from ppocr.postprocess import build_post_process
-from ppocr.utils.save_load import load_model
-from ppocr.utils.utility import get_image_file_list
-from ppocr.utils.visual import draw_rectangle
+from ptocr.datasets import create_operators, transform
+from ptocr.modules.architectures import build_model
+from ptocr.postprocess import build_post_process
+from ptocr.utils.save_load import load_model
+from ptocr.utils.utility import get_image_file_list
+from ptocr.utils.visual import draw_rectangle
 from tools.infer.utility import draw_boxes
 import tools.program as program
 import cv2

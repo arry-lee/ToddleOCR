@@ -230,7 +230,7 @@ PaddleOCR support a variety of cutting-edge algorithms related to OCR, and devel
 
 If you want to request a new language support, a PR with 1 following files are needed：
 
-1. In folder [ppocr/utils/dict](./ppocr/utils/dict),
+1. In folder [ppocr/utils/dict](ptocr/utils/dict),
 it is necessary to submit the dict text to this path and name it with `{language}_dict.txt` that contains a list of all characters. Please see the format example from other files in that folder.
 
 If your language has unique elements, please tell me in advance within any way, such as useful links, wikipedia and so on.

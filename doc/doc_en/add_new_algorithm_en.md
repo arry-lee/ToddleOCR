@@ -14,7 +14,7 @@ The following will introduce each part separately, and introduce how to add the 
 
 ## Data loading and processing
 
-Data loading and processing are composed of different modules, which complete the image reading, data augment and label production. This part is under [ppocr/data](../../ppocr/data). The explanation of each file and folder are as follows:
+Data loading and processing are composed of different modules, which complete the image reading, data augment and label production. This part is under [ppocr/data](../../ptocr/datasets). The explanation of each file and folder are as follows:
 
 ```bash
 ppocr/data/
@@ -29,7 +29,7 @@ ppocr/data/
 
 PaddleOCR has a large number of built-in image operation related modules. For modules that are not built-in, you can add them through the following steps:
 
-1. Create a new file under the [ppocr/data/imaug](../../ppocr/data/imaug) folder, such as my_module.py.
+1. Create a new file under the [ppocr/data/imaug](../../ptocr/datasets/imaug) folder, such as my_module.py.
 2. Add code in the my_module.py file, the sample code is as follows:
 
 ```python
@@ -48,7 +48,7 @@ class MyModule:
         return data
 ```
 
-3. Import the added module in the [ppocr/data/imaug/\__init\__.py](../../ppocr/data/imaug/__init__.py) file.
+3. Import the added module in the [ppocr/data/imaug/\__init\__.py](../../ptocr/datasets/imaug/__init__.py) file.
 
 All different modules of data processing are executed by sequence, combined and executed in the form of a list in the config file. Such as:
 
@@ -67,7 +67,7 @@ transforms:
 
 ## Network
 
-The network part completes the construction of the network, and PaddleOCR divides the network into four parts, which are under [ppocr/modeling](../../ppocr/models). The data entering the network will pass through these four parts in sequence(transforms->backbones->
+The network part completes the construction of the network, and PaddleOCR divides the network into four parts, which are under [ppocr/modeling](../../ptocr/modules). The data entering the network will pass through these four parts in sequence(transforms->backbones->
 necks->heads).
 
 ```bash
@@ -80,7 +80,7 @@ necks->heads).
 
 PaddleOCR has built-in commonly used modules related to algorithms such as DB, EAST, SAST, CRNN and Attention. For modules that do not have built-in, you can add them through the following steps, the four parts are added in the same steps, take backbones as an example:
 
-1. Create a new file under the [ppocr/modeling/backbones](../../ppocr/models/backbones) folder, such as my_backbone.py.
+1. Create a new file under the [ppocr/modeling/backbones](../../ptocr/modules/backbones) folder, such as my_backbone.py.
 2. Add code in the my_backbone.py file, the sample code is as follows:
 
 ```python
@@ -101,7 +101,7 @@ class MyBackbone(nn.Layer):
         return y
 ```
 
-3. Import the added module in the [ppocr/modeling/backbones/\__init\__.py](../../ppocr/models/backbones/__init__.py) file.
+3. Import the added module in the [ppocr/modeling/backbones/\__init\__.py](../../ptocr/modules/backbones/__init__.py) file.
 
 After adding the four-part modules of the network, you only need to configure them in the configuration file to use, such as:
 
@@ -126,10 +126,10 @@ Architecture:
 
 ## Post-processing
 
-Post-processing realizes decoding network output to obtain text box or recognized text. This part is under [ppocr/postprocess](../../ppocr/postprocess).
+Post-processing realizes decoding network output to obtain text box or recognized text. This part is under [ppocr/postprocess](../../ptocr/postprocess).
 PaddleOCR has built-in post-processing modules related to algorithms such as DB, EAST, SAST, CRNN and Attention. For components that are not built-in, they can be added through the following steps:
 
-1. Create a new file under the [ppocr/postprocess](../../ppocr/postprocess) folder, such as my_postprocess.py.
+1. Create a new file under the [ppocr/postprocess](../../ptocr/postprocess) folder, such as my_postprocess.py.
 2. Add code in the my_postprocess.py file, the sample code is as follows:
 
 ```python
@@ -161,7 +161,7 @@ class MyPostProcess:
         pass
 ```
 
-3. Import the added module in the [ppocr/postprocess/\__init\__.py](../../ppocr/postprocess/__init__.py) file.
+3. Import the added module in the [ppocr/postprocess/\__init\__.py](../../ptocr/postprocess/__init__.py) file.
 
 After the post-processing module is added, you only need to configure it in the configuration file to use, such as:
 
@@ -174,10 +174,10 @@ PostProcess:
 
 ## Loss
 
-The loss function is used to calculate the distance between the network output and the label. This part is under [ppocr/losses](../../ppocr/losses).
+The loss function is used to calculate the distance between the network output and the label. This part is under [ppocr/losses](../../ptocr/loss).
 PaddleOCR has built-in loss function modules related to algorithms such as DB, EAST, SAST, CRNN and Attention. For modules that do not have built-in modules, you can add them through the following steps:
 
-1. Create a new file in the [ppocr/losses](../../ppocr/losses) folder, such as my_loss.py.
+1. Create a new file in the [ppocr/losses](../../ptocr/loss) folder, such as my_loss.py.
 2. Add code in the my_loss.py file, the sample code is as follows:
 
 ```python
@@ -198,7 +198,7 @@ class MyLoss(nn.Layer):
         return {'loss': loss}
 ```
 
-3. Import the added module in the [ppocr/losses/\__init\__.py](../../ppocr/losses/__init__.py) file.
+3. Import the added module in the [ppocr/losses/\__init\__.py](../../ptocr/loss/__init__.py) file.
 
 After the loss function module is added, you only need to configure it in the configuration file to use it, such as:
 
@@ -211,9 +211,9 @@ Loss:
 
 ## Metric
 
-Metric is used to calculate the performance of the network on the current batch. This part is under [ppocr/metrics](../../ppocr/metrics). PaddleOCR has built-in evaluation modules related to algorithms such as detection, classification and recognition. For modules that do not have built-in modules, you can add them through the following steps:
+Metric is used to calculate the performance of the network on the current batch. This part is under [ppocr/metrics](../../ptocr/metrics). PaddleOCR has built-in evaluation modules related to algorithms such as detection, classification and recognition. For modules that do not have built-in modules, you can add them through the following steps:
 
-1. Create a new file under the [ppocr/metrics](../../ppocr/metrics) folder, such as my_metric.py.
+1. Create a new file under the [ppocr/metrics](../../ptocr/metrics) folder, such as my_metric.py.
 2. Add code in the my_metric.py file, the sample code is as follows:
 
 ```python
@@ -253,7 +253,7 @@ class MyMetric(object):
 
 ```
 
-3. Import the added module in the [ppocr/metrics/\__init\__.py](../../ppocr/metrics/__init__.py) file.
+3. Import the added module in the [ppocr/metrics/\__init\__.py](../../ptocr/metrics/__init__.py) file.
 
 After the metric module is added, you only need to configure it in the configuration file to use it, such as:
 
@@ -265,11 +265,11 @@ Metric:
 
 ## Optimizer
 
-The optimizer is used to train the network. The optimizer also contains network regularization and learning rate decay modules. This part is under [ppocr/optimizer](../../ppocr/optimizer). PaddleOCR has built-in
+The optimizer is used to train the network. The optimizer also contains network regularization and learning rate decay modules. This part is under [ppocr/optimizer](../../ptocr/optim). PaddleOCR has built-in
 Commonly used optimizer modules such as `Momentum`, `Adam` and `RMSProp`, common regularization modules such as `Linear`, `Cosine`, `Step` and `Piecewise`, and common learning rate decay modules such as `L1Decay` and `L2Decay`.
 Modules without built-in can be added through the following steps, take `optimizer` as an example:
 
-1. Create your own optimizer in the [ppocr/optimizer/optimizer.py](../../ppocr/optimizer/optimizer.py) file, the sample code is as follows:
+1. Create your own optimizer in the [ppocr/optimizer/optimizer.py](../../ptocr/optim/optimizer.py) file, the sample code is as follows:
 
 ```python
 from paddle import optimizer as optim

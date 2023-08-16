@@ -26,10 +26,10 @@ import time
 import sys
 
 import tools.infer.utility as utility
-from ppocr.utils.logging import get_logger
-from ppocr.utils.utility import get_image_file_list, check_and_read
-from ppocr.data import create_operators, transform
-from ppocr.postprocess import build_post_process
+from ptocr.utils.logging import get_logger
+from ptocr.utils.utility import get_image_file_list, check_and_read
+from ptocr.datasets import create_operators, transform
+from ptocr.postprocess import build_post_process
 import json
 
 logger = get_logger()

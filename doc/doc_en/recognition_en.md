@@ -94,7 +94,7 @@ PaddleOCR has built-in dictionaries, which can be used on demand.
 
 
 The current multi-language model is still in the demo stage and will continue to optimize the model and add languages. **You are very welcome to provide us with dictionaries and fonts in other languages**,
-If you like, you can submit the dictionary file to [dict](../../ppocr/utils/dict) and we will thank you in the Repo.
+If you like, you can submit the dictionary file to [dict](../../ptocr/utils/dict) and we will thank you in the Repo.
 
 
 To customize the dict file, please modify the `character_dict_path` field in `configs/rec/rec_icdar15_train.yml` .
@@ -115,7 +115,7 @@ PaddleOCR provides a variety of data augmentation methods. All the augmentation 
 
 The default perturbation methods are: cvtColor, blur, jitter, Gasuss noise, random crop, perspective, color reverse, TIA augmentation.
 
-Each disturbance method is selected with a 40% probability during the training process. For specific code implementation, please refer to: [rec_img_aug.py](../../ppocr/data/imaug/rec_img_aug.py)
+Each disturbance method is selected with a 40% probability during the training process. For specific code implementation, please refer to: [rec_img_aug.py](../../ptocr/datasets/imaug/rec_img_aug.py)
 
 <a name="TRAINING"></a>
 ## 2.Training
@@ -238,7 +238,7 @@ python3 tools/train.py -c configs/rec/rec_icdar15_train.yml -o Global.checkpoint
 <a name="23-training-with-new-backbone"></a>
 ### 2.3 Training with New Backbone
 
-The network part completes the construction of the network, and PaddleOCR divides the network into four parts, which are under [ppocr/modeling](../../ppocr/models). The data entering the network will pass through these four parts in sequence(transforms->backbones->
+The network part completes the construction of the network, and PaddleOCR divides the network into four parts, which are under [ppocr/modeling](../../ptocr/modules). The data entering the network will pass through these four parts in sequence(transforms->backbones->
 necks->heads).
 
 ```bash
@@ -253,7 +253,7 @@ If the Backbone to be replaced has a corresponding implementation in PaddleOCR, 
 
 However, if you want to use a new Backbone, an example of replacing the backbones is as follows:
 
-1. Create a new file under the [ppocr/modeling/backbones](../../ppocr/models/backbones) folder, such as my_backbone.py.
+1. Create a new file under the [ppocr/modeling/backbones](../../ptocr/modules/backbones) folder, such as my_backbone.py.
 2. Add code in the my_backbone.py file, the sample code is as follows:
 
 ```python
@@ -274,7 +274,7 @@ class MyBackbone(nn.Layer):
         return y
 ```
 
-3. Import the added module in the [ppocr/modeling/backbones/\__init\__.py](../../ppocr/models/backbones/__init__.py) file.
+3. Import the added module in the [ppocr/modeling/backbones/\__init\__.py](../../ptocr/modules/backbones/__init__.py) file.
 
 After adding the four-part modules of the network, you only need to configure them in the configuration file to use, such as:
 

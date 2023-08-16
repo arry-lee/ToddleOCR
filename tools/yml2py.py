@@ -3,7 +3,7 @@ from collections import defaultdict
 
 import torch
 import yaml
-from ppocr import hub as self
+from ptocr import hub as self
 
 
 def hub(name, model_type=None):

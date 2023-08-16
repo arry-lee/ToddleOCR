@@ -28,13 +28,13 @@ import torch.distributed as dist
 import yaml
 from tqdm import tqdm
 
-from ppocr.data import build_dataloader
-from ppocr.utils import profiler
-from ppocr.utils.loggers import Loggers, VDLLogger, WandbLogger
-from ppocr.utils.logging import get_logger
-from ppocr.utils.save_load import save_model
-from ppocr.utils.stats import TrainingStats
-from ppocr.utils.utility import AverageMeter, print_dict
+from ptocr.datasets import build_dataloader
+from ptocr.utils import profiler
+from ptocr.utils.loggers import Loggers, VDLLogger, WandbLogger
+from ptocr.utils.logging import get_logger
+from ptocr.utils.save_load import save_model
+from ptocr.utils.stats import TrainingStats
+from ptocr.utils.utility import AverageMeter, print_dict
 
 
 class ArgsParser(ArgumentParser):

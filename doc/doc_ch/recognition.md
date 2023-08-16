@@ -166,7 +166,7 @@ PaddleOCR内置了一部分字典，可以按需使用。
 
 
 目前的多语言模型仍处在demo阶段，会持续优化模型并补充语种，**非常欢迎您为我们提供其他语言的字典和字体**，
-如您愿意可将字典文件提交至 [dict](../../ppocr/utils/dict)，我们会在Repo中感谢您。
+如您愿意可将字典文件提交至 [dict](../../ptocr/utils/dict)，我们会在Repo中感谢您。
 
 - 自定义字典
 
@@ -182,7 +182,7 @@ PaddleOCR提供了多种数据增强方式，默认配置文件中已经添加�
 
 默认的扰动方式有：颜色空间转换(cvtColor)、模糊(blur)、抖动(jitter)、噪声(Gasuss noise)、随机切割(random crop)、透视(perspective)、颜色反转(reverse)、TIA数据增广。
 
-训练过程中每种扰动方式以40%的概率被选择，具体代码实现请参考：[rec_img_aug.py](../../ppocr/data/imaug/rec_img_aug.py)
+训练过程中每种扰动方式以40%的概率被选择，具体代码实现请参考：[rec_img_aug.py](../../ptocr/datasets/imaug/rec_img_aug.py)
 
 *由于OpenCV的兼容性问题，扰动操作暂时只支持Linux*
 
@@ -325,7 +325,7 @@ python3 tools/train.py -c configs/rec/PP-OCRv3/en_PP-OCRv3_rec.yml -o Global.che
 
 ## 2.3. 更换Backbone 训练
 
-PaddleOCR将网络划分为四部分，分别在[ppocr/modeling](../../ppocr/models)下。 进入网络的数据将按照顺序(transforms->backbones->necks->heads)依次通过这四个部分。
+PaddleOCR将网络划分为四部分，分别在[ppocr/modeling](../../ptocr/modules)下。 进入网络的数据将按照顺序(transforms->backbones->necks->heads)依次通过这四个部分。
 
 ```bash
 ├── architectures # 网络的组网代码
@@ -338,7 +338,7 @@ PaddleOCR将网络划分为四部分，分别在[ppocr/modeling](../../ppocr/mod
 
 如果要使用新的Backbone，更换backbones的例子如下:
 
-1. 在 [ppocr/modeling/backbones](../../ppocr/models/backbones) 文件夹下新建文件，如my_backbone.py。
+1. 在 [ppocr/modeling/backbones](../../ptocr/modules/backbones) 文件夹下新建文件，如my_backbone.py。
 2. 在 my_backbone.py 文件内添加相关代码，示例代码如下:
 
 ```python
@@ -359,7 +359,7 @@ class MyBackbone(nn.Layer):
         return y
 ```
 
-3. 在 [ppocr/modeling/backbones/\__init\__.py](../../ppocr/models/backbones/__init__.py)文件内导入添加的`MyBackbone`模块，然后修改配置文件中Backbone进行配置即可使用，格式如下:
+3. 在 [ppocr/modeling/backbones/\__init\__.py](../../ptocr/modules/backbones/__init__.py)文件内导入添加的`MyBackbone`模块，然后修改配置文件中Backbone进行配置即可使用，格式如下:
 
 ```yaml
 Backbone:
