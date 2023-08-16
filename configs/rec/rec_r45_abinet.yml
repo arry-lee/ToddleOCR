@@ -27,7 +27,7 @@ Optimizer:
     - 0.99
   clip_norm: 20.0
 LRScheduler:
-  class: Piecewise
+  class: PiecewiseLR
   decay_epochs:
     - 6
   values:

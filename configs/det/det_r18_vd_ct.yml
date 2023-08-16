@@ -35,7 +35,7 @@ Optimizer:
   class: Adam
   lr: 0.001
 LRScheduler:
-  class: Linear
+  class: LinearLR
   end_lr: 0.0
   epochs: 600
   step_each_epoch: 1254

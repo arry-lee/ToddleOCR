@@ -29,7 +29,7 @@ Optimizer:
   group_lr: true
   training_step: LA
 LRScheduler:
-  class: Piecewise
+  class: PiecewiseLR
   decay_epochs:
     - 6
   values:

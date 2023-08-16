@@ -36,7 +36,6 @@ def squizee(imports):
     for i in imports:
         l, r = i.rsplit(" ", 1)
         x[l].add(r)
-    print(x)
     lines = []
     for k, v in x.items():
         lines.append(f"{k} {', '.join(v)}")

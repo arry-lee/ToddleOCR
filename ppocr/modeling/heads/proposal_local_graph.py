@@ -11,7 +11,7 @@ import cv2
 import numpy as np
 import torch
 import torch.nn.functional as F
-from lanms import merge_quadrangle_n9 as la_nms
+from ppocr.utils.locality_aware_nms import nms_locality as la_nms
 
 from ppocr.ext_op import RoIAlignRotated
 from .local_graph import euclidean_distance_matrix, feature_embedding, normalize_adjacent_matrix

@@ -26,7 +26,7 @@ Optimizer:
     - 0.999
   lr: 0.001
 LRScheduler:
-  class: CosineAnnealing
+  class: CosineAnnealingLR
   T_max: null
 Model:
   model_type: rec

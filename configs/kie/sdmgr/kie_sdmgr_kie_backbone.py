@@ -7,7 +7,7 @@ from ppocr.metrics.kie_metric import KIEMetric
 from torch.optim import Adam
 from torch.nn import None, Piecewise
 from ppocr.data.simple_dataset import SimpleDataSet
-from ppocr.data.imaug.operators import DecodeImage, KeepKeys, NormalizeImage, KieResize, ToCHWImage
+from ppocr.data.imaug.operators import ToCHWImage, KieResize, KeepKeys, DecodeImage, NormalizeImage
 from ppocr.data.imaug.label_ops import KieLabelEncode
 class Model(ConfigModel):
     use_gpu = True

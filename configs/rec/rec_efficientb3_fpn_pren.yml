@@ -22,7 +22,7 @@ Global:
 Optimizer:
   class: Adadelta
 LRScheduler:
-  class: Piecewise
+  class: PiecewiseLR
   decay_epochs:
     - 2
     - 5

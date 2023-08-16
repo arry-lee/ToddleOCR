@@ -18,7 +18,7 @@ https://github.com/open-mmlab/mmocr/blob/main/mmocr/datasets/pipelines/textdet_t
 
 import cv2
 import numpy as np
-from lanms import merge_quadrangle_n9 as la_nms
+from ppocr.utils.locality_aware_nms import nms_locality as la_nms
 from numpy.linalg import norm
 
 

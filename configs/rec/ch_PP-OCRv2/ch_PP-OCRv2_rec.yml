@@ -27,7 +27,7 @@ Optimizer:
     - 0.9
     - 0.999
 LRScheduler:
-  class: Piecewise
+  class: PiecewiseLR
   decay_epochs:
     - 700
   values:

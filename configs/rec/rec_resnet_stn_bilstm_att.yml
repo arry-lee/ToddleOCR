@@ -24,7 +24,7 @@ Optimizer:
   weight_deacy: 0.0
   momentum: 0.9
 LRScheduler:
-  class: Piecewise
+  class: PiecewiseLR
   decay_epochs:
     - 4
     - 5
