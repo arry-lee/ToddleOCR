@@ -64,8 +64,8 @@ Train:
       - class: DecodeImage
         img_mode: BGR
         channel_first: false
-      - class: RecAug null
-      - class: CTCLabelEncode null
+      - class: RecAug
+      - class: CTCLabelEncode
       - class: RecResizeImg
         image_shape:
           - 3
@@ -91,7 +91,7 @@ Eval:
       - class: DecodeImage
         img_mode: BGR
         channel_first: false
-      - class: CTCLabelEncode null
+      - class: CTCLabelEncode
       - class: RecResizeImg
         image_shape:
           - 3

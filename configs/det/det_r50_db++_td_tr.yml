@@ -76,7 +76,7 @@ Train:
       - class: DecodeImage
         img_mode: BGR
         channel_first: false
-      - class: DetLabelEncode null
+      - class: DetLabelEncode
       - class: IaaAugment
         augmenter_args:
           - type: Fliplr
@@ -139,7 +139,7 @@ Eval:
       - class: DecodeImage
         img_mode: BGR
         channel_first: false
-      - class: DetLabelEncode null
+      - class: DetLabelEncode
       - class: DetResizeForTest
         image_shape:
           - 736

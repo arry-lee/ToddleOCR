@@ -107,8 +107,8 @@ Train:
           - 32
           - 320
           - 3
-      - class: RecAug null
-      - class: CTCLabelEncode null
+      - class: RecAug
+      - class: CTCLabelEncode
       - class: SVTRRecResizeImg
         image_shape:
           - 3
@@ -135,7 +135,7 @@ Eval:
       - class: DecodeImage
         img_mode: BGR
         channel_first: false
-      - class: CTCLabelEncode null
+      - class: CTCLabelEncode
       - class: SVTRRecResizeImg
         image_shape:
           - 3
