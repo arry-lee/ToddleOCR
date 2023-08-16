@@ -87,7 +87,7 @@ After executing the command, the super-resolution result of the above image is a
 First, the model saved during the training process is converted into an inference model. ( [Model download link](https://paddleocr.bj.bcebos.com/sr_tsrn_transformer_strock_train.tar) ), you can use the following command to convert:
 
 ```shell
-python3 tools/export_model.py -c configs/sr/sr_tsrn_transformer_strock.yml -o Global.pretrained_model={path/to/weights}/best_accuracy Global.save_inference_dir=./inference/sr_out
+python3 tools/export_model.py -c configs/sr/sr_tsrn_transformer_strock.yml -o Global.pretrained_model={path/to/weights}/best_accuracy Global.save_infer_dir=./inference/sr_out
 ```
 
 For Text-Gestalt super-resolution model inference, the following commands can be executed:

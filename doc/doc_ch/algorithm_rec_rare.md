@@ -71,7 +71,7 @@ python3 tools/infer_rec.py -c configs/rec/rec_r34_vd_tps_bilstm_att.yml -o Globa
 首先将RARE文本识别训练过程中保存的模型，转换成inference model。以基于Resnet34_vd骨干网络，在MJSynth和SynthText两个文字识别数据集训练得到的模型为例（ [模型下载地址](https://paddleocr.bj.bcebos.com/dygraph_v2.0/en/rec_r34_vd_tps_bilstm_att_v2.0_train.tar) )，可以使用如下命令进行转换：
 
 ```shell
-python3 tools/export_model.py -c configs/rec/rec_r34_vd_tps_bilstm_att.yml -o Global.pretrained_model=./rec_r34_vd_tps_bilstm_att_v2.0_train/best_accuracy  Global.save_inference_dir=./inference/rec_rare
+python3 tools/export_model.py -c configs/rec/rec_r34_vd_tps_bilstm_att.yml -o Global.pretrained_model=./rec_r34_vd_tps_bilstm_att_v2.0_train/best_accuracy  Global.save_infer_dir=./inference/rec_rare
 ```
 
 RARE文本识别模型推理，可以执行如下命令：

@@ -165,7 +165,7 @@ python3 tools/infer_e2e.py -c configs/e2e/e2e_r50_vd_pg.yml -o Global.infer_img=
 首先将PGNet端到端训练过程中保存的模型，转换成inference model。以基于Resnet50_vd骨干网络，以英文数据集训练的模型为例[模型下载地址](https://paddleocr.bj.bcebos.com/dygraph_v2.0/pgnet/en_server_pgnetA.tar) ，可以使用如下命令进行转换：
 ```
 wget https://paddleocr.bj.bcebos.com/dygraph_v2.0/pgnet/en_server_pgnetA.tar && tar xf en_server_pgnetA.tar
-python3 tools/export_model.py -c configs/e2e/e2e_r50_vd_pg.yml -o Global.pretrained_model=./en_server_pgnetA/best_accuracy Global.load_static_weights=False Global.save_inference_dir=./inference/e2e
+python3 tools/export_model.py -c configs/e2e/e2e_r50_vd_pg.yml -o Global.pretrained_model=./en_server_pgnetA/best_accuracy Global.load_static_weights=False Global.save_infer_dir=./inference/e2e
 ```
 **PGNet端到端模型推理，需要设置参数`--e2e_algorithm="PGNet"` and `--e2e_pgnet_valid_set="partvgg"`**，可以执行如下命令：
 ```

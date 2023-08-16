@@ -50,7 +50,7 @@ First, convert the model saved in the TableMaster table recognition training pro
 
 
 ```shell
-python3 tools/export_model.py -c configs/table/table_master.yml -o Global.pretrained_model=output/table_master/best_accuracy Global.save_inference_dir=./inference/table_master
+python3 tools/export_model.py -c configs/table/table_master.yml -o Global.pretrained_model=output/table_master/best_accuracy Global.save_infer_dir=./inference/table_master
 ```
 
 **Note: **

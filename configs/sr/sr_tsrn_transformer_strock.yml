@@ -1,17 +1,17 @@
 Global:
   use_gpu: true
   epoch_num: 500
-  log_smooth_window: 20
-  print_batch_step: 10
+  log_window_size: 20
+  log_batch_step: 10
   save_model_dir: ./output/sr/sr_tsrn_transformer_strock/
   save_epoch_step: 3
   eval_batch_step:
     - 0
     - 1000
-  cal_metric_during_train: false
+  metric_during_train: false
   pretrained_model: null
   checkpoints: null
-  save_inference_dir: sr_output
+  save_infer_dir: sr_output
   use_visualdl: false
   infer_img: doc/imgs_words_en/word_52.png
   character_dict_path: ./train_data/srdata/english_decomposition.txt

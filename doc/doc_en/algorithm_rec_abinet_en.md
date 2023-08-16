@@ -71,7 +71,7 @@ python3 tools/infer_rec.py -c configs/rec/rec_r45_abinet.yml -o Global.infer_img
 First, the model saved during the ABINet text recognition training process is converted into an inference model. ( [Model download link](https://paddleocr.bj.bcebos.com/rec_r45_abinet_train.tar)) ), you can use the following command to convert:
 
 ```
-python3 tools/export_model.py -c configs/rec/rec_r45_abinet.yml -o Global.pretrained_model=./rec_r45_abinet_train/best_accuracy  Global.save_inference_dir=./inference/rec_r45_abinet
+python3 tools/export_model.py -c configs/rec/rec_r45_abinet.yml -o Global.pretrained_model=./rec_r45_abinet_train/best_accuracy  Global.save_infer_dir=./inference/rec_r45_abinet
 ```
 
 **Note:**

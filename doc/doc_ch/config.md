@@ -26,12 +26,12 @@
 | :----------------------: |  :---------------------:   | :--------------:  |   :--------------------:   |
 |      use_gpu             |    设置代码是否在gpu运行           |       true        |                \                 |
 |      epoch_num           |    最大训练epoch数             |       500        |                \                 |
-|      log_smooth_window   |    log队列长度，每次打印输出队列里的中间值            |       20          |                \                 |
-|      print_batch_step    |    设置打印log间隔         |       10          |                \                 |
+|      log_window_size   |    log队列长度，每次打印输出队列里的中间值            |       20          |                \                 |
+|      log_batch_step    |    设置打印log间隔         |       10          |                \                 |
 |      save_model_dir      |    设置模型保存路径        |  output/{算法名称}  |                \                 |
 |      save_epoch_step     |    设置模型保存间隔        |       3           |                \                 |
 |      eval_batch_step     |    设置模型评估间隔        | 2000 或 [1000, 2000]        | 2000 表示每2000次迭代评估一次，[1000， 2000]表示从1000次迭代开始，每2000次评估一次   |
-|      cal_metric_during_train     |    设置是否在训练过程中评估指标，此时评估的是模型在当前batch下的指标        |       true         |                \                 |
+|      metric_during_train     |    设置是否在训练过程中评估指标，此时评估的是模型在当前batch下的指标        |       true         |                \                 |
 |      load_static_weights     |   设置预训练模型是否是静态图模式保存(目前仅检测算法需要)        |       true         |                \                 |
 |      pretrained_model    |    设置加载预训练模型路径      |  ./pretrain_models/CRNN/best_accuracy  |  \          |
 |      checkpoints         |    加载模型参数路径            |       None        |    用于中断后加载参数继续训练 |

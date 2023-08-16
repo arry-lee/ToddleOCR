@@ -73,7 +73,7 @@ python3 tools/infer_rec.py -c configs/rec/rec_r31_sar.yml -o Global.pretrained_m
 首先将SAR文本识别训练过程中保存的模型，转换成inference model。（ [模型下载地址](https://paddleocr.bj.bcebos.com/dygraph_v2.1/rec/rec_r31_sar_train.tar) )，可以使用如下命令进行转换：
 
 ```
-python3 tools/export_model.py -c configs/rec/rec_r31_sar.yml -o Global.pretrained_model=./rec_r31_sar_train/best_accuracy  Global.save_inference_dir=./inference/rec_sar
+python3 tools/export_model.py -c configs/rec/rec_r31_sar.yml -o Global.pretrained_model=./rec_r31_sar_train/best_accuracy  Global.save_infer_dir=./inference/rec_sar
 ```
 
 SAR文本识别模型推理，可以执行如下命令：

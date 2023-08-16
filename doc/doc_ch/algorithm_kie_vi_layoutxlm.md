@@ -52,7 +52,7 @@ VI-LayoutXLM基于LayoutXLM进行改进，在下游任务训练过程中，去�
 ``` bash
 wget https://paddleocr.bj.bcebos.com/ppstructure/models/vi_layoutxlm/ser_vi_layoutxlm_xfund_pretrained.tar
 tar -xf ser_vi_layoutxlm_xfund_pretrained.tar
-python3 tools/export_model.py -c configs/kie/vi_layoutxlm/ser_vi_layoutxlm_xfund_zh.yml -o Architecture.Backbone.checkpoints=./ser_vi_layoutxlm_xfund_pretrained/best_accuracy Global.save_inference_dir=./inference/ser_vi_layoutxlm_infer
+python3 tools/export_model.py -c configs/kie/vi_layoutxlm/ser_vi_layoutxlm_xfund_zh.yml -o Architecture.Backbone.checkpoints=./ser_vi_layoutxlm_xfund_pretrained/best_accuracy Global.save_infer_dir=./inference/ser_vi_layoutxlm_infer
 ```
 
 VI-LayoutXLM模型基于SER任务进行推理，可以执行如下命令：
@@ -81,7 +81,7 @@ SER可视化结果默认保存到`./output`文件夹里面，结果示例如下�
 ``` bash
 wget https://paddleocr.bj.bcebos.com/ppstructure/models/vi_layoutxlm/re_vi_layoutxlm_xfund_pretrained.tar
 tar -xf re_vi_layoutxlm_xfund_pretrained.tar
-python3 tools/export_model.py -c configs/kie/vi_layoutxlm/re_vi_layoutxlm_xfund_zh.yml -o Architecture.Backbone.checkpoints=./re_vi_layoutxlm_xfund_pretrained/best_accuracy Global.save_inference_dir=./inference/re_vi_layoutxlm_infer
+python3 tools/export_model.py -c configs/kie/vi_layoutxlm/re_vi_layoutxlm_xfund_zh.yml -o Architecture.Backbone.checkpoints=./re_vi_layoutxlm_xfund_pretrained/best_accuracy Global.save_infer_dir=./inference/re_vi_layoutxlm_infer
 ```
 
 VI-LayoutXLM模型基于RE任务进行推理，可以执行如下命令：

@@ -47,7 +47,7 @@
 
 ```shell
 # 注意将pretrained_model的路径设置为本地路径。
-python3 tools/export_model.py -c configs/table/table_master.yml -o Global.pretrained_model=output/table_master/best_accuracy Global.save_inference_dir=./inference/table_master
+python3 tools/export_model.py -c configs/table/table_master.yml -o Global.pretrained_model=output/table_master/best_accuracy Global.save_infer_dir=./inference/table_master
 ```
 
 **注意：**

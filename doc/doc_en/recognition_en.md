@@ -482,9 +482,9 @@ The recognition model is converted to the inference model in the same way as the
 # -c Set the training algorithm yml configuration file
 # -o Set optional parameters
 # Global.pretrained_model parameter Set the training model address to be converted without adding the file suffix .pdmodel, .pdopt or .pdparams.
-# Global.save_inference_dir Set the address where the converted model will be saved.
+# Global.save_infer_dir Set the address where the converted model will be saved.
 
-python3 tools/export_model.py -c configs/rec/PP-OCRv3/en_PP-OCRv3_rec.yml -o Global.pretrained_model=en_PP-OCRv3_rec_train/best_accuracy  Global.save_inference_dir=./inference/en_PP-OCRv3_rec/
+python3 tools/export_model.py -c configs/rec/PP-OCRv3/en_PP-OCRv3_rec.yml -o Global.pretrained_model=en_PP-OCRv3_rec_train/best_accuracy  Global.save_infer_dir=./inference/en_PP-OCRv3_rec/
 ```
 
 If you have a model trained on your own dataset with a different dictionary file, please make sure that you modify the `character_dict_path` in the configuration file to your dictionary file path.

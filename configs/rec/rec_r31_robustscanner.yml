@@ -1,17 +1,17 @@
 Global:
   use_gpu: true
   epoch_num: 5
-  log_smooth_window: 20
-  print_batch_step: 20
+  log_window_size: 20
+  log_batch_step: 20
   save_model_dir: ./output/rec/rec_r31_robustscanner/
   save_epoch_step: 1
   eval_batch_step:
     - 0
     - 2000
-  cal_metric_during_train: true
+  metric_during_train: true
   pretrained_model: null
   checkpoints: null
-  save_inference_dir: null
+  save_infer_dir: null
   use_visualdl: false
   infer_img: doc/imgs_words_en/word_10.png
   character_dict_path: ppocr/utils/dict90.txt

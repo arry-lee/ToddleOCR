@@ -96,7 +96,7 @@ python3 tools/infer_rec.py -c configs/rec/rec_d28_can.yml -o Architecture.Head.a
 
 ```shell
 # 注意将pretrained_model的路径设置为本地路径。
-python3 tools/export_model.py -c configs/rec/rec_d28_can.yml -o Global.pretrained_model=./rec_d28_can_train/best_accuracy.pdparams Global.save_inference_dir=./inference/rec_d28_can/ Architecture.Head.attdecoder.is_train=False
+python3 tools/export_model.py -c configs/rec/rec_d28_can.yml -o Global.pretrained_model=./rec_d28_can_train/best_accuracy.pdparams Global.save_infer_dir=./inference/rec_d28_can/ Architecture.Head.attdecoder.is_train=False
 
 # 目前的静态图模型默认的输出长度最大为36，如果您需要预测更长的序列，请在导出模型时指定其输出序列为合适的值，例如 Architecture.Head.max_text_length=72
 ```

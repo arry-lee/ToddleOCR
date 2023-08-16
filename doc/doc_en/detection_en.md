@@ -228,7 +228,7 @@ Compared with the checkpoints model, the inference model will additionally save 
 
 Firstly, we can convert DB trained model to inference model:
 ```shell
-python3 tools/export_model.py -c configs/det/det_mv3_db.yml -o Global.pretrained_model="./output/det_db/best_accuracy" Global.save_inference_dir="./output/det_db_inference/"
+python3 tools/export_model.py -c configs/det/det_mv3_db.yml -o Global.pretrained_model="./output/det_db/best_accuracy" Global.save_infer_dir="./output/det_db_inference/"
 ```
 
 The detection inference model prediction：

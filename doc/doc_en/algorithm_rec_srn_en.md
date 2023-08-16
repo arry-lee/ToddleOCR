@@ -72,7 +72,7 @@ python3 tools/infer_rec.py -c configs/rec/rec_r50_fpn_srn.yml -o Global.pretrain
 First, the model saved during the SRN text recognition training process is converted into an inference model. ( [Model download link](https://paddleocr.bj.bcebos.com/dygraph_v2.0/en/rec_r50_vd_srn_train.tar) ), you can use the following command to convert:
 
 ```
-python3 tools/export_model.py -c configs/rec/rec_r50_fpn_srn.yml -o Global.pretrained_model=./rec_r50_vd_srn_train/best_accuracy  Global.save_inference_dir=./inference/rec_srn
+python3 tools/export_model.py -c configs/rec/rec_r50_fpn_srn.yml -o Global.pretrained_model=./rec_r50_vd_srn_train/best_accuracy  Global.save_infer_dir=./inference/rec_srn
 ```
 
 For SRN text recognition model inference, the following commands can be executed:

@@ -185,11 +185,11 @@ def train(
     amp_level="O2",
     amp_custom_black_list=[],
 ):
-    cal_metric_during_train = config["Global"].get("cal_metric_during_train", False)
+    metric_during_train = config["Global"].get("metric_during_train", False)
     calc_epoch_interval = config["Global"].get("calc_epoch_interval", 1)
-    log_smooth_window = config["Global"]["log_smooth_window"]
+    log_window_size = config["Global"]["log_window_size"]
     epoch_num = config["Global"]["epoch_num"]
-    print_batch_step = config["Global"]["print_batch_step"]
+    log_batch_step = config["Global"]["log_batch_step"]
     eval_batch_step = config["Global"]["eval_batch_step"]
     profiler_options = config["profiler_options"]
 
@@ -214,7 +214,7 @@ def train(
     main_indicator = eval_class.main_indicator
     best_model_dict = {main_indicator: 0}
     best_model_dict.update(pre_best_model_dict)
-    train_stats = TrainingStats(log_smooth_window, ["lr"])
+    train_stats = TrainingStats(log_window_size, ["lr"])
     model_average = False
     model.train()
 
@@ -290,7 +290,7 @@ def train(
 
             optimizer.clear_grad()
 
-            if cal_metric_during_train and epoch % calc_epoch_interval == 0:  # only rec and cls need
+            if metric_during_train and epoch % calc_epoch_interval == 0:  # only rec and cls need
                 batch = [item.numpy() for item in batch]
                 if model_type in ["kie", "sr"]:
                     eval_class(preds, batch)
@@ -329,7 +329,7 @@ def train(
                 log_writer.log_metrics(metrics=train_stats.get(), prefix="TRAIN", step=global_step)
 
             if dist.get_rank() == 0 and (
-                (global_step > 0 and global_step % print_batch_step == 0) or (idx >= len(train_dataloader) - 1)
+                (global_step > 0 and global_step % log_batch_step == 0) or (idx >= len(train_dataloader) - 1)
             ):
                 logs = train_stats.log()
 
@@ -343,9 +343,9 @@ def train(
                         epoch_num,
                         global_step,
                         logs,
-                        train_reader_cost / print_batch_step,
-                        train_batch_cost / print_batch_step,
-                        total_samples / print_batch_step,
+                        train_reader_cost / log_batch_step,
+                        train_batch_cost / log_batch_step,
+                        total_samples / log_batch_step,
                         total_samples / train_batch_cost,
                         eta_sec_format,
                     )

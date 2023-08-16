@@ -49,7 +49,7 @@ After the data download is complete, please refer to [Text Detection Training Tu
 First, convert the model saved in the PSE text detection training process into an inference model. Taking the model based on the Resnet50_vd backbone network and trained on the ICDAR2015 English dataset as example ([model download link](https://paddleocr.bj.bcebos.com/dygraph_v2.1/en_det/det_r50_vd_pse_v2.0_train.tar)), you can use the following command to convert:
 
 ```shell
-python3 tools/export_model.py -c configs/det/det_r50_vd_pse.yml -o Global.pretrained_model=./det_r50_vd_pse_v2.0_train/best_accuracy  Global.save_inference_dir=./inference/det_pse
+python3 tools/export_model.py -c configs/det/det_r50_vd_pse.yml -o Global.pretrained_model=./det_r50_vd_pse_v2.0_train/best_accuracy  Global.save_infer_dir=./inference/det_pse
 ```
 
 PSE text detection model inference, to perform non-curved text detection, you can run the following commands:

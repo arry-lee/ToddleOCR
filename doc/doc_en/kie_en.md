@@ -444,8 +444,8 @@ The SER model can be converted to the inference model using the following comman
 # -c Set the training algorithm yml configuration file.
 # -o Set optional parameters.
 # Architecture.Backbone.checkpoints Set the training model address.
-# Global.save_inference_dir Set the address where the converted model will be saved.
-python3 tools/export_model.py -c configs/kie/vi_layoutxlm/ser_vi_layoutxlm_xfund_zh.yml -o Architecture.Backbone.checkpoints=./output/ser_vi_layoutxlm_xfund_zh/best_accuracy Global.save_inference_dir=./inference/ser_vi_layoutxlm
+# Global.save_infer_dir Set the address where the converted model will be saved.
+python3 tools/export_model.py -c configs/kie/vi_layoutxlm/ser_vi_layoutxlm_xfund_zh.yml -o Architecture.Backbone.checkpoints=./output/ser_vi_layoutxlm_xfund_zh/best_accuracy Global.save_infer_dir=./inference/ser_vi_layoutxlm
 ```
 
 After the conversion is successful, there are three files in the model save directory:
@@ -464,8 +464,8 @@ The RE model can be converted to the inference model using the following command
 # -c Set the training algorithm yml configuration file.
 # -o Set optional parameters.
 # Architecture.Backbone.checkpoints Set the training model address.
-# Global.save_inference_dir Set the address where the converted model will be saved.
-python3 tools/export_model.py -c configs/kie/vi_layoutxlm/re_vi_layoutxlm_xfund_zh.yml -o Architecture.Backbone.checkpoints=./output/re_vi_layoutxlm_xfund_zh/best_accuracy Global.save_inference_dir=./inference/re_vi_layoutxlm
+# Global.save_infer_dir Set the address where the converted model will be saved.
+python3 tools/export_model.py -c configs/kie/vi_layoutxlm/re_vi_layoutxlm_xfund_zh.yml -o Architecture.Backbone.checkpoints=./output/re_vi_layoutxlm_xfund_zh/best_accuracy Global.save_infer_dir=./inference/re_vi_layoutxlm
 ```
 
 After the conversion is successful, there are three files in the model save directory:

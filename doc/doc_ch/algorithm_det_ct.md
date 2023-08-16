@@ -50,7 +50,7 @@ CT模型使用Total-Text文本检测公开数据集训练得到，数据集下�
 首先将CT文本检测训练过程中保存的模型，转换成inference model。以基于Resnet18_vd骨干网络，在Total-Text英文数据集训练的模型为例（ [模型下载地址](https://paddleocr.bj.bcebos.com/dygraph_v2.0/en/det_r18_ct_train.tar) )，可以使用如下命令进行转换：
 
 ```shell
-python3 tools/export_model.py -c configs/det/det_r18_vd_ct.yml -o Global.pretrained_model=./det_r18_ct_train/best_accuracy  Global.save_inference_dir=./inference/det_ct
+python3 tools/export_model.py -c configs/det/det_r18_vd_ct.yml -o Global.pretrained_model=./det_r18_ct_train/best_accuracy  Global.save_infer_dir=./inference/det_ct
 ```
 
 CT文本检测模型推理，可以执行如下命令：

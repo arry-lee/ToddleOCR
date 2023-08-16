@@ -71,7 +71,7 @@ python3 tools/infer_rec.py -c configs/rec/rec_r45_visionlan.yml -o Global.infer_
 First, the model saved during the VisionLAN text recognition training process is converted into an inference model. ( [Model download link](https://paddleocr.bj.bcebos.com/VisionLAN/rec_r45_visionlan_train.tar)) ), you can use the following command to convert:
 
 ```
-python3 tools/export_model.py -c configs/rec/rec_r45_visionlan.yml -o Global.pretrained_model=./rec_r45_visionlan_train/best_accuracy Global.save_inference_dir=./inference/rec_r45_visionlan/
+python3 tools/export_model.py -c configs/rec/rec_r45_visionlan.yml -o Global.pretrained_model=./rec_r45_visionlan_train/best_accuracy Global.save_infer_dir=./inference/rec_r45_visionlan/
 ```
 
 **Note:**

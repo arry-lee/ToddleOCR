@@ -1,17 +1,17 @@
 # GLOBAL
 
 algorithm = "EAST"
-cal_metric_during_train = false
+metric_during_train = false
 checkpoints = null
 epoch_num = 10000
 eval_batch_step = [4000, 5000]
 infer_img = null
-log_smooth_window = 20
+log_window_size = 20
 model_type = "det"
 pretrained_model = "./pretrain_models/MobileNetV3_large_x0_5_pretrained"
-print_batch_step = 2
+log_batch_step = 2
 save_epoch_step = 1000
-save_inference_dir = null
+save_infer_dir = null
 save_model_dir = "./output/east_mv3/"
 save_res_path = "./output/det_east/predicts_east.txt"
 use_gpu = true

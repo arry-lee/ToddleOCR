@@ -2,17 +2,17 @@ Global:
   debug: false
   use_gpu: true
   epoch_num: 500
-  log_smooth_window: 20
-  print_batch_step: 10
+  log_window_size: 20
+  log_batch_step: 10
   save_model_dir: ./output/v3_devanagari_mobile
   save_epoch_step: 3
   eval_batch_step:
     - 0
     - 2000
-  cal_metric_during_train: true
+  metric_during_train: true
   pretrained_model: null
   checkpoints: null
-  save_inference_dir: null
+  save_infer_dir: null
   use_visualdl: false
   infer_img: doc/imgs_words/ch/word_1.jpg
   character_dict_path: ppocr/utils/dict/devanagari_dict.txt

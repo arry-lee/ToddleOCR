@@ -73,7 +73,7 @@ python3 tools/infer_rec.py -c configs/rec/rec_r31_sar.yml -o Global.pretrained_m
 First, the model saved during the SAR text recognition training process is converted into an inference model. ( [Model download link](https://paddleocr.bj.bcebos.com/dygraph_v2.1/rec/rec_r31_sar_train.tar) ), you can use the following command to convert:
 
 ```
-python3 tools/export_model.py -c configs/rec/rec_r31_sar.yml -o Global.pretrained_model=./rec_r31_sar_train/best_accuracy  Global.save_inference_dir=./inference/rec_sar
+python3 tools/export_model.py -c configs/rec/rec_r31_sar.yml -o Global.pretrained_model=./rec_r31_sar_train/best_accuracy  Global.save_infer_dir=./inference/rec_sar
 ```
 
 For SAR text recognition model inference, the following commands can be executed:

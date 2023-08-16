@@ -74,7 +74,7 @@ python3 tools/infer_rec.py -c configs/rec/rec_r31_robustscanner.yml -o Global.pr
 First, the model saved during the RobustScanner text recognition training process is converted into an inference model. you can use the following command to convert:
 
 ```
-python3 tools/export_model.py -c configs/rec/rec_r31_robustscanner.yml -o Global.pretrained_model={path/to/weights}/best_accuracy  Global.save_inference_dir=./inference/rec_r31_robustscanner
+python3 tools/export_model.py -c configs/rec/rec_r31_robustscanner.yml -o Global.pretrained_model={path/to/weights}/best_accuracy  Global.save_infer_dir=./inference/rec_r31_robustscanner
 ```
 
 For RobustScanner text recognition model inference, the following commands can be executed:

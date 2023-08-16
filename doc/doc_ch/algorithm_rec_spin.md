@@ -73,7 +73,7 @@ python3 tools/infer_rec.py -c configs/rec/rec_r32_gaspin_bilstm_att.yml -o Globa
 首先将SPIN文本识别训练过程中保存的模型，转换成inference model。可以使用如下命令进行转换：
 
 ```
-python3 tools/export_model.py -c configs/rec/rec_r32_gaspin_bilstm_att.yml -o Global.pretrained_model={path/to/weights}/best_accuracy  Global.save_inference_dir=./inference/rec_r32_gaspin_bilstm_att
+python3 tools/export_model.py -c configs/rec/rec_r32_gaspin_bilstm_att.yml -o Global.pretrained_model={path/to/weights}/best_accuracy  Global.save_infer_dir=./inference/rec_r32_gaspin_bilstm_att
 ```
 SPIN文本识别模型推理，可以执行如下命令：
 

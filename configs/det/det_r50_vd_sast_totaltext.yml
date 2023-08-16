@@ -1,17 +1,17 @@
 Global:
   use_gpu: true
   epoch_num: 5000
-  log_smooth_window: 20
-  print_batch_step: 2
+  log_window_size: 20
+  log_batch_step: 2
   save_model_dir: ./output/sast_r50_vd_tt/
   save_epoch_step: 1000
   eval_batch_step:
     - 4000
     - 5000
-  cal_metric_during_train: false
+  metric_during_train: false
   pretrained_model: ./pretrain_models/ResNet50_vd_ssld_pretrained
   checkpoints: null
-  save_inference_dir: null
+  save_infer_dir: null
   use_visualdl: false
   infer_img: null
   save_res_path: ./output/sast_r50_vd_tt/predicts_sast.txt

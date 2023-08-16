@@ -1,17 +1,17 @@
 Global:
   use_gpu: true
   epoch_num: 400
-  log_smooth_window: 20
-  print_batch_step: 20
+  log_window_size: 20
+  log_batch_step: 20
   save_model_dir: ./output/SLANet_ch
   save_epoch_step: 400
   eval_batch_step:
     - 0
     - 331
-  cal_metric_during_train: true
+  metric_during_train: true
   pretrained_model: null
   checkpoints: null
-  save_inference_dir: ./output/SLANet_ch/infer
+  save_infer_dir: ./output/SLANet_ch/infer
   use_visualdl: false
   infer_img: ppstructure/docs/table/table.jpg
   character_dict_path: ppocr/utils/dict/table_structure_dict_ch.txt

@@ -84,7 +84,7 @@ python3 tools/infer_rec.py -c configs/rec/rec_vitstr_none_ce.yml -o Global.infer
 
 ```shell
 # 注意将pretrained_model的路径设置为本地路径。
-python3 tools/export_model.py -c configs/rec/rec_vitstr_none_ce.yml -o Global.pretrained_model=./rec_vitstr_none_ce_train/best_accuracy Global.save_inference_dir=./inference/rec_vitstr/
+python3 tools/export_model.py -c configs/rec/rec_vitstr_none_ce.yml -o Global.pretrained_model=./rec_vitstr_none_ce_train/best_accuracy Global.save_infer_dir=./inference/rec_vitstr/
 ```
 **注意：**
 - 如果您是在自己的数据集上训练的模型，并且调整了字典文件，请注意修改配置文件中的`character_dict_path`是否是所需要的字典文件。

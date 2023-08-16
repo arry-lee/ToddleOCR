@@ -54,7 +54,7 @@ First, we need to export the trained model into inference model. Take LayoutXLM 
 ``` bash
 wget https://paddleocr.bj.bcebos.com/pplayout/ser_LayoutXLM_xfun_zh.tar
 tar -xf ser_LayoutXLM_xfun_zh.tar
-python3 tools/export_model.py -c configs/kie/layoutlm_series/ser_layoutxlm_xfund_zh.yml -o Architecture.Backbone.checkpoints=./ser_LayoutXLM_xfun_zh Global.save_inference_dir=./inference/ser_layoutxlm_infer
+python3 tools/export_model.py -c configs/kie/layoutlm_series/ser_layoutxlm_xfund_zh.yml -o Architecture.Backbone.checkpoints=./ser_LayoutXLM_xfun_zh Global.save_infer_dir=./inference/ser_layoutxlm_infer
 ```
 
 Use the following command to infer using LayoutXLM SER model.
@@ -85,7 +85,7 @@ First, we need to export the trained model into inference model. Take LayoutXLM 
 ``` bash
 wget https://paddleocr.bj.bcebos.com/pplayout/re_LayoutXLM_xfun_zh.tar
 tar -xf re_LayoutXLM_xfun_zh.tar
-python3 tools/export_model.py -c configs/kie/layoutlm_series/re_layoutxlm_xfund_zh.yml -o Architecture.Backbone.checkpoints=./re_LayoutXLM_xfun_zh Global.save_inference_dir=./inference/re_layoutxlm_infer
+python3 tools/export_model.py -c configs/kie/layoutlm_series/re_layoutxlm_xfund_zh.yml -o Architecture.Backbone.checkpoints=./re_LayoutXLM_xfun_zh Global.save_infer_dir=./inference/re_layoutxlm_infer
 ```
 
 Use the following command to infer using LayoutXLM RE model.

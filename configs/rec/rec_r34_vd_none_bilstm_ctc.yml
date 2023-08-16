@@ -1,17 +1,17 @@
 Global:
   use_gpu: true
   epoch_num: 72
-  log_smooth_window: 20
-  print_batch_step: 10
+  log_window_size: 20
+  log_batch_step: 10
   save_model_dir: ./output/rec/r34_vd_none_bilstm_ctc/
   save_epoch_step: 3
   eval_batch_step:
     - 0
     - 2000
-  cal_metric_during_train: true
+  metric_during_train: true
   pretrained_model: null
   checkpoints: null
-  save_inference_dir: null
+  save_infer_dir: null
   use_visualdl: false
   infer_img: doc/imgs_words_en/word_10.png
   character_dict_path: null

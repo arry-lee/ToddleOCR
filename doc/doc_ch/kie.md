@@ -424,9 +424,9 @@ inference 模型（`paddle.jit.save`保存的模型）
 # -c 后面设置训练算法的yml配置文件
 # -o 配置可选参数
 # Architecture.Backbone.checkpoints 参数设置待转换的训练模型地址
-# Global.save_inference_dir 参数设置转换的模型将保存的地址
+# Global.save_infer_dir 参数设置转换的模型将保存的地址
 
-python3 tools/export_model.py -c configs/kie/vi_layoutxlm/ser_vi_layoutxlm_xfund_zh.yml -o Architecture.Backbone.checkpoints=./output/ser_vi_layoutxlm_xfund_zh/best_accuracy Global.save_inference_dir=./inference/ser_vi_layoutxlm
+python3 tools/export_model.py -c configs/kie/vi_layoutxlm/ser_vi_layoutxlm_xfund_zh.yml -o Architecture.Backbone.checkpoints=./output/ser_vi_layoutxlm_xfund_zh/best_accuracy Global.save_infer_dir=./inference/ser_vi_layoutxlm
 ```
 
 转换成功后，在目录下有三个文件：
@@ -444,9 +444,9 @@ inference/ser_vi_layoutxlm/
 # -c 后面设置训练算法的yml配置文件
 # -o 配置可选参数
 # Architecture.Backbone.checkpoints 参数设置待转换的训练模型地址
-# Global.save_inference_dir 参数设置转换的模型将保存的地址
+# Global.save_infer_dir 参数设置转换的模型将保存的地址
 
-python3 tools/export_model.py -c configs/kie/vi_layoutxlm/re_vi_layoutxlm_xfund_zh.yml -o Architecture.Backbone.checkpoints=./output/re_vi_layoutxlm_xfund_zh/best_accuracy Global.save_inference_dir=./inference/re_vi_layoutxlm
+python3 tools/export_model.py -c configs/kie/vi_layoutxlm/re_vi_layoutxlm_xfund_zh.yml -o Architecture.Backbone.checkpoints=./output/re_vi_layoutxlm_xfund_zh/best_accuracy Global.save_infer_dir=./inference/re_vi_layoutxlm
 ```
 
 转换成功后，在目录下有三个文件：

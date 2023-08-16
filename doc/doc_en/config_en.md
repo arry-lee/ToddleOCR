@@ -26,12 +26,12 @@ Take rec_chinese_lite_train_v2.0.yml as an example
 | :----------------------: |  :---------------------:   | :--------------:  |   :--------------------:   |
 |      use_gpu             |    Set using GPU or not           |       true        |                \                 |
 |      epoch_num           |    Maximum training epoch number             |       500        |                \                 |
-|      log_smooth_window   |    Log queue length, the median value in the queue each time will be printed           |       20          |                \                 |
-|      print_batch_step    |    Set print log interval         |       10          |                \                 |
+|      log_window_size   |    Log queue length, the median value in the queue each time will be printed           |       20          |                \                 |
+|      log_batch_step    |    Set print log interval         |       10          |                \                 |
 |      save_model_dir      |    Set model save path        |  output/{算法名称}  |                \                 |
 |      save_epoch_step     |    Set model save interval        |       3           |                \                 |
 |      eval_batch_step     |    Set the model evaluation interval        | 2000 or [1000, 2000]        | running evaluation every 2000 iters or evaluation is run every 2000 iterations after the 1000th iteration   |
-|      cal_metric_during_train     |    Set whether to evaluate the metric during the training process. At this time, the metric of the model under the current batch is evaluated        |       true         |                \                 |
+|      metric_during_train     |    Set whether to evaluate the metric during the training process. At this time, the metric of the model under the current batch is evaluated        |       true         |                \                 |
 |      load_static_weights     |   Set whether the pre-training model is saved in static graph mode (currently only required by the detection algorithm)        |       true         |                \                 |
 |      pretrained_model    |    Set the path of the pre-trained model      |  ./pretrain_models/CRNN/best_accuracy  |  \          |
 |      checkpoints         |    set model parameter path            |       None        |   Used to load parameters after interruption to continue training|

@@ -339,9 +339,9 @@ The way to convert the form recognition model to the inference model is the same
 # -c Set the training algorithm yml configuration file
 # -o Set optional parameters
 # Global.pretrained_model parameter Set the training model address to be converted without adding the file suffix .pdmodel, .pdopt or .pdparams.
-# Global.save_inference_dir Set the address where the converted model will be saved.
+# Global.save_infer_dir Set the address where the converted model will be saved.
 
-python3 tools/export_model.py -c configs/table/SLANet.yml -o Global.pretrained_model=./pretrain_models/SLANet/best_accuracy  Global.save_inference_dir=./inference/SLANet/
+python3 tools/export_model.py -c configs/table/SLANet.yml -o Global.pretrained_model=./pretrain_models/SLANet/best_accuracy  Global.save_infer_dir=./inference/SLANet/
 ```
 
 After the conversion is successful, there are three files in the model save directory:

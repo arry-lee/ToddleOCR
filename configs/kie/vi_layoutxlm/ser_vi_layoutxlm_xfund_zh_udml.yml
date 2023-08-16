@@ -1,15 +1,15 @@
 Global:
   use_gpu: true
   epoch_num: 200
-  log_smooth_window: 10
-  print_batch_step: 10
+  log_window_size: 10
+  log_batch_step: 10
   save_model_dir: ./output/ser_vi_layoutxlm_xfund_zh_udml
   save_epoch_step: 2000
   eval_batch_step:
     - 0
     - 19
-  cal_metric_during_train: false
-  save_inference_dir: null
+  metric_during_train: false
+  save_infer_dir: null
   use_visualdl: false
   seed: 2022
   infer_img: ppstructure/docs/kie/input/zh_val_42.jpg

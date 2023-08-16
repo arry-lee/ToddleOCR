@@ -72,7 +72,7 @@ python3 tools/infer_rec.py -c configs/rec/rec_r50_fpn_srn.yml -o Global.pretrain
 首先将SRN文本识别训练过程中保存的模型，转换成inference model。（ [模型下载地址](https://paddleocr.bj.bcebos.com/dygraph_v2.0/en/rec_r50_vd_srn_train.tar) )，可以使用如下命令进行转换：
 
 ```
-python3 tools/export_model.py -c configs/rec/rec_r50_fpn_srn.yml -o Global.pretrained_model=./rec_r50_vd_srn_train/best_accuracy  Global.save_inference_dir=./inference/rec_srn
+python3 tools/export_model.py -c configs/rec/rec_r50_fpn_srn.yml -o Global.pretrained_model=./rec_r50_vd_srn_train/best_accuracy  Global.save_infer_dir=./inference/rec_srn
 ```
 
 SRN文本识别模型推理，可以执行如下命令：

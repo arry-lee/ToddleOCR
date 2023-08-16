@@ -82,7 +82,7 @@ python3 tools/infer_sr.py -c configs/sr/sr_telescope.yml -o Global.pretrained_mo
 
 首先将文本超分训练过程中保存的模型，转换成inference model。以 Text-Telescope 训练的[模型](https://paddleocr.bj.bcebos.com/contribution/Telescope_train.tar.gz) 为例，可以使用如下命令进行转换：
 ```shell
-python3 tools/export_model.py -c configs/sr/sr_telescope.yml -o Global.pretrained_model={path/to/weights}/best_accuracy Global.save_inference_dir=./inference/sr_out
+python3 tools/export_model.py -c configs/sr/sr_telescope.yml -o Global.pretrained_model={path/to/weights}/best_accuracy Global.save_infer_dir=./inference/sr_out
 ```
 Text-Telescope 文本超分模型推理，可以执行如下命令：
 ```

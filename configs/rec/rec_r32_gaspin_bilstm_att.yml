@@ -1,17 +1,17 @@
 Global:
   use_gpu: true
   epoch_num: 6
-  log_smooth_window: 50
-  print_batch_step: 50
+  log_window_size: 50
+  log_batch_step: 50
   save_model_dir: ./output/rec/rec_r32_gaspin_bilstm_att/
   save_epoch_step: 3
   eval_batch_step:
     - 0
     - 2000
-  cal_metric_during_train: true
+  metric_during_train: true
   pretrained_model: null
   checkpoints: null
-  save_inference_dir: null
+  save_infer_dir: null
   use_visualdl: false
   infer_img: doc/imgs_words_en/word_10.png
   character_dict_path: ./ppocr/utils/dict/spin_dict.txt

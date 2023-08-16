@@ -232,7 +232,7 @@ inference 模型（`paddle.jit.save`保存的模型）
 检测模型转inference 模型方式：
 ```shell
 # 加载配置文件`det_mv3_db.yml`，从`output/det_db`目录下加载`best_accuracy`模型，inference模型保存在`./output/det_db_inference`目录下
-python3 tools/export_model.py -c configs/det/det_mv3_db.yml -o Global.pretrained_model="./output/det_db/best_accuracy" Global.save_inference_dir="./output/det_db_inference/"
+python3 tools/export_model.py -c configs/det/det_mv3_db.yml -o Global.pretrained_model="./output/det_db/best_accuracy" Global.save_infer_dir="./output/det_db_inference/"
 ```
 
 DB检测模型inference 模型预测：

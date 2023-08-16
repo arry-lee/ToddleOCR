@@ -1,17 +1,17 @@
 Global:
   use_gpu: true
   epoch_num: 17
-  log_smooth_window: 20
-  print_batch_step: 100
+  log_window_size: 20
+  log_batch_step: 100
   save_model_dir: ./output/table_master/
   save_epoch_step: 17
   eval_batch_step:
     - 0
     - 6259
-  cal_metric_during_train: true
+  metric_during_train: true
   pretrained_model: null
   checkpoints: null
-  save_inference_dir: output/table_master/infer
+  save_infer_dir: output/table_master/infer
   use_visualdl: false
   infer_img: ppstructure/docs/table/table.jpg
   save_res_path: ./output/table_master

@@ -72,7 +72,7 @@ python3 tools/infer_rec.py -c configs/rec/rec_mtb_nrtr.yml -o Global.infer_img='
 First, the model saved during the NRTR text recognition training process is converted into an inference model. ( [Model download link](https://paddleocr.bj.bcebos.com/dygraph_v2.0/en/rec_mtb_nrtr_train.tar)) ), you can use the following command to convert:
 
 ```
-python3 tools/export_model.py -c configs/rec/rec_mtb_nrtr.yml -o Global.pretrained_model=./rec_mtb_nrtr_train/best_accuracy  Global.save_inference_dir=./inference/rec_mtb_nrtr
+python3 tools/export_model.py -c configs/rec/rec_mtb_nrtr.yml -o Global.pretrained_model=./rec_mtb_nrtr_train/best_accuracy  Global.save_infer_dir=./inference/rec_mtb_nrtr
 ```
 
 **Note:**

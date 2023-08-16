@@ -83,7 +83,7 @@ python3 tools/infer_rec.py -c ./rec_svtr_tiny_none_ctc_en_train/rec_svtr_tiny_6l
 First, the model saved during the SVTR text recognition training process is converted into an inference model. ( [Model download link](https://paddleocr.bj.bcebos.com/PP-OCRv3/chinese/rec_svtr_tiny_none_ctc_en_train.tar) ), you can use the following command to convert:
 
 ```
-python3 tools/export_model.py -c configs/rec/rec_svtrnet.yml -o Global.pretrained_model=./rec_svtr_tiny_none_ctc_en_train/best_accuracy  Global.save_inference_dir=./inference/rec_svtr_tiny_stn_en
+python3 tools/export_model.py -c configs/rec/rec_svtrnet.yml -o Global.pretrained_model=./rec_svtr_tiny_none_ctc_en_train/best_accuracy  Global.save_infer_dir=./inference/rec_svtr_tiny_stn_en
 ```
 
 **Note:**

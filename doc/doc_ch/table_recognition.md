@@ -332,7 +332,7 @@ inference 模型（`paddle.jit.save`保存的模型）
 # Global.pretrained_model 参数设置待转换的训练模型地址，不用添加文件后缀 .pdmodel，.pdopt或.pdparams。
 # Global.save_inference_dir参数设置转换的模型将保存的地址。
 
-python3 tools/export_model.py -c configs/table/SLANet.yml -o Global.pretrained_model=./pretrain_models/SLANet/best_accuracy  Global.save_inference_dir=./inference/SLANet/
+python3 tools/export_model.py -c configs/table/SLANet.yml -o Global.pretrained_model=./pretrain_models/SLANet/best_accuracy  Global.save_infer_dir=./inference/SLANet/
 ```
 
 转换成功后，在目录下有三个文件：

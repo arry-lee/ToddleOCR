@@ -59,7 +59,7 @@
 ``` bash
 wget https://paddleocr.bj.bcebos.com/pplayout/ser_LayoutXLM_xfun_zh.tar
 tar -xf ser_LayoutXLM_xfun_zh.tar
-python3 tools/export_model.py -c configs/kie/layoutlm_series/ser_layoutxlm_xfund_zh.yml -o Architecture.Backbone.checkpoints=./ser_LayoutXLM_xfun_zh Global.save_inference_dir=./inference/ser_layoutxlm_infer
+python3 tools/export_model.py -c configs/kie/layoutlm_series/ser_layoutxlm_xfund_zh.yml -o Architecture.Backbone.checkpoints=./ser_LayoutXLM_xfun_zh Global.save_infer_dir=./inference/ser_layoutxlm_infer
 ```
 
 LayoutXLM模型基于SER任务进行推理，可以执行如下命令：
@@ -87,7 +87,7 @@ SER可视化结果默认保存到`./output`文件夹里面，结果示例如下�
 ``` bash
 wget https://paddleocr.bj.bcebos.com/pplayout/re_LayoutXLM_xfun_zh.tar
 tar -xf re_LayoutXLM_xfun_zh.tar
-python3 tools/export_model.py -c configs/kie/layoutlm_series/re_layoutxlm_xfund_zh.yml -o Architecture.Backbone.checkpoints=./re_LayoutXLM_xfun_zh Global.save_inference_dir=./inference/ser_layoutxlm_infer
+python3 tools/export_model.py -c configs/kie/layoutlm_series/re_layoutxlm_xfund_zh.yml -o Architecture.Backbone.checkpoints=./re_LayoutXLM_xfun_zh Global.save_infer_dir=./inference/ser_layoutxlm_infer
 ```
 
 LayoutXLM模型基于RE任务进行推理，可以执行如下命令：

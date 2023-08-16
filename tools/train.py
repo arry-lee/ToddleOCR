@@ -371,11 +371,11 @@ class Pipeline:
         except AssertionError:
             pre_best_model_dict = {}
         # 下面开始训练
-        cal_metric_during_train = self.global_config.get('cal_metric_during_train', False)
+        metric_during_train = self.global_config.get('metric_during_train', False)
         calc_epoch_interval = self.global_config.get('calc_epoch_interval', 1)
-        log_smooth_window = self.global_config['log_smooth_window']
+        log_window_size = self.global_config['log_window_size']
         epoch_num = self.global_config['epoch_num']
-        print_batch_step = self.global_config['print_batch_step']
+        log_batch_step = self.global_config['log_batch_step']
         global_step = pre_best_model_dict.get('global_step', 0)
 
         eval_batch_step = self.global_config['eval_batch_step']
@@ -401,7 +401,7 @@ class Pipeline:
         best_model_dict = {main_indicator: 0}
         best_model_dict.update(pre_best_model_dict)  # 之前最好的指标
 
-        train_stats = TrainingStats(log_smooth_window, ['lr'])
+        train_stats = TrainingStats(log_window_size, ['lr'])
 
         model.train()
 
@@ -466,7 +466,7 @@ class Pipeline:
                 optimizer.zero_grad()
 
                 # 每多少批次计算精度
-                if cal_metric_during_train and epoch % calc_epoch_interval == 0:  # only rec and cls need
+                if metric_during_train and epoch % calc_epoch_interval == 0:  # only rec and cls need
                     batch = [item.numpy() for item in batch]
                     if model_type in ['kie', 'sr']:
                         metric_(predict, batch)
@@ -508,7 +508,7 @@ class Pipeline:
                     log_writer.log_metrics(metrics=train_stats.get(), prefix="TRAIN", step=global_step)
 
                 if self.is_rank0() and (
-                        (global_step > 0 and global_step % print_batch_step == 0) or (
+                        (global_step > 0 and global_step % log_batch_step == 0) or (
                         idx >= len(train_dataloader) - 1)):
                     logs = train_stats.log()
                     # eta_sec表示预计剩余时间（以秒为单位）
@@ -520,9 +520,9 @@ class Pipeline:
                            '{:.5f} s, avg_batch_cost: {:.5f} s, avg_samples: {}, ' \
                            'ips: {:.5f} samples/s, eta: {}'.format(
                         epoch, epoch_num, global_step, logs,
-                        train_reader_cost / print_batch_step,
-                        train_batch_cost / print_batch_step,
-                        total_samples / print_batch_step,
+                        train_reader_cost / log_batch_step,
+                        train_batch_cost / log_batch_step,
+                        total_samples / log_batch_step,
                         total_samples / train_batch_cost, eta_sec_format)
                     logger.info(strs)
 
