@@ -5,7 +5,7 @@ __all__ = ['CTCHead']
 class CTCHead(nn.Module):
 
     def __init__(self, in_channels, out_channels, fc_decay=0.0004, mid_channels=None, return_feats=False, **kwargs):
-        super(CTCHead, self).__init__()
+        super().__init__()
         if mid_channels is None:
             self.fc = nn.Linear(in_channels, out_channels, bias=True)
         else:

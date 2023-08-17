@@ -77,7 +77,7 @@ def get_micronet_config(mode):
 
 class MaxGroupPooling(nn.Module):
     def __init__(self, channel_per_group=2):
-        super(MaxGroupPooling, self).__init__()
+        super().__init__()
         self.channel_per_group = channel_per_group
 
     def forward(self, x):
@@ -94,7 +94,7 @@ class MaxGroupPooling(nn.Module):
 
 class SpatialSepConvSF(nn.Module):
     def __init__(self, inp, oups, kernel_size, stride):
-        super(SpatialSepConvSF, self).__init__()
+        super().__init__()
 
         oup1, oup2 = oups
         self.conv = nn.Sequential(
@@ -112,7 +112,7 @@ class SpatialSepConvSF(nn.Module):
 
 class ChannelShuffle(nn.Module):
     def __init__(self, groups):
-        super(ChannelShuffle, self).__init__()
+        super().__init__()
         self.groups = groups
 
     def forward(self, x):
@@ -131,7 +131,7 @@ class ChannelShuffle(nn.Module):
 
 class StemLayer(nn.Module):
     def __init__(self, inp, oup, stride, groups=(4, 4)):
-        super(StemLayer, self).__init__()
+        super().__init__()
 
         g1, g2 = groups
         self.stem = nn.Sequential(
@@ -145,7 +145,7 @@ class StemLayer(nn.Module):
 
 class DepthSpatialSepConv(nn.Module):
     def __init__(self, inp, expand, kernel_size, stride):
-        super(DepthSpatialSepConv, self).__init__()
+        super().__init__()
 
         exp1, exp2 = expand
 
@@ -166,7 +166,7 @@ class DepthSpatialSepConv(nn.Module):
 
 class GroupConv(nn.Module):
     def __init__(self, inp, oup, groups=2):
-        super(GroupConv, self).__init__()
+        super().__init__()
         self.inp = inp
         self.oup = oup
         self.groups = groups
@@ -179,7 +179,7 @@ class GroupConv(nn.Module):
 
 class DepthConv(nn.Module):
     def __init__(self, inp, oup, kernel_size, stride):
-        super(DepthConv, self).__init__()
+        super().__init__()
         self.conv = nn.Sequential(
             nn.Conv2d(inp, oup, kernel_size, stride, kernel_size // 2, bias=False, groups=inp), nn.BatchNorm2d(oup)
         )
@@ -203,7 +203,7 @@ class DYShiftMax(nn.Module):
             g=None,
             expansion=False,
     ):
-        super(DYShiftMax, self).__init__()
+        super().__init__()
         self.oup = oup
         self.act_max = act_max * 2
         self.act_relu = act_relu
@@ -294,7 +294,7 @@ class DYMicroBlock(nn.Module):
             shuffle=False,
             activation_cfg=None,
     ):
-        super(DYMicroBlock, self).__init__()
+        super().__init__()
 
         self.identity = stride == 1 and inp == oup
 
@@ -437,7 +437,7 @@ class MicroNet(nn.Module):
     """
 
     def __init__(self, mode="M3", **kwargs):
-        super(MicroNet, self).__init__()
+        super().__init__()
 
         self.cfgs = get_micronet_config(mode)
 

@@ -4,7 +4,7 @@ from torch import nn
 
 class PRENLoss(nn.Module):
     def __init__(self, **kwargs):
-        super(PRENLoss, self).__init__()
+        super().__init__()
         # note: 0 is padding idx
         self.loss_func = nn.CrossEntropyLoss(ignore_index=0)
 

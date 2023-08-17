@@ -5,7 +5,7 @@ import torch.nn.functional as F
 __all__ = ['TableFPN']
 class TableFPN(nn.Module):
     def __init__(self, in_channels, out_channels, **kwargs):
-        super(TableFPN, self).__init__()
+        super().__init__()
         self.out_channels = 512
         self.in2_conv = nn.Conv2d(in_channels=in_channels[0], out_channels=self.out_channels, kernel_size=1, bias=False)
         self.in3_conv = nn.Conv2d(

@@ -27,7 +27,7 @@ class PSELoss(nn.Module):
     """Progressive Scale Expansion Network https://arxiv.org/abs/1806.02559"""
     def __init__(self, alpha, ohem_ratio=3, kernel_sample_mask="pred", reduction="sum", eps=1e-6, **kwargs):
         """Implement PSE Loss."""
-        super(PSELoss, self).__init__()
+        super().__init__()
         assert reduction in ["sum", "mean", "none"]
         self.alpha = alpha
         self.ohem_ratio = ohem_ratio

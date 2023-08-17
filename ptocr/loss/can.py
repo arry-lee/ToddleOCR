@@ -23,7 +23,7 @@ class CANLoss(nn.Module):
     """
 
     def __init__(self):
-        super(CANLoss, self).__init__()
+        super().__init__()
 
         self.use_label_mask = False
         self.out_channel = 111

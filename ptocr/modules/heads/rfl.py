@@ -9,7 +9,7 @@ __all__ = ['RFLHead']
 class CNTHead(nn.Module):
 
     def __init__(self, embed_size=512, encode_length=26, out_channels=38, **kwargs):
-        super(CNTHead, self).__init__()
+        super().__init__()
         self.out_channels = out_channels
         self.Wv_fusion = nn.Linear(embed_size, embed_size, bias=False)
         self.Prediction_visual = nn.Linear(encode_length * embed_size, self.out_channels)
@@ -26,7 +26,7 @@ class CNTHead(nn.Module):
 class RFLHead(nn.Module):
 
     def __init__(self, in_channels=512, hidden_size=256, batch_max_legnth=25, out_channels=38, use_cnt=True, use_seq=True, **kwargs):
-        super(RFLHead, self).__init__()
+        super().__init__()
         assert use_cnt or use_seq
         self.use_cnt = use_cnt
         self.use_seq = use_seq

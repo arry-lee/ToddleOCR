@@ -28,7 +28,7 @@ def conv3x3_block(in_channels, out_channels, stride=1):
 
 class STN(nn.Module):
     def __init__(self, in_channels, num_ctrlpoints, activation="none"):
-        super(STN, self).__init__()
+        super().__init__()
         self.in_channels = in_channels
         self.num_ctrlpoints = num_ctrlpoints
         self.activation = activation
@@ -85,7 +85,7 @@ class STN(nn.Module):
 
 class STN_ON(nn.Module):
     def __init__(self, in_channels, tps_inputsize, tps_outputsize, num_control_points, tps_margins, stn_activation):
-        super(STN_ON, self).__init__()
+        super().__init__()
         self.tps = TPSSpatialTransformer(
             output_image_size=tuple(tps_outputsize), num_control_points=num_control_points, margins=tuple(tps_margins)
         )

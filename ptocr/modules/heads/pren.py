@@ -5,7 +5,7 @@ __all__ = ['PRENHead']
 
 class PRENHead(nn.Module):
     def __init__(self, in_channels, out_channels, **kwargs):
-        super(PRENHead, self).__init__()
+        super().__init__()
         self.linear = nn.Linear(in_channels, out_channels)
 
     def forward(self, x, targets=None):

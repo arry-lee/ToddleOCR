@@ -32,7 +32,7 @@ class TSRN(nn.Module):
         infer_mode=False,
         **kwargs
     ):
-        super(TSRN, self).__init__()
+        super().__init__()
         in_planes = 3
         if mask:
             in_planes = 4
@@ -120,7 +120,7 @@ class TSRN(nn.Module):
 
 class RecurrentResidualBlock(nn.Module):
     def __init__(self, channels):
-        super(RecurrentResidualBlock, self).__init__()
+        super().__init__()
         self.conv1 = nn.Conv2d(channels, channels, kernel_size=3, padding=1)
         self.bn1 = nn.BatchNorm2d(channels)
         self.gru1 = GruBlock(channels, channels)
@@ -142,7 +142,7 @@ class RecurrentResidualBlock(nn.Module):
 
 class UpsampleBLock(nn.Module):
     def __init__(self, in_channels, up_scale):
-        super(UpsampleBLock, self).__init__()
+        super().__init__()
         self.conv = nn.Conv2d(in_channels, in_channels * up_scale**2, kernel_size=3, padding=1)
 
         self.pixel_shuffle = nn.PixelShuffle(up_scale)
@@ -159,7 +159,7 @@ class mish(nn.Module):
     def __init__(
         self,
     ):
-        super(mish, self).__init__()
+        super().__init__()
         self.activated = True
 
     def forward(self, x):
@@ -170,7 +170,7 @@ class mish(nn.Module):
 
 class GruBlock(nn.Module):
     def __init__(self, in_channels, out_channels):
-        super(GruBlock, self).__init__()
+        super().__init__()
         assert out_channels % 2 == 0
         self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=1, padding=0)
         self.gru = nn.GRU(out_channels, out_channels // 2, direction="bidirectional")

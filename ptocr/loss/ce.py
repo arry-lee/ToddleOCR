@@ -5,7 +5,7 @@ import torch.nn.functional as F
 
 class CELoss(nn.Module):
     def __init__(self, smoothing=False, with_all=False, ignore_index=-1, **kwargs):
-        super(CELoss, self).__init__()
+        super().__init__()
         if ignore_index >= 0:
             self.loss_func = nn.CrossEntropyLoss(reduction="mean", ignore_index=ignore_index)
         else:

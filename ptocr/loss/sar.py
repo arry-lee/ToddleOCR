@@ -4,7 +4,7 @@ from torch import nn
 
 class SARLoss(nn.Module):
     def __init__(self, **kwargs):
-        super(SARLoss, self).__init__()
+        super().__init__()
         ignore_index = kwargs.get("ignore_index", 92)  # 6626
         self.loss_func = nn.CrossEntropyLoss(ignore_index=ignore_index)
 

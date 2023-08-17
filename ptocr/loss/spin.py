@@ -8,7 +8,7 @@ https://github.com/hikopensource/DAVAR-Lab-OCR
 
 class SPINAttentionLoss(nn.Module):
     def __init__(self, reduction="mean", ignore_index=-100, **kwargs):
-        super(SPINAttentionLoss, self).__init__()
+        super().__init__()
         self.loss_func = nn.CrossEntropyLoss(reduction=reduction, ignore_index=ignore_index)
 
     def forward(self, predicts, batch):

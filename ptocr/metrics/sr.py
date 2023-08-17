@@ -12,7 +12,7 @@ __all__ = ['SRMetric']
 class SSIM(nn.Module):
 
     def __init__(self, window_size=11, size_average=True):
-        super(SSIM, self).__init__()
+        super().__init__()
         self.window_size = window_size
         self.size_average = size_average
         self.channel = 1

@@ -63,7 +63,7 @@ class ConvBNLayer(nn.Module):
 
 class BottleneckBlock(nn.Module):
     def __init__(self, in_channels, out_channels, stride, shortcut=True, if_first=False, name=None):
-        super(BottleneckBlock, self).__init__()
+        super().__init__()
 
         self.conv0 = ConvBNLayer(
             in_channels=in_channels, out_channels=out_channels, kernel_size=1, act="relu", name=name + "_branch2a"
@@ -108,7 +108,7 @@ class BottleneckBlock(nn.Module):
 
 class BasicBlock(nn.Module):
     def __init__(self, in_channels, out_channels, stride, shortcut=True, if_first=False, name=None):
-        super(BasicBlock, self).__init__()
+        super().__init__()
         self.stride = stride
         self.conv0 = ConvBNLayer(
             in_channels=in_channels,
@@ -149,7 +149,7 @@ class BasicBlock(nn.Module):
 
 class ResNet(nn.Module):
     def __init__(self, in_channels=3, layers=50, **kwargs):
-        super(ResNet, self).__init__()
+        super().__init__()
 
         self.layers = layers
         supported_layers = [18, 34, 50, 101, 152, 200]

@@ -57,7 +57,7 @@ class SingleLayer(nn.Module):
 
 class Transition(nn.Module):
     def __init__(self, in_channels, out_channels, use_dropout):
-        super(Transition, self).__init__()
+        super().__init__()
         self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=1, bias=False)
         self.bn1 = nn.BatchNorm2d(out_channels)
         self.use_dropout = use_dropout
@@ -74,7 +74,7 @@ class Transition(nn.Module):
 
 class DenseNet(nn.Module):
     def __init__(self, grow_rate, reduction, bottleneck, use_dropout, input_channel, **kwargs):
-        super(DenseNet, self).__init__()
+        super().__init__()
 
         nDenseBlocks = 16
         in_channels = 2 * grow_rate

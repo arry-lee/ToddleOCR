@@ -72,7 +72,7 @@ class BasicBlock(nn.Module):
             norm_type (str): type of the normalization
             **kwargs (None): backup parameter
         """
-        super(BasicBlock, self).__init__()
+        super().__init__()
         self.conv1 = self._conv3x3(inplanes, planes)
         self.bn1 = nn.BatchNorm2d(planes)
         self.conv2 = self._conv3x3(planes, planes)
@@ -125,7 +125,7 @@ class ResNet(nn.Module):
             block (type): convolution block
             layers (list): layers of the block
         """
-        super(ResNet, self).__init__()
+        super().__init__()
 
         self.output_channel_block = [int(output_channel / 4), int(output_channel / 2), output_channel, output_channel]
 

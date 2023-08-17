@@ -221,7 +221,7 @@ class BalanceLoss(nn.Module):
             return_origin (bool): whether return unbalanced loss or not, default is False.
             eps (float): default is 1e-6.
         """
-        super(BalanceLoss, self).__init__()
+        super().__init__()
         self.balance_loss = balance_loss
         self.main_loss_type = main_loss_type
         self.negative_ratio = negative_ratio

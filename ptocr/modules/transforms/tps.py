@@ -16,7 +16,7 @@ import numpy as np
 
 class ConvBNLayer(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, stride=1, groups=1, act=None, name=None):
-        super(ConvBNLayer, self).__init__()
+        super().__init__()
         self.conv = nn.Conv2d(
             in_channels=in_channels,
             out_channels=out_channels,
@@ -52,7 +52,7 @@ class ConvBNLayer(nn.Module):
 
 class LocalizationNetwork(nn.Module):
     def __init__(self, in_channels, num_fiducial, loc_lr, model_name):
-        super(LocalizationNetwork, self).__init__()
+        super().__init__()
         self.F = num_fiducial
         F = num_fiducial
         if model_name == "large":
@@ -123,7 +123,7 @@ class LocalizationNetwork(nn.Module):
 
 class GridGenerator(nn.Module):
     def __init__(self, in_channels, num_fiducial):
-        super(GridGenerator, self).__init__()
+        super().__init__()
         self.eps = 1e-6
         self.F = num_fiducial
 
@@ -231,7 +231,7 @@ class GridGenerator(nn.Module):
 
 class TPS(nn.Module):
     def __init__(self, in_channels, num_fiducial, loc_lr, model_name):
-        super(TPS, self).__init__()
+        super().__init__()
         self.loc_net = LocalizationNetwork(in_channels, num_fiducial, loc_lr, model_name)
         self.grid_generator = GridGenerator(self.loc_net.out_channels, num_fiducial)
         self.out_channels = in_channels

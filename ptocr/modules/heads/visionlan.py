@@ -13,7 +13,7 @@ import torch.nn.functional as F
 
 class PositionalEncoding(nn.Module):
     def __init__(self, d_hid, n_position=200):
-        super(PositionalEncoding, self).__init__()
+        super().__init__()
         self.register_buffer("pos_table", self._get_sinusoid_encoding_table(n_position, d_hid))
 
     def _get_sinusoid_encoding_table(self, n_position, d_hid):
@@ -37,7 +37,7 @@ class ScaledDotProductAttention(nn.Module):
     "Scaled Dot-Product Attention"
 
     def __init__(self, temperature, attn_dropout=0.1):
-        super(ScaledDotProductAttention, self).__init__()
+        super().__init__()
         self.temperature = temperature
         self.dropout = nn.Dropout(attn_dropout)
         self.softmax = nn.Softmax(dim=2)
@@ -66,7 +66,7 @@ class MultiHeadAttention(nn.Module):
     "Multi-Head Attention module"
 
     def __init__(self, n_head, d_model, d_k, d_v, dropout=0.1):
-        super(MultiHeadAttention, self).__init__()
+        super().__init__()
         self.n_head = n_head
         self.d_k = d_k
         self.d_v = d_v
@@ -115,7 +115,7 @@ class MultiHeadAttention(nn.Module):
 
 class PositionwiseFeedForward(nn.Module):
     def __init__(self, d_in, d_hid, dropout=0.1):
-        super(PositionwiseFeedForward, self).__init__()
+        super().__init__()
         self.w_1 = nn.Conv1d(d_in, d_hid, 1)  # position-wise
         self.w_2 = nn.Conv1d(d_hid, d_in, 1)  # position-wise
         self.layer_norm = nn.LayerNorm(d_in)
@@ -135,7 +135,7 @@ class EncoderLayer(nn.Module):
     """Compose with two layers"""
 
     def __init__(self, d_model, d_inner, n_head, d_k, d_v, dropout=0.1):
-        super(EncoderLayer, self).__init__()
+        super().__init__()
         self.slf_attn = MultiHeadAttention(n_head, d_model, d_k, d_v, dropout=dropout)
         self.pos_ffn = PositionwiseFeedForward(d_model, d_inner, dropout=dropout)
 
@@ -158,7 +158,7 @@ class Transformer_Encoder(nn.Module):
         dropout=0.1,
         n_position=256,
     ):
-        super(Transformer_Encoder, self).__init__()
+        super().__init__()
         self.position_enc = PositionalEncoding(d_word_vec, n_position=n_position)
         self.dropout = nn.Dropout(p=dropout)
         self.layer_stack = nn.ModuleList(
@@ -176,7 +176,7 @@ class Transformer_Encoder(nn.Module):
 
 class PP_layer(nn.Module):
     def __init__(self, n_dim=512, N_max_character=25, n_position=256):
-        super(PP_layer, self).__init__()
+        super().__init__()
         self.character_len = N_max_character
         self.f0_embedding = nn.Embedding(N_max_character, n_dim)
         self.w0 = nn.Linear(N_max_character, n_position)
@@ -203,7 +203,7 @@ class PP_layer(nn.Module):
 
 class Prediction(nn.Module):
     def __init__(self, n_dim=512, n_position=256, N_max_character=25, n_class=37):
-        super(Prediction, self).__init__()
+        super().__init__()
         self.pp = PP_layer(n_dim=n_dim, N_max_character=N_max_character, n_position=n_position)
         self.pp_share = PP_layer(n_dim=n_dim, N_max_character=N_max_character, n_position=n_position)
         self.w_vrm = nn.Linear(n_dim, n_class)  # output layer
@@ -235,7 +235,7 @@ class MLM(nn.Module):
     "Architecture of MLM"
 
     def __init__(self, n_dim=512, n_position=256, max_text_length=25):
-        super(MLM, self).__init__()
+        super().__init__()
         self.MLM_SequenceModeling_mask = Transformer_Encoder(n_layers=2, n_position=n_position)
         self.MLM_SequenceModeling_WCL = Transformer_Encoder(n_layers=1, n_position=n_position)
         self.pos_embedding = nn.Embedding(max_text_length, n_dim)
@@ -293,7 +293,7 @@ class MLM_VRM(nn.Module):
     """
 
     def __init__(self, n_layers=3, n_position=256, n_dim=512, max_text_length=25, nclass=37):
-        super(MLM_VRM, self).__init__()
+        super().__init__()
         self.MLM = MLM(n_dim=n_dim, n_position=n_position, max_text_length=max_text_length)
         self.SequenceModeling = Transformer_Encoder(n_layers=n_layers, n_position=n_position)
         self.Prediction = Prediction(
@@ -369,7 +369,7 @@ class VLHead(nn.Module):
         max_text_length=25,
         training_step="LA",
     ):
-        super(VLHead, self).__init__()
+        super().__init__()
         self.MLM_VRM = MLM_VRM(
             n_layers=n_layers,
             n_position=n_position,

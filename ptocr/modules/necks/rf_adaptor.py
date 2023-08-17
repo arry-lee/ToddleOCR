@@ -9,7 +9,7 @@ __all__ = ['RFAdaptor']
 
 class S2VAdaptor(nn.Module):
     def __init__(self, in_channels=512):
-        super(S2VAdaptor, self).__init__()
+        super().__init__()
         self.in_channels = in_channels
         self.channel_inter = nn.Linear(self.in_channels, self.in_channels, bias=False)
         self.channel_bn = nn.BatchNorm1d(self.in_channels)
@@ -38,7 +38,7 @@ class S2VAdaptor(nn.Module):
 
 class V2SAdaptor(nn.Module):
     def __init__(self, in_channels=512, return_mask=False):
-        super(V2SAdaptor, self).__init__()
+        super().__init__()
         self.in_channels = in_channels
         self.return_mask = return_mask
         self.channel_inter = nn.Linear(self.in_channels, self.in_channels, bias=False)
@@ -59,7 +59,7 @@ class V2SAdaptor(nn.Module):
 
 class RFAdaptor(nn.Module):
     def __init__(self, in_channels=512, use_v2s=True, use_s2v=True, **kwargs):
-        super(RFAdaptor, self).__init__()
+        super().__init__()
         if use_v2s is True:
             self.neck_v2s = V2SAdaptor(in_channels=in_channels, **kwargs)
         else:

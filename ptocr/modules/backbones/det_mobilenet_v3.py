@@ -213,7 +213,3 @@ class SqueezeExcitation(nn.Module):
         outputs = self.conv2(outputs)
         outputs = self.hardsigmoid(outputs, slope=0.2, offset=0.5)
         return inputs * outputs
-
-if __name__ == '__main__':
-    mb = MobileNetV3()
-    print(mb)

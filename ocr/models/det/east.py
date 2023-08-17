@@ -575,7 +575,7 @@ class EASTPostProcess:
         return dt_boxes_list
 class DiceLoss(nn.Module):
     def __init__(self, eps=1e-6):
-        super(DiceLoss, self).__init__()
+        super().__init__()
         self.eps = eps
 
     def forward(self, pred, gt, mask, weights=None):
@@ -601,7 +601,7 @@ class EASTLoss(nn.Module):
     def __init__(self,
                  eps=1e-6,
                  **kwargs):
-        super(EASTLoss, self).__init__()
+        super().__init__()
         self.dice_loss = DiceLoss(eps=eps)
 
     def forward(self, predicts, labels):

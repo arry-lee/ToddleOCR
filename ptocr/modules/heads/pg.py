@@ -7,7 +7,7 @@ __all__ = ['PGHead']
 
 class ConvBNLayer(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, stride, padding, groups=1, act=None, name=None):
-        super(ConvBNLayer, self).__init__()
+        super().__init__()
         self.act = act
         self.conv = nn.Conv2d(
             in_channels=in_channels,
@@ -39,7 +39,7 @@ class PGHead(nn.Module):
     """ """
 
     def __init__(self, in_channels, character_dict_path="ppocr/utils/ic15_dict.txt", **kwargs):
-        super(PGHead, self).__init__()
+        super().__init__()
 
         # get character_length
         with open(character_dict_path, "rb") as fin:

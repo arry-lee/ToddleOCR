@@ -323,7 +323,7 @@ class SARHead(nn.Module):
         pred_concat=True,
         **kwargs
     ):
-        super(SARHead, self).__init__()
+        super().__init__()
 
         # encoder module
         self.encoder = SAREncoder(

@@ -5,7 +5,7 @@ class ClsPostProcess:
     """Convert between text-label and text-index"""
 
     def __init__(self, label_list=None, key=None, **kwargs):
-        super(ClsPostProcess, self).__init__()
+        super().__init__()
         self.label_list = label_list
         self.key = key
 

@@ -24,7 +24,7 @@ class SP_TransformerNetwork(nn.Module):
             nc (int): number of input channels (usually in 1 or 3)
             default_type (int): the complexity of transformation intensities (by default set to 6 as the paper)
         """
-        super(SP_TransformerNetwork, self).__init__()
+        super().__init__()
         self.power_list = self.cal_K(default_type)
         self.sigmoid = nn.Sigmoid()
         self.bn = nn.InstanceNorm2d(nc)
@@ -105,7 +105,7 @@ class GA_SPIN_Transformer(nn.Module):
             stn (bool): whther to use stn.
 
         """
-        super(GA_SPIN_Transformer, self).__init__()
+        super().__init__()
         self.nc = in_channels
         self.spt = True
         self.offsets = offsets

@@ -5,7 +5,7 @@ import torch.nn.functional as F
 __all__ =['EASTFPN']
 class ConvBNLayer(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, stride, padding, groups=1, act=None, name=None):
-        super(ConvBNLayer, self).__init__()
+        super().__init__()
         self.conv = nn.Conv2d(
             in_channels=in_channels,
             out_channels=out_channels,
@@ -33,7 +33,7 @@ class ConvBNLayer(nn.Module):
 
 class DeConvBNLayer(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, stride, padding, groups=1, act=None, name=None):
-        super(DeConvBNLayer, self).__init__()
+        super().__init__()
         self.act = act
         self.deconv = nn.ConvTranspose2d(
             in_channels=in_channels,
@@ -62,7 +62,7 @@ class DeConvBNLayer(nn.Module):
 
 class EASTFPN(nn.Module):
     def __init__(self, in_channels, model_name, **kwargs):
-        super(EASTFPN, self).__init__()
+        super().__init__()
         self.model_name = model_name
         if self.model_name == "large":
             self.out_channels = 128

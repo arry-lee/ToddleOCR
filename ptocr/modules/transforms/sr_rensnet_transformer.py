@@ -48,7 +48,7 @@ def attention(query, key, value, mask=None, dropout=None, attention_map=None):
 
 class MultiHeadedAttention(nn.Module):
     def __init__(self, h, d_model, dropout=0.1, compress_attention=False):
-        super(MultiHeadedAttention, self).__init__()
+        super().__init__()
         assert d_model % h == 0
         self.d_k = d_model // h
         self.h = h
@@ -74,7 +74,7 @@ class MultiHeadedAttention(nn.Module):
 
 class ResNet(nn.Module):
     def __init__(self, num_in, block, layers):
-        super(ResNet, self).__init__()
+        super().__init__()
 
         self.conv1 = nn.Conv2d(num_in, 64, kernel_size=3, stride=1, padding=1)
         self.bn1 = nn.BatchNorm2d(64, track_running_stats=True)
@@ -160,7 +160,7 @@ class ResNet(nn.Module):
 
 class Bottleneck(nn.Module):
     def __init__(self, input_dim):
-        super(Bottleneck, self).__init__()
+        super().__init__()
         self.conv1 = nn.Conv2d(input_dim, input_dim, 1)
         self.bn1 = nn.BatchNorm2d(input_dim, track_running_stats=True)
         self.relu = nn.ReLU()
@@ -188,7 +188,7 @@ class PositionalEncoding(nn.Module):
     "Implement the PE function."
 
     def __init__(self, dropout, dim, max_len=5000):
-        super(PositionalEncoding, self).__init__()
+        super().__init__()
         self.dropout = nn.Dropout(p=dropout)
 
         pe = torch.zeros([max_len, dim])
@@ -208,7 +208,7 @@ class PositionwiseFeedForward(nn.Module):
     "Implements FFN equation."
 
     def __init__(self, d_model, d_ff, dropout=0.1):
-        super(PositionwiseFeedForward, self).__init__()
+        super().__init__()
         self.w_1 = nn.Linear(d_model, d_ff)
         self.w_2 = nn.Linear(d_ff, d_model)
         self.dropout = nn.Dropout(dropout)
@@ -221,7 +221,7 @@ class Generator(nn.Module):
     "Define standard linear + softmax generation step."
 
     def __init__(self, d_model, vocab):
-        super(Generator, self).__init__()
+        super().__init__()
         self.proj = nn.Linear(d_model, vocab)
         self.relu = nn.ReLU()
 
@@ -232,7 +232,7 @@ class Generator(nn.Module):
 
 class Embeddings(nn.Module):
     def __init__(self, d_model, vocab):
-        super(Embeddings, self).__init__()
+        super().__init__()
         self.lut = nn.Embedding(vocab, d_model)
         self.d_model = d_model
 
@@ -246,7 +246,7 @@ class Embeddings(nn.Module):
 
 class Decoder(nn.Module):
     def __init__(self):
-        super(Decoder, self).__init__()
+        super().__init__()
 
         self.mask_multihead = MultiHeadedAttention(h=16, d_model=1024, dropout=0.1)
         self.mul_layernorm1 = nn.LayerNorm(1024)
@@ -273,7 +273,7 @@ class Decoder(nn.Module):
 
 class BasicBlock(nn.Module):
     def __init__(self, inplanes, planes, downsample):
-        super(BasicBlock, self).__init__()
+        super().__init__()
         self.conv1 = nn.Conv2d(inplanes, planes, kernel_size=3, stride=1, padding=1)
         self.bn1 = nn.BatchNorm2d(planes, track_running_stats=True)
         self.relu = nn.ReLU()
@@ -302,7 +302,7 @@ class BasicBlock(nn.Module):
 
 class Encoder(nn.Module):
     def __init__(self):
-        super(Encoder, self).__init__()
+        super().__init__()
         self.cnn = ResNet(num_in=1, block=BasicBlock, layers=[1, 2, 5, 3])
 
     def forward(self, input):
@@ -312,7 +312,7 @@ class Encoder(nn.Module):
 
 class Transformer(nn.Module):
     def __init__(self, in_channels=1, alphabet="0123456789"):
-        super(Transformer, self).__init__()
+        super().__init__()
         self.alphabet = alphabet
         word_n_class = self.get_alphabet_len()
         self.embedding_word_with_upperword = Embeddings(512, word_n_class)

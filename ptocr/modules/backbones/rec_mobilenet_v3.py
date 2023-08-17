@@ -16,7 +16,7 @@ class MobileNetV3(nn.Module):
             disable_se=False,
             **kwargs
     ):
-        super(MobileNetV3, self).__init__()
+        super().__init__()
         self.disable_se = disable_se
         if small_stride is None:
             small_stride = [2, 2, 2, 2]

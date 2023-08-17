@@ -24,7 +24,7 @@ class WrapEncoderForFeature(nn.Module):
             weight_sharing,
             bos_idx=0,
     ):
-        super(WrapEncoderForFeature, self).__init__()
+        super().__init__()
 
         self.prepare_encoder = PrepareEncoder(
             src_vocab_size,
@@ -78,7 +78,7 @@ class WrapEncoder(nn.Module):
             weight_sharing,
             bos_idx=0,
     ):
-        super(WrapEncoder, self).__init__()
+        super().__init__()
 
         self.prepare_decoder = PrepareDecoder(
             src_vocab_size, d_model, max_length, prepostprocess_dropout, bos_idx=bos_idx
@@ -123,7 +123,7 @@ class Encoder(nn.Module):
             preprocess_cmd="n",
             postprocess_cmd="da",
     ):
-        super(Encoder, self).__init__()
+        super().__init__()
 
         self.encoder_layers = list()
         for i in range(n_layer):
@@ -172,7 +172,7 @@ class EncoderLayer(nn.Module):
             preprocess_cmd="n",
             postprocess_cmd="da",
     ):
-        super(EncoderLayer, self).__init__()
+        super().__init__()
         self.preprocesser1 = PrePostProcessLayer(preprocess_cmd, d_model, prepostprocess_dropout)
         self.self_attn = MultiHeadAttention(d_key, d_value, d_model, n_head, attention_dropout)
         self.postprocesser1 = PrePostProcessLayer(postprocess_cmd, d_model, prepostprocess_dropout)
@@ -195,7 +195,7 @@ class MultiHeadAttention(nn.Module):
     """
 
     def __init__(self, d_key, d_value, d_model, n_head=1, dropout_rate=0.0):
-        super(MultiHeadAttention, self).__init__()
+        super().__init__()
         self.n_head = n_head
         self.d_key = d_key
         self.d_value = d_value
@@ -274,7 +274,7 @@ class PrePostProcessLayer(nn.Module):
     """
 
     def __init__(self, process_cmd, d_model, dropout_rate):
-        super(PrePostProcessLayer, self).__init__()
+        super().__init__()
         self.process_cmd = process_cmd
         self.functors = []
         for cmd in self.process_cmd:
@@ -312,7 +312,7 @@ class PrepareEncoder(nn.Module):
             word_emb_param_name=None,
             pos_enc_param_name=None,
     ):
-        super(PrepareEncoder, self).__init__()
+        super().__init__()
         self.src_emb_dim = src_emb_dim
         self.src_max_len = src_max_len
         self.emb = torch.nn.Embedding(num_embeddings=self.src_max_len, embedding_dim=self.src_emb_dim)
@@ -348,7 +348,7 @@ class PrepareDecoder(nn.Module):
             word_emb_param_name=None,
             pos_enc_param_name=None,
     ):
-        super(PrepareDecoder, self).__init__()
+        super().__init__()
         self.src_emb_dim = src_emb_dim
         """
         self.emb0 = Embedding(num_embeddings=src_vocab_size,
@@ -392,7 +392,7 @@ class FFN(nn.Module):
     """
 
     def __init__(self, d_inner_hid, d_model, dropout_rate):
-        super(FFN, self).__init__()
+        super().__init__()
         self.dropout_rate = dropout_rate
         self.fc1 = torch.nn.Linear(in_features=d_model, out_features=d_inner_hid)
         self.fc2 = torch.nn.Linear(in_features=d_inner_hid, out_features=d_model)

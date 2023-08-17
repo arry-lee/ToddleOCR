@@ -14,7 +14,7 @@ __all__ = ["FPN"]
 
 class Conv_BN_ReLU(nn.Module):
     def __init__(self, in_planes, out_planes, kernel_size=1, stride=1, padding=0):
-        super(Conv_BN_ReLU, self).__init__()
+        super().__init__()
         self.conv = nn.Conv2d(
             in_planes, out_planes, kernel_size=kernel_size, stride=stride, padding=padding, bias=False
         )
@@ -34,7 +34,7 @@ class Conv_BN_ReLU(nn.Module):
 
 class FPN(nn.Module):
     def __init__(self, in_channels, out_channels):
-        super(FPN, self).__init__()
+        super().__init__()
         self.toplayer_ = Conv_BN_ReLU(in_channels[3], out_channels, kernel_size=1, stride=1, padding=0)
         self.latlayer1_ = Conv_BN_ReLU(in_channels[2], out_channels, kernel_size=1, stride=1, padding=0)
         self.latlayer2_ = Conv_BN_ReLU(in_channels[1], out_channels, kernel_size=1, stride=1, padding=0)

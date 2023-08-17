@@ -39,7 +39,7 @@ from ptocr.utils.utility import AverageMeter, print_dict
 
 class ArgsParser(ArgumentParser):
     def __init__(self):
-        super(ArgsParser, self).__init__(formatter_class=RawDescriptionHelpFormatter)
+        super().__init__(formatter_class=RawDescriptionHelpFormatter)
         self.add_argument("-c", "--config", help="configuration file to use")
         self.add_argument("-o", "--opt", nargs="+", help="set configuration options")
         self.add_argument(
@@ -51,7 +51,7 @@ class ArgsParser(ArgumentParser):
         )
 
     def parse_args(self, argv=None):
-        args = super(ArgsParser, self).parse_args(argv)
+        args = super().parse_args(argv)
         assert args.config is not None, "Please specify --config=configure_file_path."
         args.opt = self._parse_opt(args.opt)
         return args

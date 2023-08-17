@@ -182,7 +182,7 @@ class GenTableMask:
 
 class ResizeTableImage:
     def __init__(self, max_len, resize_bboxes=False, infer_mode=False, **kwargs):
-        super(ResizeTableImage, self).__init__()
+        super().__init__()
         self.max_len = max_len
         self.resize_bboxes = resize_bboxes
         self.infer_mode = infer_mode
@@ -205,7 +205,7 @@ class ResizeTableImage:
 
 class PaddingTableImage:
     def __init__(self, size, **kwargs):
-        super(PaddingTableImage, self).__init__()
+        super().__init__()
         self.size = size
 
     def __call__(self, data):

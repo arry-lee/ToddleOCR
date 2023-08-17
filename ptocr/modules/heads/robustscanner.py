@@ -27,7 +27,7 @@ class BaseDecoder(nn.Module):
 
 class ChannelReductionEncoder(nn.Module):
     def __init__(self, in_channels, out_channels, **kwargs):
-        super(ChannelReductionEncoder, self).__init__()
+        super().__init__()
         self.layer = nn.Conv2d(
             in_channels, out_channels, kernel_size=1, stride=1, padding=0
         )
@@ -261,7 +261,7 @@ class PositionAttentionDecoder(BaseDecoder):
 
 class RobustScannerFusionLayer(nn.Module):
     def __init__(self, dim_model, dim=-1):
-        super(RobustScannerFusionLayer, self).__init__()
+        super().__init__()
         self.dim_model = dim_model
         self.dim = dim
         self.linear_layer = nn.Linear(dim_model * 2, dim_model * 2)
@@ -367,7 +367,7 @@ class RobustScannerHead(nn.Module):
             encode_value=False,
             **kwargs
     ):
-        super(RobustScannerHead, self).__init__()
+        super().__init__()
         self.encoder = ChannelReductionEncoder(in_channels=in_channels, out_channels=enc_outchannles)
         self.decoder = RobustScannerDecoder(
             num_classes=out_channels,

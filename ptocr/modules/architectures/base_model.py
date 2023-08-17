@@ -32,7 +32,7 @@ class BaseModel(nn.Module):
         args:
             config (dict): the super parameters for module.
         """
-        super(BaseModel, self).__init__()
+        super().__init__()
         in_channels = config.get("in_channels", 3)
         model_type = config["model_type"]
         # build transfrom,

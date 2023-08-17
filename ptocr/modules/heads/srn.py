@@ -13,7 +13,7 @@ gradient_clip = 10
 
 class PVAM(nn.Module):
     def __init__(self, in_channels, char_num, max_text_length, num_heads, num_encoder_tus, hidden_dims):
-        super(PVAM, self).__init__()
+        super().__init__()
         self.char_num = char_num
         self.max_length = max_text_length
         self.num_heads = num_heads
@@ -80,7 +80,7 @@ class GSRM(nn.Module):
     def __init__(
         self, in_channels, char_num, max_text_length, num_heads, num_encoder_tus, num_decoder_tus, hidden_dims
     ):
-        super(GSRM, self).__init__()
+        super().__init__()
         self.char_num = char_num
         self.max_length = max_text_length
         self.num_heads = num_heads
@@ -169,7 +169,7 @@ class GSRM(nn.Module):
 
 class VSFD(nn.Module):
     def __init__(self, in_channels=512, pvam_ch=512, char_num=38):
-        super(VSFD, self).__init__()
+        super().__init__()
         self.char_num = char_num
         self.fc0 = torch.nn.Linear(in_features=in_channels * 2, out_features=pvam_ch)
         self.fc1 = torch.nn.Linear(in_features=pvam_ch, out_features=self.char_num)
@@ -201,7 +201,7 @@ class SRNHead(nn.Module):
         hidden_dims,
         **kwargs
     ):
-        super(SRNHead, self).__init__()
+        super().__init__()
         self.char_num = out_channels
         self.max_length = max_text_length
         self.num_heads = num_heads

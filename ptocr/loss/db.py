@@ -35,7 +35,7 @@ class DBLoss(nn.Module):
     def __init__(
         self, balance_loss=True, main_loss_type="DiceLoss", alpha=5, beta=10, ohem_ratio=3, eps=1e-6, **kwargs
     ):
-        super(DBLoss, self).__init__()
+        super().__init__()
         self.alpha = alpha
         self.beta = beta
         self.dice_loss = DiceLoss(eps=eps)

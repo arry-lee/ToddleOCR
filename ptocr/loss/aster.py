@@ -6,7 +6,7 @@ __all__ = ['AsterLoss']
 class CosineEmbeddingLoss(nn.Module):
     """余弦嵌入损失函数"""
     def __init__(self, margin=0.0):
-        super(CosineEmbeddingLoss, self).__init__()
+        super().__init__()
         self.margin = margin
         self.epsilon = 1e-12
 
@@ -46,7 +46,7 @@ class AsterLoss(nn.Module):
         sample_normalize=True,
         **kwargs
     ):
-        super(AsterLoss, self).__init__()
+        super().__init__()
         self.weight = weight
         self.size_average = size_average
         self.ignore_index = ignore_index

@@ -11,7 +11,7 @@ __all__ = ['DBFPN']
 
 class DSConv(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, padding, stride=1, groups=None, if_act=True, act="relu", **kwargs):
-        super(DSConv, self).__init__()
+        super().__init__()
         if groups == None:
             groups = in_channels
         self.if_act = if_act
@@ -52,7 +52,7 @@ class DSConv(nn.Module):
 
 class DBFPN(nn.Module):
     def __init__(self, in_channels, out_channels, use_asf=False, **kwargs):
-        super(DBFPN, self).__init__()
+        super().__init__()
         self.out_channels = out_channels
         self.use_asf = use_asf
 
@@ -101,7 +101,7 @@ class DBFPN(nn.Module):
 
 class RSELayer(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, shortcut=True):
-        super(RSELayer, self).__init__()
+        super().__init__()
         self.out_channels = out_channels
         self.in_conv = nn.Conv2d(
             in_channels=in_channels, out_channels=self.out_channels, kernel_size=kernel_size, padding=int(kernel_size // 2),  bias=False
@@ -121,7 +121,7 @@ class RSELayer(nn.Module):
 
 class RSEFPN(nn.Module):
     def __init__(self, in_channels, out_channels, shortcut=True, **kwargs):
-        super(RSEFPN, self).__init__()
+        super().__init__()
         self.out_channels = out_channels
         self.ins_conv = nn.ModuleList()
         self.inp_conv = nn.ModuleList()
@@ -157,7 +157,7 @@ class RSEFPN(nn.Module):
 
 class LKPAN(nn.Module):
     def __init__(self, in_channels, out_channels, mode="large", **kwargs):
-        super(LKPAN, self).__init__()
+        super().__init__()
         self.out_channels = out_channels
 
         self.ins_conv = nn.ModuleList()
@@ -234,7 +234,7 @@ class ASFBlock(nn.Module):
             inter_channels: the number of middle channels
             out_features_num: the number of fused stages
         """
-        super(ASFBlock, self).__init__()
+        super().__init__()
         self.in_channels = in_channels
         self.inter_channels = inter_channels
         self.out_features_num = out_features_num

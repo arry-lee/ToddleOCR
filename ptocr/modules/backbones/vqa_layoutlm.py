@@ -39,7 +39,7 @@ class NLPBaseModel(nn.Module):
     def __init__(
         self, base_model_class, model_class, mode="Global", type="ser", pretrained=True, checkpoints=None, **kwargs
     ):
-        super(NLPBaseModel, self).__init__()
+        super().__init__()
         if checkpoints is not None:  # load the trained model
             self.model = model_class.from_pretrained(checkpoints)
         else:  # load the pretrained-model
@@ -58,7 +58,7 @@ class NLPBaseModel(nn.Module):
 
 class LayoutLMForSer(NLPBaseModel):
     def __init__(self, num_classes, pretrained=True, checkpoints=None, mode="Global", **kwargs):
-        super(LayoutLMForSer, self).__init__(
+        super().__init__(
             LayoutLMModel,
             LayoutLMForTokenClassification,
             mode,
@@ -83,7 +83,7 @@ class LayoutLMForSer(NLPBaseModel):
 
 class LayoutLMv2ForSer(NLPBaseModel):
     def __init__(self, num_classes, pretrained=True, checkpoints=None, mode="Global", **kwargs):
-        super(LayoutLMv2ForSer, self).__init__(
+        super().__init__(
             LayoutLMv2Model,
             LayoutLMv2ForTokenClassification,
             mode,
@@ -120,7 +120,7 @@ class LayoutLMv2ForSer(NLPBaseModel):
 
 class LayoutXLMForSer(NLPBaseModel):
     def __init__(self, num_classes, pretrained=True, checkpoints=None, mode="Global", **kwargs):
-        super(LayoutXLMForSer, self).__init__(
+        super().__init__(
             LayoutXLMModel,
             LayoutXLMForTokenClassification,
             mode,
@@ -157,7 +157,7 @@ class LayoutXLMForSer(NLPBaseModel):
 
 class LayoutLMv2ForRe(NLPBaseModel):
     def __init__(self, pretrained=True, checkpoints=None, mode="Global", **kwargs):
-        super(LayoutLMv2ForRe, self).__init__(
+        super().__init__(
             LayoutLMv2Model, LayoutLMv2ForRelationExtraction, mode, "re", pretrained, checkpoints
         )
         if hasattr(self.model.layoutlmv2, "use_visual_backbone") and self.model.layoutlmv2.use_visual_backbone is False:
@@ -181,7 +181,7 @@ class LayoutLMv2ForRe(NLPBaseModel):
 
 class LayoutXLMForRe(NLPBaseModel):
     def __init__(self, pretrained=True, checkpoints=None, mode="Global", **kwargs):
-        super(LayoutXLMForRe, self).__init__(
+        super().__init__(
             LayoutXLMModel, LayoutXLMForRelationExtraction, mode, "re", pretrained, checkpoints
         )
         if hasattr(self.model.layoutxlm, "use_visual_backbone") and self.model.layoutxlm.use_visual_backbone is False:

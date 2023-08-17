@@ -9,7 +9,7 @@ from torch import nn
 
 class TableMasterLoss(nn.Module):
     def __init__(self, ignore_index=-1):
-        super(TableMasterLoss, self).__init__()
+        super().__init__()
         self.structure_loss = nn.CrossEntropyLoss(ignore_index=ignore_index)
         self.box_loss = nn.L1Loss(reduction="sum")
         self.eps = 1e-12

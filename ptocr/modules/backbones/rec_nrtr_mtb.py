@@ -4,7 +4,7 @@ import torch
 
 class MTB(nn.Module):
     def __init__(self, cnn_num, in_channels):
-        super(MTB, self).__init__()
+        super().__init__()
         self.block = nn.Sequential()
         self.out_channels = in_channels
         self.cnn_num = cnn_num

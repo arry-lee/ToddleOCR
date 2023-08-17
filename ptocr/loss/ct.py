@@ -99,7 +99,7 @@ def iou(a, b, mask, n_class=2, reduce=True):
 
 class DiceLoss(nn.Module):
     def __init__(self, loss_weight=1.0):
-        super(DiceLoss, self).__init__()
+        super().__init__()
         self.loss_weight = loss_weight
 
     def forward(self, input, target, mask, reduce=True):
@@ -129,7 +129,7 @@ class DiceLoss(nn.Module):
 
 class SmoothL1Loss(nn.Module):
     def __init__(self, beta=1.0, loss_weight=1.0):
-        super(SmoothL1Loss, self).__init__()
+        super().__init__()
         self.beta = beta
         self.loss_weight = loss_weight
 
@@ -200,7 +200,7 @@ class SmoothL1Loss(nn.Module):
 
 class CTLoss(nn.Module):
     def __init__(self):
-        super(CTLoss, self).__init__()
+        super().__init__()
         self.kernel_loss = DiceLoss()
         self.loc_loss = SmoothL1Loss(beta=0.1, loss_weight=0.05)
 

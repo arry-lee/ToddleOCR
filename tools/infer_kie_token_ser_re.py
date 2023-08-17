@@ -43,12 +43,12 @@ from tools.infer_kie_token_ser import SerPredictor
 
 class ReArgsParser(ArgsParser):
     def __init__(self):
-        super(ReArgsParser, self).__init__()
+        super().__init__()
         self.add_argument("-c_ser", "--config_ser", help="ser configuration file to use")
         self.add_argument("-o_ser", "--opt_ser", nargs="+", help="set ser configuration options ")
 
     def parse_args(self, argv=None):
-        args = super(ReArgsParser, self).parse_args(argv)
+        args = super().parse_args(argv)
         assert args.config_ser is not None, "Please specify --config_ser=ser_configure_file_path."
         args.opt_ser = self._parse_opt(args.opt_ser)
         return args

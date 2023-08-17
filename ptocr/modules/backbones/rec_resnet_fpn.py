@@ -152,7 +152,7 @@ class ConvBNLayer(nn.Module):
 
 class ShortCut(nn.Module):
     def __init__(self, in_channels, out_channels, stride, name, is_first=False):
-        super(ShortCut, self).__init__()
+        super().__init__()
         self.use_conv = True
 
         if in_channels != out_channels or stride != 1 or is_first == True:
@@ -171,7 +171,7 @@ class ShortCut(nn.Module):
 
 class BottleneckBlock(nn.Module):
     def __init__(self, in_channels, out_channels, stride, name):
-        super(BottleneckBlock, self).__init__()
+        super().__init__()
         self.conv0 = ConvBNLayer(in_channels=in_channels, out_channels=out_channels, kernel_size=1, act="relu", name=name + "_branch2a")
         self.conv1 = ConvBNLayer(in_channels=out_channels, out_channels=out_channels, kernel_size=3, stride=stride, act="relu", name=name + "_branch2b")
 
@@ -191,7 +191,7 @@ class BottleneckBlock(nn.Module):
 
 class BasicBlock(nn.Module):
     def __init__(self, in_channels, out_channels, stride, name, is_first):
-        super(BasicBlock, self).__init__()
+        super().__init__()
         self.conv0 = ConvBNLayer(in_channels=in_channels, out_channels=out_channels, kernel_size=3, act="relu", stride=stride, name=name + "_branch2a")
         self.conv1 = ConvBNLayer(in_channels=out_channels, out_channels=out_channels, kernel_size=3, act=None, name=name + "_branch2b")
         self.short = ShortCut(in_channels=in_channels, out_channels=out_channels, stride=stride, is_first=is_first, name=name + "_branch1")

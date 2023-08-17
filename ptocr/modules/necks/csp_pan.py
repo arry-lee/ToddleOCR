@@ -8,7 +8,7 @@ __all__ = ["CSPPAN"]
 
 class ConvBNLayer(nn.Module):
     def __init__(self, in_channel=96, out_channel=96, kernel_size=3, stride=1, groups=1, act="leaky_relu"):
-        super(ConvBNLayer, self).__init__()
+        super().__init__()
         self.act = act
         assert self.act in ["leaky_relu", "hard_swish"]
         self.conv = nn.Conv2d(
@@ -46,7 +46,7 @@ class DPModule(nn.Module):
     """
 
     def __init__(self, in_channel=96, out_channel=96, kernel_size=3, stride=1, act="leaky_relu"):
-        super(DPModule, self).__init__()
+        super().__init__()
         # initializer = nn.init.KaimingUniform()
         self.act = act
         self.dwconv = nn.Conv2d(
@@ -105,7 +105,7 @@ class DarknetBottleneck(nn.Module):
             use_depthwise=False,
             act="leaky_relu",
     ):
-        super(DarknetBottleneck, self).__init__()
+        super().__init__()
         hidden_channels = int(out_channels * expansion)
         conv_func = DPModule if use_depthwise else ConvBNLayer
         self.conv1 = ConvBNLayer(in_channel=in_channels, out_channel=hidden_channels, kernel_size=1, act=act)
@@ -175,7 +175,7 @@ class CSPLayer(nn.Module):
 
 class Channel_T(nn.Module):
     def __init__(self, in_channels=(116, 232, 464), out_channels=96, act="leaky_relu"):
-        super(Channel_T, self).__init__()
+        super().__init__()
         self.convs = nn.ModuleList()
         for i in range(len(in_channels)):
             self.convs.append(ConvBNLayer(in_channels[i], out_channels, 1, act=act))
@@ -199,7 +199,7 @@ class CSPPAN(nn.Module):
     def __init__(
             self, in_channels, out_channels, kernel_size=5, num_csp_blocks=1, use_depthwise=True, act="hard_swish"
     ):
-        super(CSPPAN, self).__init__()
+        super().__init__()
         self.in_channels = in_channels
         self.out_channels = [out_channels] * len(in_channels)
         conv_func = DPModule if use_depthwise else ConvBNLayer

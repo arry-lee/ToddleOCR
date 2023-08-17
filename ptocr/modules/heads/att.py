@@ -7,7 +7,7 @@ import torch.nn.functional as F
 __all__ = ["AttentionHead"]
 class AttentionHead(nn.Module):
     def __init__(self, in_channels, out_channels, hidden_size, **kwargs):
-        super(AttentionHead, self).__init__()
+        super().__init__()
         self.input_size = in_channels
         self.hidden_size = hidden_size
         self.num_classes = out_channels
@@ -57,7 +57,7 @@ class AttentionHead(nn.Module):
 
 class AttentionGRUCell(nn.Module):
     def __init__(self, input_size, hidden_size, num_embeddings, use_gru=False):
-        super(AttentionGRUCell, self).__init__()
+        super().__init__()
         self.i2h = nn.Linear(input_size, hidden_size, bias=False)
         self.h2h = nn.Linear(hidden_size, hidden_size)
         self.score = nn.Linear(hidden_size, 1, bias=False)
@@ -86,7 +86,7 @@ class AttentionGRUCell(nn.Module):
 
 class AttentionLSTM(nn.Module):
     def __init__(self, in_channels, out_channels, hidden_size, **kwargs):
-        super(AttentionLSTM, self).__init__()
+        super().__init__()
         self.input_size = in_channels
         self.hidden_size = hidden_size
         self.num_classes = out_channels
@@ -142,7 +142,7 @@ class AttentionLSTM(nn.Module):
 
 class AttentionLSTMCell(nn.Module):
     def __init__(self, input_size, hidden_size, num_embeddings, use_gru=False):
-        super(AttentionLSTMCell, self).__init__()
+        super().__init__()
         self.i2h = nn.Linear(input_size, hidden_size, bias=False)
         self.h2h = nn.Linear(hidden_size, hidden_size)
         self.score = nn.Linear(hidden_size, 1, bias=False)

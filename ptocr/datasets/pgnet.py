@@ -7,7 +7,7 @@ from torchvision.datasets import VisionDataset
 
 class PGDataSet(VisionDataset):
     def __init__(self, root, transforms=None, **kwargs):
-        super(PGDataSet, self).__init__(root, transforms)
+        super().__init__(root, transforms)
         self.delimiter = kwargs.get("delimiter", "\t")
         label_file_list = kwargs.pop("label_file_list")
         data_source_num = len(label_file_list)

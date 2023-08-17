@@ -25,7 +25,7 @@ class EASTLoss(nn.Module):
     """ """
 
     def __init__(self, eps=1e-6, **kwargs):
-        super(EASTLoss, self).__init__()
+        super().__init__()
         self.dice_loss = DiceLoss(eps=eps)
 
     def forward(self, predicts, labels):

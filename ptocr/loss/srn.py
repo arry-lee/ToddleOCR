@@ -22,7 +22,7 @@ from torch import nn
 
 class SRNLoss(nn.Module):
     def __init__(self, **kwargs):
-        super(SRNLoss, self).__init__()
+        super().__init__()
         self.loss_func = nn.CrossEntropyLoss(reduction="sum")
 
     def forward(self, predicts, batch):

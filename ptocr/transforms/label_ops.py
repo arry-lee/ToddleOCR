@@ -157,7 +157,7 @@ class CTCLabelEncode(BaseRecLabelEncode):
     """Convert between text-label and text-index"""
 
     def __init__(self, max_text_length, character_dict_path=None, use_space_char=False, **kwargs):
-        super(CTCLabelEncode, self).__init__(max_text_length, character_dict_path, use_space_char)
+        super().__init__(max_text_length, character_dict_path, use_space_char)
 
     def __call__(self, data):
         text = data["label"]
@@ -181,7 +181,7 @@ class CTCLabelEncode(BaseRecLabelEncode):
 
 class E2ELabelEncodeTest(BaseRecLabelEncode):
     def __init__(self, max_text_length, character_dict_path=None, use_space_char=False, **kwargs):
-        super(E2ELabelEncodeTest, self).__init__(max_text_length, character_dict_path, use_space_char)
+        super().__init__(max_text_length, character_dict_path, use_space_char)
 
     def __call__(self, data):
         import json
@@ -247,7 +247,7 @@ class E2ELabelEncodeTrain:
 
 class KieLabelEncode:
     def __init__(self, character_dict_path, class_path, norm=10, directed=False, **kwargs):
-        super(KieLabelEncode, self).__init__()
+        super().__init__()
         self.dict = dict({"": 0})
         self.label2classid_map = dict()
         with open(character_dict_path, "r", encoding="utf-8") as fr:
@@ -416,7 +416,7 @@ class AttnLabelEncode(BaseRecLabelEncode):
     """Convert between text-label and text-index"""
 
     def __init__(self, max_text_length, character_dict_path=None, use_space_char=False, **kwargs):
-        super(AttnLabelEncode, self).__init__(max_text_length, character_dict_path, use_space_char)
+        super().__init__(max_text_length, character_dict_path, use_space_char)
 
     def add_special_char(self, dict_character):
         self.beg_str = "sos"
@@ -455,7 +455,7 @@ class RFLLabelEncode(BaseRecLabelEncode):
     """Convert between text-label and text-index"""
 
     def __init__(self, max_text_length, character_dict_path=None, use_space_char=False, **kwargs):
-        super(RFLLabelEncode, self).__init__(max_text_length, character_dict_path, use_space_char)
+        super().__init__(max_text_length, character_dict_path, use_space_char)
 
     def add_special_char(self, dict_character):
         self.beg_str = "sos"
@@ -504,7 +504,7 @@ class SEEDLabelEncode(BaseRecLabelEncode):
     """Convert between text-label and text-index"""
 
     def __init__(self, max_text_length, character_dict_path=None, use_space_char=False, **kwargs):
-        super(SEEDLabelEncode, self).__init__(max_text_length, character_dict_path, use_space_char)
+        super().__init__(max_text_length, character_dict_path, use_space_char)
 
     def add_special_char(self, dict_character):
         self.padding = "padding"
@@ -530,7 +530,7 @@ class SRNLabelEncode(BaseRecLabelEncode):
     """Convert between text-label and text-index"""
 
     def __init__(self, max_text_length=25, character_dict_path=None, use_space_char=False, **kwargs):
-        super(SRNLabelEncode, self).__init__(max_text_length, character_dict_path, use_space_char)
+        super().__init__(max_text_length, character_dict_path, use_space_char)
 
     def add_special_char(self, dict_character):
         dict_character = dict_character + [self.beg_str, self.end_str]
@@ -723,7 +723,7 @@ class TableMasterLabelEncode(TableLabelEncode):
         loc_reg_num=4,
         **kwargs
     ):
-        super(TableMasterLabelEncode, self).__init__(
+        super().__init__(
             max_text_length,
             character_dict_path,
             replace_empty_cell_token,
@@ -791,7 +791,7 @@ class SARLabelEncode(BaseRecLabelEncode):
     """Convert between text-label and text-index"""
 
     def __init__(self, max_text_length, character_dict_path=None, use_space_char=False, **kwargs):
-        super(SARLabelEncode, self).__init__(max_text_length, character_dict_path, use_space_char)
+        super().__init__(max_text_length, character_dict_path, use_space_char)
 
     def add_special_char(self, dict_character):
         beg_end_str = "<BOS/EOS>"
@@ -828,7 +828,7 @@ class SARLabelEncode(BaseRecLabelEncode):
 
 class PRENLabelEncode(BaseRecLabelEncode):
     def __init__(self, max_text_length, character_dict_path, use_space_char=False, **kwargs):
-        super(PRENLabelEncode, self).__init__(max_text_length, character_dict_path, use_space_char)
+        super().__init__(max_text_length, character_dict_path, use_space_char)
 
     def add_special_char(self, dict_character):
         padding_str = "<PAD>"  # 0
@@ -884,7 +884,7 @@ class VQATokenLabelEncode:
         ocr_engine=None,
         **kwargs
     ):
-        super(VQATokenLabelEncode, self).__init__()
+        super().__init__()
         from paddlenlp.transformers import LayoutXLMTokenizer, LayoutLMTokenizer, LayoutLMv2Tokenizer
         from ptocr.utils.utility import load_vqa_bio_label_maps
 
@@ -1108,7 +1108,7 @@ class VQATokenLabelEncode:
 
 class MultiLabelEncode(BaseRecLabelEncode):
     def __init__(self, max_text_length, character_dict_path=None, use_space_char=False, **kwargs):
-        super(MultiLabelEncode, self).__init__(max_text_length, character_dict_path, use_space_char)
+        super().__init__(max_text_length, character_dict_path, use_space_char)
 
         self.ctc_encode = CTCLabelEncode(max_text_length, character_dict_path, use_space_char, **kwargs)
         self.sar_encode = SARLabelEncode(max_text_length, character_dict_path, use_space_char, **kwargs)
@@ -1133,7 +1133,7 @@ class NRTRLabelEncode(BaseRecLabelEncode):
     """Convert between text-label and text-index"""
 
     def __init__(self, max_text_length, character_dict_path=None, use_space_char=False, **kwargs):
-        super(NRTRLabelEncode, self).__init__(max_text_length, character_dict_path, use_space_char)
+        super().__init__(max_text_length, character_dict_path, use_space_char)
 
     def __call__(self, data):
         text = data["label"]
@@ -1158,7 +1158,7 @@ class ViTSTRLabelEncode(BaseRecLabelEncode):
     """Convert between text-label and text-index"""
 
     def __init__(self, max_text_length, character_dict_path=None, use_space_char=False, ignore_index=0, **kwargs):
-        super(ViTSTRLabelEncode, self).__init__(max_text_length, character_dict_path, use_space_char)
+        super().__init__(max_text_length, character_dict_path, use_space_char)
         self.ignore_index = ignore_index
 
     def __call__(self, data):
@@ -1184,7 +1184,7 @@ class ABINetLabelEncode(BaseRecLabelEncode):
     """Convert between text-label and text-index"""
 
     def __init__(self, max_text_length, character_dict_path=None, use_space_char=False, ignore_index=100, **kwargs):
-        super(ABINetLabelEncode, self).__init__(max_text_length, character_dict_path, use_space_char)
+        super().__init__(max_text_length, character_dict_path, use_space_char)
         self.ignore_index = ignore_index
 
     def __call__(self, data):
@@ -1207,7 +1207,7 @@ class ABINetLabelEncode(BaseRecLabelEncode):
 
 class SRLabelEncode(BaseRecLabelEncode):
     def __init__(self, max_text_length, character_dict_path=None, use_space_char=False, **kwargs):
-        super(SRLabelEncode, self).__init__(max_text_length, character_dict_path, use_space_char)
+        super().__init__(max_text_length, character_dict_path, use_space_char)
         self.dic = {}
         with open(character_dict_path, "r") as fin:
             for line in fin.readlines():
@@ -1252,7 +1252,7 @@ class SPINLabelEncode(AttnLabelEncode):
     """Convert between text-label and text-index"""
 
     def __init__(self, max_text_length, character_dict_path=None, use_space_char=False, lower=True, **kwargs):
-        super(SPINLabelEncode, self).__init__(max_text_length, character_dict_path, use_space_char)
+        super().__init__(max_text_length, character_dict_path, use_space_char)
         self.lower = lower
 
     def add_special_char(self, dict_character):
@@ -1281,7 +1281,7 @@ class VLLabelEncode(BaseRecLabelEncode):
     """Convert between text-label and text-index"""
 
     def __init__(self, max_text_length, character_dict_path=None, use_space_char=False, **kwargs):
-        super(VLLabelEncode, self).__init__(max_text_length, character_dict_path, use_space_char)
+        super().__init__(max_text_length, character_dict_path, use_space_char)
         self.dict = {}
         for i, char in enumerate(self.character):
             self.dict[char] = i
@@ -1361,7 +1361,7 @@ class CTLabelEncode:
 
 class CANLabelEncode(BaseRecLabelEncode):
     def __init__(self, character_dict_path, max_text_length=100, use_space_char=False, lower=True, **kwargs):
-        super(CANLabelEncode, self).__init__(max_text_length, character_dict_path, use_space_char, lower)
+        super().__init__(max_text_length, character_dict_path, use_space_char, lower)
 
     def encode(self, text_seq):
         text_seq_encoded = []

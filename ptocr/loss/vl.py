@@ -13,7 +13,7 @@ from torch import nn
 
 class VLLoss(nn.Module):
     def __init__(self, mode="LF_1", weight_res=0.5, weight_mas=0.5, **kwargs):
-        super(VLLoss, self).__init__()
+        super().__init__()
         self.loss_func = nn.CrossEntropyLoss()
         assert mode in ["LF_1", "LF_2", "LA"]
         self.mode = mode

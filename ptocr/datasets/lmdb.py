@@ -11,7 +11,7 @@ from torchvision.datasets.vision import VisionDataset
 
 class LMDBDataSet(VisionDataset):
     def __init__(self, root, transforms=None, **kwargs):
-        super(LMDBDataSet, self).__init__(root, transforms)
+        super().__init__(root, transforms)
 
         self.lmdb_sets = self.load_hierarchical_lmdb_dataset()
         self.data_idx_order_list = self.dataset_traversal()

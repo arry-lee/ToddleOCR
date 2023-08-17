@@ -8,7 +8,7 @@ class ConvBNLayer(nn.Module):
     def __init__(
         self, in_channels, out_channels, kernel_size, stride=1, groups=1, is_vd_mode=False, act=None, name=None
     ):
-        super(ConvBNLayer, self).__init__()
+        super().__init__()
         self.is_vd_mode = is_vd_mode
         self._pool2d_avg = nn.AvgPool2d(kernel_size=2, stride=2, padding=0, ceil_mode=True)
         self._conv = nn.Conv2d(
@@ -42,7 +42,7 @@ class ConvBNLayer(nn.Module):
 
 class DeConvBNLayer(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size=4, stride=2, padding=1, groups=1, act=None, name=None):
-        super(DeConvBNLayer, self).__init__()
+        super().__init__()
         self.deconv = nn.ConvTranspose2d(
             in_channels=in_channels,
             out_channels=out_channels,
@@ -70,7 +70,7 @@ class DeConvBNLayer(nn.Module):
 
 class PGFPN(nn.Module):
     def __init__(self, in_channels, **kwargs):
-        super(PGFPN, self).__init__()
+        super().__init__()
         num_inputs = [2048, 2048, 1024, 512, 256]
         num_outputs = [256, 256, 192, 192, 128]
         self.out_channels = 128

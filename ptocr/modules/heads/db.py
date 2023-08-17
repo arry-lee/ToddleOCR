@@ -5,7 +5,7 @@ from torch import nn
 __all__ = ["DBHead"]
 class Head(nn.Module):
     def __init__(self, in_channels, kernel_list=[3, 2, 2], **kwargs):
-        super(Head, self).__init__()
+        super().__init__()
 
         self.conv1 = nn.Conv2d(
             in_channels=in_channels,
@@ -50,7 +50,7 @@ class DBHead(nn.Module):
     """
 
     def __init__(self, in_channels, k=50, **kwargs):
-        super(DBHead, self).__init__()
+        super().__init__()
         self.k = k
         self.binarize = Head(in_channels, **kwargs)
         self.thresh = Head(in_channels, **kwargs)

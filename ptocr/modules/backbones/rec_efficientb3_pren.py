@@ -134,7 +134,7 @@ class EffUtils:
 
 class Swish(nn.Module):
     def __init__(self, beta=1.0):
-        super(Swish, self).__init__()
+        super().__init__()
         self.beta = beta
 
     def forward(self, x):
@@ -143,7 +143,7 @@ class Swish(nn.Module):
 
 class MbConvBlock(nn.Module):
     def __init__(self, block_args):
-        super(MbConvBlock, self).__init__()
+        super().__init__()
         self._block_args = block_args
         self.has_se = (self._block_args.se_ratio is not None) and (0 < self._block_args.se_ratio <= 1)
         self.id_skip = block_args.id_skip
@@ -211,7 +211,7 @@ class MbConvBlock(nn.Module):
 
 class EfficientNetB3_PREN(nn.Module):
     def __init__(self, in_channels):
-        super(EfficientNetB3_PREN, self).__init__()
+        super().__init__()
         """
         the fllowing are efficientnetb3's superparams,
         they means efficientnetb3 network's width, depth, resolution and 

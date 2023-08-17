@@ -8,7 +8,7 @@ from .det_resnet_vd import ConvBNLayer
 
 class BottleneckBlock(nn.Module):
     def __init__(self, num_features, num_filters, stride, shortcut=True, is_dcn=False):
-        super(BottleneckBlock, self).__init__()
+        super().__init__()
 
         self.conv0 = ConvBNLayer(
             in_channels=num_features,
@@ -61,7 +61,7 @@ class BottleneckBlock(nn.Module):
 
 class BasicBlock(nn.Module):
     def __init__(self, num_features, num_filters, stride, shortcut=True, name=None):
-        super(BasicBlock, self).__init__()
+        super().__init__()
         self.stride = stride
         self.conv0 = ConvBNLayer(
             in_channels=num_features, out_channels=num_filters, kernel_size=3, stride=stride, act="relu"
@@ -88,7 +88,7 @@ class BasicBlock(nn.Module):
 
 class ResNet(nn.Module):
     def __init__(self, in_channels=3, layers=50, out_indices=None, dcn_stage=None):
-        super(ResNet, self).__init__()
+        super().__init__()
 
         self.layers = layers
         self.input_image_channel = in_channels

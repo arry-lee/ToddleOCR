@@ -25,7 +25,7 @@ __all__ = ["CTFPN"]
 
 class Conv_BN_ReLU(nn.Module):
     def __init__(self, in_planes, out_planes, kernel_size=1, stride=1, padding=0):
-        super(Conv_BN_ReLU, self).__init__()
+        super().__init__()
         self.conv = nn.Conv2d(
             in_planes, out_planes, kernel_size=kernel_size, stride=stride, padding=padding, bias=False
         )
@@ -47,7 +47,7 @@ class Conv_BN_ReLU(nn.Module):
 
 class FPEM(nn.Module):
     def __init__(self, in_channels, out_channels):
-        super(FPEM, self).__init__()
+        super().__init__()
         planes = out_channels
         self.dwconv3_1 = nn.Conv2d(planes, planes, kernel_size=3, stride=1, padding=1, groups=planes, bias=False)
         self.smooth_layer3_1 = Conv_BN_ReLU(planes, planes)
@@ -86,7 +86,7 @@ class FPEM(nn.Module):
 
 class CTFPN(nn.Module):
     def __init__(self, in_channels, out_channel=128):
-        super(CTFPN, self).__init__()
+        super().__init__()
         self.out_channels = out_channel * 4
 
         self.reduce_layer1 = Conv_BN_ReLU(in_channels[0], 128)

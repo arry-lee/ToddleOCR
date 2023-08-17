@@ -105,7 +105,7 @@ class TableLabelDecode(AttnLabelDecode):
 class TableMasterLabelDecode(TableLabelDecode):
 
     def __init__(self, character_dict_path, box_shape='ori', merge_no_span_structure=True, **kwargs):
-        super(TableMasterLabelDecode, self).__init__(character_dict_path, merge_no_span_structure)
+        super().__init__(character_dict_path, merge_no_span_structure)
         self.box_shape = box_shape
         assert box_shape in ['ori', 'pad'], 'The shape used for box normalization must be ori or pad'
 

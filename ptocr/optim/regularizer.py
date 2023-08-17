@@ -11,7 +11,7 @@ import torch.nn as nn
 
 class L1Decay(nn.Module):
     def __init__(self, weight_decay=0.01):
-        super(L1Decay, self).__init__()
+        super().__init__()
         self.weight_decay = weight_decay
 
     def forward(self, parameters):
@@ -22,7 +22,7 @@ class L1Decay(nn.Module):
 
 class L2Decay(nn.Module):
     def __init__(self, weight_decay=0.01):
-        super(L2Decay, self).__init__()
+        super().__init__()
         self.weight_decay = weight_decay
 
     def forward(self, parameters):

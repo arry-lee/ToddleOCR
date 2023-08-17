@@ -25,7 +25,7 @@ from .basic import DiceLoss
 
 class PGLoss(nn.Module):
     def __init__(self, tcl_bs, max_text_length, max_text_nums, pad_num, eps=1e-6, **kwargs):
-        super(PGLoss, self).__init__()
+        super().__init__()
         self.tcl_bs = tcl_bs
         self.max_text_nums = max_text_nums
         self.max_text_length = max_text_length

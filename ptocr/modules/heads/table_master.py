@@ -29,7 +29,7 @@ class TableMasterHead(nn.Module):
         loc_reg_num=4,
         **kwargs
     ):
-        super(TableMasterHead, self).__init__()
+        super().__init__()
         hidden_size = in_channels[-1]
         self.layers = clones(DecoderLayer(headers, hidden_size, dropout, d_ff), 2)
         self.cls_layer = clones(DecoderLayer(headers, hidden_size, dropout, d_ff), 1)
@@ -136,7 +136,7 @@ class DecoderLayer(nn.Module):
     """
 
     def __init__(self, headers, d_model, dropout, d_ff):
-        super(DecoderLayer, self).__init__()
+        super().__init__()
         self.self_attn = MultiHeadAttention(headers, d_model, dropout)
         self.src_attn = MultiHeadAttention(headers, d_model, dropout)
         self.feed_forward = FeedForward(d_model, d_ff, dropout)
@@ -150,7 +150,7 @@ class DecoderLayer(nn.Module):
 
 class MultiHeadAttention(nn.Module):
     def __init__(self, headers, d_model, dropout):
-        super(MultiHeadAttention, self).__init__()
+        super().__init__()
 
         assert d_model % headers == 0
         self.d_k = int(d_model / headers)
@@ -175,7 +175,7 @@ class MultiHeadAttention(nn.Module):
 
 class FeedForward(nn.Module):
     def __init__(self, d_model, d_ff, dropout):
-        super(FeedForward, self).__init__()
+        super().__init__()
         self.w_1 = nn.Linear(d_model, d_ff)
         self.w_2 = nn.Linear(d_ff, d_model)
         self.dropout = nn.Dropout(dropout)
@@ -191,7 +191,7 @@ class SubLayerConnection(nn.Module):
     """
 
     def __init__(self, size, dropout):
-        super(SubLayerConnection, self).__init__()
+        super().__init__()
         self.norm = nn.LayerNorm(size)
         self.dropout = nn.Dropout(dropout)
 
@@ -229,7 +229,7 @@ def clones(module, N):
 
 class Embeddings(nn.Module):
     def __init__(self, d_model, vocab):
-        super(Embeddings, self).__init__()
+        super().__init__()
         self.lut = nn.Embedding(vocab, d_model)
         self.d_model = d_model
 
@@ -242,7 +242,7 @@ class PositionalEncoding(nn.Module):
     """Implement the PE function."""
 
     def __init__(self, d_model, dropout=0.0, max_len=5000):
-        super(PositionalEncoding, self).__init__()
+        super().__init__()
         self.dropout = nn.Dropout(p=dropout)
 
         # Compute the positional encodings once in log space.

@@ -13,7 +13,7 @@ from ptocr.modules.backbones.rec_efficientb3_pren import Swish
 __all__ = ["PRENFPN"]
 class PoolAggregate(nn.Module):
     def __init__(self, n_r, d_in, d_middle=None, d_out=None):
-        super(PoolAggregate, self).__init__()
+        super().__init__()
         if not d_middle:
             d_middle = d_in
         if not d_out:
@@ -57,7 +57,7 @@ class PoolAggregate(nn.Module):
 
 class WeightAggregate(nn.Module):
     def __init__(self, n_r, d_in, d_middle=None, d_out=None):
-        super(WeightAggregate, self).__init__()
+        super().__init__()
         if not d_middle:
             d_middle = d_in
         if not d_out:
@@ -94,7 +94,7 @@ class WeightAggregate(nn.Module):
 
 class GCN(nn.Module):
     def __init__(self, d_in, n_in, d_out=None, n_out=None, dropout=0.1):
-        super(GCN, self).__init__()
+        super().__init__()
         if not d_out:
             d_out = d_in
         if not n_out:
@@ -113,7 +113,7 @@ class GCN(nn.Module):
 
 class PRENFPN(nn.Module):
     def __init__(self, in_channels, n_r, d_model, max_len, dropout):
-        super(PRENFPN, self).__init__()
+        super().__init__()
         assert len(in_channels) == 3, "in_channels' length must be 3."
         c1, c2, c3 = in_channels  # the depths are from big to small
         # build fpn

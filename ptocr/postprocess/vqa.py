@@ -7,7 +7,7 @@ from ptocr.utils.utility import load_vqa_bio_label_maps
 class VQAReTokenLayoutLMPostProcess:
 
     def __init__(self, **kwargs):
-        super(VQAReTokenLayoutLMPostProcess, self).__init__()
+        super().__init__()
 
     def __call__(self, preds, label=None, *args, **kwargs):
         pred_relations = preds['pred_relations']
@@ -79,7 +79,7 @@ class DistillationRePostProcess(VQAReTokenLayoutLMPostProcess):
 class VQASerTokenLayoutLMPostProcess:
 
     def __init__(self, class_path, **kwargs):
-        super(VQASerTokenLayoutLMPostProcess, self).__init__()
+        super().__init__()
         (label2id_map, self.id2label_map) = load_vqa_bio_label_maps(class_path)
         self.label2id_map_for_draw = dict()
         for key in label2id_map:

@@ -44,7 +44,7 @@ class Transformer(nn.Module):
         out_channels=0,
         scale_embedding=True,
     ):
-        super(Transformer, self).__init__()
+        super().__init__()
         self.out_channels = out_channels + 1
         self.max_len = max_len
         self.embedding = Embeddings(d_model=d_model, vocab=self.out_channels, padding_idx=0, scale_embedding=scale_embedding)
@@ -277,7 +277,7 @@ class MultiheadAttention(nn.Module):
     """
 
     def __init__(self, embed_dim, num_heads, dropout=0.0, self_attn=False):
-        super(MultiheadAttention, self).__init__()
+        super().__init__()
         self.embed_dim = embed_dim
         self.num_heads = num_heads
         # self.dropout = dropout
@@ -321,7 +321,7 @@ class MultiheadAttention(nn.Module):
 
 class TransformerBlock(nn.Module):
     def __init__(self, d_model, nhead, dim_feedforward=2048, attention_dropout_rate=0.0, residual_dropout_rate=0.1, with_self_attn=True, with_cross_attn=False, epsilon=1e-5):
-        super(TransformerBlock, self).__init__()
+        super().__init__()
         self.with_self_attn = with_self_attn
         if with_self_attn:
             self.self_attn = MultiheadAttention(d_model, nhead, dropout=attention_dropout_rate, self_attn=with_self_attn)
@@ -369,7 +369,7 @@ class PositionalEncoding(nn.Module):
     """
 
     def __init__(self, dropout, dim, max_len=5000):
-        super(PositionalEncoding, self).__init__()
+        super().__init__()
         self.dropout = nn.Dropout(p=dropout)
 
         pe = torch.zeros([max_len, dim])
@@ -414,7 +414,7 @@ class PositionalEncoding_2d(nn.Module):
     """
 
     def __init__(self, dropout, dim, max_len=5000):
-        super(PositionalEncoding_2d, self).__init__()
+        super().__init__()
         self.dropout = nn.Dropout(p=dropout)
 
         pe = torch.zeros([max_len, dim])
@@ -462,7 +462,7 @@ class PositionalEncoding_2d(nn.Module):
 
 class Embeddings(nn.Module):
     def __init__(self, d_model, vocab, padding_idx=None, scale_embedding=True):
-        super(Embeddings, self).__init__()
+        super().__init__()
         self.embedding = nn.Embedding(vocab, d_model, padding_idx=padding_idx)
         w0 = np.random.normal(0.0, d_model**-0.5, (vocab, d_model)).astype(np.float32)
         self.embedding.weight.set_value(w0)

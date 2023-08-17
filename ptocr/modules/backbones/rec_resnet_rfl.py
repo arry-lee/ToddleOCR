@@ -63,7 +63,7 @@ class ResNetRFL(nn.Module):
             in_channels (int): input channel
             out_channels (int): output channel
         """
-        super(ResNetRFL, self).__init__()
+        super().__init__()
         assert use_cnt or use_seq
         self.use_cnt, self.use_seq = use_cnt, use_seq
         self.backbone = RFLBase(in_channels)
@@ -184,7 +184,7 @@ class ResNetRFL(nn.Module):
 
 class ResNetBase(nn.Module):
     def __init__(self, in_channels, out_channels, block, layers):
-        super(ResNetBase, self).__init__()
+        super().__init__()
 
         self.out_channels_block = [int(out_channels / 4), int(out_channels / 2), out_channels, out_channels]
 
@@ -252,7 +252,7 @@ class RFLBase(nn.Module):
     """Reciprocal feature learning share backbone network"""
 
     def __init__(self, in_channels, out_channels=512):
-        super(RFLBase, self).__init__()
+        super().__init__()
         self.ConvNet = ResNetBase(in_channels, out_channels, BasicBlock, [1, 2, 5, 3])
 
     def forward(self, inputs):

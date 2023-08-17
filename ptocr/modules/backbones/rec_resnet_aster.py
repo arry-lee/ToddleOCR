@@ -35,7 +35,7 @@ def get_sinusoid_encoding(n_position, feat_dim, wave_length=10000):
 
 class AsterBlock(nn.Module):
     def __init__(self, inplanes, planes, stride=1, downsample=None):
-        super(AsterBlock, self).__init__()
+        super().__init__()
         self.conv1 = conv1x1(inplanes, planes, stride)
         self.bn1 = nn.BatchNorm2d(planes)
         self.relu = nn.ReLU()
@@ -63,7 +63,7 @@ class ResNet_ASTER(nn.Module):
     """For aster or crnn"""
 
     def __init__(self, with_lstm=True, n_group=1, in_channels=3):
-        super(ResNet_ASTER, self).__init__()
+        super().__init__()
         self.with_lstm = with_lstm
         self.n_group = n_group
 

@@ -122,7 +122,7 @@ project_path = os.path.abspath(os.path.join(os.getcwd(), "../../../"))
 
 class ArgsParser(ArgumentParser):
     def __init__(self):
-        super(ArgsParser, self).__init__(formatter_class=RawDescriptionHelpFormatter)
+        super().__init__(formatter_class=RawDescriptionHelpFormatter)
         self.add_argument("-o", "--opt", nargs="+", help="set configuration options")
         self.add_argument("-l", "--language", nargs="+", help="set language type, support {}".format(support_list))
         self.add_argument("--train", type=str, help="you can use this command to change the train dataset default path")
@@ -133,7 +133,7 @@ class ArgsParser(ArgumentParser):
         )
 
     def parse_args(self, argv=None):
-        args = super(ArgsParser, self).parse_args(argv)
+        args = super().parse_args(argv)
         args.opt = self._parse_opt(args.opt)
         args.language = self._set_language(args.language)
         return args

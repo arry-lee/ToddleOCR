@@ -28,7 +28,7 @@ class ConvNormLayer(nn.Module):
         freeze_norm=False,
         initializer=partial(normal_,mean=0.0, std=0.01),
     ):
-        super(ConvNormLayer, self).__init__()
+        super().__init__()
         assert norm_type in ["bn", "sync_bn", "gn"]
 
         bias = False
@@ -99,7 +99,7 @@ class FCEFPN(nn.Module):
         freeze_norm=False,
         relu_before_extra_convs=True,
     ):
-        super(FCEFPN, self).__init__()
+        super().__init__()
         self.out_channels = out_channels
         for s in range(extra_stage):
             spatial_scales = spatial_scales + [spatial_scales[-1] / 2.0]

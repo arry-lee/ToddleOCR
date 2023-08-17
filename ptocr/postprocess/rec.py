@@ -78,7 +78,7 @@ class BaseRecLabelDecode:
 class CTCLabelDecode(BaseRecLabelDecode):
 
     def __init__(self, character_dict_path=None, use_space_char=False, **kwargs):
-        super(CTCLabelDecode, self).__init__(character_dict_path, use_space_char)
+        super().__init__(character_dict_path, use_space_char)
 
     def __call__(self, preds, label=None, *args, **kwargs):
         if isinstance(preds, tuple) or isinstance(preds, list):
@@ -100,7 +100,7 @@ class CTCLabelDecode(BaseRecLabelDecode):
 class DistillationCTCLabelDecode(CTCLabelDecode):
 
     def __init__(self, character_dict_path=None, use_space_char=False, model_name=['student'], key=None, multi_head=False, **kwargs):
-        super(DistillationCTCLabelDecode, self).__init__(character_dict_path, use_space_char)
+        super().__init__(character_dict_path, use_space_char)
         if not isinstance(model_name, list):
             model_name = [model_name]
         self.model_name = model_name
@@ -121,7 +121,7 @@ class DistillationCTCLabelDecode(CTCLabelDecode):
 class AttnLabelDecode(BaseRecLabelDecode):
 
     def __init__(self, character_dict_path=None, use_space_char=False, **kwargs):
-        super(AttnLabelDecode, self).__init__(character_dict_path, use_space_char)
+        super().__init__(character_dict_path, use_space_char)
 
     def add_special_char(self, dict_character):
         self.beg_str = 'sos'
@@ -183,7 +183,7 @@ class AttnLabelDecode(BaseRecLabelDecode):
 class RFLLabelDecode(BaseRecLabelDecode):
 
     def __init__(self, character_dict_path=None, use_space_char=False, **kwargs):
-        super(RFLLabelDecode, self).__init__(character_dict_path, use_space_char)
+        super().__init__(character_dict_path, use_space_char)
 
     def add_special_char(self, dict_character):
         self.beg_str = 'sos'
@@ -260,7 +260,7 @@ class RFLLabelDecode(BaseRecLabelDecode):
 class SEEDLabelDecode(BaseRecLabelDecode):
 
     def __init__(self, character_dict_path=None, use_space_char=False, **kwargs):
-        super(SEEDLabelDecode, self).__init__(character_dict_path, use_space_char)
+        super().__init__(character_dict_path, use_space_char)
 
     def add_special_char(self, dict_character):
         self.padding_str = 'padding'
@@ -323,7 +323,7 @@ class SEEDLabelDecode(BaseRecLabelDecode):
 class SRNLabelDecode(BaseRecLabelDecode):
 
     def __init__(self, character_dict_path=None, use_space_char=False, **kwargs):
-        super(SRNLabelDecode, self).__init__(character_dict_path, use_space_char)
+        super().__init__(character_dict_path, use_space_char)
         self.max_text_length = kwargs.get('max_text_length', 25)
 
     def __call__(self, preds, label=None, *args, **kwargs):
@@ -386,7 +386,7 @@ class SRNLabelDecode(BaseRecLabelDecode):
 class SARLabelDecode(BaseRecLabelDecode):
 
     def __init__(self, character_dict_path=None, use_space_char=False, **kwargs):
-        super(SARLabelDecode, self).__init__(character_dict_path, use_space_char)
+        super().__init__(character_dict_path, use_space_char)
         self.rm_symbol = kwargs.get('rm_symbol', False)
 
     def add_special_char(self, dict_character):
@@ -450,7 +450,7 @@ class SARLabelDecode(BaseRecLabelDecode):
 class DistillationSARLabelDecode(SARLabelDecode):
 
     def __init__(self, character_dict_path=None, use_space_char=False, model_name=['student'], key=None, multi_head=False, **kwargs):
-        super(DistillationSARLabelDecode, self).__init__(character_dict_path, use_space_char)
+        super().__init__(character_dict_path, use_space_char)
         if not isinstance(model_name, list):
             model_name = [model_name]
         self.model_name = model_name
@@ -471,7 +471,7 @@ class DistillationSARLabelDecode(SARLabelDecode):
 class PRENLabelDecode(BaseRecLabelDecode):
 
     def __init__(self, character_dict_path=None, use_space_char=False, **kwargs):
-        super(PRENLabelDecode, self).__init__(character_dict_path, use_space_char)
+        super().__init__(character_dict_path, use_space_char)
 
     def add_special_char(self, dict_character):
         padding_str = '<PAD>'
@@ -520,7 +520,7 @@ class PRENLabelDecode(BaseRecLabelDecode):
 class NRTRLabelDecode(BaseRecLabelDecode):
 
     def __init__(self, character_dict_path=None, use_space_char=True, **kwargs):
-        super(NRTRLabelDecode, self).__init__(character_dict_path, use_space_char)
+        super().__init__(character_dict_path, use_space_char)
 
     def __call__(self, preds, label=None, *args, **kwargs):
         if len(preds) == 2:
@@ -579,7 +579,7 @@ class NRTRLabelDecode(BaseRecLabelDecode):
 class ViTSTRLabelDecode(NRTRLabelDecode):
 
     def __init__(self, character_dict_path=None, use_space_char=False, **kwargs):
-        super(ViTSTRLabelDecode, self).__init__(character_dict_path, use_space_char)
+        super().__init__(character_dict_path, use_space_char)
 
     def __call__(self, preds, label=None, *args, **kwargs):
         if isinstance(preds, torch.Tensor):
@@ -601,7 +601,7 @@ class ViTSTRLabelDecode(NRTRLabelDecode):
 class ABINetLabelDecode(NRTRLabelDecode):
 
     def __init__(self, character_dict_path=None, use_space_char=False, **kwargs):
-        super(ABINetLabelDecode, self).__init__(character_dict_path, use_space_char)
+        super().__init__(character_dict_path, use_space_char)
 
     def __call__(self, preds, label=None, *args, **kwargs):
         if isinstance(preds, dict):
@@ -625,7 +625,7 @@ class ABINetLabelDecode(NRTRLabelDecode):
 class SPINLabelDecode(AttnLabelDecode):
 
     def __init__(self, character_dict_path=None, use_space_char=False, **kwargs):
-        super(SPINLabelDecode, self).__init__(character_dict_path, use_space_char)
+        super().__init__(character_dict_path, use_space_char)
 
     def add_special_char(self, dict_character):
         self.beg_str = 'sos'
@@ -637,7 +637,7 @@ class SPINLabelDecode(AttnLabelDecode):
 class VLLabelDecode(BaseRecLabelDecode):
 
     def __init__(self, character_dict_path=None, use_space_char=False, **kwargs):
-        super(VLLabelDecode, self).__init__(character_dict_path, use_space_char)
+        super().__init__(character_dict_path, use_space_char)
         self.max_text_length = kwargs.get('max_text_length', 25)
         self.nclass = len(self.character) + 1
 
@@ -715,7 +715,7 @@ class VLLabelDecode(BaseRecLabelDecode):
 class CANLabelDecode(BaseRecLabelDecode):
 
     def __init__(self, character_dict_path=None, use_space_char=False, **kwargs):
-        super(CANLabelDecode, self).__init__(character_dict_path, use_space_char)
+        super().__init__(character_dict_path, use_space_char)
 
     def decode(self, text_index, preds_prob=None):
         result_list = []

@@ -31,7 +31,7 @@ class ConvBNLayer(nn.Module):
     def __init__(
         self, num_features, filter_size, num_filters, stride, padding, channels=None, num_groups=1, act="hard_swish"
     ):
-        super(ConvBNLayer, self).__init__()
+        super().__init__()
 
         self._conv = Conv2d(
             in_channels=num_features,
@@ -55,7 +55,7 @@ class DepthWiseSeparable(nn.Module):
     def __init__(
         self, num_features, num_filters1, num_filters2, num_groups, stride, scale, dw_size=3, padding=1, use_se=False
     ):
-        super(DepthWiseSeparable, self).__init__()
+        super().__init__()
         self.use_se = use_se
         self._depthwise_conv = ConvBNLayer(
             num_features=num_features,
@@ -189,7 +189,7 @@ class MobileNetV1Enhance(nn.Module):
 
 class SEModule(nn.Module):
     def __init__(self, channel, reduction=4):
-        super(SEModule, self).__init__()
+        super().__init__()
         self.avg_pool = AdaptiveAvgPool2d(1)
         self.conv1 = Conv2d(
             in_channels=channel, out_channels=channel // reduction, kernel_size=1, stride=1, padding=0, bias=True

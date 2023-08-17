@@ -21,7 +21,7 @@ class Im2Seq(nn.Module):
 
 class EncoderWithRNN(nn.Module):
     def __init__(self, in_channels, hidden_size):
-        super(EncoderWithRNN, self).__init__()
+        super().__init__()
         self.out_channels = hidden_size * 2
         self.lstm = nn.LSTM(in_channels, hidden_size, direction="bidirectional", num_layers=2)
 
@@ -42,7 +42,7 @@ class BidirectionalLSTM(nn.Module):
         time_major=False,
         with_linear=False,
     ):
-        super(BidirectionalLSTM, self).__init__()
+        super().__init__()
         self.with_linear = with_linear
         self.rnn = nn.LSTM(
             input_size, hidden_size, num_layers=num_layers, dropout=dropout, direction=direction, time_major=time_major
@@ -62,7 +62,7 @@ class BidirectionalLSTM(nn.Module):
 
 class EncoderWithCascadeRNN(nn.Module):
     def __init__(self, in_channels, hidden_size, out_channels, num_layers=2, with_linear=False):
-        super(EncoderWithCascadeRNN, self).__init__()
+        super().__init__()
         self.out_channels = out_channels[-1]
         self.encoder = nn.ModuleList(
             [
@@ -86,7 +86,7 @@ class EncoderWithCascadeRNN(nn.Module):
 
 class EncoderWithFC(nn.Module):
     def __init__(self, in_channels, hidden_size):
-        super(EncoderWithFC, self).__init__()
+        super().__init__()
         self.out_channels = hidden_size
 
         self.fc = nn.Linear(in_channels, hidden_size, bias=True)
@@ -112,7 +112,7 @@ class EncoderWithSVTR(nn.Module):
         drop_path=0.0,
         qk_scale=None,
     ):  # XS
-        super(EncoderWithSVTR, self).__init__()
+        super().__init__()
         self.depth = depth
         self.use_guide = use_guide
         self.conv1 = ConvBNLayer(in_channels, in_channels // 8, padding=1, act=Swish)
@@ -185,7 +185,7 @@ class EncoderWithSVTR(nn.Module):
 
 class SequenceEncoder(nn.Module):
     def __init__(self, in_channels, encoder_type, hidden_size=48, **kwargs):
-        super(SequenceEncoder, self).__init__()
+        super().__init__()
         self.encoder_reshape = Im2Seq(in_channels)
         self.out_channels = self.encoder_reshape.out_channels
         self.encoder_type = encoder_type

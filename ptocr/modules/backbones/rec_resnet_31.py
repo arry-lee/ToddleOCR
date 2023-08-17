@@ -72,7 +72,7 @@ class ResNet31(nn.Module):
         last_stage_pool=False,
         init_type=None,
     ):
-        super(ResNet31, self).__init__()
+        super().__init__()
         assert isinstance(in_channels, int)
         assert isinstance(last_stage_pool, bool)
 

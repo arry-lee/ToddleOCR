@@ -5,7 +5,7 @@ __all__ = ['EASTHead']
 
 class ConvBNLayer(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, stride, padding, groups=1, act=None, name=None):
-        super(ConvBNLayer, self).__init__()
+        super().__init__()
         # self.if_act = if_act
         self.act = act
         self.conv = nn.Conv2d(
@@ -42,7 +42,7 @@ class ConvBNLayer(nn.Module):
 
 class EASTHead(nn.Module):
     def __init__(self, in_channels, model_name, **kwargs):
-        super(EASTHead, self).__init__()
+        super().__init__()
         self.model_name = model_name
         if self.model_name == "large":
             num_outputs = [128, 64, 1, 8]

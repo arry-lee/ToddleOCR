@@ -12,7 +12,7 @@ from ptocr.loss.center import CenterLoss
 class CTCLoss(nn.Module):
     """The Connectionist Temporal Classification loss"""
     def __init__(self, use_focal_loss=False):
-        super(CTCLoss, self).__init__()
+        super().__init__()
         self.loss_func = nn.CTCLoss(blank=0, reduction="none")
         self.use_focal_loss = use_focal_loss
 
@@ -49,7 +49,7 @@ class EnhancedCTCLoss(nn.Module):
         center_file_path=None,
         **kwargs
     ):
-        super(EnhancedCTCLoss, self).__init__()
+        super().__init__()
         self.ctc_loss_func = CTCLoss(use_focal_loss=use_focal_loss)
 
         self.use_ace_loss = False

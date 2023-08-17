@@ -16,7 +16,7 @@ import torch.nn as nn
 __all__ =['CANHead']
 class ChannelAtt(nn.Module):
     def __init__(self, channel, reduction):
-        super(ChannelAtt, self).__init__()
+        super().__init__()
         self.avg_pool = nn.AdaptiveAvgPool2d(1)
 
         self.fc = nn.Sequential(
@@ -32,7 +32,7 @@ class ChannelAtt(nn.Module):
 
 class CountingDecoder(nn.Module):
     def __init__(self, in_channel, out_channel, kernel_size):
-        super(CountingDecoder, self).__init__()
+        super().__init__()
         self.in_channel = in_channel
         self.out_channel = out_channel
 
@@ -113,7 +113,7 @@ class AttDecoder(nn.Module):
         counting_decoder_out_channel,
         attention,
     ):
-        super(AttDecoder, self).__init__()
+        super().__init__()
         self.input_size = input_size
         self.hidden_size = hidden_size
         self.out_channel = encoder_out_channel
@@ -215,7 +215,7 @@ Attention Module
 
 class Attention(nn.Module):
     def __init__(self, hidden_size, attention_dim):
-        super(Attention, self).__init__()
+        super().__init__()
         self.hidden = hidden_size
         self.attention_dim = attention_dim
         self.hidden_weight = nn.Linear(self.hidden, self.attention_dim)
@@ -245,7 +245,7 @@ class Attention(nn.Module):
 
 class CANHead(nn.Module):
     def __init__(self, in_channel, out_channel, ratio, attdecoder, **kwargs):
-        super(CANHead, self).__init__()
+        super().__init__()
 
         self.in_channel = in_channel
         self.out_channel = out_channel

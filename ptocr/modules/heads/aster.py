@@ -11,7 +11,7 @@ from torch.nn import functional as F
 
 class AsterHead(nn.Module):
     def __init__(self, in_channels, out_channels, sDim, attDim, max_len_labels, time_step=25, beam_width=5, **kwargs):
-        super(AsterHead, self).__init__()
+        super().__init__()
         self.num_classes = out_channels
         self.in_planes = in_channels
         self.sDim = sDim
@@ -43,7 +43,7 @@ class AsterHead(nn.Module):
 
 class Embedding(nn.Module):
     def __init__(self, in_timestep, in_planes, mid_dim=4096, embed_dim=300):
-        super(Embedding, self).__init__()
+        super().__init__()
         self.in_timestep = in_timestep
         self.in_planes = in_planes
         self.embed_dim = embed_dim
@@ -65,7 +65,7 @@ class AttentionRecognitionHead(nn.Module):
     """
 
     def __init__(self, in_channels, out_channels, sDim, attDim, max_len_labels):
-        super(AttentionRecognitionHead, self).__init__()
+        super().__init__()
         self.num_classes = out_channels  # this is the output classes. So it includes the <EOS>.
         self.in_planes = in_channels
         self.sDim = sDim
@@ -254,7 +254,7 @@ class AttentionRecognitionHead(nn.Module):
 
 class AttentionUnit(nn.Module):
     def __init__(self, sDim, xDim, attDim):
-        super(AttentionUnit, self).__init__()
+        super().__init__()
 
         self.sDim = sDim
         self.xDim = xDim
@@ -286,7 +286,7 @@ class AttentionUnit(nn.Module):
 
 class DecoderUnit(nn.Module):
     def __init__(self, sDim, xDim, yDim, attDim):
-        super(DecoderUnit, self).__init__()
+        super().__init__()
         self.sDim = sDim
         self.xDim = xDim
         self.yDim = yDim

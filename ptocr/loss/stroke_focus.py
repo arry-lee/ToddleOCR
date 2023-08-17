@@ -8,7 +8,7 @@ import torch.nn as nn
 
 class StrokeFocusLoss(nn.Module):
     def __init__(self, character_dict_path=None, **kwargs):
-        super(StrokeFocusLoss, self).__init__(character_dict_path)
+        super().__init__(character_dict_path)
         self.mse_loss = nn.MSELoss()
         self.ce_loss = nn.CrossEntropyLoss()
         self.l1_loss = nn.L1Loss()

@@ -35,7 +35,7 @@ class RoIAlignRotated(nn.Module):
     """RoI align pooling layer for rotated proposals."""
 
     def __init__(self, out_size, spatial_scale, sample_num=0, aligned=True, clockwise=False):
-        super(RoIAlignRotated, self).__init__()
+        super().__init__()
 
         if isinstance(out_size, int):
             self.out_h = out_size

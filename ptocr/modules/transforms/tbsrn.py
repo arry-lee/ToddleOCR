@@ -51,7 +51,7 @@ def positionalencoding2d(d_model, height, width):
 
 class FeatureEnhancer(nn.Module):
     def __init__(self):
-        super(FeatureEnhancer, self).__init__()
+        super().__init__()
 
         self.multihead = MultiHeadedAttention(h=4, d_model=128, dropout=0.1)
         self.mul_layernorm1 = LayerNorm(128)
@@ -109,7 +109,7 @@ class TBSRN(nn.Module):
         hidden_units=32,
         infer_mode=False,
     ):
-        super(TBSRN, self).__init__()
+        super().__init__()
         in_planes = 3
         if mask:
             in_planes = 4
@@ -226,7 +226,7 @@ class TBSRN(nn.Module):
 
 class RecurrentResidualBlock(nn.Module):
     def __init__(self, channels):
-        super(RecurrentResidualBlock, self).__init__()
+        super().__init__()
         self.conv1 = nn.Conv2d(channels, channels, kernel_size=3, padding=1)
         self.bn1 = nn.BatchNorm2d(channels)
         self.gru1 = GruBlock(channels, channels)

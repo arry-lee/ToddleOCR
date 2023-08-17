@@ -12,7 +12,7 @@ class BasicBlock(nn.Module):
     expansion = 1
 
     def __init__(self, inplanes, planes, stride=1, downsample=None, gcb_config=None):
-        super(BasicBlock, self).__init__()
+        super().__init__()
         self.conv1 = nn.Conv2d(inplanes, planes, kernel_size=3, stride=stride, padding=1, bias=False)
         self.bn1 = nn.BatchNorm2d(planes, momentum=0.9)
         self.relu = nn.ReLU()
@@ -64,7 +64,7 @@ class TableResNetExtra(nn.Module):
     def __init__(self, layers, in_channels=3, gcb_config=None):
         assert len(layers) >= 4
 
-        super(TableResNetExtra, self).__init__()
+        super().__init__()
         self.inplanes = 128
         self.conv1 = nn.Conv2d(in_channels, 64, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn1 = nn.BatchNorm2d(64)
@@ -166,7 +166,7 @@ class TableResNetExtra(nn.Module):
 
 class MultiAspectGCAttention(nn.Module):
     def __init__(self, inplanes, ratio, headers, pooling_type="att", att_scale=False, fusion_type="channel_add"):
-        super(MultiAspectGCAttention, self).__init__()
+        super().__init__()
         assert pooling_type in ["avg", "att"]
 
         assert fusion_type in ["channel_add", "channel_mul", "channel_concat"]

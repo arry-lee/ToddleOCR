@@ -111,7 +111,7 @@ class RandAugment(RawRandAugment):
     def __init__(self, prob=0.5, *args, **kwargs):
         self.prob = prob
         if six.PY2:
-            super(RandAugment, self).__init__(*args, **kwargs)
+            super().__init__(*args, **kwargs)
         else:
             super().__init__(*args, **kwargs)
 
@@ -124,7 +124,7 @@ class RandAugment(RawRandAugment):
             img = Image.fromarray(img)
 
         if six.PY2:
-            img = super(RandAugment, self).__call__(img)
+            img = super().__call__(img)
         else:
             img = super().__call__(img)
 

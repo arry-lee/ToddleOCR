@@ -5,7 +5,7 @@ import torch.nn.functional as F
 __all__ = ['SASTFPN']
 class ConvBNLayer(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, stride, groups=1, act=None, name=None):
-        super(ConvBNLayer, self).__init__()
+        super().__init__()
         self.conv = nn.Conv2d(
             in_channels=in_channels,
             out_channels=out_channels,
@@ -34,7 +34,7 @@ class ConvBNLayer(nn.Module):
 
 class DeConvBNLayer(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, stride, groups=1, act=None, name=None):
-        super(DeConvBNLayer, self).__init__()
+        super().__init__()
         self.act = act
         self.deconv = nn.ConvTranspose2d(
             in_channels=in_channels,
@@ -64,7 +64,7 @@ class DeConvBNLayer(nn.Module):
 
 class FPN_Up_Fusion(nn.Module):
     def __init__(self, in_channels):
-        super(FPN_Up_Fusion, self).__init__()
+        super().__init__()
         in_channels = in_channels[::-1]
         out_channels = [256, 256, 192, 192, 128]
         self.h0_conv = ConvBNLayer(in_channels[0], out_channels[0], 1, 1, act=None, name="fpn_up_h0")
@@ -113,7 +113,7 @@ class FPN_Up_Fusion(nn.Module):
 
 class FPN_Down_Fusion(nn.Module):
     def __init__(self, in_channels):
-        super(FPN_Down_Fusion, self).__init__()
+        super().__init__()
         out_channels = [32, 64, 128]
         self.h0_conv = ConvBNLayer(in_channels[0], out_channels[0], 3, 1, act=None, name="fpn_down_h0")
         self.h1_conv = ConvBNLayer(in_channels[1], out_channels[1], 3, 1, act=None, name="fpn_down_h1")
@@ -145,7 +145,7 @@ class FPN_Down_Fusion(nn.Module):
 
 class Cross_Attention(nn.Module):
     def __init__(self, in_channels):
-        super(Cross_Attention, self).__init__()
+        super().__init__()
         self.theta_conv = ConvBNLayer(in_channels, in_channels, 1, 1, act="relu", name="f_theta")
         self.phi_conv = ConvBNLayer(in_channels, in_channels, 1, 1, act="relu", name="f_phi")
         self.g_conv = ConvBNLayer(in_channels, in_channels, 1, 1, act="relu", name="f_g")
@@ -195,7 +195,7 @@ class Cross_Attention(nn.Module):
 
 class SASTFPN(nn.Module):
     def __init__(self, in_channels, with_cab=False, **kwargs):
-        super(SASTFPN, self).__init__()
+        super().__init__()
         self.in_channels = in_channels
         self.with_cab = with_cab
         self.FPN_Down_Fusion = FPN_Down_Fusion(self.in_channels)

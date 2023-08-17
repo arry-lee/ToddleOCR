@@ -8,7 +8,7 @@ from torch import nn
 __all__ = ['PSEHead']
 class PSEHead(nn.Module):
     def __init__(self, in_channels, hidden_dim=256, out_channels=7, **kwargs):
-        super(PSEHead, self).__init__()
+        super().__init__()
         self.conv1 = nn.Conv2d(in_channels, hidden_dim, kernel_size=3, stride=1, padding=1)
         self.bn1 = nn.BatchNorm2d(hidden_dim)
         self.relu1 = nn.ReLU()

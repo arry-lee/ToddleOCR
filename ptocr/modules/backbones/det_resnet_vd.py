@@ -18,7 +18,7 @@ class DeformableConvV2(nn.Module):
             bias=None,
             skip_quant=False,
     ):
-        super(DeformableConvV2, self).__init__()
+        super().__init__()
         self.offset_channel = 2 * kernel_size ** 2 * groups
         self.mask_channel = kernel_size ** 2 * groups
         self.conv_dcn = DeformConv2d(
@@ -101,7 +101,7 @@ class ConvBNLayer(nn.Module):
 
 class BottleneckBlock(nn.Module):
     def __init__(self, in_channels, out_channels, stride, shortcut=True, if_first=False, is_dcn=False):
-        super(BottleneckBlock, self).__init__()
+        super().__init__()
         self.conv0 = ConvBNLayer(in_channels=in_channels, out_channels=out_channels, kernel_size=1, act="relu")
         self.conv1 = ConvBNLayer(
             in_channels=out_channels,
@@ -138,7 +138,7 @@ class BottleneckBlock(nn.Module):
 
 class BasicBlock(nn.Module):
     def __init__(self, in_channels, out_channels, stride, shortcut=True, is_first=False):
-        super(BasicBlock, self).__init__()
+        super().__init__()
         self.stride = stride
         self.conv0 = ConvBNLayer(
             in_channels=in_channels, out_channels=out_channels, kernel_size=3, stride=stride, act="relu"

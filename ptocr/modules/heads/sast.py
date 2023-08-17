@@ -5,7 +5,7 @@ __all__ = ['SASTHead']
 
 class ConvBNLayer(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, stride, groups=1, act=None, name=None):
-        super(ConvBNLayer, self).__init__()
+        super().__init__()
         self.act = act
         self.conv = nn.Conv2d(
             in_channels=in_channels,
@@ -34,7 +34,7 @@ class ConvBNLayer(nn.Module):
 
 class SASTHeader1(nn.Module):
     def __init__(self, in_channels, **kwargs):
-        super(SASTHeader1, self).__init__()
+        super().__init__()
         out_channels = [64, 64, 128]
         self.score_conv = nn.Sequential(
             ConvBNLayer(in_channels, out_channels[0], 1, 1, act="relu", name="f_score1"),
@@ -58,7 +58,7 @@ class SASTHeader1(nn.Module):
 
 class SASTHeader2(nn.Module):
     def __init__(self, in_channels, **kwargs):
-        super(SASTHeader2, self).__init__()
+        super().__init__()
         out_channels = [64, 64, 128]
         self.tvo_conv = nn.Sequential(
             ConvBNLayer(in_channels, out_channels[0], 1, 1, act="relu", name="f_tvo1"),
@@ -81,7 +81,7 @@ class SASTHeader2(nn.Module):
 
 class SASTHead(nn.Module):
     def __init__(self, in_channels, **kwargs):
-        super(SASTHead, self).__init__()
+        super().__init__()
         self.head1 = SASTHeader1(in_channels)
         self.head2 = SASTHeader2(in_channels)
 

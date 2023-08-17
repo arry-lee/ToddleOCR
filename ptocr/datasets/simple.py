@@ -9,7 +9,7 @@ from torchvision.datasets import VisionDataset
 
 class SimpleDataSet(VisionDataset):
     def __init__(self,root,transforms=None,**dataset_config):
-        super(SimpleDataSet, self).__init__(root,transforms)
+        super().__init__(root,transforms)
         # self.logger = logger
         self.mode = dataset_config.get('mode','train').lower()
         self.delimiter = dataset_config.get("delimiter", "\t")

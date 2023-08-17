@@ -8,7 +8,7 @@ __all__ = ["Kie_backbone"]
 
 class Encoder(nn.Module):
     def __init__(self, num_features, num_filters):
-        super(Encoder, self).__init__()
+        super().__init__()
         self.conv1 = nn.Conv2d(num_features, num_filters, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn1 = nn.BatchNorm2d(num_filters)
 
@@ -30,7 +30,7 @@ class Encoder(nn.Module):
 
 class Decoder(nn.Module):
     def __init__(self, num_features, num_filters):
-        super(Decoder, self).__init__()
+        super().__init__()
 
         self.conv1 = nn.Conv2d(num_features, num_filters, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn1 = nn.BatchNorm2d(num_filters)
@@ -58,7 +58,7 @@ class Decoder(nn.Module):
 
 class UNet(nn.Module):
     def __init__(self):
-        super(UNet, self).__init__()
+        super().__init__()
         self.down1 = Encoder(num_features=3, num_filters=16)
         self.down2 = Encoder(num_features=16, num_filters=32)
         self.down3 = Encoder(num_features=32, num_filters=64)
@@ -87,7 +87,7 @@ class UNet(nn.Module):
 
 class Kie_backbone(nn.Module):
     def __init__(self, in_channels, **kwargs):
-        super(Kie_backbone, self).__init__()
+        super().__init__()
         self.out_channels = 16
         self.img_feat = UNet()
         self.maxpool = nn.MaxPool2d(kernel_size=7)

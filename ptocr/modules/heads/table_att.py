@@ -12,7 +12,7 @@ class TableAttentionHead(nn.Module):
     def __init__(
         self, in_channels, hidden_size, in_max_len=488, max_text_length=800, out_channels=30, loc_reg_num=4, **kwargs
     ):
-        super(TableAttentionHead, self).__init__()
+        super().__init__()
         self.input_size = in_channels[-1]
         self.hidden_size = hidden_size
         self.out_channels = out_channels
