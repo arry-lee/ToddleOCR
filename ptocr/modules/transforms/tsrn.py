@@ -15,7 +15,7 @@ warnings.filterwarnings("ignore")
 
 from .tps_spatial_transformer import TPSSpatialTransformer
 from .stn import STN as STN_model
-from ptocr.modules.heads.sr_rensnet_transformer import Transformer
+from .sr_rensnet_transformer import Transformer
 
 
 class TSRN(nn.Module):

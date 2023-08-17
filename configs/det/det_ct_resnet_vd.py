@@ -2,17 +2,17 @@
 from configs.config import ConfigModel,_
 from ptocr.modules.backbones.det_resnet_vd import ResNet_vd
 from ptocr.modules.necks.ct_fpn import CTFPN
-from ptocr.modules.heads.det_ct_head import CTHead
+from ptocr.modules.heads.ct import CTHead
 from ptocr.loss.ct import CTLoss
 from ptocr.metrics.ct import CTMetric
 from torch.optim import Adam
 from torch.optim.lr_scheduler import PolynomialLR
 from ptocr.postprocess.ct import CTPostProcess
 from ptocr.datasets.simple_dataset import SimpleDataSet
-from ptocr.datasets.imaug.operators import ToCHWImage, DecodeImage, KeepKeys, NormalizeImage
-from ptocr.datasets.imaug.label_ops import CTLabelEncode
-from ptocr.datasets.imaug.ct_process import RandomScale, MakeCentripetalShift, GroupRandomRotate, ScaleAlignedShort, GroupRandomHorizontalFlip, GroupRandomCropPadding, MakeShrink
-from ptocr.datasets.imaug.ColorJitter import ColorJitter
+from ptocr.transforms.operators import ToCHWImage, DecodeImage, KeepKeys, NormalizeImage
+from ptocr.transforms.label_ops import CTLabelEncode
+from ptocr.transforms.ct_process import RandomScale, MakeCentripetalShift, GroupRandomRotate, ScaleAlignedShort, GroupRandomHorizontalFlip, GroupRandomCropPadding, MakeShrink
+from ptocr.transforms.ColorJitter import ColorJitter
 class Model(ConfigModel):
     use_gpu = True
     epoch_num = 600

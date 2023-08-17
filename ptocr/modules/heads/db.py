@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 
-
+__all__ = ["DBHead"]
 class Head(nn.Module):
     def __init__(self, in_channels, kernel_list=[3, 2, 2], **kwargs):
         super(Head, self).__init__()

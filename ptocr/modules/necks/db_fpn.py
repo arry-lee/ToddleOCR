@@ -5,12 +5,9 @@ import torch.nn.functional as F
 import os
 import sys
 
-__dir__ = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(__dir__)
-sys.path.insert(0, os.path.abspath(os.path.join(__dir__, "../../..")))
-
 from ptocr.modules.backbones.det_mobilenet_v3 import SqueezeExcitation
 
+__all__ = ['DBFPN']
 
 class DSConv(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, padding, stride=1, groups=None, if_act=True, act="relu", **kwargs):

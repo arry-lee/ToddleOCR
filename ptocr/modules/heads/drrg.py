@@ -6,13 +6,14 @@ https://github.com/open-mmlab/mmocr/blob/main/mmocr/models/textdet/dense_heads/d
 import numpy as np
 import torch
 import torch.nn as nn
+
 import torch.nn.functional as F
 
-from .gcn import GCN
-from .local_graph import LocalGraphs
-from .proposal_local_graph import ProposalLocalGraphs
+from ._gcn import GCN
+from ._local_graph import LocalGraphs
+from ._proposal_local_graph import ProposalLocalGraphs
 
-
+__all__ = ['DRRGHead']
 class DRRGHead(nn.Module):
     def __init__(
             self,

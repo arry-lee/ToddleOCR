@@ -1,6 +1,7 @@
 # reference from : https://github.com/open-mmlab/mmocr/blob/main/mmocr/models/kie/heads/sdmgr_head.py
 
 
+__all__ = ['SDMGRHead']
 import torch
 import torch.nn.functional as F
 from torch import nn

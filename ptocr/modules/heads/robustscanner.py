@@ -6,7 +6,7 @@ https://github.com/open-mmlab/mmocr/blob/main/mmocr/models/textrecog/decoders/ro
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
+__all__ = ['RobustScannerHead']
 
 class BaseDecoder(nn.Module):
     def __init__(self, **kwargs):

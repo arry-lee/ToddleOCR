@@ -4,8 +4,8 @@ https://github.com/hikopensource/DAVAR-Lab-OCR/blob/main/davarocr/davar_rcg/mode
 """
 import torch.nn as nn
 from torch.nn.init import kaiming_normal_, zeros_
-from .rec_att_head import AttentionLSTM
-
+from .att import AttentionLSTM
+__all__ = ['RFLHead']
 class CNTHead(nn.Module):
 
     def __init__(self, embed_size=512, encode_length=26, out_channels=38, **kwargs):

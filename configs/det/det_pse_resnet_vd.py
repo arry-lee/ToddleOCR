@@ -2,19 +2,19 @@
 from configs.config import ConfigModel,_
 from ptocr.modules.backbones.det_resnet_vd import ResNet_vd
 from ptocr.modules.necks.fpn import FPN
-from ptocr.modules.heads.det_pse_head import PSEHead
+from ptocr.modules.heads.pse import PSEHead
 from ptocr.loss.pse import PSELoss
 from ptocr.metrics.det import DetMetric
 from torch.optim import Adam
 from torch.optim.lr_scheduler import StepLR
 from ptocr.postprocess.pse import PSEPostProcess
 from ptocr.datasets.simple_dataset import SimpleDataSet
-from ptocr.datasets.imaug.operators import DecodeImage, KeepKeys, ToCHWImage, DetResizeForTest, NormalizeImage
-from ptocr.datasets.imaug.label_ops import DetLabelEncode
-from ptocr.datasets.imaug.ColorJitter import ColorJitter
-from ptocr.datasets.imaug.iaa_augment import IaaAugment
-from ptocr.datasets.imaug.make_pse_gt import MakePseGt
-from ptocr.datasets.imaug.random_crop_data import RandomCropImgMask
+from ptocr.transforms.operators import DecodeImage, KeepKeys, ToCHWImage, DetResizeForTest, NormalizeImage
+from ptocr.transforms.label_ops import DetLabelEncode
+from ptocr.transforms.ColorJitter import ColorJitter
+from ptocr.transforms.iaa_augment import IaaAugment
+from ptocr.transforms.make_pse_gt import MakePseGt
+from ptocr.transforms.random_crop_data import RandomCropImgMask
 class Model(ConfigModel):
     use_gpu = True
     epoch_num = 600

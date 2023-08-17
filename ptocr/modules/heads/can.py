@@ -13,7 +13,7 @@ import math
 import torch
 import torch.nn as nn
 
-
+__all__ =['CANHead']
 class ChannelAtt(nn.Module):
     def __init__(self, channel, reduction):
         super(ChannelAtt, self).__init__()

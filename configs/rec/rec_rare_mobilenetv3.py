@@ -3,16 +3,16 @@ from configs.config import ConfigModel,_
 from ptocr.modules.transforms.tps import TPS
 from ptocr.modules.backbones.rec_mobilenet_v3 import MobileNetV3
 from ptocr.modules.necks.rnn import SequenceEncoder
-from ptocr.modules.heads.rec_att_head import AttentionHead
+from ptocr.modules.heads.att import AttentionHead
 from ptocr.loss.att import AttentionLoss
 from ptocr.metrics.rec import RecMetric
 from torch.optim import Adam
 from torch.optim.lr_scheduler import ConstantLR
 from ptocr.postprocess.rec import AttnLabelDecode
 from ptocr.datasets.lmdb_dataset import LMDBDataSet
-from ptocr.datasets.imaug.operators import DecodeImage, KeepKeys
-from ptocr.datasets.imaug.label_ops import AttnLabelEncode
-from ptocr.datasets.imaug.rec_img_aug import RecResizeImg
+from ptocr.transforms.operators import DecodeImage, KeepKeys
+from ptocr.transforms.label_ops import AttnLabelEncode
+from ptocr.transforms.rec_img_aug import RecResizeImg
 class Model(ConfigModel):
     use_gpu = True
     epoch_num = 72

@@ -5,7 +5,7 @@ https://github.com/whai362/PSENet/blob/python3/models/head/psenet_head.py
 
 from torch import nn
 
-
+__all__ = ['PSEHead']
 class PSEHead(nn.Module):
     def __init__(self, in_channels, hidden_dim=256, out_channels=7, **kwargs):
         super(PSEHead, self).__init__()

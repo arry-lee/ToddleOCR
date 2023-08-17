@@ -21,7 +21,7 @@ from torchvision.transforms import Compose
 from ocr.datasets.ocr_dataset import FolderDataset
 from ptocr import hub
 from ptocr.datasets import SimpleDataSet
-from ptocr.datasets.imaug import (
+from ptocr.transforms import (
     DecodeImage,
     DetLabelEncode,
     DetResizeForTest,
@@ -34,8 +34,8 @@ from ptocr.datasets.imaug import (
 from ptocr.loss import DBLoss, EASTLoss
 from ptocr.metrics import DetMetric
 from ptocr.modules.backbones.det_mobilenet_v3 import MobileNetV3
-from ptocr.modules.heads.det_db_head import DBHead
-from ptocr.modules.heads.det_east_head import EASTHead
+from ptocr.modules.heads.db import DBHead
+from ptocr.modules.heads.east import EASTHead
 from ptocr.modules.necks.db_fpn import DBFPN
 from ptocr.modules.necks.east_fpn import EASTFPN
 from ptocr.postprocess import DBPostProcess, EASTPostProcess

@@ -7,10 +7,10 @@ from torch.optim import AdamW
 from torch.optim.lr_scheduler import PolynomialLR
 from ptocr.postprocess import VQASerTokenLayoutLMPostProcess
 from ptocr.datasets.simple_dataset import SimpleDataSet
-from ptocr.datasets.imaug.operators import DecodeImage, KeepKeys, ToCHWImage, NormalizeImage, Resize
-from ptocr.datasets.imaug.label_ops import VQATokenLabelEncode
-from ptocr.datasets.imaug.vqa.token.vqa_token_pad import VQATokenPad
-from ptocr.datasets.imaug.vqa.token.vqa_token_chunk import VQASerTokenChunk
+from ptocr.transforms.operators import DecodeImage, KeepKeys, ToCHWImage, NormalizeImage, Resize
+from ptocr.transforms.label_ops import VQATokenLabelEncode
+from ptocr.transforms.vqa.token.vqa_token_pad import VQATokenPad
+from ptocr.transforms.vqa.token.vqa_token_chunk import VQASerTokenChunk
 class Model(ConfigModel):
     use_gpu = True
     epoch_num = 200

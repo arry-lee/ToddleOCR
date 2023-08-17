@@ -3,16 +3,16 @@ from configs.config import ConfigModel,_
 from ptocr.modules.transforms.tps import TPS
 from ptocr.modules.backbones.rec_resnet_rfl import ResNetRFL
 from ptocr.modules.necks.rf_adaptor import RFAdaptor
-from ptocr.modules.heads.rec_rfl_head import RFLHead
+from ptocr.modules.heads.rfl import RFLHead
 from ptocr.loss.rfl import RFLLoss
 from ptocr.metrics.rec import CNTMetric
 from torch.optim import AdamW
 from ptocr.optim.lr_scheduler import PiecewiseLR
 from ptocr.postprocess.rec import RFLLabelDecode
 from ptocr.datasets.lmdb_dataset import LMDBDataSet
-from ptocr.datasets.imaug.operators import DecodeImage, KeepKeys
-from ptocr.datasets.imaug.label_ops import RFLLabelEncode
-from ptocr.datasets.imaug.rec_img_aug import RFLRecResizeImg
+from ptocr.transforms.operators import DecodeImage, KeepKeys
+from ptocr.transforms.label_ops import RFLLabelEncode
+from ptocr.transforms.rec_img_aug import RFLRecResizeImg
 class Model(ConfigModel):
     use_gpu = True
     epoch_num = 6

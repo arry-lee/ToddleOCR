@@ -2,19 +2,19 @@
 from configs.config import ConfigModel,_
 from ptocr.modules.backbones.det_resnet_vd import ResNet_vd
 from ptocr.modules.necks.fce_fpn import FCEFPN
-from ptocr.modules.heads.det_fce_head import FCEHead
+from ptocr.modules.heads.fce import FCEHead
 from ptocr.loss.fce import FCELoss
 from ptocr.metrics.det import DetFCEMetric
 from torch.optim import Adam
 from torch.optim.lr_scheduler import ConstantLR
 from ptocr.postprocess.fce import FCEPostProcess
 from ptocr.datasets.simple_dataset import SimpleDataSet
-from ptocr.datasets.imaug.operators import DecodeImage, KeepKeys, ToCHWImage, DetResizeForTest, NormalizeImage, Pad
-from ptocr.datasets.imaug.label_ops import DetLabelEncode
-from ptocr.datasets.imaug.ColorJitter import ColorJitter
-from ptocr.datasets.imaug.fce_aug import RandomRotatePolyInstances, RandomCropPolyInstances, SquareResizePad, RandomCropFlip, RandomScaling
-from ptocr.datasets.imaug.iaa_augment import IaaAugment
-from ptocr.datasets.imaug.fce_targets import FCENetTargets
+from ptocr.transforms.operators import DecodeImage, KeepKeys, ToCHWImage, DetResizeForTest, NormalizeImage, Pad
+from ptocr.transforms.label_ops import DetLabelEncode
+from ptocr.transforms.ColorJitter import ColorJitter
+from ptocr.transforms.fce_aug import RandomRotatePolyInstances, RandomCropPolyInstances, SquareResizePad, RandomCropFlip, RandomScaling
+from ptocr.transforms.iaa_augment import IaaAugment
+from ptocr.transforms.fce_targets import FCENetTargets
 class Model(ConfigModel):
     use_gpu = True
     epoch_num = 1500

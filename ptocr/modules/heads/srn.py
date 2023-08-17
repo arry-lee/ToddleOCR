@@ -4,9 +4,10 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-from .self_attention import WrapEncoder
-from .self_attention import WrapEncoderForFeature
 
+from ._self_attention import WrapEncoder
+from ._self_attention import WrapEncoderForFeature
+__all__ = ['SRNHead']
 gradient_clip = 10
 
 

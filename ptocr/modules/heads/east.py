@@ -1,5 +1,6 @@
 import torch.nn.functional as F
 from torch import nn
+__all__ = ['EASTHead']
 
 
 class ConvBNLayer(nn.Module):

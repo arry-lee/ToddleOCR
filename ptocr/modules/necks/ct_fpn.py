@@ -21,10 +21,7 @@ import torch.nn.functional as F
 from torch import nn
 from torch.nn.init import normal_, ones_, zeros_
 
-__dir__ = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(__dir__)
-sys.path.insert(0, os.path.abspath(os.path.join(__dir__, "../../..")))
-
+__all__ = ["CTFPN"]
 
 class Conv_BN_ReLU(nn.Module):
     def __init__(self, in_planes, out_planes, kernel_size=1, stride=1, padding=0):

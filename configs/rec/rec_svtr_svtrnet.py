@@ -2,16 +2,16 @@
 from configs.config import ConfigModel,_
 from ptocr.modules.backbones.rec_svtrnet import SVTRNet
 from ptocr.modules.necks.rnn import SequenceEncoder
-from ptocr.modules.heads.rec_ctc_head import CTCHead
+from ptocr.modules.heads.ctc import CTCHead
 from ptocr.loss.ctc import CTCLoss
 from ptocr.metrics.rec import RecMetric
 from torch.optim import AdamW
 from torch.optim.lr_scheduler import CosineAnnealingWarmRestarts
 from ptocr.postprocess.rec import CTCLabelDecode
 from ptocr.datasets.simple_dataset import SimpleDataSet
-from ptocr.datasets.imaug.operators import DecodeImage, KeepKeys
-from ptocr.datasets.imaug.rec_img_aug import RecConAug, SVTRRecResizeImg, RecAug
-from ptocr.datasets.imaug.label_ops import CTCLabelEncode
+from ptocr.transforms.operators import DecodeImage, KeepKeys
+from ptocr.transforms.rec_img_aug import RecConAug, SVTRRecResizeImg, RecAug
+from ptocr.transforms.label_ops import CTCLabelEncode
 class Model(ConfigModel):
     use_gpu = True
     epoch_num = 100

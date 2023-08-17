@@ -2,6 +2,7 @@
 This code is refer from:
 https://github.com/ayumiymk/aster.pytorch/blob/master/lib/models/attention_recognition_head.py
 """
+__all__ = ['AsterHead']
 
 import torch
 from torch import nn

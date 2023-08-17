@@ -2,6 +2,7 @@
 This code is refer from:
 https://github.com/open-mmlab/mmocr/blob/main/mmocr/models/textdet/necks/fpn_unet.py
 """
+__all__ = ['FPN_UNet']
 
 import torch
 import torch.nn as nn

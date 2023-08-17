@@ -2,7 +2,7 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 
-
+__all__ = ['TableFPN']
 class TableFPN(nn.Module):
     def __init__(self, in_channels, out_channels, **kwargs):
         super(TableFPN, self).__init__()

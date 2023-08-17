@@ -24,7 +24,7 @@ from random import sample
 import numpy as np
 from shapely.geometry import LineString, Point, Polygon
 
-from ptocr.datasets.imaug.vqa.augment import order_by_tbyx
+from ptocr.transforms.vqa.augment import order_by_tbyx
 from ptocr.utils.logging import get_logger
 
 

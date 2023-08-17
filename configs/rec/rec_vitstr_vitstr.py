@@ -2,16 +2,16 @@
 from configs.config import ConfigModel,_
 from ptocr.modules.backbones.rec_vitstr import ViTSTR
 from ptocr.modules.necks.rnn import SequenceEncoder
-from ptocr.modules.heads.rec_ctc_head import CTCHead
+from ptocr.modules.heads.ctc import CTCHead
 from ptocr.loss.ce import CELoss
 from ptocr.metrics.rec import RecMetric
 from torch.optim import Adadelta
 from torch.optim.lr_scheduler import ConstantLR
 from ptocr.postprocess.rec import ViTSTRLabelDecode
 from ptocr.datasets.lmdb_dataset import LMDBDataSet
-from ptocr.datasets.imaug.operators import DecodeImage, KeepKeys
-from ptocr.datasets.imaug.label_ops import ViTSTRLabelEncode
-from ptocr.datasets.imaug.rec_img_aug import GrayRecResizeImg
+from ptocr.transforms.operators import DecodeImage, KeepKeys
+from ptocr.transforms.label_ops import ViTSTRLabelEncode
+from ptocr.transforms.rec_img_aug import GrayRecResizeImg
 class Model(ConfigModel):
     use_gpu = True
     epoch_num = 20

@@ -18,8 +18,8 @@ import numpy as np
 from PIL import Image
 from shapely.geometry import Polygon
 
-from ptocr.datasets.imaug.iaa_augment import IaaAugment
-from ptocr.datasets.imaug.random_crop_data import is_poly_outside_rect
+from ptocr.transforms.iaa_augment import IaaAugment
+from ptocr.transforms.random_crop_data import is_poly_outside_rect
 from tools.infer.utility import get_rotate_crop_image
 
 

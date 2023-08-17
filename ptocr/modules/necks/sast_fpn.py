@@ -2,7 +2,7 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 
-
+__all__ = ['SASTFPN']
 class ConvBNLayer(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, stride, groups=1, act=None, name=None):
         super(ConvBNLayer, self).__init__()

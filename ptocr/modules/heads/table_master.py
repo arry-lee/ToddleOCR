@@ -10,7 +10,7 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-
+__all__ = ["TableMasterHead"]
 class TableMasterHead(nn.Module):
     """
     Split to two transformer header at the last layer.

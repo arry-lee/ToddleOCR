@@ -3,8 +3,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from ptocr.modules.necks.rnn import Im2Seq, EncoderWithRNN, EncoderWithFC, SequenceEncoder, EncoderWithSVTR
-from .rec_ctc_head import CTCHead
-from .rec_sar_head import SARHead
+from .ctc import CTCHead
+from .sar import SARHead
 __all__ = ['MultiHead']
 
 

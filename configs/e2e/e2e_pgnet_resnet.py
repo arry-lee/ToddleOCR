@@ -2,16 +2,16 @@
 from configs.config import ConfigModel,_
 from ptocr.modules.backbones.e2e_resnet_vd_pg import ResNet
 from ptocr.modules.necks.pg_fpn import PGFPN
-from ptocr.modules.heads.e2e_pg_head import PGHead
+from ptocr.modules.heads.pg import PGHead
 from ptocr.loss.pg import PGLoss
 from ptocr.metrics.e2e import E2EMetric
 from torch.optim import Adam
 from torch.optim.lr_scheduler import CosineAnnealingWarmRestarts
 from ptocr.postprocess.pg import PGPostProcess
 from ptocr.datasets.pgnet_dataset import PGDataSet
-from ptocr.datasets.imaug.operators import DecodeImage, KeepKeys, ToCHWImage, NormalizeImage, E2EResizeForTest
-from ptocr.datasets.imaug.label_ops import E2ELabelEncodeTrain, E2ELabelEncodeTest
-from ptocr.datasets.imaug.pg_process import PGProcessTrain
+from ptocr.transforms.operators import DecodeImage, KeepKeys, ToCHWImage, NormalizeImage, E2EResizeForTest
+from ptocr.transforms.label_ops import E2ELabelEncodeTrain, E2ELabelEncodeTest
+from ptocr.transforms.pg_process import PGProcessTrain
 class Model(ConfigModel):
     use_gpu = True
     epoch_num = 600

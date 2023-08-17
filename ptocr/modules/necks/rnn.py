@@ -2,6 +2,7 @@ import torch
 from torch import nn
 
 from ptocr.modules.backbones.rec_efficientb3_pren import Swish
+__all__ = ['SequenceEncoder']
 from ptocr.modules.backbones.rec_svtrnet import Block, ConvBNLayer, trunc_normal_, zeros_, ones_
 
 

@@ -1,5 +1,6 @@
 import torch.nn.functional as F
 from torch import nn
+__all__ = ['SASTHead']
 
 
 class ConvBNLayer(nn.Module):

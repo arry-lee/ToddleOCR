@@ -5,7 +5,7 @@ import torch.nn.functional as F
 import numpy as np
 __all__ = ['TableAttentionHead', 'SLAHead']
 
-from .rec_att_head import AttentionGRUCell
+from .att import AttentionGRUCell
 
 
 class TableAttentionHead(nn.Module):

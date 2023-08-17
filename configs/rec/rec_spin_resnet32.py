@@ -3,16 +3,16 @@ from configs.config import ConfigModel,_
 from torch.nn import GA_SPIN
 from ptocr.modules.backbones.rec_resnet_32 import ResNet32
 from ptocr.modules.necks.rnn import SequenceEncoder
-from ptocr.modules.heads.rec_spin_att_head import SPINAttentionHead
+from ptocr.modules.heads.spin_att import SPINAttentionHead
 from ptocr.loss.spin import SPINAttentionLoss
 from ptocr.metrics.rec import RecMetric
 from torch.optim import AdamW
 from ptocr.optim.lr_scheduler import PiecewiseLR
 from ptocr.postprocess.rec import SPINLabelDecode
 from ptocr.datasets.simple_dataset import SimpleDataSet
-from ptocr.datasets.imaug.operators import DecodeImage, KeepKeys
-from ptocr.datasets.imaug.label_ops import SPINLabelEncode
-from ptocr.datasets.imaug.rec_img_aug import SPINRecResizeImg
+from ptocr.transforms.operators import DecodeImage, KeepKeys
+from ptocr.transforms.label_ops import SPINLabelEncode
+from ptocr.transforms.rec_img_aug import SPINRecResizeImg
 class Model(ConfigModel):
     use_gpu = True
     epoch_num = 6

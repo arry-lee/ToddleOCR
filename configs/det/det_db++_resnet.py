@@ -2,18 +2,18 @@
 from configs.config import ConfigModel,_
 from ptocr.modules.backbones.det_resnet import ResNet
 from ptocr.modules.necks.db_fpn import DBFPN
-from ptocr.modules.heads.det_db_head import DBHead
+from ptocr.modules.heads.db import DBHead
 from ptocr.loss.db import DBLoss
 from ptocr.metrics.det import DetMetric
 from torch.nn import DecayLearningRate, Momentum
 from ptocr.postprocess.db import DBPostProcess
 from ptocr.datasets.simple_dataset import SimpleDataSet
-from ptocr.datasets.imaug.operators import DecodeImage, KeepKeys, ToCHWImage, DetResizeForTest, NormalizeImage
-from ptocr.datasets.imaug.label_ops import DetLabelEncode
-from ptocr.datasets.imaug.iaa_augment import IaaAugment
-from ptocr.datasets.imaug.random_crop_data import EastRandomCropData
-from ptocr.datasets.imaug.make_shrink_map import MakeShrinkMap
-from ptocr.datasets.imaug.make_border_map import MakeBorderMap
+from ptocr.transforms.operators import DecodeImage, KeepKeys, ToCHWImage, DetResizeForTest, NormalizeImage
+from ptocr.transforms.label_ops import DetLabelEncode
+from ptocr.transforms.iaa_augment import IaaAugment
+from ptocr.transforms.random_crop_data import EastRandomCropData
+from ptocr.transforms.make_shrink_map import MakeShrinkMap
+from ptocr.transforms.make_border_map import MakeBorderMap
 class Model(ConfigModel):
     debug = False
     use_gpu = True

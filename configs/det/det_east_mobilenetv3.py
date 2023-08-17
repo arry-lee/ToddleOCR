@@ -2,16 +2,16 @@
 from configs.config import ConfigModel,_
 from ptocr.modules.backbones.det_mobilenet_v3 import MobileNetV3
 from ptocr.modules.necks.east_fpn import EASTFPN
-from ptocr.modules.heads.det_east_head import EASTHead
+from ptocr.modules.heads.east import EASTHead
 from ptocr.loss.east import EASTLoss
 from ptocr.metrics.det import DetMetric
 from torch.optim import Adam
 from torch.optim.lr_scheduler import ConstantLR
 from ptocr.postprocess.east import EASTPostProcess
 from ptocr.datasets.simple_dataset import SimpleDataSet
-from ptocr.datasets.imaug.operators import DecodeImage, KeepKeys, ToCHWImage, DetResizeForTest, NormalizeImage
-from ptocr.datasets.imaug.label_ops import DetLabelEncode
-from ptocr.datasets.imaug.east_process import EASTProcessTrain
+from ptocr.transforms.operators import DecodeImage, KeepKeys, ToCHWImage, DetResizeForTest, NormalizeImage
+from ptocr.transforms.label_ops import DetLabelEncode
+from ptocr.transforms.east_process import EASTProcessTrain
 class Model(ConfigModel):
     use_gpu = True
     epoch_num = 10000

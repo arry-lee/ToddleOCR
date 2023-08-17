@@ -9,6 +9,8 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 
+__all__ = ['FCEHead']
+
 
 def multi_apply(func, *args, **kwargs):
     pfunc = partial(func, **kwargs) if kwargs else func

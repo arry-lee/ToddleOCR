@@ -7,12 +7,12 @@ from ptocr.loss.drrg import DRRGLoss
 from ptocr.metrics.det import DetFCEMetric
 from ptocr.postprocess.drrg import DRRGPostprocess
 from ptocr.datasets.simple_dataset import SimpleDataSet
-from ptocr.datasets.imaug.operators import DecodeImage, KeepKeys, ToCHWImage, DetResizeForTest, NormalizeImage, Pad
-from ptocr.datasets.imaug.label_ops import DetLabelEncode
-from ptocr.datasets.imaug.ColorJitter import ColorJitter
-from ptocr.datasets.imaug.fce_aug import RandomRotatePolyInstances, RandomCropPolyInstances, SquareResizePad, RandomCropFlip, RandomScaling
-from ptocr.datasets.imaug.iaa_augment import IaaAugment
-from ptocr.datasets.imaug.drrg_targets import DRRGTargets
+from ptocr.transforms.operators import DecodeImage, KeepKeys, ToCHWImage, DetResizeForTest, NormalizeImage, Pad
+from ptocr.transforms.label_ops import DetLabelEncode
+from ptocr.transforms.ColorJitter import ColorJitter
+from ptocr.transforms.fce_aug import RandomRotatePolyInstances, RandomCropPolyInstances, SquareResizePad, RandomCropFlip, RandomScaling
+from ptocr.transforms.iaa_augment import IaaAugment
+from ptocr.transforms.drrg_targets import DRRGTargets
 class Model(ConfigModel):
     use_gpu = True
     epoch_num = 1200

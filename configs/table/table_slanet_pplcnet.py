@@ -2,16 +2,16 @@
 from configs.config import ConfigModel,_
 from torch.nn import PPLCNet
 from ptocr.modules.necks.csp_pan import CSPPAN
-from ptocr.modules.heads.table_att_head import SLAHead
+from ptocr.modules.heads.table_att import SLAHead
 from ptocr.loss.table_att import SLALoss
 from ptocr.metrics.table import TableMetric
 from torch.optim import Adam
 from torch.optim.lr_scheduler import ConstantLR
 from ptocr.postprocess.table import TableLabelDecode
 from ptocr.datasets.pubtab_dataset import PubTabDataSet
-from ptocr.datasets.imaug.operators import ToCHWImage, DecodeImage, KeepKeys, NormalizeImage
-from ptocr.datasets.imaug.label_ops import TableBoxEncode, TableLabelEncode
-from ptocr.datasets.imaug.table_ops import PaddingTableImage, ResizeTableImage
+from ptocr.transforms.operators import ToCHWImage, DecodeImage, KeepKeys, NormalizeImage
+from ptocr.transforms.label_ops import TableBoxEncode, TableLabelEncode
+from ptocr.transforms.table_ops import PaddingTableImage, ResizeTableImage
 class Model(ConfigModel):
     use_gpu = True
     epoch_num = 400

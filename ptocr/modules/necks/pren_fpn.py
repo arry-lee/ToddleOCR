@@ -10,7 +10,7 @@ import torch.nn.functional as F
 
 from ptocr.modules.backbones.rec_efficientb3_pren import Swish
 
-
+__all__ = ["PRENFPN"]
 class PoolAggregate(nn.Module):
     def __init__(self, n_r, d_in, d_middle=None, d_out=None):
         super(PoolAggregate, self).__init__()

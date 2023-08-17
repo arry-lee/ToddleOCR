@@ -2,16 +2,16 @@
 from configs.config import ConfigModel,_
 from ptocr.modules.transforms.stn import STN_ON
 from ptocr.modules.backbones.rec_resnet_aster import ResNet_ASTER
-from ptocr.modules.heads.rec_aster_head import AsterHead
+from ptocr.modules.heads.aster import AsterHead
 from ptocr.loss.aster import AsterLoss
 from ptocr.metrics.rec import RecMetric
 from torch.optim import Adadelta
 from ptocr.optim.lr_scheduler import PiecewiseLR
 from ptocr.postprocess.rec import SEEDLabelDecode
 from ptocr.datasets.lmdb_dataset import LMDBDataSet
-from ptocr.datasets.imaug.operators import Fasttext, DecodeImage, KeepKeys
-from ptocr.datasets.imaug.label_ops import SEEDLabelEncode
-from ptocr.datasets.imaug.rec_img_aug import RecResizeImg
+from ptocr.transforms.operators import Fasttext, DecodeImage, KeepKeys
+from ptocr.transforms.label_ops import SEEDLabelEncode
+from ptocr.transforms.rec_img_aug import RecResizeImg
 class Model(ConfigModel):
     use_gpu = True
     epoch_num = 6

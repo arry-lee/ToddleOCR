@@ -14,7 +14,7 @@ import torch.nn.functional as F
 from ptocr.utils.locality_aware_nms import nms_locality as la_nms
 
 from ptocr.ops import RoIAlignRotated
-from .local_graph import euclidean_distance_matrix, feature_embedding, normalize_adjacent_matrix
+from ._local_graph import euclidean_distance_matrix, feature_embedding, normalize_adjacent_matrix
 
 
 def fill_hole(input_mask):

@@ -9,7 +9,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-__all__ = ["FPN", "Conv_BN_ReLU"]
+__all__ = ["FPN"]
 
 
 class Conv_BN_ReLU(nn.Module):

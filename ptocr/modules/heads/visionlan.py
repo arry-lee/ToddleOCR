@@ -3,6 +3,7 @@ This code is refer from:
 https://github.com/wangyuxin87/VisionLAN
 """
 
+__all__ = ['VLHead']
 
 import numpy as np
 import torch

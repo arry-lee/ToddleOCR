@@ -3,11 +3,12 @@ This code is refer from:
 https://github.com/FangShancheng/ABINet/tree/main/modules
 """
 
+__all__ = ['ABINetHead']
 import torch
 import torch.nn.functional as F
 from torch import nn
 
-from ptocr.modules.heads.rec_nrtr_head import PositionalEncoding, TransformerBlock
+from ptocr.modules.heads.nrtr import PositionalEncoding, TransformerBlock
 
 
 class BCNLanguage(nn.Module):

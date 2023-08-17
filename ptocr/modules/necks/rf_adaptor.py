@@ -5,6 +5,7 @@ https://github.com/hikopensource/DAVAR-Lab-OCR/blob/main/davarocr/davar_rcg/mode
 import torch.nn as nn
 from torch.nn.init import kaiming_normal_, ones_, zeros_
 
+__all__ = ['RFAdaptor']
 
 class S2VAdaptor(nn.Module):
     def __init__(self, in_channels=512):
