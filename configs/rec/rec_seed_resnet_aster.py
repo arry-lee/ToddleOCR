@@ -3,11 +3,11 @@ from configs.config import ConfigModel,_
 from ptocr.modules.transforms.stn import STN_ON
 from ptocr.modules.backbones.rec_resnet_aster import ResNet_ASTER
 from ptocr.modules.heads.rec_aster_head import AsterHead
-from ptocr.loss.rec_aster_loss import AsterLoss
-from ptocr.metrics.rec_metric import RecMetric
+from ptocr.loss.aster import AsterLoss
+from ptocr.metrics.rec import RecMetric
 from torch.optim import Adadelta
 from ptocr.optim.lr_scheduler import PiecewiseLR
-from ptocr.postprocess.rec_postprocess import SEEDLabelDecode
+from ptocr.postprocess.rec import SEEDLabelDecode
 from ptocr.datasets.lmdb_dataset import LMDBDataSet
 from ptocr.datasets.imaug.operators import Fasttext, DecodeImage, KeepKeys
 from ptocr.datasets.imaug.label_ops import SEEDLabelEncode

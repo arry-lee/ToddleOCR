@@ -3,11 +3,11 @@ from configs.config import ConfigModel,_
 from ptocr.modules.backbones.rec_efficientb3_pren import EfficientNetB3_PREN
 from ptocr.modules.necks.pren_fpn import PRENFPN
 from ptocr.modules.heads.rec_pren_head import PRENHead
-from ptocr.loss.rec_pren_loss import PRENLoss
-from ptocr.metrics.rec_metric import RecMetric
+from ptocr.loss.pren import PRENLoss
+from ptocr.metrics.rec import RecMetric
 from torch.optim import Adadelta
 from ptocr.optim.lr_scheduler import PiecewiseLR
-from ptocr.postprocess.rec_postprocess import PRENLabelDecode
+from ptocr.postprocess.rec import PRENLabelDecode
 from ptocr.datasets.lmdb_dataset import LMDBDataSet
 from ptocr.datasets.imaug.operators import DecodeImage, KeepKeys
 from ptocr.datasets.imaug.label_ops import PRENLabelEncode

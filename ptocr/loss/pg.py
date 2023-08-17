@@ -20,7 +20,7 @@ import torch
 from torch import nn
 
 from ptocr.utils.e2e_utils.extract_batchsize import pre_process
-from .det_basic_loss import DiceLoss
+from .basic import DiceLoss
 
 
 class PGLoss(nn.Module):

@@ -2,11 +2,11 @@
 from configs.config import ConfigModel,_
 from ptocr.modules.backbones.table_master_resnet import TableResNetExtra
 from ptocr.modules.heads.table_master_head import TableMasterHead
-from ptocr.loss.table_master_loss import TableMasterLoss
-from ptocr.metrics.table_metric import TableMetric
+from ptocr.loss.table_master import TableMasterLoss
+from ptocr.metrics.table import TableMetric
 from torch.optim import Adam
 from torch.optim.lr_scheduler import MultiStepLR
-from ptocr.postprocess.table_postprocess import TableMasterLabelDecode
+from ptocr.postprocess.table import TableMasterLabelDecode
 from ptocr.datasets.pubtab_dataset import PubTabDataSet
 from ptocr.datasets.imaug.operators import ToCHWImage, DecodeImage, KeepKeys, NormalizeImage
 from ptocr.datasets.imaug.label_ops import TableBoxEncode, TableMasterLabelEncode

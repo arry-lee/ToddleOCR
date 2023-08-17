@@ -1,13 +1,13 @@
 import cv2
 import numpy as np
 import torch
-from .basic_loss import DMLLoss
-from .basic_loss import DistanceLoss
-from .basic_loss import LossFromOutput
-from .det_db_loss import DBLoss
-from .rec_ctc_loss import CTCLoss
-from .rec_sar_loss import SARLoss
-from .vqa_token_layoutlm_loss import VQASerTokenLayoutLMLoss
+from .basic import DMLLoss
+from .basic import DistanceLoss
+from .basic import LossFromOutput
+from .db import DBLoss
+from .ctc import CTCLoss
+from .sar import SARLoss
+from .vqa_token_layoutlm import VQASerTokenLayoutLMLoss
 
 def _sum_loss(loss_dict):
     if 'loss' in loss_dict.keys():

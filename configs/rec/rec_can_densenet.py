@@ -2,10 +2,10 @@
 from configs.config import ConfigModel,_
 from ptocr.modules.backbones.rec_densenet import DenseNet
 from ptocr.modules.heads.rec_can_head import CANHead
-from ptocr.loss.rec_can_loss import CANLoss
-from ptocr.metrics.rec_metric import CANMetric
+from ptocr.loss.can import CANLoss
+from ptocr.metrics.rec import CANMetric
 from torch.nn import Momentum, TwoStepCosine
-from ptocr.postprocess.rec_postprocess import CANLabelDecode
+from ptocr.postprocess.rec import CANLabelDecode
 from ptocr.datasets.simple_dataset import SimpleDataSet
 from ptocr.datasets.imaug.operators import KeepKeys, DecodeImage, NormalizeImage, GrayImageChannelFormat
 from ptocr.datasets.imaug.label_ops import CANLabelEncode

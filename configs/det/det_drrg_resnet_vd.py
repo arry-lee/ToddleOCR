@@ -3,9 +3,9 @@ from configs.config import ConfigModel,_
 from ptocr.modules.backbones.det_resnet_vd import ResNet_vd
 from ptocr.modules.necks.fpn_unet import FPN_UNet
 from torch.nn import DecayLearningRate, Momentum, DRRGHead
-from ptocr.loss.det_drrg_loss import DRRGLoss
-from ptocr.metrics.det_metric import DetFCEMetric
-from ptocr.postprocess.drrg_postprocess import DRRGPostprocess
+from ptocr.loss.drrg import DRRGLoss
+from ptocr.metrics.det import DetFCEMetric
+from ptocr.postprocess.drrg import DRRGPostprocess
 from ptocr.datasets.simple_dataset import SimpleDataSet
 from ptocr.datasets.imaug.operators import DecodeImage, KeepKeys, ToCHWImage, DetResizeForTest, NormalizeImage, Pad
 from ptocr.datasets.imaug.label_ops import DetLabelEncode

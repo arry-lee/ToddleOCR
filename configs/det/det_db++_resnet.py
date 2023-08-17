@@ -3,10 +3,10 @@ from configs.config import ConfigModel,_
 from ptocr.modules.backbones.det_resnet import ResNet
 from ptocr.modules.necks.db_fpn import DBFPN
 from ptocr.modules.heads.det_db_head import DBHead
-from ptocr.loss.det_db_loss import DBLoss
-from ptocr.metrics.det_metric import DetMetric
+from ptocr.loss.db import DBLoss
+from ptocr.metrics.det import DetMetric
 from torch.nn import DecayLearningRate, Momentum
-from ptocr.postprocess.db_postprocess import DBPostProcess
+from ptocr.postprocess.db import DBPostProcess
 from ptocr.datasets.simple_dataset import SimpleDataSet
 from ptocr.datasets.imaug.operators import DecodeImage, KeepKeys, ToCHWImage, DetResizeForTest, NormalizeImage
 from ptocr.datasets.imaug.label_ops import DetLabelEncode

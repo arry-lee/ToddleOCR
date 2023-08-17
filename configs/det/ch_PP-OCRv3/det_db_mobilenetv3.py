@@ -3,11 +3,11 @@ from configs.config import ConfigModel,_
 from ptocr.modules.backbones.det_mobilenet_v3 import MobileNetV3
 from ptocr.modules.necks.db_fpn import RSEFPN
 from ptocr.modules.heads.det_db_head import DBHead
-from ptocr.loss.det_db_loss import DBLoss
-from ptocr.metrics.det_metric import DetMetric
+from ptocr.loss.db import DBLoss
+from ptocr.metrics.det import DetMetric
 from torch.optim import Adam
 from torch.optim.lr_scheduler import CosineAnnealingWarmRestarts
-from ptocr.postprocess.db_postprocess import DBPostProcess
+from ptocr.postprocess.db import DBPostProcess
 from ptocr.datasets.simple_dataset import SimpleDataSet
 from ptocr.datasets.imaug.operators import DecodeImage, KeepKeys, ToCHWImage, DetResizeForTest, NormalizeImage
 from ptocr.datasets.imaug.label_ops import DetLabelEncode

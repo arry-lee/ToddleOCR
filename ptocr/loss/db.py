@@ -22,7 +22,7 @@ https://github.com/WenmuZhou/DBNet.pytorch/blob/master/models/losses/DB_loss.py
 
 from torch import nn
 
-from .det_basic_loss import BalanceLoss, DiceLoss, MaskL1Loss
+from .basic import BalanceLoss, DiceLoss, MaskL1Loss
 
 
 class DBLoss(nn.Module):

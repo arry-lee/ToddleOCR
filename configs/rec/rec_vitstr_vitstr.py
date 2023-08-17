@@ -3,11 +3,11 @@ from configs.config import ConfigModel,_
 from ptocr.modules.backbones.rec_vitstr import ViTSTR
 from ptocr.modules.necks.rnn import SequenceEncoder
 from ptocr.modules.heads.rec_ctc_head import CTCHead
-from ptocr.loss.rec_ce_loss import CELoss
-from ptocr.metrics.rec_metric import RecMetric
+from ptocr.loss.ce import CELoss
+from ptocr.metrics.rec import RecMetric
 from torch.optim import Adadelta
 from torch.optim.lr_scheduler import ConstantLR
-from ptocr.postprocess.rec_postprocess import ViTSTRLabelDecode
+from ptocr.postprocess.rec import ViTSTRLabelDecode
 from ptocr.datasets.lmdb_dataset import LMDBDataSet
 from ptocr.datasets.imaug.operators import DecodeImage, KeepKeys
 from ptocr.datasets.imaug.label_ops import ViTSTRLabelEncode

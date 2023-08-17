@@ -4,11 +4,11 @@ from torch.nn import GA_SPIN
 from ptocr.modules.backbones.rec_resnet_32 import ResNet32
 from ptocr.modules.necks.rnn import SequenceEncoder
 from ptocr.modules.heads.rec_spin_att_head import SPINAttentionHead
-from ptocr.loss.rec_spin_att_loss import SPINAttentionLoss
-from ptocr.metrics.rec_metric import RecMetric
+from ptocr.loss.spin import SPINAttentionLoss
+from ptocr.metrics.rec import RecMetric
 from torch.optim import AdamW
 from ptocr.optim.lr_scheduler import PiecewiseLR
-from ptocr.postprocess.rec_postprocess import SPINLabelDecode
+from ptocr.postprocess.rec import SPINLabelDecode
 from ptocr.datasets.simple_dataset import SimpleDataSet
 from ptocr.datasets.imaug.operators import DecodeImage, KeepKeys
 from ptocr.datasets.imaug.label_ops import SPINLabelEncode

@@ -300,7 +300,7 @@ Loss:
 - `Student`和`Teacher`的骨干网络输出(`backbone_out`)之间的l2 loss，权重为1。
 
 
-关于`CombinedLoss`更加具体的实现可以参考: [combined_loss.py](../../ptocr/loss/combined_loss.py#L23)。关于`DistillationCTCLoss`等蒸馏损失函数更加具体的实现可以参考[distillation_loss.py](../../ptocr/loss/distillation_loss.py)。
+关于`CombinedLoss`更加具体的实现可以参考: [combined_loss.py](../../ptocr/loss/compose.py#L23)。关于`DistillationCTCLoss`等蒸馏损失函数更加具体的实现可以参考[distillation_loss.py](../../ptocr/loss/distillation.py)。
 
 <a name="213"></a>
 #### 2.1.3 后处理
@@ -317,7 +317,7 @@ PostProcess:
 
 以上述配置为例，最终会同时计算`Student`和`Teahcer` 2个子网络的CTC解码输出，返回一个`dict`，`key`为用于处理的子网络名称，`value`为用于处理的子网络列表。
 
-关于`DistillationCTCLabelDecode`更加具体的实现可以参考: [rec_postprocess.py](../../ptocr/postprocess/rec_postprocess.py#L128)
+关于`DistillationCTCLabelDecode`更加具体的实现可以参考: [rec_postprocess.py](../../ptocr/postprocess/rec.py#L128)
 
 <a name="214"></a>
 #### 2.1.4 指标计算
@@ -335,7 +335,7 @@ Metric:
 
 以上述配置为例，最终会使用`Student`子网络的acc指标作为保存best model的判断指标，同时，日志中也会打印出所有子网络的acc指标。
 
-关于`DistillationMetric`更加具体的实现可以参考: [distillation_metric.py](../../ptocr/metrics/distillation_metric.py#L24)。
+关于`DistillationMetric`更加具体的实现可以参考: [distillation_metric.py](../../ptocr/metrics/distillation.py#L24)。
 
 <a name="215"></a>
 #### 2.1.5 蒸馏模型微调
@@ -570,7 +570,7 @@ PostProcess:
 
 以上述配置为例，最终会同时计算`Student`，`Student2`和`Teacher` 3个子网络的输出做后处理计算。同时，由于有多个输入，后处理返回的输出也有多个，
 
-关于`DistillationDBPostProcess`更加具体的实现可以参考: [db_postprocess.py](../../ptocr/postprocess/db_postprocess.py#L195)
+关于`DistillationDBPostProcess`更加具体的实现可以参考: [db_postprocess.py](../../ptocr/postprocess/db.py#L195)
 
 <a name="224"></a>
 #### 2.2.4 蒸馏指标计算

@@ -1,7 +1,7 @@
 from collections import namedtuple
 import numpy as np
 from shapely.geometry import Polygon
-__all__ = ['DetectionIoUEvaluator']
+
 
 class DetectionIoUEvaluator:
 
@@ -37,6 +37,7 @@ class DetectionIoUEvaluator:
                 if numGtCare > 0:
                     AP /= numGtCare
             return AP
+
         perSampleMetrics = {}
         matchedSum = 0
         Rectangle = namedtuple('Rectangle', 'xmin ymin xmax ymax')
@@ -70,7 +71,8 @@ class DetectionIoUEvaluator:
             gtPolPoints.append(points)
             if dontCare:
                 gtDontCarePolsNum.append(len(gtPols) - 1)
-        evaluationLog += 'GT polygons: ' + str(len(gtPols)) + (' (' + str(len(gtDontCarePolsNum)) + " don't care)\n" if len(gtDontCarePolsNum) > 0 else '\n')
+        evaluationLog += 'GT polygons: ' + str(len(gtPols)) + (
+            ' (' + str(len(gtDontCarePolsNum)) + " don't care)\n" if len(gtDontCarePolsNum) > 0 else '\n')
         for n in range(len(pred)):
             points = pred[n]['points']
             if not Polygon(points).is_valid:
@@ -87,7 +89,8 @@ class DetectionIoUEvaluator:
                     if precision > self.area_precision_constraint:
                         detDontCarePolsNum.append(len(detPols) - 1)
                         break
-        evaluationLog += 'DET polygons: ' + str(len(detPols)) + (' (' + str(len(detDontCarePolsNum)) + " don't care)\n" if len(detDontCarePolsNum) > 0 else '\n')
+        evaluationLog += 'DET polygons: ' + str(len(detPols)) + (
+            ' (' + str(len(detDontCarePolsNum)) + " don't care)\n" if len(detDontCarePolsNum) > 0 else '\n')
         if len(gtPols) > 0 and len(detPols) > 0:
             outputShape = [len(gtPols), len(detPols)]
             iouMat = np.empty(outputShape)
@@ -100,7 +103,8 @@ class DetectionIoUEvaluator:
                     iouMat[gtNum, detNum] = get_intersection_over_union(pD, pG)
             for gtNum in range(len(gtPols)):
                 for detNum in range(len(detPols)):
-                    if gtRectMat[gtNum] == 0 and detRectMat[detNum] == 0 and (gtNum not in gtDontCarePolsNum) and (detNum not in detDontCarePolsNum):
+                    if gtRectMat[gtNum] == 0 and detRectMat[detNum] == 0 and (gtNum not in gtDontCarePolsNum) and (
+                            detNum not in detDontCarePolsNum):
                         if iouMat[gtNum, detNum] > self.iou_constraint:
                             gtRectMat[gtNum] = 1
                             detRectMat[detNum] = 1
@@ -133,12 +137,16 @@ class DetectionIoUEvaluator:
             matchedSum += result['detMatched']
         methodRecall = 0 if numGlobalCareGt == 0 else float(matchedSum) / numGlobalCareGt
         methodPrecision = 0 if numGlobalCareDet == 0 else float(matchedSum) / numGlobalCareDet
-        methodHmean = 0 if methodRecall + methodPrecision == 0 else 2 * methodRecall * methodPrecision / (methodRecall + methodPrecision)
+        methodHmean = 0 if methodRecall + methodPrecision == 0 else 2 * methodRecall * methodPrecision / (
+                    methodRecall + methodPrecision)
         methodMetrics = {'precision': methodPrecision, 'recall': methodRecall, 'hmean': methodHmean}
         return methodMetrics
+
+
 if __name__ == '__main__':
     evaluator = DetectionIoUEvaluator()
-    gts = [[{'points': [(0, 0), (1, 0), (1, 1), (0, 1)], 'text': 1234, 'ignore': False}, {'points': [(2, 2), (3, 2), (3, 3), (2, 3)], 'text': 5678, 'ignore': False}]]
+    gts = [[{'points': [(0, 0), (1, 0), (1, 1), (0, 1)], 'text': 1234, 'ignore': False},
+            {'points': [(2, 2), (3, 2), (3, 3), (2, 3)], 'text': 5678, 'ignore': False}]]
     preds = [[{'points': [(0.1, 0.1), (1, 0), (1, 1), (0, 1)], 'text': 123, 'ignore': False}]]
     results = []
     for (gt, pred) in zip(gts, preds):

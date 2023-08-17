@@ -2,11 +2,11 @@
 from configs.config import ConfigModel,_
 from ptocr.modules.backbones.rec_mv1_enhance import MobileNetV1Enhance
 from ptocr.modules.heads.rec_multi_head import MultiHead
-from ptocr.loss.rec_multi_loss import MultiLoss
-from ptocr.metrics.rec_metric import RecMetric
+from ptocr.loss import MultiLoss
+from ptocr.metrics.rec import RecMetric
 from torch.optim import Adam
 from torch.optim.lr_scheduler import CosineAnnealingWarmRestarts
-from ptocr.postprocess.rec_postprocess import CTCLabelDecode
+from ptocr.postprocess.rec import CTCLabelDecode
 from ptocr.datasets.simple_dataset import SimpleDataSet
 from ptocr.datasets.imaug.operators import DecodeImage, KeepKeys
 from ptocr.datasets.imaug.rec_img_aug import RecResizeImg, RecConAug, RecAug

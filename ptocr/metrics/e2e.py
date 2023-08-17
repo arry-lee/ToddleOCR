@@ -1,4 +1,4 @@
-from ptocr.utils.e2e_metric.Deteval import combine_results, get_socre_A, get_socre_B
+from ptocr.utils.e2e_metric.deteval import combine_results, get_socre_A, get_socre_B
 from ptocr.utils.e2e_utils.extract_textpoint_slow import get_dict
 __all__ = ['E2EMetric']
 

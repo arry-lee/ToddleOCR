@@ -37,7 +37,7 @@ Combining the idea of Focal Loss, assigning larger weights to difficult samples 
 
 
 
-In the experiment, the value of &gamma; is 2, &alpha; = 1, see this for specific implementation: [rec_ctc_loss.py](../../ptocr/loss/rec_ctc_loss.py)
+In the experiment, the value of &gamma; is 2, &alpha; = 1, see this for specific implementation: [rec_ctc_loss.py](../../ptocr/loss/ctc.py)
 
 
 
@@ -63,7 +63,7 @@ A_CTC Loss is defined as follows:
 
 
 
-In the experiment, λ = 0.1. See the ACE loss implementation code: [ace_loss.py](../../ptocr/loss/ace_loss.py)
+In the experiment, λ = 0.1. See the ACE loss implementation code: [ace_loss.py](../../ptocr/loss/ace.py)
 
 
 
@@ -79,7 +79,7 @@ By trying Arcmargin, Cosmargin and other methods, we finally found that Centerlo
 <img src="./equation_c_ctc.png" width = "300" /> 
 </div>
 
-In the experiment, we set λ=0.25. See the center_loss implementation code: [center_loss.py](../../ptocr/loss/center_loss.py)
+In the experiment, we set λ=0.25. See the center_loss implementation code: [center_loss.py](../../ptocr/loss/center.py)
 
 It is worth mentioning that in C-CTC Loss, choosing to initialize the Center randomly does not bring significant improvement. Our Center initialization method is as follows:
 + Based on the original CTCLoss, a network N is obtained by training

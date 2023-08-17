@@ -3,11 +3,11 @@ from configs.config import ConfigModel,_
 from ptocr.modules.backbones.det_resnet_vd import ResNet_vd
 from ptocr.modules.necks.east_fpn import EASTFPN
 from ptocr.modules.heads.det_east_head import EASTHead
-from ptocr.loss.det_east_loss import EASTLoss
-from ptocr.metrics.det_metric import DetMetric
+from ptocr.loss.east import EASTLoss
+from ptocr.metrics.det import DetMetric
 from torch.optim import Adam
 from torch.nn import ContantLR
-from ptocr.postprocess.east_postprocess import EASTPostProcess
+from ptocr.postprocess.east import EASTPostProcess
 from ptocr.datasets.simple_dataset import SimpleDataSet
 from ptocr.datasets.imaug.operators import DecodeImage, KeepKeys, ToCHWImage, DetResizeForTest, NormalizeImage
 from ptocr.datasets.imaug.label_ops import DetLabelEncode

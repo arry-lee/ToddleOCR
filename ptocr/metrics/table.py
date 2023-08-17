@@ -1,4 +1,4 @@
-from ptocr.metrics.det_metric import DetMetric
+from ptocr.metrics.det import DetMetric
 
 __all__ = ['TableStructureMetric', 'TableMetric']
 

@@ -1,15 +1,13 @@
-from .det_metric import DetMetric, DetFCEMetric
-from .rec_metric import RecMetric, CNTMetric, CANMetric
-from .cls_metric import ClsMetric
-from .e2e_metric import E2EMetric
-from .distillation_metric import DistillationMetric
-from .table_metric import TableMetric
-from .kie_metric import KIEMetric
-from .vqa_token_ser_metric import VQASerTokenMetric
-from .vqa_token_re_metric import VQAReTokenMetric
-from .sr_metric import SRMetric
-from .ct_metric import CTMetric
-
+from .cls import ClsMetric
+from .ct import CTMetric
+from .det import DetMetric, DetFCEMetric
+from .distillation import DistillationMetric
+from .e2e import E2EMetric
+from .kie import KIEMetric
+from .rec import RecMetric, CNTMetric, CANMetric
+from .sr import SRMetric
+from .table import TableMetric
+from .vqa import VQAReTokenMetric, VQASerTokenMetric
 
 __all__ = [
     "DetMetric",
@@ -20,7 +18,6 @@ __all__ = [
     "DistillationMetric",
     "TableMetric",
     "KIEMetric",
-    "VQASerTokenMetric",
     "VQAReTokenMetric",
     "SRMetric",
     "CTMetric",

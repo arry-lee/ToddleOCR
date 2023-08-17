@@ -4,11 +4,11 @@ from ptocr.modules.transforms.tps import TPS
 from ptocr.modules.backbones.rec_resnet_vd import ResNet
 from ptocr.modules.necks.rnn import SequenceEncoder
 from ptocr.modules.heads.rec_att_head import AttentionHead
-from ptocr.loss.rec_att_loss import AttentionLoss
-from ptocr.metrics.rec_metric import RecMetric
+from ptocr.loss.att import AttentionLoss
+from ptocr.metrics.rec import RecMetric
 from torch.optim import Adam
 from torch.optim.lr_scheduler import ConstantLR
-from ptocr.postprocess.rec_postprocess import AttnLabelDecode
+from ptocr.postprocess.rec import AttnLabelDecode
 from ptocr.datasets.lmdb_dataset import LMDBDataSet
 from ptocr.datasets.imaug.operators import DecodeImage, KeepKeys
 from ptocr.datasets.imaug.label_ops import AttnLabelEncode

@@ -1,4 +1,4 @@
-from .eval_det_iou import DetectionIoUEvaluator
+from ._eval_det_iou import DetectionIoUEvaluator
 
 __all__ = ["DetMetric", "DetFCEMetric"]
 

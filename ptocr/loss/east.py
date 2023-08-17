@@ -18,7 +18,7 @@
 
 import torch
 from torch import nn
-from .det_basic_loss import DiceLoss
+from .basic import DiceLoss
 
 
 class EASTLoss(nn.Module):

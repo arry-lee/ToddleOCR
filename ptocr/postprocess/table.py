@@ -1,6 +1,6 @@
 import numpy as np
 import torch
-from .rec_postprocess import AttnLabelDecode
+from .rec import AttnLabelDecode
 __all__ = ['TableLabelDecode', 'TableMasterLabelDecode']
 
 class TableLabelDecode(AttnLabelDecode):

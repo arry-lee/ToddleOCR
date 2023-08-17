@@ -2,11 +2,11 @@
 from configs.config import ConfigModel,_
 from ptocr.modules.backbones.rec_resnet_fpn import ResNetFPN
 from ptocr.modules.heads.rec_srn_head import SRNHead
-from ptocr.loss.rec_srn_loss import SRNLoss
-from ptocr.metrics.rec_metric import RecMetric
+from ptocr.loss.srn import SRNLoss
+from ptocr.metrics.rec import RecMetric
 from torch.optim import Adam
 from torch.optim.lr_scheduler import ConstantLR
-from ptocr.postprocess.rec_postprocess import SRNLabelDecode
+from ptocr.postprocess.rec import SRNLabelDecode
 from ptocr.datasets.lmdb_dataset import LMDBDataSet
 from ptocr.datasets.imaug.operators import DecodeImage, KeepKeys
 from ptocr.datasets.imaug.label_ops import SRNLabelEncode

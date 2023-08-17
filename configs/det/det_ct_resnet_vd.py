@@ -3,11 +3,11 @@ from configs.config import ConfigModel,_
 from ptocr.modules.backbones.det_resnet_vd import ResNet_vd
 from ptocr.modules.necks.ct_fpn import CTFPN
 from ptocr.modules.heads.det_ct_head import CTHead
-from ptocr.loss.det_ct_loss import CTLoss
-from ptocr.metrics.ct_metric import CTMetric
+from ptocr.loss.ct import CTLoss
+from ptocr.metrics.ct import CTMetric
 from torch.optim import Adam
 from torch.optim.lr_scheduler import PolynomialLR
-from ptocr.postprocess.ct_postprocess import CTPostProcess
+from ptocr.postprocess.ct import CTPostProcess
 from ptocr.datasets.simple_dataset import SimpleDataSet
 from ptocr.datasets.imaug.operators import ToCHWImage, DecodeImage, KeepKeys, NormalizeImage
 from ptocr.datasets.imaug.label_ops import CTLabelEncode

@@ -4,11 +4,11 @@ from ptocr.modules.transforms.tps import TPS
 from ptocr.modules.backbones.rec_resnet_rfl import ResNetRFL
 from ptocr.modules.necks.rf_adaptor import RFAdaptor
 from ptocr.modules.heads.rec_rfl_head import RFLHead
-from ptocr.loss.rec_rfl_loss import RFLLoss
-from ptocr.metrics.rec_metric import CNTMetric
+from ptocr.loss.rfl import RFLLoss
+from ptocr.metrics.rec import CNTMetric
 from torch.optim import AdamW
 from ptocr.optim.lr_scheduler import PiecewiseLR
-from ptocr.postprocess.rec_postprocess import RFLLabelDecode
+from ptocr.postprocess.rec import RFLLabelDecode
 from ptocr.datasets.lmdb_dataset import LMDBDataSet
 from ptocr.datasets.imaug.operators import DecodeImage, KeepKeys
 from ptocr.datasets.imaug.label_ops import RFLLabelEncode

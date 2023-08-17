@@ -2,11 +2,11 @@
 from configs.config import ConfigModel,_
 from ptocr.modules.backbones.rec_resnet_31 import ResNet31
 from ptocr.modules.heads.rec_sar_head import SARHead
-from ptocr.loss.rec_sar_loss import SARLoss
-from ptocr.metrics.rec_metric import RecMetric
+from ptocr.loss.sar import SARLoss
+from ptocr.metrics.rec import RecMetric
 from torch.optim import Adam
 from ptocr.optim.lr_scheduler import PiecewiseLR
-from ptocr.postprocess.rec_postprocess import SARLabelDecode
+from ptocr.postprocess.rec import SARLabelDecode
 from ptocr.datasets.simple_dataset import SimpleDataSet
 from ptocr.datasets.imaug.operators import DecodeImage, KeepKeys
 from ptocr.datasets.imaug.label_ops import SARLabelEncode

@@ -3,11 +3,11 @@ from configs.config import ConfigModel,_
 from ptocr.modules.backbones.rec_mv1_enhance import MobileNetV1Enhance
 from ptocr.modules.necks.rnn import SequenceEncoder
 from ptocr.modules.heads.rec_ctc_head import CTCHead
-from ptocr.loss.combined_loss import CombinedLoss
-from ptocr.metrics.rec_metric import RecMetric
+from ptocr.loss.compose import CombinedLoss
+from ptocr.metrics.rec import RecMetric
 from torch.optim import Adam
 from ptocr.optim.lr_scheduler import PiecewiseLR
-from ptocr.postprocess.rec_postprocess import CTCLabelDecode
+from ptocr.postprocess.rec import CTCLabelDecode
 from ptocr.datasets.simple_dataset import SimpleDataSet
 from ptocr.datasets.imaug.operators import DecodeImage, KeepKeys
 from ptocr.datasets.imaug.rec_img_aug import RecResizeImg, RecAug

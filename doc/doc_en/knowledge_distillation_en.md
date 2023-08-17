@@ -308,8 +308,8 @@ Taking the above configuration as an example, the final distillation training lo
 - DML loss between SAR branch of `Student` and `Teacher`'s final output `head_out` (loss weight equals 0.5).
 - L2 loss between `Student` and `Teacher`'s backbone network output `backbone_out` (loss weight equals 1.0).
 
-For more specific implementation of `CombinedLoss`, please refer to: [combined_loss.py](../../ptocr/loss/combined_loss.py#L23).
-For more specific implementations of distillation loss functions such as `DistillationCTCLoss`, please refer to [distillation_loss.py](../../ptocr/loss/distillation_loss.py)
+For more specific implementation of `CombinedLoss`, please refer to: [combined_loss.py](../../ptocr/loss/compose.py#L23).
+For more specific implementations of distillation loss functions such as `DistillationCTCLoss`, please refer to [distillation_loss.py](../../ptocr/loss/distillation.py)
 
 
 <a name="213"></a>
@@ -328,7 +328,7 @@ PostProcess:
 Taking the above configuration as an example, the CTC decoding output of the two sub-networks `Student` and `Teahcer` will be calculated at the same time.
 Among them, `key` is the name of the subnet, and `value` is the list of subnets.
 
-For more specific implementation of `DistillationCTCLabelDecode`, please refer to: [rec_postprocess.py](../../ptocr/postprocess/rec_postprocess.py#L128)
+For more specific implementation of `DistillationCTCLabelDecode`, please refer to: [rec_postprocess.py](../../ptocr/postprocess/rec.py#L128)
 
 
 <a name="214"></a>
@@ -348,7 +348,7 @@ Metric:
 Taking the above configuration as an example, the accuracy metric of the `Student` subnet will be used as the judgment metric for saving the best model.
 At the same time, the accuracy metric of all subnets will be printed out in the log.
 
-For more specific implementation of `DistillationMetric`, please refer to: [distillation_metric.py](../../ptocr/metrics/distillation_metric.py#L24).
+For more specific implementation of `DistillationMetric`, please refer to: [distillation_metric.py](../../ptocr/metrics/distillation.py#L24).
 
 
 <a name="215"></a>
@@ -584,7 +584,7 @@ PostProcess:
 
 Taking the above configuration as an example, the output of the three subnets `Student`, `Student2` and `Teacher` will be calculated at the same time for post-processing calculations.
 Since there are multiple inputs, there are also multiple outputs returned by post-processing.
-For a more specific implementation of `DistillationDBPostProcess`, please refer to: [db_postprocess.py](../../ptocr/postprocess/db_postprocess.py#L195)
+For a more specific implementation of `DistillationDBPostProcess`, please refer to: [db_postprocess.py](../../ptocr/postprocess/db.py#L195)
 
 <a name="224"></a>
 #### 2.2.4 Metric Calculation

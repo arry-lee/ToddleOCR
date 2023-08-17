@@ -3,11 +3,11 @@ from configs.config import ConfigModel,_
 from ptocr.modules.backbones.det_resnet_vd_sast import ResNet_SAST
 from ptocr.modules.necks.sast_fpn import SASTFPN
 from ptocr.modules.heads.det_sast_head import SASTHead
-from ptocr.loss.det_sast_loss import SASTLoss
-from ptocr.metrics.det_metric import DetMetric
+from ptocr.loss.sast import SASTLoss
+from ptocr.metrics.det import DetMetric
 from torch.optim import Adam
 from torch.optim.lr_scheduler import ConstantLR
-from ptocr.postprocess.sast_postprocess import SASTPostProcess
+from ptocr.postprocess.sast import SASTPostProcess
 from ptocr.datasets.simple_dataset import SimpleDataSet
 from ptocr.datasets.imaug.operators import DecodeImage, KeepKeys, ToCHWImage, DetResizeForTest, NormalizeImage
 from ptocr.datasets.imaug.label_ops import DetLabelEncode

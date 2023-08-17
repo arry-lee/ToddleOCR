@@ -2,11 +2,11 @@
 from configs.config import ConfigModel,_
 from ptocr.modules.backbones.rec_resnet_45 import ResNet45
 from ptocr.modules.heads.rec_abinet_head import ABINetHead
-from ptocr.loss.rec_ce_loss import CELoss
-from ptocr.metrics.rec_metric import RecMetric
+from ptocr.loss.ce import CELoss
+from ptocr.metrics.rec import RecMetric
 from torch.optim import Adam
 from ptocr.optim.lr_scheduler import PiecewiseLR
-from ptocr.postprocess.rec_postprocess import ABINetLabelDecode
+from ptocr.postprocess.rec import ABINetLabelDecode
 from ptocr.datasets.lmdb_dataset import LMDBDataSet
 from ptocr.datasets.imaug.operators import DecodeImage, KeepKeys
 from ptocr.datasets.imaug.rec_img_aug import ABINetRecAug, ABINetRecResizeImg

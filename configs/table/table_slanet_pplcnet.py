@@ -3,11 +3,11 @@ from configs.config import ConfigModel,_
 from torch.nn import PPLCNet
 from ptocr.modules.necks.csp_pan import CSPPAN
 from ptocr.modules.heads.table_att_head import SLAHead
-from ptocr.loss.table_att_loss import SLALoss
-from ptocr.metrics.table_metric import TableMetric
+from ptocr.loss.table_att import SLALoss
+from ptocr.metrics.table import TableMetric
 from torch.optim import Adam
 from torch.optim.lr_scheduler import ConstantLR
-from ptocr.postprocess.table_postprocess import TableLabelDecode
+from ptocr.postprocess.table import TableLabelDecode
 from ptocr.datasets.pubtab_dataset import PubTabDataSet
 from ptocr.datasets.imaug.operators import ToCHWImage, DecodeImage, KeepKeys, NormalizeImage
 from ptocr.datasets.imaug.label_ops import TableBoxEncode, TableLabelEncode

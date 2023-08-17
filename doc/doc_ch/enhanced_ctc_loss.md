@@ -26,7 +26,7 @@ Focal Loss 出自论文《Focal Loss for Dense Object Detection》, 该loss最�
 <img src="./equation_focal_ctc.png" width = "500" /> 
 </div>
 
-实验中，&gamma;取值为2, &alpha;= 1, 具体实现见:  [rec_ctc_loss.py](../../ptocr/loss/rec_ctc_loss.py)
+实验中，&gamma;取值为2, &alpha;= 1, 具体实现见:  [rec_ctc_loss.py](../../ptocr/loss/ctc.py)
 
 ## 2. A-CTC Loss
 A-CTC Loss是CTC Loss + ACE Loss的简称。 其中ACE Loss出自论文< Aggregation Cross-Entropy for Sequence Recognition>.  ACE Loss相比于CTCLoss，主要有如下两点优势: 
@@ -44,7 +44,7 @@ A_CTC Loss定义如下:
 <img src="./equation_a_ctc.png" width = "300" /> 
 </div>
 
-实验中，λ = 0.1.  ACE loss实现代码见:  [ace_loss.py](../../ptocr/loss/ace_loss.py)
+实验中，λ = 0.1.  ACE loss实现代码见:  [ace_loss.py](../../ptocr/loss/ace.py)
 
 ## 3. C-CTC Loss
 C-CTC Loss是CTC Loss + Center Loss的简称。 其中Center Loss出自论文 < A Discriminative Feature Learning Approach for Deep Face Recognition>.  最早用于人脸识别任务，用于增大类间距离，减小类内距离,  是Metric Learning领域一种较早的、也比较常用的一种算法。 
@@ -54,7 +54,7 @@ C-CTC Loss是CTC Loss + Center Loss的简称。 其中Center Loss出自论文 < 
 <img src="./equation_c_ctc.png" width = "300" /> 
 </div>
 
-实验中，我们设置λ=0.25. center_loss实现代码见:  [center_loss.py](../../ptocr/loss/center_loss.py)
+实验中，我们设置λ=0.25. center_loss实现代码见:  [center_loss.py](../../ptocr/loss/center.py)
 
 值得一提的是， 在C-CTC Loss中，选择随机初始化Center并不能够带来明显的提升. 我们的Center初始化方法如下：
 + 基于原始的CTCLoss， 训练得到一个网络N
