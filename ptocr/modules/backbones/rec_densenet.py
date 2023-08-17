@@ -5,9 +5,6 @@ https://github.com/LBH1024/CAN/models/densenet.py
 """
 
 
-
-
-
 import math
 import torch
 import torch.nn as nn

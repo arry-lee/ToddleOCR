@@ -3,41 +3,7 @@ import torch.nn.functional as F
 from torch import nn
 __all__ = ['PGFPN']
 
-
-class ConvBNLayer(nn.Module):
-    def __init__(
-        self, in_channels, out_channels, kernel_size, stride=1, groups=1, is_vd_mode=False, act=None, name=None
-    ):
-        super().__init__()
-        self.is_vd_mode = is_vd_mode
-        self._pool2d_avg = nn.AvgPool2d(kernel_size=2, stride=2, padding=0, ceil_mode=True)
-        self._conv = nn.Conv2d(
-            in_channels=in_channels,
-            out_channels=out_channels,
-            kernel_size=kernel_size,
-            stride=stride,
-            padding=(kernel_size - 1) // 2,
-            groups=groups,
-            bias=False,
-        )
-        if name == "conv1":
-            bn_name = "bn_" + name
-        else:
-            bn_name = "bn" + name[3:]
-        self._batch_norm = nn.BatchNorm2d(out_channels, track_running_stats=False)
-        self._batch_norm.register_buffer(bn_name + "_mean", self._batch_norm.running_mean)
-        self._batch_norm.register_buffer(bn_name + "_variance", self._batch_norm.running_var)
-        if act:
-            self._act = getattr(F, act)
-        else:
-            self._act = None
-
-    def forward(self, inputs):
-        y = self._conv(inputs)
-        y = self._batch_norm(y)
-        if self._act:
-            y = self._act(y)
-        return y
+from ptocr.ops import ConvBNLayer
 
 
 class DeConvBNLayer(nn.Module):

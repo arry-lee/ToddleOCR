@@ -5,20 +5,20 @@ from torch.nn import MaxPool2d
 
 from .det_resnet_vd import ConvBNLayer
 
-
+from torchvision.models.resnet import Bottleneck
 class BottleneckBlock(nn.Module):
-    def __init__(self, num_features, num_filters, stride, shortcut=True, is_dcn=False):
+    def __init__(self, in_channels, out_channels, stride, shortcut=True, is_dcn=False):
         super().__init__()
 
         self.conv0 = ConvBNLayer(
-            in_channels=num_features,
-            out_channels=num_filters,
+            in_channels=in_channels,
+            out_channels=out_channels,
             kernel_size=1,
             act="relu",
         )
         self.conv1 = ConvBNLayer(
-            in_channels=num_filters,
-            out_channels=num_filters,
+            in_channels=out_channels,
+            out_channels=out_channels,
             kernel_size=3,
             stride=stride,
             act="relu",
@@ -26,23 +26,23 @@ class BottleneckBlock(nn.Module):
             dcn_groups=1,
         )
         self.conv2 = ConvBNLayer(
-            in_channels=num_filters,
-            out_channels=num_filters * 4,
+            in_channels=out_channels,
+            out_channels=out_channels * 4,
             kernel_size=1,
             act=None,
         )
 
         if not shortcut:
             self.short = ConvBNLayer(
-                in_channels=num_features,
-                out_channels=num_filters * 4,
+                in_channels=in_channels,
+                out_channels=out_channels * 4,
                 kernel_size=1,
                 stride=stride,
             )
 
         self.shortcut = shortcut
 
-        self._num_channels_out = num_filters * 4
+        self._num_channels_out = out_channels * 4
 
     def forward(self, inputs):
         y = self.conv0(inputs)
@@ -140,15 +140,13 @@ class ResNet(nn.Module):
                             conv_name = "res" + str(block + 2) + "b" + str(i)
                     else:
                         conv_name = "res" + str(block + 2) + chr(97 + i)
-                    bottleneck_block = self.add_module(
+                    bottleneck_block = BottleneckBlock(
+                        in_channels=num_features[block] if i == 0 else num_filters[block] * 4,
+                        out_channels=num_filters[block], stride=2 if i == 0 and block != 0 else 1, shortcut=shortcut,
+                        is_dcn=is_dcn)
+                    self.add_module(
                         conv_name,
-                        BottleneckBlock(
-                            num_features=num_features[block] if i == 0 else num_filters[block] * 4,
-                            num_filters=num_filters[block],
-                            stride=2 if i == 0 and block != 0 else 1,
-                            shortcut=shortcut,
-                            is_dcn=is_dcn,
-                        ),
+                        bottleneck_block
                     )
                     block_list.append(bottleneck_block)
                     shortcut = True
@@ -161,14 +159,15 @@ class ResNet(nn.Module):
                 block_list = []
                 for i in range(depth[block]):
                     conv_name = "res" + str(block + 2) + chr(97 + i)
-                    basic_block = self.add_module(
+                    basic_block = BasicBlock(
+                        num_features=num_features[block] if i == 0 else num_filters[block],
+                        num_filters=num_filters[block],
+                        stride=2 if i == 0 and block != 0 else 1,
+                        shortcut=shortcut,
+                    )
+                    self.add_module(
                         conv_name,
-                        BasicBlock(
-                            num_features=num_features[block] if i == 0 else num_filters[block],
-                            num_filters=num_filters[block],
-                            stride=2 if i == 0 and block != 0 else 1,
-                            shortcut=shortcut,
-                        ),
+                        basic_block
                     )
                     block_list.append(basic_block)
                     shortcut = True

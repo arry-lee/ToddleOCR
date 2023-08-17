@@ -2,63 +2,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-__all__ = ["ResNet"]
+__all__ = ["ResNet_SAST"]
 
-
-class ConvBNLayer(nn.Module):
-    def __init__(
-            self,
-            in_channels,
-            out_channels,
-            kernel_size,
-            stride=1,
-            groups=1,
-            is_vd_mode=False,
-            act=None,
-            name=None,
-    ):
-        super().__init__()
-
-        self.is_vd_mode = is_vd_mode
-        self._pool2d_avg = nn.AvgPool2d(kernel_size=2, stride=2, padding=0, ceil_mode=True)
-        self._conv = nn.Conv2d(
-            in_channels=in_channels,
-            out_channels=out_channels,
-            kernel_size=kernel_size,
-            stride=stride,
-            padding=(kernel_size - 1) // 2,
-            groups=groups,
-            bias=False,
-        )
-        if name == "conv1":
-            bn_name = "bn_" + name
-        else:
-            bn_name = "bn" + name[3:] # what name
-        self._batch_norm = nn.BatchNorm2d(out_channels,
-            # act=act,
-            # bias=True,
-            # moving_mean_name=bn_name + "_mean",
-            # moving_variance_name=bn_name + "_variance",
-        )
-        # todo what is this?
-        self._batch_norm.register_buffer(bn_name + "_mean",self._batch_norm.running_mean)
-        self._batch_norm.register_buffer(bn_name + "_variance",self._batch_norm.running_var)
-
-        if act:
-            self._act = getattr(F,act)
-        else:
-            self._act = None
-
-
-
-    def forward(self, inputs):
-        if self.is_vd_mode:
-            inputs = self._pool2d_avg(inputs)
-        y = self._conv(inputs)
-        y = self._batch_norm(y)
-        if self._act:
-            y = self._act(y)
-        return y
+from ptocr.ops import ConvBNLayer
 
 
 class BottleneckBlock(nn.Module):
@@ -85,7 +31,7 @@ class BottleneckBlock(nn.Module):
                 in_channels=in_channels,
                 out_channels=out_channels * 4,
                 kernel_size=1,
-                stride=stride,
+                stride=1,
                 is_vd_mode=False if if_first else True,
                 name=name + "_branch1",
             )
@@ -101,7 +47,7 @@ class BottleneckBlock(nn.Module):
             short = inputs
         else:
             short = self.short(inputs)
-        y = torch.add(x=short, y=conv2)
+        y = torch.add(short, conv2)
         y = F.relu(y)
         return y
 
@@ -142,12 +88,12 @@ class BasicBlock(nn.Module):
             short = inputs
         else:
             short = self.short(inputs)
-        y = torch.add(x=short, y=conv1)
+        y = torch.add(short, conv1)
         y = F.relu(y)
         return y
 
 
-class ResNet(nn.Module):
+class ResNet_SAST(nn.Module):
     def __init__(self, in_channels=3, layers=50, **kwargs):
         super().__init__()
 
@@ -168,17 +114,21 @@ class ResNet(nn.Module):
             depth = [3, 8, 36, 3]
         elif layers == 200:
             depth = [3, 12, 48, 3]
+        else:
+            raise NotImplementedError
+
         num_features = [64, 256, 512, 1024, 2048] if layers >= 50 else [64, 64, 128, 256]
         num_filters = [64, 128, 256, 512, 512]
 
         self.conv1_1 = ConvBNLayer(
-            in_channels=in_channels, out_channels=64, kernel_size=7, stride=2, act="relu", name="conv1_1"
+            in_channels=in_channels, out_channels=32, kernel_size=3, stride=2, act="relu", name="conv1_1"
         )
+        self.conv1_2 = ConvBNLayer(in_channels=32, out_channels=32, kernel_size=3, stride=1, act="relu", name="conv1_2")
+        self.conv1_3 = ConvBNLayer(in_channels=32, out_channels=64, kernel_size=3, stride=1, act="relu", name="conv1_3")
         self.pool2d_max = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
 
         self.stages = []
         self.out_channels = [3, 64]
-        # num_filters = [64, 128, 256, 512, 512]
         if layers >= 50:
             for block in range(len(depth)):
                 block_list = []
@@ -231,6 +181,8 @@ class ResNet(nn.Module):
     def forward(self, inputs):
         out = [inputs]
         y = self.conv1_1(inputs)
+        y = self.conv1_2(y)
+        y = self.conv1_3(y)
         out.append(y)
         y = self.pool2d_max(y)
         for block in self.stages:

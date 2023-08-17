@@ -13,41 +13,7 @@ from torch import nn
 from torch.nn import functional as F
 import numpy as np
 
-
-class ConvBNLayer(nn.Module):
-    def __init__(self, in_channels, out_channels, kernel_size, stride=1, groups=1, act=None, name=None):
-        super().__init__()
-        self.conv = nn.Conv2d(
-            in_channels=in_channels,
-            out_channels=out_channels,
-            kernel_size=kernel_size,
-            stride=stride,
-            padding=(kernel_size - 1) // 2,
-            groups=groups,
-            bias=False,
-        )
-        # bn_name = "bn_" + name
-        self.bn = nn.BatchNorm2d(
-            out_channels,
-            # act=act,
-            # bias=True,
-            # moving_mean_name=bn_name + "_mean",
-            # moving_variance_name=bn_name + "_variance",
-        )
-        self.bn = nn.BatchNorm2d(num_features=out_channels)
-        self.bn.register_buffer("bn_" + name + "_mean", self.bn.running_mean)
-        self.bn.register_buffer("bn_" + name + "_variance", self.bn.running_var)
-        if act is not None:
-            self.act = getattr(F, act)
-        else:
-            self.act = None
-
-    def forward(self, x):
-        x = self.conv(x)
-        x = self.bn(x)
-        if self.act is not None:
-            x = self.act(x)
-        return x
+from ptocr.ops import ConvBNLayer
 
 
 class LocalizationNetwork(nn.Module):

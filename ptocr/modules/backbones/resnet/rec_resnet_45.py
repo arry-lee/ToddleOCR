@@ -4,11 +4,11 @@ __all__ = ["ResNet45"]
 
 
 def conv1x1(in_planes, out_planes):
-    return nn.Conv2d(in_planes, out_planes, kernel_size=1, stride=1,  bias=False)
+    return nn.Conv2d(in_planes, out_planes, kernel_size=1, stride=1, bias=False)
 
 
 def conv3x3(in_channel, out_channel, stride=1):
-    return nn.Conv2d(in_channel, out_channel, kernel_size=3, stride=stride, padding=1,  bias=False)
+    return nn.Conv2d(in_channel, out_channel, kernel_size=3, stride=stride, padding=1, bias=False)
 
 
 class BasicBlock(nn.Module):
@@ -46,7 +46,7 @@ class ResNet45(nn.Module):
     def __init__(self, in_channels=3, block=BasicBlock, layers=(3, 4, 6, 6, 3), strides=(2, 1, 2, 1, 1)):
         self.inplanes = 32
         super().__init__()
-        self.conv1 = nn.Conv2d(in_channels, 32, kernel_size=3, stride=1, padding=1,  bias=False)
+        self.conv1 = nn.Conv2d(in_channels, 32, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn1 = nn.BatchNorm2d(32)
         self.relu = nn.ReLU()
 

@@ -20,7 +20,7 @@ https://github.com/liyunsheng13/micronet/blob/main/backbone/activation.py
 import torch
 import torch.nn as nn
 
-from ptocr.modules.backbones.det_mobilenet_v3 import make_divisible
+from ptocr.modules.backbones.mobilenetv3.det_mobilenet_v3 import make_divisible
 
 M0_cfgs = [
     # s, n, c, ks, c1, c2, g1, g2, c3, g3, g4, y1, y2, y3, r
@@ -191,17 +191,17 @@ class DepthConv(nn.Module):
 
 class DYShiftMax(nn.Module):
     def __init__(
-            self,
-            inp,
-            oup,
-            reduction=4,
-            act_max=1.0,
-            act_relu=True,
-            init_a=[0.0, 0.0],
-            init_b=[0.0, 0.0],
-            relu_before_pool=False,
-            g=None,
-            expansion=False,
+        self,
+        inp,
+        oup,
+        reduction=4,
+        act_max=1.0,
+        act_relu=True,
+        init_a=[0.0, 0.0],
+        init_b=[0.0, 0.0],
+        relu_before_pool=False,
+        g=None,
+        expansion=False,
     ):
         super().__init__()
         self.oup = oup
@@ -282,17 +282,17 @@ class DYShiftMax(nn.Module):
 
 class DYMicroBlock(nn.Module):
     def __init__(
-            self,
-            inp,
-            oup,
-            kernel_size=3,
-            stride=1,
-            ch_exp=(2, 2),
-            ch_per_group=4,
-            groups_1x1=(1, 1),
-            depthsep=True,
-            shuffle=False,
-            activation_cfg=None,
+        self,
+        inp,
+        oup,
+        kernel_size=3,
+        stride=1,
+        ch_exp=(2, 2),
+        ch_per_group=4,
+        groups_1x1=(1, 1),
+        depthsep=True,
+        shuffle=False,
+        activation_cfg=None,
     ):
         super().__init__()
 

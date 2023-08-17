@@ -3,7 +3,9 @@ import torch
 import torch.nn as nn
 from torch.nn.init import ones_, trunc_normal_, zeros_
 
-__all__ = ['SVTRNet']
+__all__ = ["SVTRNet"]
+
+from ptocr.ops import ConvBNLayer
 
 
 def drop_path(x, drop_prob=0.0, training=False):
@@ -20,29 +22,6 @@ def drop_path(x, drop_prob=0.0, training=False):
     output = x.divide(keep_prob) * random_tensor
     return output
 
-
-class ConvBNLayer(nn.Module):
-    def __init__(
-            self, in_channels, out_channels, kernel_size=3, stride=1, padding=0, bias=False, groups=1, act=nn.GELU
-    ):
-        super().__init__()
-        self.conv = nn.Conv2d(
-            in_channels=in_channels,
-            out_channels=out_channels,
-            kernel_size=kernel_size,
-            stride=stride,
-            padding=padding,
-            groups=groups,
-            bias=True,
-        )
-        self.norm = nn.BatchNorm2d(out_channels)
-        self.act = act()
-
-    def forward(self, inputs):
-        out = self.conv(inputs)
-        out = self.norm(out)
-        out = self.act(out)
-        return out
 
 
 class DropPath(nn.Module):
@@ -85,11 +64,11 @@ class Mlp(nn.Module):
 
 class ConvMixer(nn.Module):
     def __init__(
-            self,
-            dim,
-            num_heads=8,
-            HW=(8, 25),
-            local_k=(3, 3),
+        self,
+        dim,
+        num_heads=8,
+        HW=(8, 25),
+        local_k=(3, 3),
     ):
         super().__init__()
         self.HW = HW
@@ -114,21 +93,21 @@ class ConvMixer(nn.Module):
 
 class Attention(nn.Module):
     def __init__(
-            self,
-            dim,
-            num_heads=8,
-            mixer="Global",
-            HW=None,
-            local_k=(7, 11),
-            qkv_bias=False,
-            qk_scale=None,
-            attn_drop=0.0,
-            proj_drop=0.0,
+        self,
+        dim,
+        num_heads=8,
+        mixer="Global",
+        HW=None,
+        local_k=(7, 11),
+        qkv_bias=False,
+        qk_scale=None,
+        attn_drop=0.0,
+        proj_drop=0.0,
     ):
         super().__init__()
         self.num_heads = num_heads
         head_dim = dim // num_heads
-        self.scale = qk_scale or head_dim ** -0.5
+        self.scale = qk_scale or head_dim**-0.5
 
         self.qkv = nn.Linear(dim, dim * 3, bias=qkv_bias)
         self.attn_drop = nn.Dropout(attn_drop)
@@ -146,8 +125,8 @@ class Attention(nn.Module):
             mask = torch.ones([H * W, H + hk - 1, W + wk - 1], dtype=torch.float32)
             for h in range(0, H):
                 for w in range(0, W):
-                    mask[h * W + w, h: h + hk, w: w + wk] = 0.0
-            mask_paddle = mask[:, hk // 2: H + hk // 2, wk // 2: W + wk // 2].flatten(1)
+                    mask[h * W + w, h : h + hk, w : w + wk] = 0.0
+            mask_paddle = mask[:, hk // 2 : H + hk // 2, wk // 2 : W + wk // 2].flatten(1)
             mask_inf = torch.full([H * W, H * W], -torch.inf, dtype=torch.float32)
             mask = torch.where(mask_paddle < 1, mask_paddle, mask_inf)
             self.mask = mask.unsqueeze([0, 1])
@@ -176,22 +155,22 @@ class Attention(nn.Module):
 
 class Block(nn.Module):
     def __init__(
-            self,
-            dim,
-            num_heads,
-            mixer="Global",
-            local_mixer=(7, 11),
-            HW=None,
-            mlp_ratio=4.0,
-            qkv_bias=False,
-            qk_scale=None,
-            drop=0.0,
-            attn_drop=0.0,
-            drop_path=0.0,
-            act_layer=nn.GELU,
-            norm_layer=nn.LayerNorm,
-            epsilon=1e-6,
-            prenorm=True,
+        self,
+        dim,
+        num_heads,
+        mixer="Global",
+        local_mixer=(7, 11),
+        HW=None,
+        mlp_ratio=4.0,
+        qkv_bias=False,
+        qk_scale=None,
+        drop=0.0,
+        attn_drop=0.0,
+        drop_path=0.0,
+        act_layer=nn.GELU,
+        norm_layer=nn.LayerNorm,
+        epsilon=1e-6,
+        prenorm=True,
     ):
         super().__init__()
         if isinstance(norm_layer, str):
@@ -240,7 +219,7 @@ class PatchEmbed(nn.Module):
 
     def __init__(self, img_size=(32, 100), in_channels=3, embed_dim=768, sub_num=2, patch_size=(4, 4), mode="pope"):
         super().__init__()
-        num_patches = (img_size[1] // (2 ** sub_num)) * (img_size[0] // (2 ** sub_num))
+        num_patches = (img_size[1] // (2**sub_num)) * (img_size[0] // (2**sub_num))
         self.img_size = img_size
         self.num_patches = num_patches
         self.embed_dim = embed_dim
@@ -304,7 +283,7 @@ class PatchEmbed(nn.Module):
     def forward(self, x):
         B, C, H, W = x.shape
         assert (
-                H == self.img_size[0] and W == self.img_size[1]
+            H == self.img_size[0] and W == self.img_size[1]
         ), f"Input image size ({H}*{W}) doesn't match model ({self.img_size[0]}*{self.img_size[1]})."
         x = self.proj(x).flatten(2).transpose((0, 2, 1))
         return x
@@ -348,36 +327,36 @@ class SubSample(nn.Module):
         return out
 
 
-class SVTRNet(nn.Module): # todo 太多了
+class SVTRNet(nn.Module):  # todo 太多了
     def __init__(
-            self,
-            img_size=(32, 100),
-            in_channels=3,
-            embed_dim=(64, 128, 256),
-            depth=(3, 6, 3),
-            num_heads=(2, 4, 8),
-            mixer=("Local",) * 6 + ("Global",) * 6,  # Local atten, Global atten, Conv
-            local_mixer=((7, 11), (7, 11), (7, 11)),
-            patch_merging="Conv",  # Conv, Pool, None
-            mlp_ratio=4,
-            qkv_bias=True,
-            qk_scale=None,
-            drop_rate=0.0,
-            last_drop=0.1,
-            attn_drop_rate=0.0,
-            drop_path_rate=0.1,
-            norm_layer="nn.LayerNorm",
-            sub_norm="nn.LayerNorm",
-            epsilon=1e-6,
-            out_channels=192,
-            out_char_num=25,
-            block_unit="Block",
-            act="nn.GELU",
-            last_stage=True,
-            sub_num=2,
-            prenorm=True,
-            use_lenhead=False,
-            **kwargs,
+        self,
+        img_size=(32, 100),
+        in_channels=3,
+        embed_dim=(64, 128, 256),
+        depth=(3, 6, 3),
+        num_heads=(2, 4, 8),
+        mixer=("Local",) * 6 + ("Global",) * 6,  # Local atten, Global atten, Conv
+        local_mixer=((7, 11), (7, 11), (7, 11)),
+        patch_merging="Conv",  # Conv, Pool, None
+        mlp_ratio=4,
+        qkv_bias=True,
+        qk_scale=None,
+        drop_rate=0.0,
+        last_drop=0.1,
+        attn_drop_rate=0.0,
+        drop_path_rate=0.1,
+        norm_layer="nn.LayerNorm",
+        sub_norm="nn.LayerNorm",
+        epsilon=1e-6,
+        out_channels=192,
+        out_char_num=25,
+        block_unit="Block",
+        act="nn.GELU",
+        last_stage=True,
+        sub_num=2,
+        prenorm=True,
+        use_lenhead=False,
+        **kwargs,
     ):
         super().__init__()
         self.img_size = img_size
@@ -389,7 +368,7 @@ class SVTRNet(nn.Module): # todo 太多了
             img_size=img_size, in_channels=in_channels, embed_dim=embed_dim[0], sub_num=sub_num
         )
         num_patches = self.patch_embed.num_patches
-        self.HW = [img_size[0] // (2 ** sub_num), img_size[1] // (2 ** sub_num)]
+        self.HW = [img_size[0] // (2**sub_num), img_size[1] // (2**sub_num)]
         self.pos_embed = nn.Parameter(torch.zeros([1, num_patches, embed_dim[0]]))
         self.register_parameter("pos_embed", self.pos_embed)
         self.pos_drop = nn.Dropout(p=drop_rate)
@@ -401,7 +380,7 @@ class SVTRNet(nn.Module): # todo 太多了
                 Block_unit(
                     dim=embed_dim[0],
                     num_heads=num_heads[0],
-                    mixer=mixer[0: depth[0]][i],
+                    mixer=mixer[0 : depth[0]][i],
                     HW=self.HW,
                     local_mixer=local_mixer[0],
                     mlp_ratio=mlp_ratio,
@@ -410,7 +389,7 @@ class SVTRNet(nn.Module): # todo 太多了
                     drop=drop_rate,
                     act_layer=eval(act),
                     attn_drop=attn_drop_rate,
-                    drop_path=dpr[0: depth[0]][i],
+                    drop_path=dpr[0 : depth[0]][i],
                     norm_layer=norm_layer,
                     epsilon=epsilon,
                     prenorm=prenorm,
@@ -431,7 +410,7 @@ class SVTRNet(nn.Module): # todo 太多了
                 Block_unit(
                     dim=embed_dim[1],
                     num_heads=num_heads[1],
-                    mixer=mixer[depth[0]: depth[0] + depth[1]][i],
+                    mixer=mixer[depth[0] : depth[0] + depth[1]][i],
                     HW=HW,
                     local_mixer=local_mixer[1],
                     mlp_ratio=mlp_ratio,
@@ -440,7 +419,7 @@ class SVTRNet(nn.Module): # todo 太多了
                     drop=drop_rate,
                     act_layer=eval(act),
                     attn_drop=attn_drop_rate,
-                    drop_path=dpr[depth[0]: depth[0] + depth[1]][i],
+                    drop_path=dpr[depth[0] : depth[0] + depth[1]][i],
                     norm_layer=norm_layer,
                     epsilon=epsilon,
                     prenorm=prenorm,
@@ -460,7 +439,7 @@ class SVTRNet(nn.Module): # todo 太多了
                 Block_unit(
                     dim=embed_dim[2],
                     num_heads=num_heads[2],
-                    mixer=mixer[depth[0] + depth[1]:][i],
+                    mixer=mixer[depth[0] + depth[1] :][i],
                     HW=HW,
                     local_mixer=local_mixer[2],
                     mlp_ratio=mlp_ratio,
@@ -469,7 +448,7 @@ class SVTRNet(nn.Module): # todo 太多了
                     drop=drop_rate,
                     act_layer=eval(act),
                     attn_drop=attn_drop_rate,
-                    drop_path=dpr[depth[0] + depth[1]:][i],
+                    drop_path=dpr[depth[0] + depth[1] :][i],
                     norm_layer=norm_layer,
                     epsilon=epsilon,
                     prenorm=prenorm,

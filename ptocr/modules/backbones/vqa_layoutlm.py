@@ -157,9 +157,7 @@ class LayoutXLMForSer(NLPBaseModel):
 
 class LayoutLMv2ForRe(NLPBaseModel):
     def __init__(self, pretrained=True, checkpoints=None, mode="Global", **kwargs):
-        super().__init__(
-            LayoutLMv2Model, LayoutLMv2ForRelationExtraction, mode, "re", pretrained, checkpoints
-        )
+        super().__init__(LayoutLMv2Model, LayoutLMv2ForRelationExtraction, mode, "re", pretrained, checkpoints)
         if hasattr(self.model.layoutlmv2, "use_visual_backbone") and self.model.layoutlmv2.use_visual_backbone is False:
             self.use_visual_backbone = False
 
@@ -181,9 +179,7 @@ class LayoutLMv2ForRe(NLPBaseModel):
 
 class LayoutXLMForRe(NLPBaseModel):
     def __init__(self, pretrained=True, checkpoints=None, mode="Global", **kwargs):
-        super().__init__(
-            LayoutXLMModel, LayoutXLMForRelationExtraction, mode, "re", pretrained, checkpoints
-        )
+        super().__init__(LayoutXLMModel, LayoutXLMForRelationExtraction, mode, "re", pretrained, checkpoints)
         if hasattr(self.model.layoutxlm, "use_visual_backbone") and self.model.layoutxlm.use_visual_backbone is False:
             self.use_visual_backbone = False
 

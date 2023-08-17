@@ -20,6 +20,7 @@ import torch.nn as nn
 from torch.hub import download_url_to_file
 from torch.nn import AdaptiveAvgPool2d, BatchNorm2d, Conv2d
 
+from ptocr.ops import ConvBNLayer
 
 MODEL_URLS = {
     "PPLCNet_x0.25": "https://paddle-imagenet-models-name.bj.bcebos.com/dygraph/legendary_models/PPLCNet_x0_25_pretrained.pdparams",
@@ -69,29 +70,6 @@ def make_divisible(v, divisor=8, min_value=None):
         new_v += divisor
     return new_v
 
-
-class ConvBNLayer(nn.Module):
-    def __init__(self, in_channels, out_channels, kernel_size, stride, groups=1):
-        super().__init__()
-
-        self.conv = nn.Conv2d(
-            in_channels=in_channels,
-            out_channels=out_channels,
-            kernel_size=kernel_size,
-            stride=stride,
-            padding=(kernel_size - 1) // 2,
-            groups=groups,
-            bias=False,
-        )
-
-        self.bn = nn.BatchNorm2d(out_channels)
-        self.hardswish = nn.Hardswish()
-
-    def forward(self, x):
-        x = self.conv(x)
-        x = self.bn(x)
-        x = self.hardswish(x)
-        return x
 
 
 class DepthWiseSeparable(nn.Module):

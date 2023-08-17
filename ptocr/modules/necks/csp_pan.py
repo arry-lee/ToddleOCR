@@ -5,32 +5,7 @@ import torch.nn.functional as F
 
 __all__ = ["CSPPAN"]
 
-
-class ConvBNLayer(nn.Module):
-    def __init__(self, in_channel=96, out_channel=96, kernel_size=3, stride=1, groups=1, act="leaky_relu"):
-        super().__init__()
-        self.act = act
-        assert self.act in ["leaky_relu", "hard_swish"]
-        self.conv = nn.Conv2d(
-            in_channels=in_channel,
-            out_channels=out_channel,
-            kernel_size=kernel_size,
-            groups=groups,
-            padding=(kernel_size - 1) // 2,
-            stride=stride,
-            bias=False,
-        )
-        nn.init.kaiming_uniform_(self.conv.weight)
-
-        self.bn = nn.BatchNorm2d(out_channel)
-
-    def forward(self, x):
-        x = self.bn(self.conv(x))
-        if self.act == "leaky_relu":
-            x = F.leaky_relu(x)
-        elif self.act == "hard_swish":
-            x = F.hardswish(x)
-        return x
+from ptocr.ops import ConvBNLayer
 
 
 class DPModule(nn.Module):

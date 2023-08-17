@@ -5,6 +5,8 @@ import numpy as np
 
 __all__ = ["ResNetFPN"]
 
+from ptocr.ops import ConvBNLayer
+
 
 class ResNetFPN(nn.Module):
     def __init__(self, in_channels=1, layers=50, **kwargs):
@@ -20,7 +22,9 @@ class ResNetFPN(nn.Module):
         num_filters = [64, 128, 256, 512]
         self.depth = supported_layers[layers]["depth"]
         self.F = []
-        self.conv = ConvBNLayer(in_channels=in_channels, out_channels=64, kernel_size=7, stride=2, act="relu", name="conv1")
+        self.conv = ConvBNLayer(
+            in_channels=in_channels, out_channels=64, kernel_size=7, stride=2, act="relu", name="conv1"
+        )
         self.block_list = []
         in_ch = 64
         if layers >= 50:
@@ -34,7 +38,13 @@ class ResNetFPN(nn.Module):
                     else:
                         conv_name = "res" + str(block + 2) + chr(97 + i)
                     block_list = self.add_module(
-                        "bottleneckBlock_{}_{}".format(block, i), BottleneckBlock(in_channels=in_ch, out_channels=num_filters[block], stride=stride_list[block] if i == 0 else 1, name=conv_name)
+                        "bottleneckBlock_{}_{}".format(block, i),
+                        BottleneckBlock(
+                            in_channels=in_ch,
+                            out_channels=num_filters[block],
+                            stride=stride_list[block] if i == 0 else 1,
+                            name=conv_name,
+                        ),
                     )
                     in_ch = num_filters[block] * 4
                     self.block_list.append(block_list)
@@ -48,7 +58,14 @@ class ResNetFPN(nn.Module):
                     else:
                         stride = (1, 1)
                     basic_block = self.add_module(
-                        conv_name, BasicBlock(in_channels=in_ch, out_channels=num_filters[block], stride=stride_list[block] if i == 0 else 1, is_first=block == i == 0, name=conv_name)
+                        conv_name,
+                        BasicBlock(
+                            in_channels=in_ch,
+                            out_channels=num_filters[block],
+                            stride=stride_list[block] if i == 0 else 1,
+                            is_first=block == i == 0,
+                            name=conv_name,
+                        ),
                     )
                     in_ch = basic_block.out_channels
                     self.block_list.append(basic_block)
@@ -61,7 +78,8 @@ class ResNetFPN(nn.Module):
 
             self.base_block.append(
                 self.add_module(
-                    "F_{}_base_block_0".format(i), nn.Conv2d(in_channels=in_channels, out_channels=out_ch_list[i], kernel_size=1,  bias=True)
+                    "F_{}_base_block_0".format(i),
+                    nn.Conv2d(in_channels=in_channels, out_channels=out_ch_list[i], kernel_size=1, bias=True),
                 )
             )
             self.base_block.append(
@@ -70,10 +88,7 @@ class ResNetFPN(nn.Module):
                     nn.Conv2d(in_channels=out_ch_list[i], out_channels=out_ch_list[i], kernel_size=3, padding=1),
                 )
             )
-            self.base_block.append(
-                self.add_module("F_{}_base_block_2".format(i), 
-                                nn.BatchNorm2d(out_ch_list[i]))
-            )
+            self.base_block.append(self.add_module("F_{}_base_block_2".format(i), nn.BatchNorm2d(out_ch_list[i])))
         self.base_block.append(
             self.add_module(
                 "F_{}_base_block_3".format(i), nn.Conv2d(in_channels=out_ch_list[i], out_channels=512, kernel_size=1)
@@ -111,44 +126,6 @@ class ResNetFPN(nn.Module):
         return base
 
 
-class ConvBNLayer(nn.Module):
-    def __init__(self, in_channels, out_channels, kernel_size, stride=1, groups=1, act=None, name=None):
-        super().__init__()
-        self.conv = nn.Conv2d(
-            in_channels=in_channels,
-            out_channels=out_channels,
-            kernel_size=2 if stride == (1, 1) else kernel_size,
-            dilation=2 if stride == (1, 1) else 1,
-            stride=stride,
-            padding=(kernel_size - 1) // 2,
-            groups=groups,
-            bias=False,
-        )
-
-        if name == "conv1":
-            bn_name = "bn_" + name
-        else:
-            bn_name = "bn" + name[3:]
-        self.bn = nn.BatchNorm2d(
-            num_features=out_channels,
-        )
-        self.bn.register_buffer(bn_name + "_mean",self.bn.running_mean)
-        self.bn.register_buffer(bn_name + "_variance",self.bn.running_var)
-
-        if act:
-            self._act = getattr(F,act)
-        else:
-            self._act = None
-
-    def __call__(self, x):
-        x = self.conv(x)
-        x = self.bn(x)
-        if self._act:
-            x = self._act(x)
-        return x
-
-
-
 
 class ShortCut(nn.Module):
     def __init__(self, in_channels, out_channels, stride, name, is_first=False):
@@ -172,12 +149,29 @@ class ShortCut(nn.Module):
 class BottleneckBlock(nn.Module):
     def __init__(self, in_channels, out_channels, stride, name):
         super().__init__()
-        self.conv0 = ConvBNLayer(in_channels=in_channels, out_channels=out_channels, kernel_size=1, act="relu", name=name + "_branch2a")
-        self.conv1 = ConvBNLayer(in_channels=out_channels, out_channels=out_channels, kernel_size=3, stride=stride, act="relu", name=name + "_branch2b")
+        self.conv0 = ConvBNLayer(
+            in_channels=in_channels, out_channels=out_channels, kernel_size=1, act="relu", name=name + "_branch2a"
+        )
+        self.conv1 = ConvBNLayer(
+            in_channels=out_channels,
+            out_channels=out_channels,
+            kernel_size=3,
+            stride=stride,
+            act="relu",
+            name=name + "_branch2b",
+        )
 
-        self.conv2 = ConvBNLayer(in_channels=out_channels, out_channels=out_channels * 4, kernel_size=1, act=None, name=name + "_branch2c")
+        self.conv2 = ConvBNLayer(
+            in_channels=out_channels, out_channels=out_channels * 4, kernel_size=1, act=None, name=name + "_branch2c"
+        )
 
-        self.short = ShortCut(in_channels=in_channels, out_channels=out_channels * 4, stride=stride, is_first=False, name=name + "_branch1")
+        self.short = ShortCut(
+            in_channels=in_channels,
+            out_channels=out_channels * 4,
+            stride=stride,
+            is_first=False,
+            name=name + "_branch1",
+        )
         self.out_channels = out_channels * 4
 
     def forward(self, x):
@@ -192,9 +186,20 @@ class BottleneckBlock(nn.Module):
 class BasicBlock(nn.Module):
     def __init__(self, in_channels, out_channels, stride, name, is_first):
         super().__init__()
-        self.conv0 = ConvBNLayer(in_channels=in_channels, out_channels=out_channels, kernel_size=3, act="relu", stride=stride, name=name + "_branch2a")
-        self.conv1 = ConvBNLayer(in_channels=out_channels, out_channels=out_channels, kernel_size=3, act=None, name=name + "_branch2b")
-        self.short = ShortCut(in_channels=in_channels, out_channels=out_channels, stride=stride, is_first=is_first, name=name + "_branch1")
+        self.conv0 = ConvBNLayer(
+            in_channels=in_channels,
+            out_channels=out_channels,
+            kernel_size=3,
+            act="relu",
+            stride=stride,
+            name=name + "_branch2a",
+        )
+        self.conv1 = ConvBNLayer(
+            in_channels=out_channels, out_channels=out_channels, kernel_size=3, act=None, name=name + "_branch2b"
+        )
+        self.short = ShortCut(
+            in_channels=in_channels, out_channels=out_channels, stride=stride, is_first=is_first, name=name + "_branch1"
+        )
         self.out_channels = out_channels
 
     def forward(self, x):

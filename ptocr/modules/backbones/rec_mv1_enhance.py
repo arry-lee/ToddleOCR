@@ -15,9 +15,6 @@
 # This code is refer from: https://github.com/PaddlePaddle/PaddleClas/blob/develop/ppcls/arch/backbone/legendary_models/pp_lcnet.py
 
 
-
-
-
 import torch
 
 import torch.nn as nn
@@ -27,29 +24,6 @@ from torch.nn import AdaptiveAvgPool2d
 from torch.nn.functional import hardsigmoid
 
 
-class ConvBNLayer(nn.Module):
-    def __init__(
-        self, num_features, filter_size, num_filters, stride, padding, channels=None, num_groups=1, act="hard_swish"
-    ):
-        super().__init__()
-
-        self._conv = Conv2d(
-            in_channels=num_features,
-            out_channels=num_filters,
-            kernel_size=filter_size,
-            stride=stride,
-            padding=padding,
-            groups=num_groups,
-            bias=False,
-        )
-
-        self._batch_norm = BatchNorm2d(num_filters, act=act, bias=True)
-
-    def forward(self, inputs):
-        y = self._conv(inputs)
-        y = self._batch_norm(y)
-        return y
-
 
 class DepthWiseSeparable(nn.Module):
     def __init__(
@@ -57,23 +31,13 @@ class DepthWiseSeparable(nn.Module):
     ):
         super().__init__()
         self.use_se = use_se
-        self._depthwise_conv = ConvBNLayer(
-            num_features=num_features,
-            num_filters=int(num_filters1 * scale),
-            filter_size=dw_size,
-            stride=stride,
-            padding=padding,
-            num_groups=int(num_groups * scale),
-        )
+        self._depthwise_conv = ConvBNLayer(in_channels=num_features, out_channels=int(num_filters1 * scale),
+                                           kernel_size=dw_size, stride=stride, padding=padding,
+                                           groups=int(num_groups * scale))
         if use_se:
             self._se = SEModule(int(num_filters1 * scale))
-        self._pointwise_conv = ConvBNLayer(
-            num_features=int(num_filters1 * scale),
-            filter_size=1,
-            num_filters=int(num_filters2 * scale),
-            stride=1,
-            padding=0,
-        )
+        self._pointwise_conv = ConvBNLayer(in_channels=int(num_filters1 * scale),
+                                           out_channels=int(num_filters2 * scale), kernel_size=1, stride=1, padding=0)
 
     def forward(self, inputs):
         y = self._depthwise_conv(inputs)
@@ -89,9 +53,8 @@ class MobileNetV1Enhance(nn.Module):
         self.scale = scale
         self.block_list = []
 
-        self.conv1 = ConvBNLayer(
-            num_features=3, filter_size=3, channels=3, num_filters=int(32 * scale), stride=2, padding=1
-        )
+        self.conv1 = ConvBNLayer(in_channels=3, out_channels=int(32 * scale), kernel_size=3, stride=2, padding=1,
+                                 channels=3)
 
         conv2_1 = DepthWiseSeparable(
             num_features=int(32 * scale), num_filters1=32, num_filters2=64, num_groups=32, stride=1, scale=scale

@@ -5,6 +5,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from ptocr.ops import ConvBNLayer
+
 
 def make_divisible(v, divisor=8, min_value=None):
     if min_value is None:
@@ -14,57 +16,6 @@ def make_divisible(v, divisor=8, min_value=None):
         new_v += divisor
     return new_v
 
-class ConvBNLayer(nn.Module):
-    def __init__(self,
-                 in_channels,
-                 out_channels,
-                 kernel_size,
-                 stride,
-                 padding,
-                 groups=1,
-                 if_act=True,
-                 act=None,
-                 name=None):
-        super().__init__()
-        self.if_act = if_act
-        self.act = act
-        self.conv = nn.Conv2d(
-            in_channels=in_channels,
-            out_channels=out_channels,
-            kernel_size=kernel_size,
-            stride=stride,
-            padding=padding,
-            groups=groups,
-            bias=False)
-
-        self.bn = nn.BatchNorm2d(
-            num_features=out_channels,
-            affine=True,
-            track_running_stats=True)
-
-        self.name = name
-
-    def forward(self, x):
-        x = self.conv(x)
-        x = self.bn(x)
-
-        if self.if_act and self.act is not None:
-            if self.act == 'relu':
-                x = nn.ReLU()(x)
-            elif self.act == 'sigmoid':
-                x = nn.Sigmoid()(x)
-            elif self.act == 'tanh':
-                x = nn.Tanh()(x)
-            elif self.act == 'leaky_relu':
-                x = nn.LeakyReLU()(x)
-            elif self.act == 'elu':
-                x = nn.ELU()(x)
-            elif self.act == 'hardswish':
-                x = nn.Hardswish()(x)
-            else:
-                raise NotImplementedError(f"Activation function {self.act} is not supported.")
-
-        return x
 
 class DeConvBNLayer(nn.Module):
     def __init__(self,
@@ -125,33 +76,12 @@ class EASTFPN(nn.Module):
         else:
             self.out_channels = 64
         self.in_channels = in_channels[::-1]
-        self.h1_conv = ConvBNLayer(
-            in_channels=self.out_channels + self.in_channels[1],
-            out_channels=self.out_channels,
-            kernel_size=3,
-            stride=1,
-            padding=1,
-            if_act=True,
-            act='relu',
-            name="unet_h_1")
-        self.h2_conv = ConvBNLayer(
-            in_channels=self.out_channels + self.in_channels[2],
-            out_channels=self.out_channels,
-            kernel_size=3,
-            stride=1,
-            padding=1,
-            if_act=True,
-            act='relu',
-            name="unet_h_2")
-        self.h3_conv = ConvBNLayer(
-            in_channels=self.out_channels + self.in_channels[3],
-            out_channels=self.out_channels,
-            kernel_size=3,
-            stride=1,
-            padding=1,
-            if_act=True,
-            act='relu',
-            name="unet_h_3")
+        self.h1_conv = ConvBNLayer(in_channels=self.out_channels + self.in_channels[1], out_channels=self.out_channels,
+                                   kernel_size=3, stride=1, padding=1, act='relu', name="unet_h_1")
+        self.h2_conv = ConvBNLayer(in_channels=self.out_channels + self.in_channels[2], out_channels=self.out_channels,
+                                   kernel_size=3, stride=1, padding=1, act='relu', name="unet_h_2")
+        self.h3_conv = ConvBNLayer(in_channels=self.out_channels + self.in_channels[3], out_channels=self.out_channels,
+                                   kernel_size=3, stride=1, padding=1, act='relu', name="unet_h_3")
         self.g0_deconv = DeConvBNLayer(
             in_channels=self.in_channels[0],
             out_channels=self.out_channels,
@@ -179,15 +109,8 @@ class EASTFPN(nn.Module):
             if_act=True,
             act='relu',
             name="unet_g_2")
-        self.g3_conv = ConvBNLayer(
-            in_channels=self.out_channels,
-            out_channels=self.out_channels,
-            kernel_size=3,
-            stride=1,
-            padding=1,
-            if_act=True,
-            act='relu',
-            name="unet_g_3")
+        self.g3_conv = ConvBNLayer(in_channels=self.out_channels, out_channels=self.out_channels, kernel_size=3,
+                                   stride=1, padding=1, act='relu', name="unet_g_3")
 
     def forward(self, x):
         f = x[::-1]
@@ -215,42 +138,14 @@ class EASTHead(nn.Module):
         else:
             num_outputs = [64, 32, 1, 8]
 
-        self.det_conv1 = ConvBNLayer(
-            in_channels=in_channels,
-            out_channels=num_outputs[0],
-            kernel_size=3,
-            stride=1,
-            padding=1,
-            if_act=True,
-            act='relu',
-            name="det_head1")
-        self.det_conv2 = ConvBNLayer(
-            in_channels=num_outputs[0],
-            out_channels=num_outputs[1],
-            kernel_size=3,
-            stride=1,
-            padding=1,
-            if_act=True,
-            act='relu',
-            name="det_head2")
-        self.score_conv = ConvBNLayer(
-            in_channels=num_outputs[1],
-            out_channels=num_outputs[2],
-            kernel_size=1,
-            stride=1,
-            padding=0,
-            if_act=False,
-            act=None,
-            name="f_score")
-        self.geo_conv = ConvBNLayer(
-            in_channels=num_outputs[1],
-            out_channels=num_outputs[3],
-            kernel_size=1,
-            stride=1,
-            padding=0,
-            if_act=False,
-            act=None,
-            name="f_geo")
+        self.det_conv1 = ConvBNLayer(in_channels=in_channels, out_channels=num_outputs[0], kernel_size=3, stride=1,
+                                     padding=1, act='relu', name="det_head1")
+        self.det_conv2 = ConvBNLayer(in_channels=num_outputs[0], out_channels=num_outputs[1], kernel_size=3, stride=1,
+                                     padding=1, act='relu', name="det_head2")
+        self.score_conv = ConvBNLayer(in_channels=num_outputs[1], out_channels=num_outputs[2], kernel_size=1, stride=1,
+                                      padding=0, act=None, name="f_score")
+        self.geo_conv = ConvBNLayer(in_channels=num_outputs[1], out_channels=num_outputs[3], kernel_size=1, stride=1,
+                                    padding=0, act=None, name="f_geo")
 
     def forward(self, x, targets=None):
         f_det = self.det_conv1(x)
@@ -277,33 +172,15 @@ class ResidualUnit(nn.Module):
         self.if_shortcut = stride == 1 and in_channels == out_channels
         self.if_se = use_se
 
-        self.expand_conv = ConvBNLayer(
-            in_channels=in_channels,
-            out_channels=mid_channels,
-            kernel_size=1,
-            stride=1,
-            padding=0,
-            if_act=True,
-            act=act)
-        self.bottleneck_conv = ConvBNLayer(
-            in_channels=mid_channels,
-            out_channels=mid_channels,
-            kernel_size=kernel_size,
-            stride=stride,
-            padding=int((kernel_size - 1) // 2),
-            groups=mid_channels,
-            if_act=True,
-            act=act)
+        self.expand_conv = ConvBNLayer(in_channels=in_channels, out_channels=mid_channels, kernel_size=1, stride=1,
+                                       padding=0, act=act)
+        self.bottleneck_conv = ConvBNLayer(in_channels=mid_channels, out_channels=mid_channels, kernel_size=kernel_size,
+                                           stride=stride, padding=int((kernel_size - 1) // 2), groups=mid_channels,
+                                           act=act)
         if self.if_se:
             self.mid_se = SEModule(mid_channels)
-        self.linear_conv = ConvBNLayer(
-            in_channels=mid_channels,
-            out_channels=out_channels,
-            kernel_size=1,
-            stride=1,
-            padding=0,
-            if_act=False,
-            act=None)
+        self.linear_conv = ConvBNLayer(in_channels=mid_channels, out_channels=out_channels, kernel_size=1, stride=1,
+                                       padding=0, act=None)
 
     def forward(self, inputs):
         x = self.expand_conv(inputs)
@@ -400,15 +277,8 @@ class MobileNetV3(nn.Module):
             "supported scale are {} but input scale is {}".format(supported_scale, scale)
         inplanes = 16
         # conv1
-        self.conv = ConvBNLayer(
-            in_channels=in_channels,
-            out_channels=make_divisible(inplanes * scale),
-            kernel_size=3,
-            stride=2,
-            padding=1,
-            groups=1,
-            if_act=True,
-            act='hardswish')
+        self.conv = ConvBNLayer(in_channels=in_channels, out_channels=make_divisible(inplanes * scale), kernel_size=3,
+                                stride=2, padding=1, groups=1, act='hardswish')
 
         self.stages = []
         self.out_channels = []
@@ -434,15 +304,8 @@ class MobileNetV3(nn.Module):
             inplanes = make_divisible(scale * c)
             i += 1
         block_list.append(
-            ConvBNLayer(
-                in_channels=inplanes,
-                out_channels=make_divisible(scale * cls_ch_squeeze),
-                kernel_size=1,
-                stride=1,
-                padding=0,
-                groups=1,
-                if_act=True,
-                act='hardswish'))
+            ConvBNLayer(in_channels=inplanes, out_channels=make_divisible(scale * cls_ch_squeeze), kernel_size=1,
+                        stride=1, padding=0, groups=1, act='hardswish'))
         self.stages.append(nn.Sequential(*block_list))
         self.out_channels.append(make_divisible(scale * cls_ch_squeeze))
         for i, stage in enumerate(self.stages):

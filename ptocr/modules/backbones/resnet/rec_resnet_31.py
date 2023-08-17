@@ -26,13 +26,13 @@ class BasicBlock(nn.Module):
         else:
             self.downsample = nn.Sequential()
         self.stride = stride
-        
+
         for model in self.modules():
-            if isinstance(model,nn.Conv2d):
+            if isinstance(model, nn.Conv2d):
                 model.weight = conv_weight_attr(model.weight)
-            elif isinstance(model,nn.BatchNorm2d):
+            elif isinstance(model, nn.BatchNorm2d):
                 model.weight = bn_weight_attr(model.weight)
-                
+
     def forward(self, x):
         residual = x
 

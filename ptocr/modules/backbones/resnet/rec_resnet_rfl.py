@@ -4,9 +4,6 @@ https://github.com/hikopensource/DAVAR-Lab-OCR/blob/main/davarocr/davar_rcg/mode
 """
 
 
-
-
-
 import torch.nn as nn
 
 

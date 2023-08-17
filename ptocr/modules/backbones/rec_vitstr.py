@@ -13,26 +13,26 @@ scale_dim_heads = {"tiny": [192, 3], "small": [384, 6], "Global": [768, 12]}
 
 class ViTSTR(nn.Module):
     def __init__(
-            self,
-            img_size=(224, 224),
-            in_channels=1,
-            scale="tiny",
-            seqlen=27,
-            patch_size=(16, 16),
-            embed_dim=None,
-            depth=12,
-            num_heads=None,
-            mlp_ratio=4,
-            qkv_bias=True,
-            qk_scale=None,
-            drop_path_rate=0.0,
-            drop_rate=0.0,
-            attn_drop_rate=0.0,
-            norm_layer="nn.LayerNorm",
-            act_layer="nn.GELU",
-            epsilon=1e-6,
-            out_channels=None,
-            **kwargs
+        self,
+        img_size=(224, 224),
+        in_channels=1,
+        scale="tiny",
+        seqlen=27,
+        patch_size=(16, 16),
+        embed_dim=None,
+        depth=12,
+        num_heads=None,
+        mlp_ratio=4,
+        qkv_bias=True,
+        qk_scale=None,
+        drop_path_rate=0.0,
+        drop_rate=0.0,
+        attn_drop_rate=0.0,
+        norm_layer="nn.LayerNorm",
+        act_layer="nn.GELU",
+        epsilon=1e-6,
+        out_channels=None,
+        **kwargs
     ):
         super().__init__()
         self.seqlen = seqlen

@@ -4,6 +4,8 @@ from torch import nn
 
 __all__ = ["MobileNetV3"]
 
+from ptocr.ops import ConvBNLayer
+
 
 def make_divisible(v, divisor=8, min_value=None):
     if min_value is None:
@@ -65,7 +67,8 @@ class MobileNetV3(nn.Module):
             raise NotImplementedError(f"mode[{model_name}_model] is not implemented!")
 
         supported_scale = [0.35, 0.5, 0.75, 1.0, 1.25]
-        assert scale in supported_scale, "supported scale are {} but input scale is {}".format(supported_scale, scale)
+        assert scale in supported_scale, "supported scales are {} but input scale is {}".format(supported_scale, scale)
+
         inplanes = 16
         # conv1B
         self.conv = ConvBNLayer(
@@ -128,33 +131,6 @@ class MobileNetV3(nn.Module):
         return out_list
 
 
-class ConvBNLayer(nn.Module):
-    def __init__(self, in_channels, out_channels, kernel_size, stride, padding, groups=1, act=None):
-        super().__init__()
-        self.act = act
-        self.conv = nn.Conv2d(
-            in_channels=in_channels,
-            out_channels=out_channels,
-            kernel_size=kernel_size,
-            stride=stride,
-            padding=padding,
-            groups=groups,
-            bias=False,
-        )
-
-        self.bn = nn.BatchNorm2d(out_channels)
-
-    def forward(self, x):
-        x = self.conv(x)
-        x = self.bn(x)
-        if self.act is not None:
-            if self.act == "relu":
-                x = F.relu(x)
-            elif self.act == "hardswish":
-                x = F.hardswish(x)
-            else:
-                raise ValueError("The activation function({}) is selected incorrectly.".format(self.act))
-        return x
 
 
 class InvertedResidual(nn.Module):
@@ -165,7 +141,7 @@ class InvertedResidual(nn.Module):
 
         self.expand_conv = ConvBNLayer(
             in_channels=in_channels, out_channels=mid_channels, kernel_size=1, stride=1, padding=0, act=act
-        ) # 扩张卷积
+        )  # 扩张卷积
         self.bottleneck_conv = ConvBNLayer(
             in_channels=mid_channels,
             out_channels=mid_channels,

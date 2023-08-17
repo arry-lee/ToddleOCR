@@ -17,9 +17,6 @@ https://github.com/hikopensource/DAVAR-Lab-OCR/davarocr/davar_rcg/models/backbon
 """
 
 
-
-
-
 import torch.nn as nn
 
 __all__ = ["ResNet32"]
@@ -183,8 +180,9 @@ class ResNet(nn.Module):
         self.bn4_2 = nn.BatchNorm2d(self.output_channel_block[3])
 
         for model in self.modules():
-            if isinstance(model,nn.Conv2d):
+            if isinstance(model, nn.Conv2d):
                 model.weight = conv_weight_attr(model.weight)
+
     def _make_layer(self, block, planes, blocks, stride=1):
         """
 
