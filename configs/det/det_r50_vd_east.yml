@@ -37,7 +37,7 @@ Optimizer:
     - 0.999
   lr: 0.001
 LRScheduler:
-  class: ContantLR
+  class: ConstantLR
 PostProcessor:
   class: EASTPostProcess
   score_thresh: 0.8

@@ -38,15 +38,15 @@ Model:
 Loss:
   class: DRRGLoss
 Optimizer:
-  class: Momentum
+  class: SGD
   momentum: 0.9
   lr: 0.028
-LRScheduler:
-  class: DecayLearningRate
-  epochs: 1200
-  factor: 0.9
-  end_lr: 1.0e-07
   weight_decay: 0.0001
+LRScheduler:
+  class: PolynomialLR
+  total_iters: 1200
+  power: 0.9
+
 PostProcessor:
   class: DRRGPostprocess
   link_thr: 0.8
