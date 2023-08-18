@@ -1,186 +1,94 @@
 import torch
-import torch.nn as nn
 import torch.nn.functional as F
-from torch.nn import MaxPool2d
+from torch import nn
+from ptocr.ops import ConvBNLayer
 
-from .det_resnet_vd import ConvBNLayer
-
-from torchvision.models.resnet import Bottleneck
 class BottleneckBlock(nn.Module):
-    def __init__(self, in_channels, out_channels, stride, shortcut=True, is_dcn=False):
+    expansion = 4
+
+    def __init__(self, in_channels, out_channels, stride, downsample=None, name=None, is_dcn=False):
         super().__init__()
+        self.conv0 = ConvBNLayer(in_channels=in_channels, out_channels=out_channels, kernel_size=1, act='relu', name=name + '_branch2a' if name else None)
+        self.conv1 = ConvBNLayer(in_channels=out_channels, out_channels=out_channels, kernel_size=3, stride=stride, act='relu', name=name + '_branch2b' if name else None, is_dcn=is_dcn, dcn_groups=2)
+        self.conv2 = ConvBNLayer(in_channels=out_channels, out_channels=out_channels * self.expansion, kernel_size=1, act=None, name=name + '_branch2c' if name else None)
+        self.downsample = downsample
 
-        self.conv0 = ConvBNLayer(
-            in_channels=in_channels,
-            out_channels=out_channels,
-            kernel_size=1,
-            act="relu",
-        )
-        self.conv1 = ConvBNLayer(
-            in_channels=out_channels,
-            out_channels=out_channels,
-            kernel_size=3,
-            stride=stride,
-            act="relu",
-            is_dcn=is_dcn,
-            dcn_groups=1,
-        )
-        self.conv2 = ConvBNLayer(
-            in_channels=out_channels,
-            out_channels=out_channels * 4,
-            kernel_size=1,
-            act=None,
-        )
-
-        if not shortcut:
-            self.short = ConvBNLayer(
-                in_channels=in_channels,
-                out_channels=out_channels * 4,
-                kernel_size=1,
-                stride=stride,
-            )
-
-        self.shortcut = shortcut
-
-        self._num_channels_out = out_channels * 4
-
-    def forward(self, inputs):
-        y = self.conv0(inputs)
-        conv1 = self.conv1(y)
-        conv2 = self.conv2(conv1)
-
-        if self.shortcut:
-            short = inputs
+    def forward(self, x):
+        x = self.conv0(x)
+        x = self.conv1(x)
+        x = self.conv2(x)
+        if self.downsample:
+            short = self.downsample(x)
         else:
-            short = self.short(inputs)
-
-        y = torch.add(short, conv2)
-        y = F.relu(y)
-        return y
-
+            short = x
+        x = torch.add(short, x)
+        x = F.relu(x)
+        return x
 
 class BasicBlock(nn.Module):
-    def __init__(self, num_features, num_filters, stride, shortcut=True, name=None):
+    expansion = 1
+
+    def __init__(self, in_channels, out_channels, stride, downsample=None, name=None, **kwargs):
         super().__init__()
         self.stride = stride
-        self.conv0 = ConvBNLayer(
-            in_channels=num_features, out_channels=num_filters, kernel_size=3, stride=stride, act="relu"
-        )
-        self.conv1 = ConvBNLayer(in_channels=num_filters, out_channels=num_filters, kernel_size=3, act=None)
+        self.conv0 = ConvBNLayer(in_channels=in_channels, out_channels=out_channels, kernel_size=3, stride=stride, act='relu', name=name + '_branch2a' if name else None)
+        self.conv1 = ConvBNLayer(in_channels=out_channels, out_channels=out_channels, kernel_size=3, act=None, name=name + '_branch2b' if name else None)
+        self.downsample = downsample
 
-        if not shortcut:
-            self.short = ConvBNLayer(in_channels=num_features, out_channels=num_filters, kernel_size=1, stride=stride)
-
-        self.shortcut = shortcut
-
-    def forward(self, inputs):
-        y = self.conv0(inputs)
-        conv1 = self.conv1(y)
-
-        if self.shortcut:
-            short = inputs
+    def forward(self, x):
+        x = self.conv0(x)
+        x = self.conv1(x)
+        if self.downsample:
+            short = self.downsample(x)
         else:
-            short = self.short(inputs)
-        y = torch.add(short, conv1)
-        y = F.relu(y)
-        return y
-
+            short = x
+        x = torch.add(short, x)
+        x = F.relu(x)
+        return x
 
 class ResNet(nn.Module):
+    supported_layers = {18: [2, 2, 2, 2], 34: [3, 4, 6, 3], 50: [3, 4, 6, 3], 101: [3, 4, 23, 3], 152: [3, 8, 36, 3], 200: [3, 12, 48, 3]}
+    num_filters = [64, 128, 256, 512]
+    num_features = [64, 256, 512, 1024]
+
     def __init__(self, in_channels=3, layers=50, out_indices=None, dcn_stage=None):
         super().__init__()
-
         self.layers = layers
-        self.input_image_channel = in_channels
-
-        supported_layers = [18, 34, 50, 101, 152]
-        assert layers in supported_layers, "supported layers are {} but input layer is {}".format(
-            supported_layers, layers
-        )
-
-        if layers == 18:
-            depth = [2, 2, 2, 2]
-        elif layers == 34 or layers == 50:
-            depth = [3, 4, 6, 3]
-        elif layers == 101:
-            depth = [3, 4, 23, 3]
-        elif layers == 152:
-            depth = [3, 8, 36, 3]
-        num_features = [64, 256, 512, 1024] if layers >= 50 else [64, 64, 128, 256]
-        num_filters = [64, 128, 256, 512]
-
-        self.dcn_stage = dcn_stage if dcn_stage is not None else [False, False, False, False]
-        self.out_indices = out_indices if out_indices is not None else [0, 1, 2, 3]
-
-        self.conv = ConvBNLayer(
-            in_channels=self.input_image_channel,
-            out_channels=64,
-            kernel_size=7,
-            stride=2,
-            act="relu",
-        )
-        self.pool2d_max = MaxPool2d(
-            kernel_size=3,
-            stride=2,
-            padding=1,
-        )
-
+        depth = self.supported_layers[layers]
+        num_features = [64, 64, 128, 256] if layers < 50 else self.num_features
+        num_filters = self.num_filters
+        self.dcn_stage = dcn_stage or [False] * 4
+        self.out_indices = out_indices or [0, 1, 2, 3]
+        self.pool2d_max = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         self.stages = []
         self.out_channels = []
-        if layers >= 50:
-            for block in range(len(depth)):
-                shortcut = False
-                block_list = []
-                is_dcn = self.dcn_stage[block]
-                for i in range(depth[block]):
-                    if layers in [101, 152] and block == 2:
-                        if i == 0:
-                            conv_name = "res" + str(block + 2) + "a"
-                        else:
-                            conv_name = "res" + str(block + 2) + "b" + str(i)
-                    else:
-                        conv_name = "res" + str(block + 2) + chr(97 + i)
-                    bottleneck_block = BottleneckBlock(
-                        in_channels=num_features[block] if i == 0 else num_filters[block] * 4,
-                        out_channels=num_filters[block], stride=2 if i == 0 and block != 0 else 1, shortcut=shortcut,
-                        is_dcn=is_dcn)
-                    self.add_module(
-                        conv_name,
-                        bottleneck_block
-                    )
-                    block_list.append(bottleneck_block)
-                    shortcut = True
-                if block in self.out_indices:
-                    self.out_channels.append(num_filters[block] * 4)
-                self.stages.append(nn.Sequential(*block_list))
-        else:
-            for block in range(len(depth)):
-                shortcut = False
-                block_list = []
-                for i in range(depth[block]):
-                    conv_name = "res" + str(block + 2) + chr(97 + i)
-                    basic_block = BasicBlock(
-                        num_features=num_features[block] if i == 0 else num_filters[block],
-                        num_filters=num_filters[block],
-                        stride=2 if i == 0 and block != 0 else 1,
-                        shortcut=shortcut,
-                    )
-                    self.add_module(
-                        conv_name,
-                        basic_block
-                    )
-                    block_list.append(basic_block)
-                    shortcut = True
-                if block in self.out_indices:
-                    self.out_channels.append(num_filters[block])
-                self.stages.append(nn.Sequential(*block_list))
+        block_class = BottleneckBlock if layers >= 50 else BasicBlock
+        for block in range(len(depth)):
+            block_list = []
+            is_dcn = self.dcn_stage[block]
+            downsample = ConvBNLayer(in_channels=in_channels, out_channels=num_filters[block], kernel_size=1, stride=1, is_vd_mode=True)
+            for i in range(depth[block]):
+                conv_name = self.format_name(block, i)
+                if block == i == 0:
+                    downsample = None
+                _block = block_class(in_channels=num_features[block] if i == 0 else num_filters[block] * block_class.expansion, out_channels=num_filters[block], stride=2 if i == 0 and block != 0 else 1, downsample=downsample, is_dcn=is_dcn, name=conv_name)
+                self.add_module('bb_%d_%d' % (block, i), _block)
+                block_list.append(_block)
+            if block in self.out_indices:
+                self.out_channels.append(num_filters[block] * block_class.expansion)
+            self.stages.append(nn.Sequential(*block_list))
 
-    def forward(self, inputs):
-        y = self.conv(inputs)
-        y = self.pool2d_max(y)
+        self.conv = ConvBNLayer(in_channels=in_channels, out_channels=64, kernel_size=7, stride=2, act='relu')
+
+    def format_name(self, *args):
+        return None
+
+    def forward(self, x):
+        x = self.conv(x)
+        x = self.pool2d_max(x)
         out = []
-        for i, block in enumerate(self.stages):
-            y = block(y)
+        for (i, block) in enumerate(self.stages):
+            x = block(x)
             if i in self.out_indices:
-                out.append(y)
+                out.append(x)
         return out
