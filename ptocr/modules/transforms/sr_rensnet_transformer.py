@@ -310,7 +310,7 @@ class Encoder(nn.Module):
         return conv_result
 
 
-class Transformer(nn.Module):
+class _Transformer(nn.Module):
     def __init__(self, in_channels=1, alphabet="0123456789"):
         super().__init__()
         self.alphabet = alphabet

@@ -38,8 +38,7 @@ Model:
 Loss:
   class: TelescopeLoss
   confuse_dict_path: ./ppocr/utils/dict/confuse.pkl
-PostProcessor:
-  class: None
+PostProcessor: null
 Metric:
   class: SRMetric
   main_indicator: all

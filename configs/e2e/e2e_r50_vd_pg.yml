@@ -27,7 +27,7 @@ Model:
   algorithm: PGNet
   Transform: null
   Backbone:
-    class: ResNet
+    class: ResNet_E2E
     layers: 50
   Neck:
     class: PGFPN

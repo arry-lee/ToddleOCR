@@ -32,7 +32,7 @@ Model:
   algorithm: CRNN
   Transform: null
   Backbone:
-    class: MobileNetV3
+    class: MobileNetV3Rec
     scale: 0.5
     model_name: large
   Neck:

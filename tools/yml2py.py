@@ -20,15 +20,17 @@ def hub(name, model_type=None):
         if len(module_dict[name]) == 1:
             return module_dict[name][0]
         else:
+            # print(name,module_dict[name])
             if model_type is not None:
                 for one in module_dict[name]:
-                    if one.rsplit(".", 1)[1].startswith(model_type.lower()):
+                    if model_type.lower() in one:
                         return one
     if hasattr(torch.optim, name):
         return "torch.optim"
     elif hasattr(torch.optim.lr_scheduler, name):
         return "torch.optim.lr_scheduler"
-    return "torch.nn"
+    print("model not found in model zoo, please check the name {}".format(name))
+    raise
 
 
 def squizee(imports):
@@ -52,7 +54,7 @@ def yaml2py(old_file):
     m = yml_data["Model"]
     # print(yml_data)
 
-    imports = ["from configs.config import ConfigModel,_"]
+    imports = ["from ptocr.config import ConfigModel,_"]
 
     mode = m.pop("model_type")
     algo = m.pop("algorithm")
@@ -161,8 +163,10 @@ def yaml2py(old_file):
     lines = explain + squizee(imports) + lines
 
     filename = os.path.join(path, f"{mode}_{algo}_{backbone}.py".lower())
-
-    with open(filename, "w") as f:
+    # os.remove(filename)
+    new = filename.replace('configs','models')
+    os.makedirs(os.path.dirname(new), exist_ok=True)
+    with open(new, "w") as f:
         f.write("\n".join(lines))
 
 
@@ -181,34 +185,4 @@ def convert_yml_to_yaml(folder_path):
 
 
 if __name__ == "__main__":
-    convert_yml_to_yaml(".")
-
-# load D:\dev\github\PaddleOCR\ppocr\module_map.yml
-# 'Backbone'
-# .\det\ch_PP-OCRv2\ch_PP-OCRv2_det_cml.yml
-# 'Backbone'
-# .\det\ch_PP-OCRv2\ch_PP-OCRv2_det_distill.yml
-# 'Backbone'
-# .\det\ch_PP-OCRv2\ch_PP-OCRv2_det_dml.yml
-# 'Backbone'
-# .\det\ch_PP-OCRv3\ch_PP-OCRv3_det_cml.yml
-# 'Backbone'
-# .\det\ch_PP-OCRv3\ch_PP-OCRv3_det_dml.yml
-# 'class'
-# .\kie\layoutlm_series\re_layoutlmv2_xfund_zh.yml
-# 'class'
-# .\kie\layoutlm_series\re_layoutxlm_xfund_zh.yml
-# 'class'
-# .\kie\vi_layoutxlm\re_vi_layoutxlm_xfund_zh.yml
-# 'Backbone'
-# .\kie\vi_layoutxlm\re_vi_layoutxlm_xfund_zh_udml.yml
-# 'Backbone'
-# .\kie\vi_layoutxlm\ser_vi_layoutxlm_xfund_zh_udml.yml
-# 'Backbone'
-# .\rec\ch_PP-OCRv2\ch_PP-OCRv2_rec_distillation.yml
-# 'Backbone'
-# .\rec\PP-OCRv3\ch_PP-OCRv3_rec_distillation.yml
-# 'Backbone'
-# .\sr\sr_telescope.yml
-# 'Backbone'
-# .\sr\sr_tsrn_transformer_strock.yml
+    convert_yml_to_yaml("../configs")

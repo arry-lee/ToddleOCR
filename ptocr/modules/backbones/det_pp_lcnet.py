@@ -18,7 +18,6 @@ import os
 import torch
 import torch.nn as nn
 from torch.hub import download_url_to_file
-from torch.nn import AdaptiveAvgPool2d, BatchNorm2d, Conv2d
 
 from ptocr.ops import ConvBNLayer
 

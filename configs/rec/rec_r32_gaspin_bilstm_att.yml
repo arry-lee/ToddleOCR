@@ -40,7 +40,7 @@ Model:
   algorithm: SPIN
   in_channels: 1
   Transform:
-    class: GA_SPIN
+    class: GA_SPIN_Transformer
     offsets: true
     default_type: 6
     loc_lr: 0.1

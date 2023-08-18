@@ -5,9 +5,12 @@ import torch.nn.functional as F
 import os
 import sys
 
-from ptocr.modules.backbones.det_mobilenet_v3 import SqueezeExcitation
+# from ptocr.modules.backbones.det_mobilenet_v3 import SqueezeExcitation
 
-__all__ = ['DBFPN']
+__all__ = ['DBFPN',"RSEFPN"]
+
+from ptocr.modules.backbones.mobilenetv3.det_mobilenet_v3 import SqueezeExcitation
+
 
 class DSConv(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, padding, stride=1, groups=None, if_act=True, act="relu", **kwargs):

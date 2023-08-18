@@ -54,39 +54,39 @@ def label_smooth(label, prior_dist=None, epsilon=0.1):
     return smooth_label
 
 
-class CELoss(nn.Module):
-    """交叉熵"""
-    def __init__(self, epsilon=None):
-        super().__init__()
-        if epsilon is not None and (epsilon <= 0 or epsilon >= 1):
-            epsilon = None
-        self.epsilon = epsilon
-
-    def _labelsmoothing(self, target, class_num):
-        if target.shape[-1] != class_num:
-            one_hot_target = F.one_hot(target, class_num)
-        else:
-            one_hot_target = target
-        soft_target = label_smooth(one_hot_target, epsilon=self.epsilon)
-        soft_target = torch.reshape(soft_target, shape=[-1, class_num])
-        return soft_target
-
-    def forward(self, x, label):
-        loss_dict = {}
-        if self.epsilon is not None:  # 如果 epsilon 不为空，则进行标签平滑处理
-            class_num = x.shape[-1]
-            label = self._labelsmoothing(label, class_num)  # 调用 _labelsmoothing 方法对目标标签进行平滑处理
-            x = -F.log_softmax(x, dim=-1)  # 对预测值进行 softmax 归一化，并取其负对数为新的预测值
-            loss = torch.sum(x * label, dim=-1)  # 计算加权的交叉熵损失，乘积相加
-        else:
-            if label.shape[-1] == x.shape[-1]:  # 如果标签的类别数量与预测值的类别数量相同，则认为标签已经进行了 softmax 归一化
-                label = F.softmax(label, dim=-1)
-                soft_label = True  # 标记为已进行软标签处理
-            else:
-                soft_label = False  # 标记为未进行软标签处理
-            loss = F.cross_entropy(x, label)  # 直接使用 PyTorch 的交叉熵损失函数计算损失
-        return loss
-
+# class CELoss(nn.Module):
+#     """交叉熵"""
+#     def __init__(self, epsilon=None):
+#         super().__init__()
+#         if epsilon is not None and (epsilon <= 0 or epsilon >= 1):
+#             epsilon = None
+#         self.epsilon = epsilon
+#
+#     def _labelsmoothing(self, target, class_num):
+#         if target.shape[-1] != class_num:
+#             one_hot_target = F.one_hot(target, class_num)
+#         else:
+#             one_hot_target = target
+#         soft_target = label_smooth(one_hot_target, epsilon=self.epsilon)
+#         soft_target = torch.reshape(soft_target, shape=[-1, class_num])
+#         return soft_target
+#
+#     def forward(self, x, label):
+#         loss_dict = {}
+#         if self.epsilon is not None:  # 如果 epsilon 不为空，则进行标签平滑处理
+#             class_num = x.shape[-1]
+#             label = self._labelsmoothing(label, class_num)  # 调用 _labelsmoothing 方法对目标标签进行平滑处理
+#             x = -F.log_softmax(x, dim=-1)  # 对预测值进行 softmax 归一化，并取其负对数为新的预测值
+#             loss = torch.sum(x * label, dim=-1)  # 计算加权的交叉熵损失，乘积相加
+#         else:
+#             if label.shape[-1] == x.shape[-1]:  # 如果标签的类别数量与预测值的类别数量相同，则认为标签已经进行了 softmax 归一化
+#                 label = F.softmax(label, dim=-1)
+#                 soft_label = True  # 标记为已进行软标签处理
+#             else:
+#                 soft_label = False  # 标记为未进行软标签处理
+#             loss = F.cross_entropy(x, label)  # 直接使用 PyTorch 的交叉熵损失函数计算损失
+#         return loss
+#
 
 class KLJSLoss:
     """用于计算 KL 散度（Kullback-Leibler Divergence）和 JS 散度（Jensen-Shannon Divergence）的损失函数"""

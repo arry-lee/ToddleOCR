@@ -5,45 +5,24 @@ import platform
 import sys
 import time
 from functools import partial
-from typing import Callable, List, Optional, Tuple, Type
+from typing import Callable, Optional, Tuple, Type
 
 import torch
 import torch.distributed as dist
 from loguru import logger
 from torch import nn
 from torch.nn.parallel import DistributedDataParallel
-from torch.optim import Adam
 from torch.optim.lr_scheduler import LRScheduler
 from torch.utils.data import BatchSampler, DataLoader, DistributedSampler, RandomSampler, SequentialSampler
 from torchvision.datasets import VisionDataset
 from torchvision.transforms import Compose
 
-from ocr.datasets.ocr_dataset import FolderDataset
 from ptocr import hub
-from ptocr.datasets import SimpleDataSet
-from ptocr.transforms import (
-    DecodeImage,
-    DetLabelEncode,
-    DetResizeForTest,
-    EASTProcessTrain,
-    IaaAugment,
-    KeepKeys,
-    NormalizeImage,
-    ToCHWImage,
-)
-from ptocr.loss import DBLoss, EASTLoss
-from ptocr.metrics import DetMetric
-from ptocr.modules.backbones.det_mobilenet_v3 import MobileNetV3
-from ptocr.modules.heads.db import DBHead
-from ptocr.modules.heads.east import EASTHead
-from ptocr.modules.necks.db_fpn import DBFPN
-from ptocr.modules.necks.east_fpn import EASTFPN
-from ptocr.postprocess import DBPostProcess, EASTPostProcess
+from ptocr.optim.lr_scheduler import warmup_scheduler
 from ptocr.utils.save_load import _mkdir_if_not_exist, load_pretrained_params
 from ptocr.utils.stats import TrainingStats
 from ptocr.utils.utility import AverageMeter
 from tools.train import valid
-from ptocr.optim.lr_scheduler import warmup_scheduler
 
 
 class _:

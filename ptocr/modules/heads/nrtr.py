@@ -10,7 +10,7 @@ from torch.nn.init import xavier_normal_
 from ptocr.modules.backbones.rec_svtrnet import Mlp, zeros_
 
 __all__ = ['Transformer']
-ó
+
 
 class Transformer(nn.Module):
     """A transformer model. User is able to modify the attributes as needed. The architechture

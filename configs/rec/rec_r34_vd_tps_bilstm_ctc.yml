@@ -36,7 +36,7 @@ Model:
     loc_lr: 0.1
     model_name: large
   Backbone:
-    class: ResNet
+    class: ResNet_Rec_Vd
     layers: 34
   Neck:
     class: SequenceEncoder

@@ -1,11 +1,11 @@
 from torch import nn
 
-from ptocr.modules.backbones.det_mobilenet_v3 import ConvBNLayer, InvertedResidual, make_divisible
+from ptocr.modules.backbones.mobilenetv3.det_mobilenet_v3 import ConvBNLayer, InvertedResidual, make_divisible
 
-__all__ = ["MobileNetV3"]
+__all__ = ["MobileNetV3Rec"]
 
 
-class MobileNetV3(nn.Module):
+class MobileNetV3Rec(nn.Module):
     def __init__(
         self,
         in_channels=3,

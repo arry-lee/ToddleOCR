@@ -15,7 +15,7 @@ warnings.filterwarnings("ignore")
 
 from .tps_spatial_transformer import TPSSpatialTransformer
 from .stn import STN as STN_model
-from .sr_rensnet_transformer import Transformer
+from .sr_rensnet_transformer import _Transformer
 
 
 class TSRN(nn.Module):
@@ -70,7 +70,7 @@ class TSRN(nn.Module):
             self.stn_head = STN_model(in_channels=in_planes, num_ctrlpoints=num_control_points, activation="none")
         self.out_channels = in_channels
 
-        self.r34_transformer = Transformer()
+        self.r34_transformer = _Transformer()
         for param in self.r34_transformer.parameters():
             param.trainable = False
         self.infer_mode = infer_mode

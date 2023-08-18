@@ -1,5 +1,5 @@
 import numpy as np
-__all__ = ['VQAReTokenMetric']
+__all__ = ['VQAReTokenMetric','VQASerTokenMetric']
 
 class VQAReTokenMetric:
 

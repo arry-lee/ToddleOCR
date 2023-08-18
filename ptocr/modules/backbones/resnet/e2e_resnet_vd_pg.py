@@ -4,7 +4,7 @@ import torch.nn.functional as F
 
 __all__ = ["ResNet_E2E"]
 
-from ptocr.modules.backbones import ResNet_SAST
+from ptocr.modules.backbones.resnet.det_resnet_vd_sast import ResNet_SAST
 from ptocr.ops import ConvBNLayer
 
 

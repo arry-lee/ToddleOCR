@@ -32,7 +32,7 @@ Model:
   algorithm: CRNN
   Transform: null
   Backbone:
-    class: ResNet
+    class: ResNet_Rec_Vd
     layers: 34
   Neck:
     class: SequenceEncoder

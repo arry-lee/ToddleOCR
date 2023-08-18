@@ -8,4 +8,3 @@ from .rec_nrtr_mtb import MTB
 from .rec_svtrnet import SVTRNet
 from .rec_vitstr import ViTSTR
 from .vqa_layoutlm import LayoutLMForSer, LayoutLMv2ForRe, LayoutLMv2ForSer, LayoutXLMForRe, LayoutXLMForSer
-from .resnet import *

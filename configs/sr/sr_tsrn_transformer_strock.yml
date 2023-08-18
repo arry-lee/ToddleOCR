@@ -37,8 +37,7 @@ Model:
 Loss:
   class: StrokeFocusLoss
   character_dict_path: ./train_data/srdata/english_decomposition.txt
-PostProcessor:
-  class: None
+PostProcessor: null
 Metric:
   class: SRMetric
   main_indicator: all

@@ -3,7 +3,6 @@ import torch.nn.functional as F
 from torch import nn
 
 __all__ = ["MobileNetV3"]
-
 from ptocr.ops import ConvBNLayer
 
 
@@ -17,19 +16,18 @@ def make_divisible(v, divisor=8, min_value=None):
 
 
 class MobileNetV3(nn.Module):
-    def __init__(self, in_channels=3, model_name="large", scale=0.5, disable_se=False, **kwargs):
-        """
-        the MobilenetV3 backbone network for detection module.
-        Args:
-            params(dict): the super parameters for build network
-        """
+    def __init__(
+        self,
+        in_channels=3,
+        model_name="large",
+        scale=0.5,
+        disable_se=False,
+        **kwargs,
+    ):
         super().__init__()
-
         self.disable_se = disable_se
-
         if model_name == "large":
             cfg = [
-                # k, exp, c,  se,     nl,  s,
                 [3, 16, 16, False, "relu", 1],
                 [3, 64, 24, False, "relu", 2],
                 [3, 72, 24, False, "relu", 1],
@@ -49,7 +47,6 @@ class MobileNetV3(nn.Module):
             cls_ch_squeeze = 960
         elif model_name == "small":
             cfg = [
-                # k, exp, c,  se,     nl,  s,
                 [3, 16, 16, True, "relu", 2],
                 [3, 72, 24, False, "relu", 2],
                 [3, 88, 24, False, "relu", 1],
@@ -64,13 +61,16 @@ class MobileNetV3(nn.Module):
             ]
             cls_ch_squeeze = 576
         else:
-            raise NotImplementedError(f"mode[{model_name}_model] is not implemented!")
-
+            raise NotImplementedError(
+                f"mode[{model_name}_model] is not implemented!"
+            )
         supported_scale = [0.35, 0.5, 0.75, 1.0, 1.25]
-        assert scale in supported_scale, "supported scales are {} but input scale is {}".format(supported_scale, scale)
-
+        assert (
+            scale in supported_scale
+        ), "supported scales are {} but input scale is {}".format(
+            supported_scale, scale
+        )
         inplanes = 16
-        # conv1B
         self.conv = ConvBNLayer(
             in_channels=in_channels,
             out_channels=make_divisible(inplanes * scale),
@@ -80,14 +80,13 @@ class MobileNetV3(nn.Module):
             groups=1,
             act="hardswish",
         )
-
         self.stages = []
         self.out_channels = []
         block_list = []
         i = 0
         inplanes = make_divisible(inplanes * scale)
         for k, exp, c, se, nl, s in cfg:
-            se = se and not self.disable_se
+            se = se and (not self.disable_se)
             start_idx = 2 if model_name == "large" else 0
             if s == 2 and i > start_idx:
                 self.out_channels.append(inplanes)
@@ -131,17 +130,28 @@ class MobileNetV3(nn.Module):
         return out_list
 
 
-
-
 class InvertedResidual(nn.Module):
-    def __init__(self, in_channels, mid_channels, out_channels, kernel_size, stride, use_se, act=None):
+    def __init__(
+        self,
+        in_channels,
+        mid_channels,
+        out_channels,
+        kernel_size,
+        stride,
+        use_se,
+        act=None,
+    ):
         super().__init__()
         self.use_shortcut = stride == 1 and in_channels == out_channels
         self.use_se = use_se
-
         self.expand_conv = ConvBNLayer(
-            in_channels=in_channels, out_channels=mid_channels, kernel_size=1, stride=1, padding=0, act=act
-        )  # 扩张卷积
+            in_channels=in_channels,
+            out_channels=mid_channels,
+            kernel_size=1,
+            stride=1,
+            padding=0,
+            act=act,
+        )
         self.bottleneck_conv = ConvBNLayer(
             in_channels=mid_channels,
             out_channels=mid_channels,
@@ -154,7 +164,12 @@ class InvertedResidual(nn.Module):
         if self.use_se:
             self.mid_se = SqueezeExcitation(mid_channels)
         self.linear_conv = ConvBNLayer(
-            in_channels=mid_channels, out_channels=out_channels, kernel_size=1, stride=1, padding=0, act=None
+            in_channels=mid_channels,
+            out_channels=out_channels,
+            kernel_size=1,
+            stride=1,
+            padding=0,
+            act=None,
         )
 
     def forward(self, inputs):
@@ -173,10 +188,18 @@ class SqueezeExcitation(nn.Module):
         super().__init__()
         self.avg_pool = nn.AdaptiveAvgPool2d(1)
         self.conv1 = nn.Conv2d(
-            in_channels=in_channels, out_channels=in_channels // reduction, kernel_size=1, stride=1, padding=0
+            in_channels=in_channels,
+            out_channels=in_channels // reduction,
+            kernel_size=1,
+            stride=1,
+            padding=0,
         )
         self.conv2 = nn.Conv2d(
-            in_channels=in_channels // reduction, out_channels=in_channels, kernel_size=1, stride=1, padding=0
+            in_channels=in_channels // reduction,
+            out_channels=in_channels,
+            kernel_size=1,
+            stride=1,
+            padding=0,
         )
 
     def hardsigmoid(self, x, slope=0.2, offset=0.5):

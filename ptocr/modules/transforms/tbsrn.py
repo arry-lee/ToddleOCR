@@ -18,7 +18,7 @@ from .tps_spatial_transformer import TPSSpatialTransformer
 from .stn import STN as STNHead
 from .tsrn import GruBlock, mish, UpsampleBLock
 from .sr_rensnet_transformer import (
-    Transformer,
+    _Transformer,
     # LayerNorm,
     PositionwiseFeedForward,
     MultiHeadedAttention,
@@ -157,7 +157,7 @@ class TBSRN(nn.Module):
         self.english_dict = {}
         for index in range(len(self.english_alphabet)):
             self.english_dict[self.english_alphabet[index]] = index
-        transformer = Transformer(alphabet="-0123456789abcdefghijklmnopqrstuvwxyz")
+        transformer = _Transformer(alphabet="-0123456789abcdefghijklmnopqrstuvwxyz")
         self.transformer = transformer
         for param in self.transformer.parameters():
             param.trainable = False

@@ -20,7 +20,7 @@ Global:
   use_space_char: false
   save_res_path: ./output/rec/predicts_can.txt
 Optimizer:
-  class: Momentum
+  class: SGD
   momentum: 0.9
   clip_norm_global: 100.0
   lr: 0.01

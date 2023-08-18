@@ -14,6 +14,26 @@ def dynamic_import(module_path):
     return class_
 
 
+
+def get_all(module_file_path):
+    with open(module_file_path, "r", encoding="utf-8") as file:
+        module_ast = ast.parse(file.read())
+
+    for node in module_ast.body:
+        if isinstance(node, ast.Assign) and len(node.targets) == 1:
+            target = node.targets[0]
+            if isinstance(target, ast.Name) and target.id == "__all__":
+                if isinstance(node.value, (ast.List, ast.Tuple)):
+                    return [elem.s for elem in node.value.elts if isinstance(elem, ast.Str)]
+
+    all_names = []
+    for node in module_ast.body:
+        if isinstance(node, ast.ClassDef):
+            if node.name[0] != "_":
+                all_names.append(node.name)
+
+    return all_names
+
 class Hub:
     def __init__(self, project_dir):
         cached_file = os.path.join(project_dir, "module_map.yml")
@@ -27,17 +47,17 @@ class Hub:
             self.module_dict = defaultdict(list)
 
             # print(project_dir)
-            def get_all(module_file_path):
-                with open(module_file_path, "r", encoding="utf-8") as file:
-                    module_ast = ast.parse(file.read())
-
-                all_names = set()
-                for node in module_ast.body:
-                    if isinstance(node, ast.ClassDef):
-                        if node.name[0] != "_":
-                            all_names.add(node.name)
-
-                return list(all_names)
+            # def get_all(module_file_path):
+            #     with open(module_file_path, "r", encoding="utf-8") as file:
+            #         module_ast = ast.parse(file.read())
+            #
+            #     all_names = set()
+            #     for node in module_ast.body:
+            #         if isinstance(node, ast.ClassDef):
+            #             if node.name[0] != "_":
+            #                 all_names.add(node.name)
+            #
+            #     return list(all_names)
 
             for root, dirs, files in os.walk(project_dir):
                 for file in files:
@@ -45,16 +65,21 @@ class Hub:
                         file_path = os.path.join(root, file)
                         name = file_path.removeprefix(os.path.dirname(project_dir))[1:-3].replace(os.path.sep, ".")
                         try:
-                            module = importlib.import_module(name=name)
-                            if hasattr(module, "__all__"):
-                                all = getattr(module, "__all__")
-                            else:
-                                all = get_all(file_path)
+                            all = get_all(file_path)
+                            # module = importlib.import_module(name=name)
+                            # if hasattr(module, "__all__"):
+                            #     all = getattr(module, "__all__")
+                            # else:
+                            #     print("[Warning] {} has no __all__".format(name))
+                            #     all = get_all(file_path)
                         except Exception as e:
+                            print("[Error] {}".format(file_path))
                             print(e)
-                        for cls in all:
-                            self.module_dict[cls].append(name)
-            with open(cached_file, "w") as f:
+                        else:
+                            for cls in all:
+                                self.module_dict[cls].append(name)
+                                print(cls, name)
+            with open(cached_file, "w",encoding='utf-8') as f:
                 yaml.dump(dict(self.module_dict), f)
 
     def __getitem__(self, item):
@@ -84,3 +109,6 @@ class Hub:
                 else:
                     raise ValueError("model_type is not specified")
         return class_
+
+# x = get_all(r"D:\dev\github\PaddleOCR\ptocr\modules\backbones\resnet\rec_resnet_32.py")
+# print(x)

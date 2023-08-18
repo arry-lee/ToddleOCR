@@ -47,8 +47,7 @@ LRScheduler:
     - 0.0001
     - 1.0e-05
   warmup_epoch: 2
-PostProcessor:
-  class: None
+PostProcessor: null
 Metric:
   class: KIEMetric
   main_indicator: hmean

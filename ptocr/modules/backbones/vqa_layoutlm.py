@@ -12,13 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+__all__ = ['NLPBaseModel', 'LayoutLMv2ForSer', 'LayoutXLMForRe', 'LayoutXLMForSer', 'LayoutLMv2ForRe', 'LayoutLMForSer']
 
 from paddlenlp.transformers import LayoutLMForTokenClassification, LayoutLMModel
 from paddlenlp.transformers import LayoutLMv2ForRelationExtraction, LayoutLMv2ForTokenClassification, LayoutLMv2Model
 from paddlenlp.transformers import LayoutXLMForRelationExtraction, LayoutXLMForTokenClassification, LayoutXLMModel
 from torch import nn
 
-__all__ = ["LayoutXLMForSer", "LayoutLMForSer"]
+
 
 pretrained_model_dict = {
     LayoutXLMModel: {

@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-__all__ = ["ResNet"]
+__all__ = ["ResNet_Rec_Vd"]
 
 from ptocr.ops import ConvBNLayer
 
@@ -123,7 +123,7 @@ class BasicBlock(nn.Module):
         return y
 
 
-class ResNet(nn.Module):
+class ResNet_Rec_Vd(nn.Module):
     def __init__(self, in_channels=3, layers=50, **kwargs):
         super().__init__()
 
