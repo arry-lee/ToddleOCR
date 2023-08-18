@@ -2,44 +2,7 @@ import torch.nn as nn
 
 __all__ = ["ResNet45"]
 
-
-def conv1x1(in_planes, out_planes):
-    return nn.Conv2d(in_planes, out_planes, kernel_size=1, stride=1, bias=False)
-
-
-def conv3x3(in_channel, out_channel, stride=1):
-    return nn.Conv2d(in_channel, out_channel, kernel_size=3, stride=stride, padding=1, bias=False)
-
-
-class BasicBlock(nn.Module):
-    expansion = 1
-
-    def __init__(self, in_channels, channels, stride=1, downsample=None):
-        super().__init__()
-        self.conv1 = conv1x1(in_channels, channels)
-        self.bn1 = nn.BatchNorm2d(channels)
-        self.relu = nn.ReLU()
-        self.conv2 = conv3x3(channels, channels, stride)
-        self.bn2 = nn.BatchNorm2d(channels)
-        self.downsample = downsample
-        self.stride = stride
-
-    def forward(self, x):
-        residual = x
-
-        out = self.conv1(x)
-        out = self.bn1(out)
-        out = self.relu(out)
-
-        out = self.conv2(out)
-        out = self.bn2(out)
-
-        if self.downsample is not None:
-            residual = self.downsample(x)
-        out += residual
-        out = self.relu(out)
-
-        return out
+from ptocr.modules.backbones.resnet.det_resnet import BasicBlock
 
 
 class ResNet45(nn.Module):

@@ -50,10 +50,9 @@ from ptocr.ops import ConvBNLayer
 #         return out
 
 class ResNet_vd(ResNet):
-    def __init__(self, in_channels=3, layers=50, dcn_stage=None, out_indices=None):
-        super().__init__(in_channels=in_channels, layers=layers, dcn_stage=dcn_stage, out_indices=out_indices)
-        self.conv = nn.Sequential(
-            ConvBNLayer(in_channels=in_channels, out_channels=32, kernel_size=3, stride=2, act='relu'),
+    def convs(self):
+        return nn.Sequential(
+            ConvBNLayer(in_channels=self.in_channels, out_channels=32, kernel_size=3, stride=2, act='relu'),
             ConvBNLayer(in_channels=32, out_channels=32, kernel_size=3, stride=1, act='relu'),
             ConvBNLayer(in_channels=32, out_channels=64, kernel_size=3, stride=1, act='relu'),
         )

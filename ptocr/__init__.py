@@ -17,4 +17,4 @@ from tools.modelhub import Hub
 
 hub = Hub(os.path.dirname(__file__))
 
-from ptocr import loss, metrics, datasets, modules, optim, ops, transforms, postprocess
+# from ptocr import loss, metrics, datasets, modules, optim, ops, transforms, postprocess

@@ -23,7 +23,12 @@ class ResNetFPN(nn.Module):
         self.depth = supported_layers[layers]["depth"]
         self.F = []
         self.conv = ConvBNLayer(
-            in_channels=in_channels, out_channels=64, kernel_size=7, stride=2, act="relu", name="conv1"
+            in_channels=in_channels,
+            out_channels=64,
+            kernel_size=7,
+            stride=2,
+            act="relu",
+            name="conv1",
         )
         self.block_list = []
         in_ch = 64
@@ -79,19 +84,37 @@ class ResNetFPN(nn.Module):
             self.base_block.append(
                 self.add_module(
                     "F_{}_base_block_0".format(i),
-                    nn.Conv2d(in_channels=in_channels, out_channels=out_ch_list[i], kernel_size=1, bias=True),
+                    nn.Conv2d(
+                        in_channels=in_channels,
+                        out_channels=out_ch_list[i],
+                        kernel_size=1,
+                        bias=True,
+                    ),
                 )
             )
             self.base_block.append(
                 self.add_module(
                     "F_{}_base_block_1".format(i),
-                    nn.Conv2d(in_channels=out_ch_list[i], out_channels=out_ch_list[i], kernel_size=3, padding=1),
+                    nn.Conv2d(
+                        in_channels=out_ch_list[i],
+                        out_channels=out_ch_list[i],
+                        kernel_size=3,
+                        padding=1,
+                    ),
                 )
             )
-            self.base_block.append(self.add_module("F_{}_base_block_2".format(i), nn.BatchNorm2d(out_ch_list[i])))
+            self.base_block.append(
+                self.add_module(
+                    "F_{}_base_block_2".format(i),
+                    nn.BatchNorm2d(out_ch_list[i]),
+                )
+            )
         self.base_block.append(
             self.add_module(
-                "F_{}_base_block_3".format(i), nn.Conv2d(in_channels=out_ch_list[i], out_channels=512, kernel_size=1)
+                "F_{}_base_block_3".format(i),
+                nn.Conv2d(
+                    in_channels=out_ch_list[i], out_channels=512, kernel_size=1
+                ),
             )
         )
         self.out_channels = 512
@@ -126,7 +149,6 @@ class ResNetFPN(nn.Module):
         return base
 
 
-
 class ShortCut(nn.Module):
     def __init__(self, in_channels, out_channels, stride, name, is_first=False):
         super().__init__()
@@ -134,9 +156,13 @@ class ShortCut(nn.Module):
 
         if in_channels != out_channels or stride != 1 or is_first == True:
             if stride == (1, 1):
-                self.conv = ConvBNLayer(in_channels, out_channels, 1, 1, name=name)
+                self.conv = ConvBNLayer(
+                    in_channels, out_channels, 1, 1, name=name
+                )
             else:  # stride==(2,2)
-                self.conv = ConvBNLayer(in_channels, out_channels, 1, stride, name=name)
+                self.conv = ConvBNLayer(
+                    in_channels, out_channels, 1, stride, name=name
+                )
         else:
             self.use_conv = False
 
@@ -150,7 +176,11 @@ class BottleneckBlock(nn.Module):
     def __init__(self, in_channels, out_channels, stride, name):
         super().__init__()
         self.conv0 = ConvBNLayer(
-            in_channels=in_channels, out_channels=out_channels, kernel_size=1, act="relu", name=name + "_branch2a"
+            in_channels=in_channels,
+            out_channels=out_channels,
+            kernel_size=1,
+            act="relu",
+            name=name + "_branch2a",
         )
         self.conv1 = ConvBNLayer(
             in_channels=out_channels,
@@ -162,7 +192,11 @@ class BottleneckBlock(nn.Module):
         )
 
         self.conv2 = ConvBNLayer(
-            in_channels=out_channels, out_channels=out_channels * 4, kernel_size=1, act=None, name=name + "_branch2c"
+            in_channels=out_channels,
+            out_channels=out_channels * 4,
+            kernel_size=1,
+            act=None,
+            name=name + "_branch2c",
         )
 
         self.short = ShortCut(
@@ -195,10 +229,18 @@ class BasicBlock(nn.Module):
             name=name + "_branch2a",
         )
         self.conv1 = ConvBNLayer(
-            in_channels=out_channels, out_channels=out_channels, kernel_size=3, act=None, name=name + "_branch2b"
+            in_channels=out_channels,
+            out_channels=out_channels,
+            kernel_size=3,
+            act=None,
+            name=name + "_branch2b",
         )
         self.short = ShortCut(
-            in_channels=in_channels, out_channels=out_channels, stride=stride, is_first=is_first, name=name + "_branch1"
+            in_channels=in_channels,
+            out_channels=out_channels,
+            stride=stride,
+            is_first=is_first,
+            name=name + "_branch1",
         )
         self.out_channels = out_channels
 

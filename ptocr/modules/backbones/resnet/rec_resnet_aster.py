@@ -11,12 +11,21 @@ import math
 
 def conv3x3(in_planes, out_planes, stride=1):
     """3x3 convolution with padding"""
-    return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride, padding=1, bias=False)
+    return nn.Conv2d(
+        in_planes,
+        out_planes,
+        kernel_size=3,
+        stride=stride,
+        padding=1,
+        bias=False,
+    )
 
 
 def conv1x1(in_planes, out_planes, stride=1):
     """1x1 convolution"""
-    return nn.Conv2d(in_planes, out_planes, kernel_size=1, stride=stride, bias=False)
+    return nn.Conv2d(
+        in_planes, out_planes, kernel_size=1, stride=stride, bias=False
+    )
 
 
 def get_sinusoid_encoding(n_position, feat_dim, wave_length=10000):
@@ -26,7 +35,9 @@ def get_sinusoid_encoding(n_position, feat_dim, wave_length=10000):
     dim_range = torch.arange(0, feat_dim)
     dim_range = torch.pow(wave_length, 2 * (dim_range // 2) / feat_dim)
     # [n_position, feat_dim]
-    angles = torch.unsqueeze(positions, dim=1) / torch.unsqueeze(dim_range, dim=0)
+    angles = torch.unsqueeze(positions, dim=1) / torch.unsqueeze(
+        dim_range, dim=0
+    )
     angles = angles.type(dtype=torch.float32)
     angles[:, 0::2] = torch.sin(angles[:, 0::2])
     angles[:, 1::2] = torch.cos(angles[:, 1::2])
@@ -68,7 +79,14 @@ class ResNet_ASTER(nn.Module):
         self.n_group = n_group
 
         self.layer0 = nn.Sequential(
-            nn.Conv2d(in_channels, 32, kernel_size=(3, 3), stride=1, padding=1, bias=False),
+            nn.Conv2d(
+                in_channels,
+                32,
+                kernel_size=(3, 3),
+                stride=1,
+                padding=1,
+                bias=False,
+            ),
             nn.BatchNorm2d(32),
             nn.ReLU(),
         )
@@ -89,7 +107,9 @@ class ResNet_ASTER(nn.Module):
     def _make_layer(self, planes, blocks, stride):
         downsample = None
         if stride != [1, 1] or self.inplanes != planes:
-            downsample = nn.Sequential(conv1x1(self.inplanes, planes, stride), nn.BatchNorm2d(planes))
+            downsample = nn.Sequential(
+                conv1x1(self.inplanes, planes, stride), nn.BatchNorm2d(planes)
+            )
 
         layers = []
         layers.append(AsterBlock(self.inplanes, planes, stride, downsample))

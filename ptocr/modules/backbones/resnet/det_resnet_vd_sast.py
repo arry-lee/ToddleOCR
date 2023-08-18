@@ -1,54 +1,24 @@
 import torch.nn as nn
-
-__all__ = ["ResNet_SAST"]
+__all__ = ['ResNet_SAST']
 from ptocr.modules.backbones.resnet.det_resnet import ResNet
 from ptocr.ops import ConvBNLayer
-
 
 class ResNet_SAST(ResNet):
     num_features = [64, 256, 512, 1024, 2048]
     num_filters = [64, 128, 256, 512, 512]
+    out_channels = [3, 64]
 
-    def __init__(
-        self, in_channels=3, layers=50, out_indices=None, dcn_stage=None
-    ):
-        super().__init__(in_channels, layers, out_indices, dcn_stage)
-        self.out_channels = [3, 64] + self.out_channels
-        self.conv = nn.Sequential(
-            ConvBNLayer(
-                in_channels=in_channels,
-                out_channels=32,
-                kernel_size=3,
-                stride=2,
-                act="relu",
-                name="conv1_1",
-            ),
-            ConvBNLayer(
-                in_channels=32,
-                out_channels=32,
-                kernel_size=3,
-                stride=1,
-                act="relu",
-                name="conv1_2",
-            ),
-            ConvBNLayer(
-                in_channels=32,
-                out_channels=64,
-                kernel_size=3,
-                stride=1,
-                act="relu",
-                name="conv1_3",
-            ),
-        )
+    def convs(self):
+        return nn.Sequential(ConvBNLayer(in_channels=self.in_channels, out_channels=32, kernel_size=3, stride=2, act='relu', name='conv1_1'), ConvBNLayer(in_channels=32, out_channels=32, kernel_size=3, stride=1, act='relu', name='conv1_2'), ConvBNLayer(in_channels=32, out_channels=64, kernel_size=3, stride=1, act='relu', name='conv1_3'))
 
     def format_name(self, block, i):
         if self.layers in [101, 152] and block == 2:
             if i == 0:
-                conv_name = "res" + str(block + 2) + "a"
+                conv_name = 'res' + str(block + 2) + 'a'
             else:
-                conv_name = "res" + str(block + 2) + "b" + str(i)
+                conv_name = 'res' + str(block + 2) + 'b' + str(i)
         else:
-            conv_name = "res" + str(block + 2) + chr(97 + i)
+            conv_name = 'res' + str(block + 2) + chr(97 + i)
         return conv_name
 
     def forward(self, x):
