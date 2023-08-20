@@ -59,10 +59,14 @@ class Model(ConfigModel):
                     label_file_list=['./train_data/icdar2015/text_localization/test_icdar2015_label.txt'])
         transforms = _[DecodeImage(img_mode="BGR", channel_first=False), DetLabelEncode(), DetResizeForTest(image_shape=[736, 1280]), NormalizeImage(scale="1./255.", mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], order="hwc"), ToCHWImage(), KeepKeys(keep_keys=['image', 'shape', 'polys', 'ignore_tags'])]
         DATALOADER = _(shuffle=False, drop_last=False, batch_size=1, num_workers=1)
-
+    class Infer:
+        transforms = _[DecodeImage(img_mode="BGR", channel_first=False), DetResizeForTest(
+            image_shape=[736, 1280]), NormalizeImage(scale="1./255.", mean=[0.485, 0.456, 0.406],
+                                                     std=[0.229, 0.224, 0.225], order="hwc"), ToCHWImage(), KeepKeys(
+            keep_keys=['image', 'shape'])]
 if __name__ == '__main__':
 
     m = Model()
-    m.train()
+    m.infer("doc/imgs_en/1.jpg","output/db_mv3/best_accuracy.pth")
     # for i in m.model.parameters():
     #     print(i.size())

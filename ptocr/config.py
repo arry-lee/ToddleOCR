@@ -1,4 +1,8 @@
+import json
 import warnings
+
+import cv2
+import numpy as np
 
 # 忽略所有警告
 warnings.filterwarnings("ignore")
@@ -26,7 +30,7 @@ from ptocr import hub
 from ptocr.optim.lr_scheduler import warmup_scheduler
 from ptocr.utils.save_load import _mkdir_if_not_exist, load_pretrained_params
 from ptocr.utils.stats import TrainingStats
-from ptocr.utils.utility import AverageMeter
+from ptocr.utils.utility import AverageMeter, get_image_file_list
 from tools.train import valid
 
 torch.autograd.set_detect_anomaly(True)
@@ -99,7 +103,10 @@ class ConfigModel:
             Callable
         ] = None  # = _[DetResizeForTest(limit_side_len=2400, limit_type=max),NormalizeImage(scale=1.0 / 255.0, mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], order="hwc"),ToCHWImage(),KeepKeys(keep_keys=["image", "shape", "polys", "ignore_tags"])]
         DATALOADER: dict  # = _(shuffle=False, drop_last=False, batch_size=1, num_workers=4, pin_memory=False)
-
+    class Infer:
+        transforms: Optional[
+            Callable
+        ] = None
     def __init__(self):
         self.use_gpu = torch.cuda.is_available() and self.use_gpu
         self.device = "cuda" if self.use_gpu else "cpu"
@@ -173,7 +180,6 @@ class ConfigModel:
 
     def train(self, log_writer=None):
         self.init_distributed()
-        # config = self.config
         train_dataloader = self._build_dataloader("Train")
         if len(train_dataloader) == 0:
             logger.error(
@@ -470,7 +476,64 @@ class ConfigModel:
             return dist.get_rank() == 0
         return True
 
+    @torch.no_grad()
+    def infer(self,infer_img,pth):
+        # build model
+        model = self.model
+        state_dict = torch.load(pth)  # 参数
+        model.load_state_dict(state_dict)
+        # build post process
+        post_process_class = self.postprocessor
+        save_res_path = self.save_res_path
+        if not os.path.exists(os.path.dirname(save_res_path)):
+            os.makedirs(os.path.dirname(save_res_path))
 
+        model.eval()
+        with open(save_res_path, "wb") as fout:
+            for file in get_image_file_list(infer_img):
+                logger.info("infer_img: {}".format(file))
+                with open(file, "rb") as f:
+                    img = f.read()
+                    data = {"image": img}
+
+                batch = self.Infer.transforms(data)
+
+                images = np.expand_dims(batch[0], axis=0)
+                shape_list = np.expand_dims(batch[1], axis=0)
+                images = torch.Tensor(images)
+                preds = model(images)
+                post_result = post_process_class(preds, shape_list)
+
+                src_img = cv2.imread(file)
+
+                dt_boxes_json = []
+                # parser boxes if post_result is dict
+                if isinstance(post_result, dict):
+                    det_box_json = {}
+                    for k in post_result.keys():
+                        boxes = post_result[k][0]["points"]
+                        dt_boxes_list = []
+                        for box in boxes:
+                            tmp_json = {"transcription": ""}
+                            tmp_json["points"] = np.array(box).tolist()
+                            dt_boxes_list.append(tmp_json)
+                        det_box_json[k] = dt_boxes_list
+                        save_det_path = os.path.dirname(self.save_res_path) + "/det_results_{}/".format(k)
+                        draw_det_res(boxes, src_img, file, save_det_path)
+                else:
+                    boxes = post_result[0]["points"]
+                    dt_boxes_json = []
+                    # write result
+                    for box in boxes:
+                        tmp_json = {"transcription": ""}
+                        tmp_json["points"] = np.array(box).tolist()
+                        dt_boxes_json.append(tmp_json)
+                    save_det_path = os.path.dirname(self.save_res_path) + "/det_results/"
+                    draw_det_res(boxes, src_img, file, save_det_path)
+                otstr = file + "\t" + json.dumps(dt_boxes_json) + "\n"
+                fout.write(otstr.encode())
+
+        logger.info("success!")
 def save_model(model, optimizer, model_path, logger, is_best=False, prefix="ppocr", **kwargs):
     """
     save model to the target path
@@ -583,3 +646,17 @@ class BaseModel(nn.Module):
                 return {list(out_dict.keys())[-1]: x}
         else:
             return x
+
+def draw_det_res(dt_boxes, img, img_name, save_path):
+    if len(dt_boxes) > 0:
+        import cv2
+
+        src_im = img
+        for box in dt_boxes:
+            box = np.array(box).astype(np.int32).reshape((-1, 1, 2))
+            cv2.polylines(src_im, [box], True, color=(255, 255, 0), thickness=2)
+        if not os.path.exists(save_path):
+            os.makedirs(save_path)
+        save_path = os.path.join(save_path, os.path.basename(img_name))
+        cv2.imwrite(save_path, src_im)
+        logger.info("The detected Image saved in {}".format(save_path))
