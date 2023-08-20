@@ -8,10 +8,10 @@ class CosineEmbeddingLoss(nn.Module):
     def __init__(self, margin=0.0):
         super().__init__()
         self.margin = margin
-        self.epsilon = 1e-12
+        self.eps = 1e-12
 
     def forward(self, x1, x2, target):
-        similarity = torch.sum(x1 * x2, dim=-1) / (torch.norm(x1, dim=-1) * torch.norm(x2, dim=-1) + self.epsilon)
+        similarity = torch.sum(x1 * x2, dim=-1) / (torch.norm(x1, dim=-1) * torch.norm(x2, dim=-1) + self.eps)
         one_list = torch.full_like(target, fill_value=1)
         out = torch.mean(
             torch.where(

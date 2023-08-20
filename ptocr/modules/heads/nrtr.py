@@ -320,22 +320,22 @@ class MultiheadAttention(nn.Module):
 
 
 class TransformerBlock(nn.Module):
-    def __init__(self, d_model, nhead, dim_feedforward=2048, attention_dropout_rate=0.0, residual_dropout_rate=0.1, with_self_attn=True, with_cross_attn=False, epsilon=1e-5):
+    def __init__(self, d_model, nhead, dim_feedforward=2048, attention_dropout_rate=0.0, residual_dropout_rate=0.1, with_self_attn=True, with_cross_attn=False, eps=1e-5):
         super().__init__()
         self.with_self_attn = with_self_attn
         if with_self_attn:
             self.self_attn = MultiheadAttention(d_model, nhead, dropout=attention_dropout_rate, self_attn=with_self_attn)
-            self.norm1 = LayerNorm(d_model, epsilon=epsilon)
+            self.norm1 = LayerNorm(d_model, eps=eps)
             self.dropout1 = Dropout(residual_dropout_rate)
         self.with_cross_attn = with_cross_attn
         if with_cross_attn:
             self.cross_attn = MultiheadAttention(d_model, nhead, dropout=attention_dropout_rate)  # for self_attn of encoder or cross_attn of decoder
-            self.norm2 = LayerNorm(d_model, epsilon=epsilon)
+            self.norm2 = LayerNorm(d_model, eps=eps)
             self.dropout2 = Dropout(residual_dropout_rate)
 
         self.mlp = Mlp(in_features=d_model, hidden_features=dim_feedforward, act_layer=nn.ReLU, drop=residual_dropout_rate)
 
-        self.norm3 = LayerNorm(d_model, epsilon=epsilon)
+        self.norm3 = LayerNorm(d_model, eps=eps)
 
         self.dropout3 = Dropout(residual_dropout_rate)
 

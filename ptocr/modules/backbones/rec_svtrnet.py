@@ -129,7 +129,9 @@ class Attention(nn.Module):
             mask_paddle = mask[:, hk // 2 : H + hk // 2, wk // 2 : W + wk // 2].flatten(1)
             mask_inf = torch.full([H * W, H * W], -torch.inf, dtype=torch.float32)
             mask = torch.where(mask_paddle < 1, mask_paddle, mask_inf)
-            self.mask = mask.unsqueeze([0, 1])
+
+            self.mask = mask.unsqueeze(0).unsqueeze(1)
+
         self.mixer = mixer
 
     def forward(self, x):
@@ -169,12 +171,12 @@ class Block(nn.Module):
         drop_path=0.0,
         act_layer=nn.GELU,
         norm_layer=nn.LayerNorm,
-        epsilon=1e-6,
+        eps=1e-6,
         prenorm=True,
     ):
         super().__init__()
         if isinstance(norm_layer, str):
-            self.norm1 = eval(norm_layer)(dim, epsilon=epsilon)
+            self.norm1 = eval(norm_layer)(dim, eps=eps)
         else:
             self.norm1 = norm_layer(dim)
         if mixer == "Global" or mixer == "Local":
@@ -196,7 +198,7 @@ class Block(nn.Module):
 
         self.drop_path = DropPath(drop_path) if drop_path > 0.0 else Identity()
         if isinstance(norm_layer, str):
-            self.norm2 = eval(norm_layer)(dim, epsilon=epsilon)
+            self.norm2 = eval(norm_layer)(dim, eps=eps)
         else:
             self.norm2 = norm_layer(dim)
         mlp_hidden_dim = int(dim * mlp_ratio)
@@ -347,7 +349,7 @@ class SVTRNet(nn.Module):  # todo 太多了
         drop_path_rate=0.1,
         norm_layer="nn.LayerNorm",
         sub_norm="nn.LayerNorm",
-        epsilon=1e-6,
+        eps=1e-6,
         out_channels=192,
         out_char_num=25,
         block_unit="Block",
@@ -391,7 +393,7 @@ class SVTRNet(nn.Module):  # todo 太多了
                     attn_drop=attn_drop_rate,
                     drop_path=dpr[0 : depth[0]][i],
                     norm_layer=norm_layer,
-                    epsilon=epsilon,
+                    eps=eps,
                     prenorm=prenorm,
                 )
                 for i in range(depth[0])
@@ -421,7 +423,7 @@ class SVTRNet(nn.Module):  # todo 太多了
                     attn_drop=attn_drop_rate,
                     drop_path=dpr[depth[0] : depth[0] + depth[1]][i],
                     norm_layer=norm_layer,
-                    epsilon=epsilon,
+                    eps=eps,
                     prenorm=prenorm,
                 )
                 for i in range(depth[1])
@@ -450,7 +452,7 @@ class SVTRNet(nn.Module):  # todo 太多了
                     attn_drop=attn_drop_rate,
                     drop_path=dpr[depth[0] + depth[1] :][i],
                     norm_layer=norm_layer,
-                    epsilon=epsilon,
+                    eps=eps,
                     prenorm=prenorm,
                 )
                 for i in range(depth[2])
@@ -465,7 +467,7 @@ class SVTRNet(nn.Module):  # todo 太多了
             self.hardswish = nn.Hardswish()
             self.dropout = nn.Dropout(p=last_drop)
         if not prenorm:
-            self.norm = eval(norm_layer)(embed_dim[-1], epsilon=epsilon)
+            self.norm = eval(norm_layer)(embed_dim[-1], eps=eps)
         self.use_lenhead = use_lenhead
         if use_lenhead:
             self.len_conv = nn.Linear(embed_dim[2], self.out_channels)

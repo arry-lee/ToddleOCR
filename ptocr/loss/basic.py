@@ -5,7 +5,7 @@ from torch import nn
 from torch.nn import functional as F
 
 
-def label_smooth(label, prior_dist=None, epsilon=0.1):
+def label_smooth(label, prior_dist=None, eps=0.1):
     """
     标签平滑是一种常用的正则化技术，用于改善深度学习模型在训练集上的性能。它通过减少标签的确定性，引入一定程度的噪声，以防止模型对训练数据的过拟合。
 
@@ -22,9 +22,9 @@ def label_smooth(label, prior_dist=None, epsilon=0.1):
     Label smoothing replaces the ground-truth label y with the weighted sum
     of itself and some fixed distribution mu. For class k, i.e.
 
-    tilde{y_k} = (1 - epsilon) * y_k + epsilon * mu_k,
+    tilde{y_k} = (1 - eps) * y_k + eps * mu_k,
 
-    where 1 - epsilon and epsilon are the weights respectively,
+    where 1 - eps and eps are the weights respectively,
     and tilde{y}_k is the smoothed label. Usually uniform distribution is used for mu.
 
     Parameters:
@@ -34,14 +34,14 @@ def label_smooth(label, prior_dist=None, epsilon=0.1):
         prior_dist (torch.Tensor, optional): The prior distribution to be used to smooth labels.
             If not provided, a uniform distribution is used. Its shape should be [1, class_num].
             The default value is None.
-        epsilon (float, optional): The weight used to mix up the original ground-truth distribution and
+        eps (float, optional): The weight used to mix up the original ground-truth distribution and
             the fixed distribution. The default value is 0.1.
 
     Returns:
         torch.Tensor: The tensor containing the smoothed labels.
     """
-    if epsilon > 1. or epsilon < 0.:
-        raise ValueError("The value of epsilon must be between 0 and 1.")
+    if eps > 1. or eps < 0.:
+        raise ValueError("The value of eps must be between 0 and 1.")
 
     label = label.float()
     if prior_dist is not None:
@@ -50,30 +50,30 @@ def label_smooth(label, prior_dist=None, epsilon=0.1):
     if prior_dist is None:
         prior_dist = torch.ones_like(label) / label.size(-1)
 
-    smooth_label = (1 - epsilon) * label + epsilon * prior_dist
+    smooth_label = (1 - eps) * label + eps * prior_dist
     return smooth_label
 
 
 # class CELoss(nn.Module):
 #     """交叉熵"""
-#     def __init__(self, epsilon=None):
+#     def __init__(self, eps=None):
 #         super().__init__()
-#         if epsilon is not None and (epsilon <= 0 or epsilon >= 1):
-#             epsilon = None
-#         self.epsilon = epsilon
+#         if eps is not None and (eps <= 0 or eps >= 1):
+#             eps = None
+#         self.eps = eps
 #
 #     def _labelsmoothing(self, target, class_num):
 #         if target.shape[-1] != class_num:
 #             one_hot_target = F.one_hot(target, class_num)
 #         else:
 #             one_hot_target = target
-#         soft_target = label_smooth(one_hot_target, epsilon=self.epsilon)
+#         soft_target = label_smooth(one_hot_target, eps=self.eps)
 #         soft_target = torch.reshape(soft_target, shape=[-1, class_num])
 #         return soft_target
 #
 #     def forward(self, x, label):
 #         loss_dict = {}
-#         if self.epsilon is not None:  # 如果 epsilon 不为空，则进行标签平滑处理
+#         if self.eps is not None:  # 如果 eps 不为空，则进行标签平滑处理
 #             class_num = x.shape[-1]
 #             label = self._labelsmoothing(label, class_num)  # 调用 _labelsmoothing 方法对目标标签进行平滑处理
 #             x = -F.log_softmax(x, dim=-1)  # 对预测值进行 softmax 归一化，并取其负对数为新的预测值

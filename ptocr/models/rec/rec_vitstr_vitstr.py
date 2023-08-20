@@ -41,7 +41,7 @@ class Model(ConfigModel):
     loss = CELoss(with_all=True, ignore_index=0)
     metric = RecMetric(main_indicator="acc")
     postprocessor = ViTSTRLabelDecode()
-    Optimizer = _(Adadelta,epsilon=1e-08, rho=0.95, clip_norm=5.0, lr=1.0)
+    Optimizer = _(Adadelta,eps=1e-08, rho=0.95, clip_norm=5.0, lr=1.0)
     LRScheduler = _(ConstantLR,)
     class Train:
         Dataset = _(LMDBDataSet, root="./train_data/data_lmdb_release/training/")

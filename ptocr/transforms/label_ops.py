@@ -22,6 +22,7 @@ import json
 from random import sample
 
 import numpy as np
+from loguru import logger
 from shapely.geometry import LineString, Point, Polygon
 
 from ptocr.transforms.vqa.augment import order_by_tbyx
@@ -103,7 +104,7 @@ class BaseRecLabelEncode:
         self.lower = lower
 
         if character_dict_path is None:
-            logger = get_logger()
+            # logger = get_logger()
             logger.warning("The character_dict_path is None, model can only recognize number and lower letters")
             self.character_str = "0123456789abcdefghijklmnopqrstuvwxyz"
             dict_character = list(self.character_str)
@@ -770,7 +771,7 @@ class TableBoxEncode:
         data["bboxes"] = bboxes
         return data
 
-    def xyxyxyxy2xywh(self, boxes):
+    def xyxyxyxy2xywh(self, bboxes):
         new_bboxes = np.zeros([len(bboxes), 4])
         new_bboxes[:, 0] = bboxes[:, 0::2].min()  # x1
         new_bboxes[:, 1] = bboxes[:, 1::2].min()  # y1

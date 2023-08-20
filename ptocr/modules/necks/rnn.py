@@ -133,13 +133,13 @@ class EncoderWithSVTR(nn.Module):
                     attn_drop=attn_drop_rate,
                     drop_path=drop_path,
                     norm_layer="nn.LayerNorm",
-                    epsilon=1e-05,
+                    eps=1e-05,
                     prenorm=False,
                 )
                 for i in range(depth)
             ]
         )
-        self.norm = nn.LayerNorm(hidden_dims, epsilon=1e-6)
+        self.norm = nn.LayerNorm(hidden_dims, eps=1e-6)
         self.conv3 = ConvBNLayer(hidden_dims, in_channels, kernel_size=1, act=nn.Swish)
         # last conv-nxn, the input is concat of input tensor and conv3 output tensor
         self.conv4 = ConvBNLayer(2 * in_channels, in_channels // 8, padding=1, act=nn.Swish)

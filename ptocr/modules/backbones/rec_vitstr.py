@@ -30,7 +30,7 @@ class ViTSTR(nn.Module):
         attn_drop_rate=0.0,
         norm_layer="nn.LayerNorm",
         act_layer="nn.GELU",
-        epsilon=1e-6,
+        eps=1e-6,
         out_channels=None,
         **kwargs
     ):
@@ -65,13 +65,13 @@ class ViTSTR(nn.Module):
                     drop_path=dpr[i],
                     norm_layer=norm_layer,
                     act_layer=eval(act_layer),
-                    epsilon=epsilon,
+                    eps=eps,
                     prenorm=False,
                 )
                 for i in range(depth)
             ]
         )
-        self.norm = eval(norm_layer)(embed_dim, epsilon=epsilon)
+        self.norm = eval(norm_layer)(embed_dim, eps=eps)
 
         self.out_channels = out_channels
 

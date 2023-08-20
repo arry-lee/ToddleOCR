@@ -71,7 +71,7 @@ class RandomCropFlip:
         assert isinstance(min_area_ratio, float)
 
         self.pad_ratio = pad_ratio
-        self.epsilon = 1e-2
+        self.eps = 1e-2
         self.crop_ratio = crop_ratio
         self.iter_num = iter_num
         self.min_area_ratio = min_area_ratio
@@ -127,10 +127,10 @@ class RandomCropFlip:
             for polygon, ignore_tag in zip(polygons, ignore_tags):
                 ppi = Polygon(polygon.reshape(-1, 2))
                 ppiou, _ = poly_intersection(ppi, pp, buffer=0)
-                if np.abs(ppiou - float(ppi.area)) > self.epsilon and np.abs(ppiou) > self.epsilon:
+                if np.abs(ppiou - float(ppi.area)) > self.eps and np.abs(ppiou) > self.eps:
                     fail_flag = True
                     break
-                elif np.abs(ppiou - float(ppi.area)) < self.epsilon:
+                elif np.abs(ppiou - float(ppi.area)) < self.eps:
                     polys_new.append(polygon)
                     ignore_tags_new.append(ignore_tag)
                 else:
