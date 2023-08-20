@@ -18,7 +18,7 @@ def _sum_loss(loss_dict):
             if k == 'loss':
                 continue
             else:
-                loss_dict['loss'] += value
+                loss_dict['loss'] =loss_dict['loss']+ value
         return loss_dict
 
 class DistillationDMLLoss(DMLLoss):

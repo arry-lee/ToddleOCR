@@ -69,7 +69,7 @@ Metric:
 Train:
   Dataset:
     class: SimpleDataSet
-    data_dir: ./train_data/
+    root: ./train_data/
     label_file_list:
       - ./train_data/train_list.txt
     transforms:
@@ -97,7 +97,7 @@ Train:
 Eval:
   Dataset:
     class: SimpleDataSet
-    data_dir: ./train_data
+    root: ./train_data
     label_file_list:
       - ./train_data/val_list.txt
     transforms:

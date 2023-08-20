@@ -54,7 +54,7 @@ Metric:
 Train:
   Dataset:
     class: SimpleDataSet
-    data_dir: ./train_data/wildreceipt/
+    root: ./train_data/wildreceipt/
     label_file_list:
       - ./train_data/wildreceipt/wildreceipt_train.txt
     ratio_list:
@@ -96,7 +96,7 @@ Train:
 Eval:
   Dataset:
     class: SimpleDataSet
-    data_dir: ./train_data/wildreceipt
+    root: ./train_data/wildreceipt
     label_file_list:
       - ./train_data/wildreceipt/wildreceipt_test.txt
     transforms:

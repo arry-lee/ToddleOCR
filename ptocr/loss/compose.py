@@ -67,9 +67,9 @@ class CombinedLoss(nn.Module):
             loss = {key: loss[key] * weight for key in loss}  # 根据权重对损失进行加权
 
             if "loss" in loss:
-                loss_all += loss["loss"]  # 将损失累加到总损失值中
+                loss_all = loss_all+loss["loss"]  # 将损失累加到总损失值中
             else:
-                loss_all += sum(loss.values())
+                loss_all =loss_all+ sum(loss.values())
 
             loss_dict.update(loss)  # 更新损失字典
 

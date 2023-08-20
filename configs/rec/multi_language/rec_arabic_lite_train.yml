@@ -57,7 +57,7 @@ Metric:
 Train:
   Dataset:
     class: SimpleDataSet
-    data_dir: train_data/
+    root: train_data/
     label_file_list:
       - train_data/arabic_train.txt
     transforms:
@@ -84,7 +84,7 @@ Train:
 Eval:
   Dataset:
     class: SimpleDataSet
-    data_dir: train_data/
+    root: train_data/
     label_file_list:
       - train_data/arabic_val.txt
     transforms:

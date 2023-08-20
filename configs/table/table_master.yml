@@ -75,7 +75,7 @@ Metric:
 Train:
   Dataset:
     class: PubTabDataSet
-    data_dir: train_data/table/pubtabnet/train/
+    root: train_data/table/pubtabnet/train/
     label_file_list:
       - train_data/table/pubtabnet/PubTabNet_2.0.0_train.jsonl
     transforms:
@@ -125,7 +125,7 @@ Train:
 Eval:
   Dataset:
     class: PubTabDataSet
-    data_dir: train_data/table/pubtabnet/val/
+    root: train_data/table/pubtabnet/val/
     label_file_list:
       - train_data/table/pubtabnet/PubTabNet_2.0.0_val.jsonl
     transforms:

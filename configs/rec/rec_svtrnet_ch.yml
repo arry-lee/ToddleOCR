@@ -92,7 +92,7 @@ Metric:
 Train:
   Dataset:
     class: SimpleDataSet
-    data_dir: ./train_data
+    root: ./train_data
     label_file_list:
       - ./train_data/train_list.txt
     ext_op_transform_idx: 1
@@ -128,7 +128,7 @@ Train:
 Eval:
   Dataset:
     class: SimpleDataSet
-    data_dir: ./train_data
+    root: ./train_data
     label_file_list:
       - ./train_data/val_list.txt
     transforms:

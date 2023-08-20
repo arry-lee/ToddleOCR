@@ -38,7 +38,7 @@ class DecodeImage:
 
     def __call__(self, data):
         img = data["image"]
-        # img = np.frombuffer(img, dtype="uint8")
+        img = np.frombuffer(img, dtype="uint8")
         if self.ignore_orientation:
             img = cv2.imdecode(img, cv2.IMREAD_IGNORE_ORIENTATION | cv2.IMREAD_COLOR)
         else:

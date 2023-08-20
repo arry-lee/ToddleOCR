@@ -67,7 +67,7 @@ Metric:
 Train:
   Dataset:
     class: SimpleDataSet
-    data_dir: ./train_data/ctw1500/imgs/
+    root: ./train_data/ctw1500/imgs/
     label_file_list:
       - ./train_data/ctw1500/imgs/training.txt
     transforms:
@@ -126,7 +126,7 @@ Train:
 Eval:
   Dataset:
     class: SimpleDataSet
-    data_dir: ./train_data/ctw1500/imgs/
+    root: ./train_data/ctw1500/imgs/
     label_file_list:
       - ./train_data/ctw1500/imgs/test.txt
     transforms:

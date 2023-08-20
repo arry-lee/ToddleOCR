@@ -50,7 +50,7 @@ Metric:
 Train:
   Dataset:
     class: SimpleDataSet
-    data_dir: ./train_data/total_text/train
+    root: ./train_data/total_text/train
     label_file_list:
       - ./train_data/total_text/train/train.txt
     ratio_list:
@@ -88,7 +88,7 @@ Train:
 Eval:
   Dataset:
     class: SimpleDataSet
-    data_dir: ./train_data/total_text/test
+    root: ./train_data/total_text/test
     label_file_list:
       - ./train_data/total_text/test/test.txt
     ratio_list:

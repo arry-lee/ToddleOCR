@@ -97,12 +97,12 @@ class KLJSLoss:
     def __call__(self, p1, p2, reduction="mean", eps=1e-5):
         if self.mode.lower() == "kl":
             loss = torch.multiply(p2, torch.log((p2 + eps) / (p1 + eps) + eps))
-            loss += torch.multiply(p1, torch.log((p1 + eps) / (p2 + eps) + eps))
-            loss *= 0.5
+            loss = loss+torch.multiply(p1, torch.log((p1 + eps) / (p2 + eps) + eps))
+            loss = loss*0.5
         elif self.mode.lower() == "js":
             loss = torch.multiply(p2, torch.log((2 * p2 + eps) / (p1 + p2 + eps) + eps))
-            loss += torch.multiply(p1, torch.log((2 * p1 + eps) / (p1 + p2 + eps) + eps))
-            loss *= 0.5
+            loss = loss+torch.multiply(p1, torch.log((2 * p1 + eps) / (p1 + p2 + eps) + eps))
+            loss = loss*0.5
         else:
             raise ValueError("The mode.lower() if KLJSLoss should be one of ['kl', 'js']")
 
@@ -264,8 +264,10 @@ class BalanceLoss(nn.Module):
         positive_loss = positive * loss
         negative_loss = negative * loss
         negative_loss = torch.reshape(negative_loss, shape=[-1])
+        # torch.sort()
         if negative_count > 0:
-            sort_loss = negative_loss.sort(descending=True)
+            sort_loss,_ = negative_loss.sort(descending=True)
+            # print(sort_loss,_)
             negative_loss = sort_loss[:negative_count]
             # negative_loss, _ = torch.topk(negative_loss, k=negative_count_int)
             balance_loss = (positive_loss.sum() + negative_loss.sum()) / (positive_count + negative_count + self.eps)

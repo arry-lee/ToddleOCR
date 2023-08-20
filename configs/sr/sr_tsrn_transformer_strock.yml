@@ -44,7 +44,7 @@ Metric:
 Train:
   Dataset:
     class: LMDBDataSetSR
-    data_dir: ./train_data/srdata/train
+    root: ./train_data/srdata/train
     transforms:
       - class: SRResize
         imgH: 32
@@ -66,7 +66,7 @@ Train:
 Eval:
   Dataset:
     class: LMDBDataSetSR
-    data_dir: ./train_data/srdata/test
+    root: ./train_data/srdata/test
     transforms:
       - class: SRResize
         imgH: 32

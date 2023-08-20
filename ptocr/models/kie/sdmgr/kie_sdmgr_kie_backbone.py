@@ -58,7 +58,7 @@ class Model(ConfigModel):
     class Train:
         Dataset = _(
             SimpleDataSet,
-            data_dir="./train_data/wildreceipt/",
+            root="./train_data/wildreceipt/",
             label_file_list=["./train_data/wildreceipt/wildreceipt_train.txt"],
             ratio_list=[1.0],
         )
@@ -95,7 +95,7 @@ class Model(ConfigModel):
     class Eval:
         Dataset = _(
             SimpleDataSet,
-            data_dir="./train_data/wildreceipt",
+            root="./train_data/wildreceipt",
             label_file_list=["./train_data/wildreceipt/wildreceipt_test.txt"],
         )
         transforms = _[

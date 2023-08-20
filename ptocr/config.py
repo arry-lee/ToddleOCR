@@ -1,3 +1,8 @@
+import warnings
+
+# 忽略所有警告
+warnings.filterwarnings("ignore")
+
 import datetime
 import os
 import pickle
@@ -23,6 +28,8 @@ from ptocr.utils.save_load import _mkdir_if_not_exist, load_pretrained_params
 from ptocr.utils.stats import TrainingStats
 from ptocr.utils.utility import AverageMeter
 from tools.train import valid
+
+torch.autograd.set_detect_anomaly(True)
 
 
 class _:
@@ -75,7 +82,7 @@ class ConfigModel:
     Head: Type[nn.Module]|partial  # = _(EASTHead, model_name="small")
     loss: nn.Module  # = EASTLoss()
     Optimizer: Type[torch.optim.Optimizer]|partial  # = _(Adam, lr=0.01, betas=(0.9, 0.999))
-    Scheduler: Type[torch.optim.lr_scheduler.LRScheduler]|partial  # = _(ConstantLR, factor=1.0 / 3, total_iters=5, last_epoch=-1)
+    LRScheduler: Type[torch.optim.lr_scheduler.LRScheduler] | partial  # = _(ConstantLR, factor=1.0 / 3, total_iters=5, last_epoch=-1)
     postprocessor: Callable  # = EASTPostProcess(score_thresh=0.8, cover_thresh=0.1, nms_thresh=0.2)
     metric: Callable  # = DetMetric(main_indicator="hmean")
 
@@ -94,8 +101,10 @@ class ConfigModel:
         DATALOADER: dict  # = _(shuffle=False, drop_last=False, batch_size=1, num_workers=4, pin_memory=False)
 
     def __init__(self):
+        self.use_gpu = torch.cuda.is_available() and self.use_gpu
         self.device = "cuda" if self.use_gpu else "cpu"
         self.use_dist = getattr(self, "distributed", False)
+        self.init_distributed()
         self.model = self._build_model()
 
     def _build_model(self):
@@ -180,7 +189,7 @@ class ConfigModel:
             logger.info("valid dataloader has {} iters".format(len(valid_dataloader)))
 
         model = self.model
-        loss_ = self.loss
+        criterion = self.loss
         optimizer = self.Optimizer(model.parameters())
 
         # step_each_epoch = len(train_dataloader)
@@ -271,9 +280,13 @@ class ConfigModel:
                     predict = model(batch[:3])
                 else:
                     predict = model(images)
+                # with torch.autograd.set_detect_anomaly(True):
+                loss = criterion(predict, batch)  # {'loss':...,'other':...}
 
-                loss = loss_(predict, batch)  # {'loss':...,'other':...}
-                loss["loss"].backward()
+
+
+                with torch.autograd.detect_anomaly():
+                    loss["loss"].backward()
 
                 optimizer.step()
                 optimizer.zero_grad()
@@ -441,15 +454,15 @@ class ConfigModel:
         return
 
     def _build_scheduler(self, optimizer, max_epochs, step_each_epoch):
-        if self.Scheduler.func.__name__ == 'CosineAnnealingLR':
+        if self.LRScheduler.func.__name__ == 'CosineAnnealingLR':
             kwargs = {'T_max': step_each_epoch * max_epochs}
-        elif self.Scheduler.func.__name__ == 'CosineAnnealingWarmRestarts':
+        elif self.LRScheduler.func.__name__ == 'CosineAnnealingWarmRestarts':
             kwargs = {'T_0': step_each_epoch * max_epochs}
-        elif self.Scheduler.func.__name__ == 'TwoStepCosineLR':
+        elif self.LRScheduler.func.__name__ == 'TwoStepCosineLR':
             kwargs = {'T_max1': step_each_epoch * 200, 'T_max2': step_each_epoch * max_epochs}
         else:
             kwargs = {}
-        lr_scheduler = self.Scheduler(optimizer, **kwargs)
+        lr_scheduler = self.LRScheduler(optimizer, **kwargs)
         return lr_scheduler
 
     def is_rank0(self):

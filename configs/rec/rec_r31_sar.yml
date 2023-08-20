@@ -53,7 +53,7 @@ Train:
     class: SimpleDataSet
     label_file_list:
       - ./train_data/train_list.txt
-    data_dir: ./train_data/
+    root: ./train_data/
     ratio_list: 1.0
     transforms:
       - class: DecodeImage
@@ -81,7 +81,7 @@ Train:
 Eval:
   Dataset:
     class: LMDBDataSet
-    data_dir: ./train_data/data_lmdb_release/evaluation/
+    root: ./train_data/data_lmdb_release/evaluation/
     transforms:
       - class: DecodeImage
         img_mode: BGR

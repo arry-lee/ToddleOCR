@@ -50,7 +50,7 @@ Metric:
 Train:
   Dataset:
     class: SimpleDataSet
-    data_dir: ./train_data/
+    root: ./train_data/
     label_file_list:
       - ./train_data/icdar2013/train_label_json.txt
       - ./train_data/icdar2015/train_label_json.txt
@@ -90,7 +90,7 @@ Train:
 Eval:
   Dataset:
     class: SimpleDataSet
-    data_dir: ./train_data/icdar2015/text_localization/
+    root: ./train_data/icdar2015/text_localization/
     label_file_list:
       - ./train_data/icdar2015/text_localization/test_icdar2015_label.txt
     transforms:

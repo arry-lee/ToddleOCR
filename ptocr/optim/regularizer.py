@@ -17,7 +17,7 @@ class L1Decay(nn.Module):
     def forward(self, parameters):
         decay = torch.tensor(0., dtype=torch.float32)
         for param in parameters:
-            decay += torch.norm(param, p=1)
+            decay =decay+ torch.norm(param, p=1)
         return self.weight_decay * decay
 
 class L2Decay(nn.Module):

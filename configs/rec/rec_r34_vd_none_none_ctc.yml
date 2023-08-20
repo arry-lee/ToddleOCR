@@ -49,7 +49,7 @@ Metric:
 Train:
   Dataset:
     class: LMDBDataSet
-    data_dir: ./train_data/data_lmdb_release/training/
+    root: ./train_data/data_lmdb_release/training/
     transforms:
       - class: DecodeImage
         img_mode: BGR
@@ -73,7 +73,7 @@ Train:
 Eval:
   Dataset:
     class: LMDBDataSet
-    data_dir: ./train_data/data_lmdb_release/validation/
+    root: ./train_data/data_lmdb_release/validation/
     transforms:
       - class: DecodeImage
         img_mode: BGR

@@ -71,6 +71,10 @@ class DBFPN(nn.Module):
         if self.use_asf is True:
             self.asf = ASFBlock(self.out_channels, self.out_channels // 4)
 
+        for m in self.modules():  # 添加循环初始化参数的代码
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_uniform_(m.weight)
+
     def forward(self, x):
         c2, c3, c4, c5 = x
 
@@ -79,26 +83,22 @@ class DBFPN(nn.Module):
         in3 = self.in3_conv(c3)
         in2 = self.in2_conv(c2)
 
-        out4 = in4 + F.upsample(in5, scale_factor=2, mode="nearest")  # 1/16
-        out3 = in3 + F.upsample(out4, scale_factor=2, mode="nearest")  # 1/8
-        out2 = in2 + F.upsample(out3, scale_factor=2, mode="nearest")  # 1/4
+        out4 = in4 + F.interpolate(in5, scale_factor=2, mode="nearest")  # 1/16
+        out3 = in3 + F.interpolate(out4, scale_factor=2, mode="nearest")  # 1/8
+        out2 = in2 + F.interpolate(out3, scale_factor=2, mode="nearest")  # 1/4
 
         p5 = self.p5_conv(in5)
         p4 = self.p4_conv(out4)
         p3 = self.p3_conv(out3)
         p2 = self.p2_conv(out2)
-        p5 = F.upsample(p5, scale_factor=8, mode="nearest")
-        p4 = F.upsample(p4, scale_factor=4, mode="nearest")
-        p3 = F.upsample(p3, scale_factor=2, mode="nearest")
+        p5 = F.interpolate(p5, scale_factor=8, mode="nearest")
+        p4 = F.interpolate(p4, scale_factor=4, mode="nearest")
+        p3 = F.interpolate(p3, scale_factor=2, mode="nearest")
 
         fuse = torch.concat([p5, p4, p3, p2], dim=1)
 
         if self.use_asf is True:
             fuse = self.asf(fuse, [p5, p4, p3, p2])
-        for m in self.children():
-            if isinstance(m,nn.Conv2d):
-                nn.init.kaiming_uniform_(m.weight)
-
         return fuse
 
 
@@ -141,18 +141,18 @@ class RSEFPN(nn.Module):
         in3 = self.ins_conv[1](c3)
         in2 = self.ins_conv[0](c2)
 
-        out4 = in4 + F.upsample(in5, scale_factor=2, mode="nearest", )  # 1/16
-        out3 = in3 + F.upsample(out4, scale_factor=2, mode="nearest", )  # 1/8
-        out2 = in2 + F.upsample(out3, scale_factor=2, mode="nearest", )  # 1/4
+        out4 = in4 + F.interpolate(in5, scale_factor=2, mode="nearest", )  # 1/16
+        out3 = in3 + F.interpolate(out4, scale_factor=2, mode="nearest", )  # 1/8
+        out2 = in2 + F.interpolate(out3, scale_factor=2, mode="nearest", )  # 1/4
 
         p5 = self.inp_conv[3](in5)
         p4 = self.inp_conv[2](out4)
         p3 = self.inp_conv[1](out3)
         p2 = self.inp_conv[0](out2)
 
-        p5 = F.upsample(p5, scale_factor=8, mode="nearest", )
-        p4 = F.upsample(p4, scale_factor=4, mode="nearest", )
-        p3 = F.upsample(p3, scale_factor=2, mode="nearest", )
+        p5 = F.interpolate(p5, scale_factor=8, mode="nearest", )
+        p4 = F.interpolate(p4, scale_factor=4, mode="nearest", )
+        p3 = F.interpolate(p3, scale_factor=2, mode="nearest", )
 
         fuse = torch.concat([p5, p4, p3, p2], dim=1)
         return fuse
@@ -197,9 +197,9 @@ class LKPAN(nn.Module):
         in3 = self.ins_conv[1](c3)
         in2 = self.ins_conv[0](c2)
 
-        out4 = in4 + F.upsample(in5, scale_factor=2, mode="nearest", )  # 1/16
-        out3 = in3 + F.upsample(out4, scale_factor=2, mode="nearest", )  # 1/8
-        out2 = in2 + F.upsample(out3, scale_factor=2, mode="nearest", )  # 1/4
+        out4 = in4 + F.interpolate(in5, scale_factor=2, mode="nearest", )  # 1/16
+        out3 = in3 + F.interpolate(out4, scale_factor=2, mode="nearest", )  # 1/8
+        out2 = in2 + F.interpolate(out3, scale_factor=2, mode="nearest", )  # 1/4
 
         f5 = self.inp_conv[3](in5)
         f4 = self.inp_conv[2](out4)
@@ -215,9 +215,9 @@ class LKPAN(nn.Module):
         p4 = self.pan_lat_conv[2](pan4)
         p5 = self.pan_lat_conv[3](pan5)
 
-        p5 = F.upsample(p5, scale_factor=8, mode="nearest", )
-        p4 = F.upsample(p4, scale_factor=4, mode="nearest", )
-        p3 = F.upsample(p3, scale_factor=2, mode="nearest", )
+        p5 = F.interpolate(p5, scale_factor=8, mode="nearest", )
+        p4 = F.interpolate(p4, scale_factor=4, mode="nearest", )
+        p3 = F.interpolate(p3, scale_factor=2, mode="nearest", )
 
         fuse = torch.concat([p5, p4, p3, p2], dim=1)
         return fuse

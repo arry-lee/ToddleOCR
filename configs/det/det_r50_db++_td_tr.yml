@@ -65,7 +65,7 @@ Metric:
 Train:
   Dataset:
     class: SimpleDataSet
-    data_dir: ./train_data/
+    root: ./train_data/
     label_file_list:
       - ./train_data/TD_TR/TD500/train_gt_labels.txt
       - ./train_data/TD_TR/TR400/gt_labels.txt
@@ -132,7 +132,7 @@ Train:
 Eval:
   Dataset:
     class: SimpleDataSet
-    data_dir: ./train_data/
+    root: ./train_data/
     label_file_list:
       - ./train_data/TD_TR/TD500/test_gt_labels.txt
     transforms:

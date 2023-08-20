@@ -64,7 +64,7 @@ Metric:
 Train:
   Dataset:
     class: PubTabDataSet
-    data_dir: train_data/table/train/
+    root: train_data/table/train/
     label_file_list:
       - train_data/table/train.txt
     transforms:
@@ -113,7 +113,7 @@ Train:
 Eval:
   Dataset:
     class: PubTabDataSet
-    data_dir: train_data/table/val/
+    root: train_data/table/val/
     label_file_list:
       - train_data/table/val.txt
     transforms:

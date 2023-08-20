@@ -13,7 +13,7 @@ def make_divisible(v, divisor=8, min_value=None):
         min_value = divisor
     new_v = max(min_value, int(v + divisor / 2) // divisor * divisor)
     if new_v < 0.9 * v:
-        new_v += divisor
+        new_v = new_v+divisor
     return new_v
 
 
@@ -487,7 +487,7 @@ class EASTLoss(nn.Module):
             in_loss = abs_geo_diff * abs_geo_diff * smooth_l1_sign + \
                 (abs_geo_diff - 0.5) * (1.0 - smooth_l1_sign)
             out_loss = l_geo_split[-1] / channels * in_loss * l_score
-            smooth_l1 += out_loss
+            smooth_l1 = smooth_l1 +out_loss
         smooth_l1_loss = torch.mean(smooth_l1 * l_score)
 
         dice_loss = dice_loss * 0.01
