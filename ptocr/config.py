@@ -114,6 +114,53 @@ class ConfigModel:
         self.init_distributed()
         self.model = self._build_model()
 
+    # def _update(self):
+    #     post_process_class = self.postprocessor
+    #     if hasattr(post_process_class, 'character'):
+    #         char_num = len(getattr(post_process_class, 'character'))
+    #         # if self.algorithm in ["Distillation",]:  # distillation model
+    #         #     for key in config['Architecture']["Models"]:
+    #         #         if config['Architecture']['Models'][key]['Head'][
+    #         #             'name'] == 'MultiHead':  # for multi head
+    #         #             if config['PostProcess'][
+    #         #                 'name'] == 'DistillationSARLabelDecode':
+    #         #                 char_num = char_num - 2
+    #         #             # update SARLoss params
+    #         #             assert list(config['Loss']['loss_config_list'][-1].keys())[
+    #         #                        0] == 'DistillationSARLoss'
+    #         #             config['Loss']['loss_config_list'][-1][
+    #         #                 'DistillationSARLoss']['ignore_index'] = char_num + 1
+    #         #             out_channels_list = {}
+    #         #             out_channels_list['CTCLabelDecode'] = char_num
+    #         #             out_channels_list['SARLabelDecode'] = char_num + 2
+    #         #             config['Architecture']['Models'][key]['Head'][
+    #         #                 'out_channels_list'] = out_channels_list
+    #         #         else:
+    #         #             config['Architecture']["Models"][key]["Head"][
+    #         #                 'out_channels'] = char_num
+    #         if config['Architecture']['Head']['name'] == 'MultiHead':  # for multi head
+    #             if config['PostProcess']['name'] == 'SARLabelDecode':
+    #                 char_num = char_num - 2
+    #             # update SARLoss params
+    #             assert list(config['Loss']['loss_config_list'][1].keys())[0] == 'SARLoss'
+    #             if config['Loss']['loss_config_list'][1]['SARLoss'] is None:
+    #                 config['Loss']['loss_config_list'][1]['SARLoss'] = {
+    #                     'ignore_index': char_num + 1
+    #                 }
+    #             else:
+    #                 config['Loss']['loss_config_list'][1]['SARLoss'][
+    #                     'ignore_index'] = char_num + 1
+    #             out_channels_list = {}
+    #             out_channels_list['CTCLabelDecode'] = char_num
+    #             out_channels_list['SARLabelDecode'] = char_num + 2
+    #             config['Architecture']['Head'][
+    #                 'out_channels_list'] = out_channels_list
+    #         else:  # base rec model
+    #             config['Architecture']["Head"]['out_channels'] = char_num
+    #
+    #         if config['PostProcess']['name'] == 'SARLabelDecode':  # for SAR model
+    #             config['Loss']['ignore_index'] = char_num - 1
+
     def _build_model(self):
         _model = BaseModel(in_channels=3, backbone=self.Backbone, neck=self.Neck, head=self.Head)
         use_sync_bn = getattr(self, "use_sync_bn", False)
@@ -533,6 +580,32 @@ class ConfigModel:
                 otstr = file + "\t" + json.dumps(dt_boxes_json) + "\n"
                 fout.write(otstr.encode())
 
+        logger.info("success!")
+
+    @torch.no_grad()
+    def rec(self,infer_img,pth):
+        # build post process
+        post_process_class = self.postprocessor
+        # build model
+        model = self.model
+        state_dict = torch.load(pth)  # 参数
+        model.load_state_dict(state_dict)
+
+        # create data ops
+        model.eval()
+        for file in get_image_file_list(infer_img):
+            logger.info("infer_img: {}".format(file))
+            with open(file, "rb") as f:
+                img = f.read()
+                data = {"image": img}
+            batch = self.Infer.transforms(data)
+
+            images = np.expand_dims(batch[0], axis=0)
+            images = torch.Tensor(images)
+            preds = model(images)
+            post_result = post_process_class(preds)
+            for rec_result in post_result:
+                logger.info("\t result: {}".format(rec_result))
         logger.info("success!")
 def save_model(model, optimizer, model_path, logger, is_best=False, prefix="ppocr", **kwargs):
     """

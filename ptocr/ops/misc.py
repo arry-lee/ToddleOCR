@@ -61,15 +61,15 @@ class ConvBNLayer(nn.Module):
                 bias=bias,
             )
 
-        self.bn = nn.BatchNorm2d(num_features=out_channels)
+        self.bn = nn.BatchNorm2d(num_features=out_channels,track_running_stats=False)
 
-        if name is not None:
-            if name == "conv1":
-                bn_name = "bn_" + name
-            else:
-                bn_name = "bn" + name[3:]
-            self.bn.register_buffer(bn_name + "_mean", self.bn.running_mean)
-            self.bn.register_buffer(bn_name + "_variance", self.bn.running_var)
+        # if name is not None:
+        #     if name == "conv1":
+        #         bn_name = "bn_" + name
+        #     else:
+        #         bn_name = "bn" + name[3:]
+        #     self.bn.register_buffer(bn_name + "_mean", self.bn.running_mean)
+        #     self.bn.register_buffer(bn_name + "_variance", self.bn.running_var)
 
         if isinstance(act, str):
             self.act = getattr(F, act)

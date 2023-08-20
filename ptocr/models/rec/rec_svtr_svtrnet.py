@@ -68,12 +68,10 @@ class Model(ConfigModel):
         prenorm=False,
     )
     Neck = _(SequenceEncoder, encoder_type="reshape")
-    Head = _(
-        CTCHead,
-    )
     loss = CTCLoss()
     metric = RecMetric(main_indicator="acc")
     postprocessor = CTCLabelDecode()
+    Head = _(CTCHead, out_channels=len(postprocessor.character))
     Optimizer = _(
         AdamW,
         beta1=0.9,
@@ -123,6 +121,18 @@ class Model(ConfigModel):
 
 
 if __name__ == "__main__":
+    import paddle
     m = Model()
     x = m.model.state_dict()  # save("/output/rec_svtr/zero.pth")
     print(x.keys())
+
+    paddle_params = paddle.load(r'D:\dev\github\PaddleOCR\model\rec_svtr_tiny_none_ctc_en_train\best_accuracy.pdparams')
+    print(type(paddle_params))
+
+    keys = list(paddle_params.keys())
+    print(keys)
+    print(len(keys),len(x.keys()))
+    # keys.sort()
+    # for k in keys:
+    #     v = paddle_params[k]
+    #     print(k, v.shape, v.size)

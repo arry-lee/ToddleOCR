@@ -5,8 +5,53 @@ import torch.nn.functional as F
 
 __all__ = ["ResNet_Rec_Vd"]
 
-from ptocr.ops import ConvBNLayer
+class ConvBNLayer(nn.Module):
+    def __init__(
+        self,
+        in_channels,
+        out_channels,
+        kernel_size,
+        stride=1,
+        groups=1,
+        is_vd_mode=False,
+        act=None,
+        name=None,
+    ):
+        super().__init__()
 
+        self.is_vd_mode = is_vd_mode
+        self._pool2d_avg = nn.AvgPool2d(kernel_size=stride, stride=stride, padding=0, ceil_mode=True)
+        self.conv = nn.Conv2d(
+            in_channels=in_channels,
+            out_channels=out_channels,
+            kernel_size=kernel_size,
+            stride=1 if is_vd_mode else stride,
+            padding=(kernel_size - 1) // 2,
+            groups=groups,
+            bias=False,
+        )
+        # if name == "conv1":
+        #     bn_name = "bn_" + name
+        # else:
+        #     bn_name = "bn" + name[3:]
+        self.bn = nn.BatchNorm2d(out_channels,track_running_stats=False)
+        # todo what is this?
+        # self._batch_norm.register_buffer(bn_name + "_mean", self._batch_norm.running_mean)
+        # self._batch_norm.register_buffer(bn_name + "_variance", self._batch_norm.running_var)
+
+        if act:
+            self._act = getattr(F, act)
+        else:
+            self._act = None
+
+    def forward(self, inputs):
+        if self.is_vd_mode:
+            inputs = self._pool2d_avg(inputs)
+        y = self.conv(inputs)
+        y = self.bn(y)
+        if self._act:
+            y = self._act(y)
+        return y
 
 class BottleneckBlock(nn.Module):
     def __init__(
@@ -156,7 +201,7 @@ class ResNet_Rec_Vd(nn.Module):
             kernel_size=3,
             stride=1,
             act="relu",
-            name="conv1_1",
+            # name="conv1_1",
         )
         self.conv1_2 = ConvBNLayer(
             in_channels=32,
@@ -164,7 +209,7 @@ class ResNet_Rec_Vd(nn.Module):
             kernel_size=3,
             stride=1,
             act="relu",
-            name="conv1_2",
+            # name="conv1_2",
         )
         self.conv1_3 = ConvBNLayer(
             in_channels=32,
@@ -172,7 +217,7 @@ class ResNet_Rec_Vd(nn.Module):
             kernel_size=3,
             stride=1,
             act="relu",
-            name="conv1_3",
+            # name="conv1_3",
         )
         self.pool2d_max = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
 
@@ -193,9 +238,7 @@ class ResNet_Rec_Vd(nn.Module):
                         stride = (2, 1)
                     else:
                         stride = (1, 1)
-                    bottleneck_block = self.add_module(
-                        "bb_%d_%d" % (block, i),
-                        BottleneckBlock(
+                    bottleneck_block = BottleneckBlock(
                             in_channels=num_features[block]
                             if i == 0
                             else num_filters[block] * 4,
@@ -204,7 +247,10 @@ class ResNet_Rec_Vd(nn.Module):
                             shortcut=shortcut,
                             if_first=block == i == 0,
                             name=conv_name,
-                        ),
+                        )
+                    self.add_module(
+                        "bb_%d_%d" % (block, i),
+                        bottleneck_block
                     )
                     shortcut = True
                     self.block_list.append(bottleneck_block)
@@ -219,9 +265,7 @@ class ResNet_Rec_Vd(nn.Module):
                     else:
                         stride = (1, 1)
 
-                    basic_block = self.add_module(
-                        "bb_%d_%d" % (block, i),
-                        BasicBlock(
+                    basic_block = BasicBlock(
                             in_channels=num_features[block]
                             if i == 0
                             else num_filters[block],
@@ -230,7 +274,9 @@ class ResNet_Rec_Vd(nn.Module):
                             shortcut=shortcut,
                             if_first=block == i == 0,
                             name=conv_name,
-                        ),
+                        )
+                    self.add_module(
+                        "bb_%d_%d" % (block, i),basic_block
                     )
                     shortcut = True
                     self.block_list.append(basic_block)

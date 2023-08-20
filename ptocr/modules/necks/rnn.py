@@ -15,7 +15,7 @@ class Im2Seq(nn.Module):
         B, C, H, W = x.shape
         assert H == 1
         x = x.squeeze(axis=2)
-        x = x.transpose([0, 2, 1])  # (NTC)(batch, width, channels)
+        x = x.permute(0, 2, 1)  # (NTC)(batch, width, channels)
         return x
 
 
@@ -23,7 +23,7 @@ class EncoderWithRNN(nn.Module):
     def __init__(self, in_channels, hidden_size):
         super().__init__()
         self.out_channels = hidden_size * 2
-        self.lstm = nn.LSTM(in_channels, hidden_size, direction="bidirectional", num_layers=2)
+        self.lstm = nn.LSTM(in_channels, hidden_size, bidirectional=True, num_layers=2)
 
     def forward(self, x):
         x, _ = self.lstm(x)
@@ -71,7 +71,7 @@ class EncoderWithCascadeRNN(nn.Module):
                     hidden_size,
                     output_size=out_channels[i],
                     num_layers=1,
-                    direction="bidirectional",
+                    # bidirectional=True,
                     with_linear=with_linear,
                 )
                 for i in range(num_layers)
