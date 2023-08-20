@@ -42,22 +42,53 @@ class _:
     def __new__(cls, class_=None, /, **kwargs):
         if class_ is None:
             return kwargs
-        # 如果是字符串，则从hub加载
-        if isinstance(class_, str):
-            class_ = hub(class_)
+        if isinstance(class_, type):
+            return partial(class_, **kwargs)
         # 预热装饰器用于装饰调度器
         if issubclass(class_, LRScheduler) and 'warmup_epoch' in kwargs:
             warmup_epochs = kwargs.pop('warmup_epoch')
             class_ = warmup_scheduler(class_, warmup_epochs)
-        #
-        return partial(class_, **kwargs)
+            return partial(class_, **kwargs)
+        # 如果是字符串，则从hub加载
+        if isinstance(class_, str):
+            class_ = hub(class_)
+            return partial(class_, **kwargs)
 
     def __class_getitem__(cls, item):
         """方便实现Compose"""
         if isinstance(item, tuple) and all(callable(it) for it in item):
             return Compose(item)
 
+"""
+    Train = _(
+        dataset=SimpleDataSet(
+            root:= "./train_data/",
+            label_file_list=["./train_data/train_list.txt"],
+            transforms=_[
+                _1 := DecodeImage(img_mode="BGR", channel_first=False),
+                _2 := RecAug(),
+                _3 := CTCLabelEncode(max_text_length, character_dict_path),
+                _4 := RecResizeImg(image_shape=[3, 32, 320]),
+                _5 := KeepKeys(keep_keys=["image", "label", "length"]),
+            ]
+        ),
+        shuffle=True,
+        batch_size=256,
+        drop_last=True,
+        num_workers=8)
 
+    Eval = _(
+        dataset=SimpleDataSet(
+            root,
+            label_file_list=["./train_data/val_list.txt"],
+            transforms=_[_1, _3, _4, _5]
+        ),
+        shuffle=True,
+        batch_size=1,
+        drop_last=True,
+        num_workers=1)
+
+"""
 class ConfigModel:
     """基于配置的训练"""
 
@@ -705,6 +736,7 @@ class BaseModel(nn.Module):
     def forward(self, x):
         out_dict = {}
         for module_name, module in self.named_children():
+            print(module_name,module)
             x = module(x)
             if isinstance(x, dict):
                 out_dict.update(x)

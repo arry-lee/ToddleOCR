@@ -18,9 +18,9 @@ class DeConvBNLayer(nn.Module):
             groups=groups,
             bias=False,
         )
-        self.bn = nn.BatchNorm2d(num_features=out_channels, track_running_stats=False)
-        self._batch_norm.register_buffer("bn_" + name + "_mean", self._batch_norm.running_mean)
-        self._batch_norm.register_buffer("bn_" + name + "_variance", self._batch_norm.running_var)
+        self.bn = nn.BatchNorm2d(num_features=out_channels)
+        # self._batch_norm.register_buffer("bn_" + name + "_mean", self._batch_norm.running_mean)
+        # self._batch_norm.register_buffer("bn_" + name + "_variance", self._batch_norm.running_var)
         if act:
             self._act = getattr(F, act)
         else:

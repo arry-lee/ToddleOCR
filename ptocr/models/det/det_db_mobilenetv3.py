@@ -67,6 +67,7 @@ class Model(ConfigModel):
 if __name__ == '__main__':
 
     m = Model()
-    m.infer("doc/imgs_en/1.jpg","output/db_mv3/best_accuracy.pth")
+    # print(m.model.parameters().keys())
+    m.infer(r"D:\dev\github\PaddleOCR\doc\imgs\11.jpg","output/db_mv3/best_accuracy.pth")
     # for i in m.model.parameters():
     #     print(i.size())

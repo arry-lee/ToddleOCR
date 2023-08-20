@@ -61,7 +61,7 @@ class ConvBNLayer(nn.Module):
                 bias=bias,
             )
 
-        self.bn = nn.BatchNorm2d(num_features=out_channels,track_running_stats=False)
+        self.bn = nn.BatchNorm2d(num_features=out_channels)
 
         # if name is not None:
         #     if name == "conv1":

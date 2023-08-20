@@ -21,8 +21,8 @@ class DeConvBNLayer(nn.Module):
             bias=False,
         )
         self.bn = nn.BatchNorm2d(num_features=out_channels)
-        self.bn.register_buffer("bn_" + name + "_mean", self.bn.running_mean)
-        self.bn.register_buffer("bn_" + name + "_variance", self.bn.running_var)
+        # self.bn.register_buffer("bn_" + name + "_mean", self.bn.running_mean)
+        # self.bn.register_buffer("bn_" + name + "_variance", self.bn.running_var)
         if act is not None:
             self.act = getattr(F, act)
         else:
