@@ -1,8 +1,13 @@
+import copy
 import json
+import math
 import warnings
 
 import cv2
 import numpy as np
+
+
+from tools.infer.utility import get_minarea_rect_crop, get_rotate_crop_image
 
 # 忽略所有警告
 warnings.filterwarnings("ignore")
@@ -35,6 +40,27 @@ from tools.train import valid
 
 torch.autograd.set_detect_anomaly(True)
 
+def sorted_boxes(dt_boxes):
+    """
+    Sort text boxes in order from top to bottom, left to right
+    args:
+        dt_boxes(array):detected text boxes with shape [4, 2]
+    return:
+        sorted boxes(array) with shape [4, 2]
+    """
+    num_boxes = dt_boxes.shape[0]
+    sorted_boxes = sorted(dt_boxes, key=lambda x: (x[0][1], x[0][0]))
+    _boxes = list(sorted_boxes)
+
+    for i in range(num_boxes - 1):
+        for j in range(i, -1, -1):
+            if abs(_boxes[j + 1][0][1] - _boxes[j][0][1]) < 10 and (_boxes[j + 1][0][0] < _boxes[j][0][0]):
+                tmp = _boxes[j]
+                _boxes[j] = _boxes[j + 1]
+                _boxes[j + 1] = tmp
+            else:
+                break
+    return _boxes
 
 class _:
     """一个方便写配置文件的辅助类"""
@@ -135,11 +161,13 @@ class ConfigModel:
         ] = None  # = _[DetResizeForTest(limit_side_len=2400, limit_type=max),NormalizeImage(scale=1.0 / 255.0, mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], order="hwc"),ToCHWImage(),KeepKeys(keep_keys=["image", "shape", "polys", "ignore_tags"])]
         DATALOADER: dict  # = _(shuffle=False, drop_last=False, batch_size=1, num_workers=4, pin_memory=False)
     class Infer:
-        transforms: Optional[
-            Callable
-        ] = None
+        transforms: Optional[Callable] = None
+
+    rec_image_shape: list = [3,32,320]
+    rec_batch_num = 6
+
     def __init__(self,pretrained=None):
-        self.det_box_type = "poly"
+        self.det_box_type = "rect"
         self.use_gpu = torch.cuda.is_available() and self.use_gpu
         self.device = "cuda" if self.use_gpu else "cpu"
         self.use_dist = getattr(self, "distributed", False)
@@ -611,26 +639,9 @@ class ConfigModel:
                 fout.write(otstr.encode())
         logger.info("success!")
 
-    @torch.no_grad()
-    def rec(self,infer_img):
-        self.model.eval()
-        for file in get_image_file_list(infer_img):
-            logger.info("infer_img: {}".format(file))
-            with open(file, "rb") as f:
-                img = f.read()
-                data = {"image": img}
-            batch = self.Infer.transforms(data)
-
-            images = np.expand_dims(batch[0], axis=0)
-            images = torch.Tensor(images)
-            preds = self.model(images)
-            post_result = self.postprocessor(preds)
-            for rec_result in post_result:
-                logger.info("\t result: {}".format(rec_result))
-        logger.info("success!")
 
     @torch.no_grad()
-    def det_one_image(self,img_or_path,rec=None):
+    def det_one_image(self,img_or_path):
         self.model.eval()
         if isinstance(img_or_path, str):
             img = cv2.imread(img_or_path)
@@ -651,20 +662,7 @@ class ConfigModel:
             dt_boxes = self.filter_tag_det_res_only_clip(dt_boxes, img.shape)
         else:
             dt_boxes = self.filter_tag_det_res(dt_boxes, img.shape)
-        if rec:
-            img_copy = img.copy()
-            for box in dt_boxes:
-
-                roi = self.crop_text_region(img, box)
-                text = rec(roi)
-                print(text)
-                result.append({"points": box, "text": text})
-                # self.draw_text_region(img_copy, box,text)
-
-            # cv2.imwrite('.test.jpg', img_copy)
-            return result
-
-        return dt_boxes
+        return dt_boxes,img
 
     def crop_text_region(self, img, box):
         x1, y1 = box[0]
@@ -748,6 +746,103 @@ class ConfigModel:
             dt_boxes_new.append(box)
         dt_boxes = np.array(dt_boxes_new)
         return dt_boxes
+
+    def resize_norm_img(self, img, max_wh_ratio):
+        imgC, imgH, imgW = self.rec_image_shape
+        assert imgC == img.shape[2]
+        imgW = int((imgH * max_wh_ratio))
+
+        h, w = img.shape[:2]
+        ratio = w / float(h)
+        if math.ceil(imgH * ratio) > imgW:
+            resized_w = imgW
+        else:
+            resized_w = int(math.ceil(imgH * ratio))
+        resized_image = cv2.resize(img, (resized_w, imgH))
+        resized_image = resized_image.astype("float32")
+        resized_image = resized_image.transpose((2, 0, 1)) / 255
+        resized_image -= 0.5
+        resized_image /= 0.5
+        padding_im = np.zeros((imgC, imgH, imgW), dtype=np.float32)
+        padding_im[:, :, 0:resized_w] = resized_image
+        return padding_im
+
+    @torch.no_grad()
+    def rec(self, img_list):
+        """针对图像列表进行识别"""
+        img_num = len(img_list)
+        # Calculate the aspect ratio of all text bars
+        width_list = []
+        for img in img_list:
+            width_list.append(img.shape[1] / float(img.shape[0]))
+        # Sorting can speed up the recognition process
+        indices = np.argsort(np.array(width_list))
+        rec_res = [["", 0.0]] * img_num
+        batch_num = self.rec_batch_num # 一批数量
+
+        self.model.eval()
+
+        for beg_img_no in range(0, img_num, batch_num):
+            end_img_no = min(img_num, beg_img_no + batch_num)
+            norm_img_batch = []
+
+            imgC, imgH, imgW = self.rec_image_shape[:3]
+            max_wh_ratio = imgW / imgH
+            # max_wh_ratio = 0
+            for ino in range(beg_img_no, end_img_no):
+                h, w = img_list[indices[ino]].shape[0:2]
+                wh_ratio = w * 1.0 / h
+                max_wh_ratio = max(max_wh_ratio, wh_ratio) # 计算最大宽高比
+                logger.info(f"计算最大宽高比{max_wh_ratio}")
+            for ino in range(beg_img_no, end_img_no):
+                norm_img = self.resize_norm_img(img_list[indices[ino]], max_wh_ratio)# 统一缩放
+                norm_img = norm_img[np.newaxis, :]
+                norm_img_batch.append(norm_img)
+            norm_img_batch = np.concatenate(norm_img_batch)
+            norm_img_batch = norm_img_batch.copy()
+
+            input_tensor = torch.from_numpy(norm_img_batch)
+            #
+            # self.predictor.run() # how
+            output_tensors = self.model(input_tensor)
+            # logger.info(output_tensors)
+            # outputs = []
+            # for output_tensor in output_tensors:
+            #     output = output_tensor.numpy()
+            #     outputs.append(output)
+            #
+            # if len(outputs) != 1:
+            #     preds = outputs
+            # else:
+            #     preds = outputs[0]
+            rec_result = self.postprocessor(output_tensors)
+            logger.info(rec_result)
+            for rno in range(len(rec_result)):
+                rec_res[indices[beg_img_no + rno]] = rec_result[rno]
+
+        return rec_res
+
+    @torch.no_grad()
+    def det(self,img,cls=None,rec=None):
+        dt_boxes,img = self.det_one_image(img)
+        ori_im = img.copy()
+        img_crop_list = []
+        dt_boxes = sorted_boxes(dt_boxes)
+        logger.info(f'有效框:{len(dt_boxes)}')
+
+        for bno in range(len(dt_boxes)):
+            tmp_box = copy.deepcopy(dt_boxes[bno])
+            if self.det_box_type == "quad":
+                img_crop = get_rotate_crop_image(ori_im, tmp_box)
+            else:
+                img_crop = get_minarea_rect_crop(ori_im, tmp_box)
+            img_crop_list.append(img_crop)
+        if cls:
+            img_crop_list, _ = cls(img_crop_list)
+        if rec:
+            img_crop_list = rec.rec(img_crop_list)
+        return img_crop_list
+
 def save_model(model, optimizer, model_path, logger, is_best=False, prefix="ppocr", **kwargs):
     """
     save model to the target path
