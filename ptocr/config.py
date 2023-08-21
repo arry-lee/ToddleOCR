@@ -138,13 +138,17 @@ class ConfigModel:
         transforms: Optional[
             Callable
         ] = None
-    def __init__(self):
+    def __init__(self,pretrained=None):
+        self.det_box_type = "poly"
         self.use_gpu = torch.cuda.is_available() and self.use_gpu
         self.device = "cuda" if self.use_gpu else "cpu"
         self.use_dist = getattr(self, "distributed", False)
         self.init_distributed()
         self.model = self._build_model()
 
+        self.pretrained_model = pretrained
+        if self.pretrained_model:
+            self.load_pretrained_model()
     # def _update(self):
     #     post_process_class = self.postprocessor
     #     if hasattr(post_process_class, 'character'):
@@ -555,18 +559,13 @@ class ConfigModel:
         return True
 
     @torch.no_grad()
-    def infer(self,infer_img,pth):
-        # build model
-        model = self.model
-        state_dict = torch.load(pth)  # 参数
-        model.load_state_dict(state_dict)
-        # build post process
-        post_process_class = self.postprocessor
+    def det(self,infer_img):
+        """检测模型的推理方法"""
         save_res_path = self.save_res_path
         if not os.path.exists(os.path.dirname(save_res_path)):
             os.makedirs(os.path.dirname(save_res_path))
 
-        model.eval()
+        self.model.eval()
         with open(save_res_path, "wb") as fout:
             for file in get_image_file_list(infer_img):
                 logger.info("infer_img: {}".format(file))
@@ -579,8 +578,8 @@ class ConfigModel:
                 images = np.expand_dims(batch[0], axis=0)
                 shape_list = np.expand_dims(batch[1], axis=0)
                 images = torch.Tensor(images)
-                preds = model(images)
-                post_result = post_process_class(preds, shape_list)
+                preds = self.model(images)
+                post_result = self.postprocessor(preds, shape_list)
 
                 src_img = cv2.imread(file)
 
@@ -610,20 +609,11 @@ class ConfigModel:
                     draw_det_res(boxes, src_img, file, save_det_path)
                 otstr = file + "\t" + json.dumps(dt_boxes_json) + "\n"
                 fout.write(otstr.encode())
-
         logger.info("success!")
 
     @torch.no_grad()
-    def rec(self,infer_img,pth):
-        # build post process
-        post_process_class = self.postprocessor
-        # build model
-        model = self.model
-        state_dict = torch.load(pth)  # 参数
-        model.load_state_dict(state_dict)
-
-        # create data ops
-        model.eval()
+    def rec(self,infer_img):
+        self.model.eval()
         for file in get_image_file_list(infer_img):
             logger.info("infer_img: {}".format(file))
             with open(file, "rb") as f:
@@ -633,11 +623,131 @@ class ConfigModel:
 
             images = np.expand_dims(batch[0], axis=0)
             images = torch.Tensor(images)
-            preds = model(images)
-            post_result = post_process_class(preds)
+            preds = self.model(images)
+            post_result = self.postprocessor(preds)
             for rec_result in post_result:
                 logger.info("\t result: {}".format(rec_result))
         logger.info("success!")
+
+    @torch.no_grad()
+    def det_one_image(self,img_or_path,rec=None):
+        self.model.eval()
+        if isinstance(img_or_path, str):
+            img = cv2.imread(img_or_path)
+        else:
+            img = img_or_path
+        data = {"image": img}
+        batch = self.Infer.transforms(data)
+
+        images = np.expand_dims(batch[0], axis=0)
+        shape_list = np.expand_dims(batch[1], axis=0)
+        images = torch.Tensor(images)
+        preds = self.model(images)
+        post_result = self.postprocessor(preds, shape_list)
+        # parser boxes if post_result is dict
+        result = []
+        dt_boxes = post_result[0]["points"]
+        if self.det_box_type == "poly":
+            dt_boxes = self.filter_tag_det_res_only_clip(dt_boxes, img.shape)
+        else:
+            dt_boxes = self.filter_tag_det_res(dt_boxes, img.shape)
+        if rec:
+            img_copy = img.copy()
+            for box in dt_boxes:
+
+                roi = self.crop_text_region(img, box)
+                text = rec(roi)
+                print(text)
+                result.append({"points": box, "text": text})
+                # self.draw_text_region(img_copy, box,text)
+
+            # cv2.imwrite('.test.jpg', img_copy)
+            return result
+
+        return dt_boxes
+
+    def crop_text_region(self, img, box):
+        x1, y1 = box[0]
+        x2, y2 = box[2]
+        cropped_img = img[y1:y2, x1:x2]
+        return cropped_img
+
+    def draw_text_region(self, img, box, text=''):
+        x1, y1 = box[0]
+        x2, y2 = box[2]
+
+        cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
+        cv2.putText(img, text, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
+
+        return img
+
+    @torch.no_grad()
+    def rec_one_image(self,img_or_path):
+        self.model.eval()
+        if isinstance(img_or_path, str):
+            img = cv2.imread(img_or_path)
+        else:
+            img = img_or_path
+        data = {"image": img}
+        batch = self.Infer.transforms(data)
+
+        images = np.expand_dims(batch[0], axis=0)
+        images = torch.Tensor(images)
+        preds = self.model(images)
+        post_result = self.postprocessor(preds)
+        return post_result
+
+    def load_pretrained_model(self):
+        state_dict = torch.load(self.pretrained_model)  # 参数
+        self.model.load_state_dict(state_dict)
+        return self.model
+
+    def __call__(self, infer_img):
+        return getattr(self, self.model_type)(infer_img)
+
+    def order_points_clockwise(self, pts):
+        rect = np.zeros((4, 2), dtype="float32")
+        s = pts.sum(axis=1)
+        rect[0] = pts[np.argmin(s)]
+        rect[2] = pts[np.argmax(s)]
+        tmp = np.delete(pts, (np.argmin(s), np.argmax(s)), axis=0)
+        diff = np.diff(np.array(tmp), axis=1)
+        rect[1] = tmp[np.argmin(diff)]
+        rect[3] = tmp[np.argmax(diff)]
+        return rect
+
+    def clip_det_res(self, points, img_height, img_width):
+        for pno in range(points.shape[0]):
+            points[pno, 0] = int(min(max(points[pno, 0], 0), img_width - 1))
+            points[pno, 1] = int(min(max(points[pno, 1], 0), img_height - 1))
+        return points
+
+    def filter_tag_det_res(self, dt_boxes, image_shape):
+        img_height, img_width = image_shape[0:2]
+        dt_boxes_new = []
+        for box in dt_boxes:
+            if type(box) is list:
+                box = np.array(box)
+            box = self.order_points_clockwise(box)
+            box = self.clip_det_res(box, img_height, img_width)
+            rect_width = int(np.linalg.norm(box[0] - box[1]))
+            rect_height = int(np.linalg.norm(box[0] - box[3]))
+            if rect_width <= 3 or rect_height <= 3:
+                continue
+            dt_boxes_new.append(box)
+        dt_boxes = np.array(dt_boxes_new)
+        return dt_boxes
+
+    def filter_tag_det_res_only_clip(self, dt_boxes, image_shape):
+        img_height, img_width = image_shape[0:2]
+        dt_boxes_new = []
+        for box in dt_boxes:
+            if type(box) is list:
+                box = np.array(box)
+            box = self.clip_det_res(box, img_height, img_width)
+            dt_boxes_new.append(box)
+        dt_boxes = np.array(dt_boxes_new)
+        return dt_boxes
 def save_model(model, optimizer, model_path, logger, is_best=False, prefix="ppocr", **kwargs):
     """
     save model to the target path
@@ -736,7 +846,7 @@ class BaseModel(nn.Module):
     def forward(self, x):
         out_dict = {}
         for module_name, module in self.named_children():
-            print(module_name,module)
+            # print(module_name,module)
             x = module(x)
             if isinstance(x, dict):
                 out_dict.update(x)
