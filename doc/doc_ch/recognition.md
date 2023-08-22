@@ -150,7 +150,7 @@ word_dict.txt 每行有一个单字，将字符与数字索引映射在一起，
 
 PaddleOCR内置了一部分字典，可以按需使用。
 
-`ppocr/utils/ppocr_keys_v1.txt` 是一个包含6623个字符的中文字典
+`ptocr/utils/ppocr_keys_v1.txt` 是一个包含6623个字符的中文字典
 
 `ppocr/utils/ic15_dict.txt` 是一个包含36个字符的英文字典
 
@@ -257,7 +257,7 @@ PaddleOCR支持训练和评估交替进行, 可以在 `configs/rec/PP-OCRv3/en_P
 Global:
   ...
   # 添加自定义字典，如修改字典请将路径指向新字典
-  character_dict_path: ppocr/utils/ppocr_keys_v1.txt
+  character_dict_path: ptocr/utils/ppocr_keys_v1.txt
   ...
   # 识别空格
   use_space_char: True

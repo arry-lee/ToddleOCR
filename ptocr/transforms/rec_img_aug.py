@@ -195,7 +195,7 @@ class RecResizeImg:
         self,
         image_shape,
         infer_mode=False,
-        character_dict_path="./ppocr/utils/ppocr_keys_v1.txt",
+        character_dict_path="./ptocr/utils/ppocr_keys_v1.txt",
         padding=True,
         **kwargs
     ):
@@ -220,7 +220,7 @@ class VLRecResizeImg:
         self,
         image_shape,
         infer_mode=False,
-        character_dict_path="./ppocr/utils/ppocr_keys_v1.txt",
+        character_dict_path="./ptocr/utils/ppocr_keys_v1.txt",
         padding=True,
         **kwargs
     ):

@@ -32,7 +32,7 @@ class Model(ConfigModel):
     save_infer_dir = None
     use_visualdl = False
     infer_img = "doc/imgs_words/ch/word_1.jpg"
-    character_dict_path = "ppocr/utils/ppocr_keys_v1.txt"
+    character_dict_path = "ptocr/utils/ppocr_keys_v1.txt"
 
     infer_mode = False
     use_space_char = True

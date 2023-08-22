@@ -81,7 +81,7 @@ MODEL_URLS = {
             "rec": {
                 "ch": {
                     "url": "https://paddleocr.bj.bcebos.com/PP-OCRv3/chinese/ch_PP-OCRv3_rec_infer.tar",
-                    "dict_path": "./ppocr/utils/ppocr_keys_v1.txt",
+                    "dict_path": "./ptocr/utils/ppocr_keys_v1.txt",
                 },
                 "en": {
                     "url": "https://paddleocr.bj.bcebos.com/PP-OCRv3/english/en_PP-OCRv3_rec_infer.tar",
@@ -143,7 +143,7 @@ MODEL_URLS = {
             "rec": {
                 "ch": {
                     "url": "https://paddleocr.bj.bcebos.com/PP-OCRv2/chinese/ch_PP-OCRv2_rec_infer.tar",
-                    "dict_path": "./ppocr/utils/ppocr_keys_v1.txt",
+                    "dict_path": "./ptocr/utils/ppocr_keys_v1.txt",
                 }
             },
             "cls": {
@@ -167,7 +167,7 @@ MODEL_URLS = {
             "rec": {
                 "ch": {
                     "url": "https://paddleocr.bj.bcebos.com/dygraph_v2.0/ch/ch_ppocr_mobile_v2.0_rec_infer.tar",
-                    "dict_path": "./ppocr/utils/ppocr_keys_v1.txt",
+                    "dict_path": "./ptocr/utils/ppocr_keys_v1.txt",
                 },
                 "en": {
                     "url": "https://paddleocr.bj.bcebos.com/dygraph_v2.0/multilingual/en_number_mobile_v2.0_rec_infer.tar",

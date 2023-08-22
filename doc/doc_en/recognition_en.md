@@ -78,7 +78,7 @@ In `word_dict.txt`, there is a single word in each line, which maps characters a
 
 PaddleOCR has built-in dictionaries, which can be used on demand.
 
-`ppocr/utils/ppocr_keys_v1.txt` is a Chinese dictionary with 6623 characters.
+`ptocr/utils/ppocr_keys_v1.txt` is a Chinese dictionary with 6623 characters.
 
 `ppocr/utils/ic15_dict.txt` is an English dictionary with 36 characters
 
@@ -165,7 +165,7 @@ Take `ch_PP-OCRv3_rec_distillation.yml` as an example:
 Global:
   ...
   # Add a custom dictionary, such as modify the dictionary, please point the path to the new dictionary
-  character_dict_path: ppocr/utils/ppocr_keys_v1.txt
+  character_dict_path: ptocr/utils/ppocr_keys_v1.txt
   # Modify character type
   ...
   # Whether to recognize spaces

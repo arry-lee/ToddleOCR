@@ -6,7 +6,7 @@ import warnings
 import cv2
 import numpy as np
 
-
+from ptocr.transforms.rec_img_aug import resize_norm_img_chinese
 from tools.infer.utility import get_minarea_rect_crop, get_rotate_crop_image
 
 # 忽略所有警告
@@ -174,8 +174,8 @@ class ConfigModel:
         self.init_distributed()
         self.model = self._build_model()
 
-        self.pretrained_model = pretrained
-        if self.pretrained_model:
+        self.pretrained = pretrained
+        if self.pretrained:
             self.load_pretrained_model()
     # def _update(self):
     #     post_process_class = self.postprocessor
@@ -586,59 +586,6 @@ class ConfigModel:
             return dist.get_rank() == 0
         return True
 
-    @torch.no_grad()
-    def det(self,infer_img):
-        """检测模型的推理方法"""
-        save_res_path = self.save_res_path
-        if not os.path.exists(os.path.dirname(save_res_path)):
-            os.makedirs(os.path.dirname(save_res_path))
-
-        self.model.eval()
-        with open(save_res_path, "wb") as fout:
-            for file in get_image_file_list(infer_img):
-                logger.info("infer_img: {}".format(file))
-                with open(file, "rb") as f:
-                    img = f.read()
-                    data = {"image": img}
-
-                batch = self.Infer.transforms(data)
-
-                images = np.expand_dims(batch[0], axis=0)
-                shape_list = np.expand_dims(batch[1], axis=0)
-                images = torch.Tensor(images)
-                preds = self.model(images)
-                post_result = self.postprocessor(preds, shape_list)
-
-                src_img = cv2.imread(file)
-
-                dt_boxes_json = []
-                # parser boxes if post_result is dict
-                if isinstance(post_result, dict):
-                    det_box_json = {}
-                    for k in post_result.keys():
-                        boxes = post_result[k][0]["points"]
-                        dt_boxes_list = []
-                        for box in boxes:
-                            tmp_json = {"transcription": ""}
-                            tmp_json["points"] = np.array(box).tolist()
-                            dt_boxes_list.append(tmp_json)
-                        det_box_json[k] = dt_boxes_list
-                        save_det_path = os.path.dirname(self.save_res_path) + "/det_results_{}/".format(k)
-                        draw_det_res(boxes, src_img, file, save_det_path)
-                else:
-                    boxes = post_result[0]["points"]
-                    dt_boxes_json = []
-                    # write result
-                    for box in boxes:
-                        tmp_json = {"transcription": ""}
-                        tmp_json["points"] = np.array(box).tolist()
-                        dt_boxes_json.append(tmp_json)
-                    save_det_path = os.path.dirname(self.save_res_path) + "/det_results/"
-                    draw_det_res(boxes, src_img, file, save_det_path)
-                otstr = file + "\t" + json.dumps(dt_boxes_json) + "\n"
-                fout.write(otstr.encode())
-        logger.info("success!")
-
 
     @torch.no_grad()
     def det_one_image(self,img_or_path):
@@ -656,7 +603,7 @@ class ConfigModel:
         preds = self.model(images)
         post_result = self.postprocessor(preds, shape_list)
         # parser boxes if post_result is dict
-        result = []
+        logger.info("det_result:{}".format(post_result))
         dt_boxes = post_result[0]["points"]
         if self.det_box_type == "poly":
             dt_boxes = self.filter_tag_det_res_only_clip(dt_boxes, img.shape)
@@ -696,7 +643,7 @@ class ConfigModel:
         return post_result
 
     def load_pretrained_model(self):
-        state_dict = torch.load(self.pretrained_model)  # 参数
+        state_dict = torch.load(self.pretrained)  # 参数
         self.model.load_state_dict(state_dict)
         return self.model
 
@@ -796,16 +743,18 @@ class ConfigModel:
                 logger.info(f"计算最大宽高比{max_wh_ratio}")
             for ino in range(beg_img_no, end_img_no):
                 norm_img = self.resize_norm_img(img_list[indices[ino]], max_wh_ratio)# 统一缩放
+                # norm_img,_ = resize_norm_img_chinese(norm_img,[3, 32, 320])
                 norm_img = norm_img[np.newaxis, :]
                 norm_img_batch.append(norm_img)
             norm_img_batch = np.concatenate(norm_img_batch)
             norm_img_batch = norm_img_batch.copy()
 
             input_tensor = torch.from_numpy(norm_img_batch)
-            #
+            logger.info(input_tensor.shape)
             # self.predictor.run() # how
+            # input_tensor = self.Infer.transforms(input_tensor)
             output_tensors = self.model(input_tensor)
-            # logger.info(output_tensors)
+            logger.info(output_tensors)
             # outputs = []
             # for output_tensor in output_tensors:
             #     output = output_tensor.numpy()
@@ -832,7 +781,7 @@ class ConfigModel:
 
         for bno in range(len(dt_boxes)):
             tmp_box = copy.deepcopy(dt_boxes[bno])
-            if self.det_box_type == "quad":
+            if self.det_box_type == "poly":
                 img_crop = get_rotate_crop_image(ori_im, tmp_box)
             else:
                 img_crop = get_minarea_rect_crop(ori_im, tmp_box)

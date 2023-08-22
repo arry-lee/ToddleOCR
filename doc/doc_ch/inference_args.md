@@ -91,7 +91,7 @@ PSE算法相关参数如下
 |  rec_image_shape | str | "3,48,320" | 识别时的图像尺寸 |
 |  rec_batch_num | int | 6 | 识别的batch size |
 |  max_text_length | int | 25 | 识别结果最大长度，在`SRN`中有效 |
-|  rec_char_dict_path | str | "./ppocr/utils/ppocr_keys_v1.txt" | 识别的字符字典文件 |
+|  rec_char_dict_path | str | "./ptocr/utils/ppocr_keys_v1.txt" | 识别的字符字典文件 |
 |  use_space_char | bool | True | 是否包含空格，如果为`True`，则会在最后字符字典中补充`空格`字符 |
 
 

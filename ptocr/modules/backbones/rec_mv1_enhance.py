@@ -23,7 +23,95 @@ from torch.nn import Conv2d, BatchNorm2d
 from torch.nn import AdaptiveAvgPool2d
 from torch.nn.functional import hardsigmoid
 
+from ptocr.ops.misc import DeformableConvV2
 
+
+# from ptocr.ops import ConvBNLayer
+
+class ConvBNLayer(nn.Module):
+    def __init__(
+            self,
+            in_channels,
+            out_channels,
+            kernel_size,
+            stride=1,
+            dilation=1,
+            groups=1,
+            bias=False,
+            act=None,  # 激活函数名
+            name=None,
+            **kwargs
+            # 不常用的东西放在kwargs里
+            # is_dcn=False,  # 是否使用deformable conv network
+            # dcn_groups=1,
+            # is_vd_mode=False,  # 是否使用平均池化
+    ):
+        super().__init__()
+        self.is_vd_mode = kwargs.get("is_vd_mode", False)
+
+        if self.is_vd_mode:
+            stride = 1
+            self._pool2d_avg = nn.AvgPool2d(kernel_size=2, stride=2, padding=0, ceil_mode=True)
+
+        is_dcn = kwargs.get("is_dcn", False)
+        if not is_dcn:
+            if stride == (1, 1):
+                kernel_size = 2
+                dilation = 2
+
+            padding = kwargs.get("padding", (kernel_size - 1) // 2)
+
+            self.conv = nn.Conv2d(
+                in_channels=in_channels,
+                out_channels=out_channels,
+                kernel_size=kernel_size,
+                stride=stride,
+                dilation=dilation,
+                padding=padding,
+                groups=groups,
+                bias=bias,
+            )
+            if kwargs.get("initializer", None) is not None:
+                initializer = kwargs.get("initializer")
+                initializer(self.conv.weight)
+        else:
+            dcn_groups = kwargs.get("dcn_groups", 1)
+            self.conv = DeformableConvV2(
+                in_channels=in_channels,
+                out_channels=out_channels,
+                kernel_size=kernel_size,
+                stride=stride,
+                groups=dcn_groups,
+                bias=bias,
+            )
+
+        self.bn = nn.BatchNorm2d(num_features=out_channels)
+
+        # if name is not None:
+        #     if name == "conv1":
+        #         bn_name = "bn_" + name
+        #     else:
+        #         bn_name = "bn" + name[3:]
+        #     self.bn.register_buffer(bn_name + "_mean", self.bn.running_mean)
+        #     self.bn.register_buffer(bn_name + "_variance", self.bn.running_var)
+
+        if isinstance(act, str):
+            self.act = getattr(F, act)
+        elif isinstance(act, nn.Module):
+            self.act = act()
+        elif callable(act):
+            self.act = act
+        else:
+            self.act = None
+
+    def forward(self, x):
+        if self.is_vd_mode:
+            x = self._pool2d_avg(x)
+        x = self.conv(x)
+        x = self.bn(x)
+        if self.act:
+            x = self.act(x)
+        return x
 
 class DepthWiseSeparable(nn.Module):
     def __init__(
@@ -167,4 +255,4 @@ class SEModule(nn.Module):
         outputs = F.relu(outputs)
         outputs = self.conv2(outputs)
         outputs = hardsigmoid(outputs)
-        return torch.multiply(x=inputs, y=outputs)
+        return torch.multiply(inputs, outputs)

@@ -91,7 +91,7 @@ The relevant parameters of the PSE algorithm are as follows
 |  rec_image_shape | str | "3,48,320" ] | Image size at the time of recognition |
 |  rec_batch_num | int | 6 | batch size |
 |  max_text_length | int | 25 | The maximum length of the recognition result, valid in `SRN` |
-|  rec_char_dict_path | str | "./ppocr/utils/ppocr_keys_v1.txt" | character dictionary file |
+|  rec_char_dict_path | str | "./ptocr/utils/ppocr_keys_v1.txt" | character dictionary file |
 |  use_space_char | bool | True | Whether to include spaces, if `True`, the `space` character will be added at the end of the character dictionary |
 
 
