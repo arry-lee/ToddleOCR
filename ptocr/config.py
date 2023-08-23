@@ -6,6 +6,7 @@ import warnings
 import cv2
 import numpy as np
 
+from ptocr.modules.architectures import BaseModel
 from ptocr.transforms.rec_img_aug import resize_norm_img_chinese
 from tools.infer.utility import get_minarea_rect_crop, get_rotate_crop_image
 
@@ -176,53 +177,7 @@ class ConfigModel:
 
         self.pretrained = pretrained
         if self.pretrained:
-            self.load_pretrained_model()
-    # def _update(self):
-    #     post_process_class = self.postprocessor
-    #     if hasattr(post_process_class, 'character'):
-    #         char_num = len(getattr(post_process_class, 'character'))
-    #         # if self.algorithm in ["Distillation",]:  # distillation model
-    #         #     for key in config['Architecture']["Models"]:
-    #         #         if config['Architecture']['Models'][key]['Head'][
-    #         #             'name'] == 'MultiHead':  # for multi head
-    #         #             if config['PostProcess'][
-    #         #                 'name'] == 'DistillationSARLabelDecode':
-    #         #                 char_num = char_num - 2
-    #         #             # update SARLoss params
-    #         #             assert list(config['Loss']['loss_config_list'][-1].keys())[
-    #         #                        0] == 'DistillationSARLoss'
-    #         #             config['Loss']['loss_config_list'][-1][
-    #         #                 'DistillationSARLoss']['ignore_index'] = char_num + 1
-    #         #             out_channels_list = {}
-    #         #             out_channels_list['CTCLabelDecode'] = char_num
-    #         #             out_channels_list['SARLabelDecode'] = char_num + 2
-    #         #             config['Architecture']['Models'][key]['Head'][
-    #         #                 'out_channels_list'] = out_channels_list
-    #         #         else:
-    #         #             config['Architecture']["Models"][key]["Head"][
-    #         #                 'out_channels'] = char_num
-    #         if config['Architecture']['Head']['name'] == 'MultiHead':  # for multi head
-    #             if config['PostProcess']['name'] == 'SARLabelDecode':
-    #                 char_num = char_num - 2
-    #             # update SARLoss params
-    #             assert list(config['Loss']['loss_config_list'][1].keys())[0] == 'SARLoss'
-    #             if config['Loss']['loss_config_list'][1]['SARLoss'] is None:
-    #                 config['Loss']['loss_config_list'][1]['SARLoss'] = {
-    #                     'ignore_index': char_num + 1
-    #                 }
-    #             else:
-    #                 config['Loss']['loss_config_list'][1]['SARLoss'][
-    #                     'ignore_index'] = char_num + 1
-    #             out_channels_list = {}
-    #             out_channels_list['CTCLabelDecode'] = char_num
-    #             out_channels_list['SARLabelDecode'] = char_num + 2
-    #             config['Architecture']['Head'][
-    #                 'out_channels_list'] = out_channels_list
-    #         else:  # base rec model
-    #             config['Architecture']["Head"]['out_channels'] = char_num
-    #
-    #         if config['PostProcess']['name'] == 'SARLabelDecode':  # for SAR model
-    #             config['Loss']['ignore_index'] = char_num - 1
+            self.load_pretrained_model(pretrained)
 
     def _build_model(self):
         _model = BaseModel(in_channels=3, backbone=self.Backbone, neck=self.Neck, head=self.Head)
@@ -234,12 +189,6 @@ class ConfigModel:
             _model = DistributedDataParallel(_model)
         _model.to(self.device)
         return _model
-
-    # def _transforms(self, mode="Train"):
-    #     transforms = getattr(self, mode).transforms
-    #     if transforms:
-    #         return Compose(self.Train.transforms)
-    #     return None
 
     def _dataset(self, mode="Train"):
         return getattr(self, mode).Dataset(transforms=getattr(self, mode).transforms)
@@ -287,6 +236,23 @@ class ConfigModel:
 
             logger.info(self.rank)
             logger.info(self.world_size)
+
+    def _build_scheduler(self, optimizer, max_epochs, step_each_epoch):
+        if self.LRScheduler.func.__name__ == 'CosineAnnealingLR':
+            kwargs = {'T_max': step_each_epoch * max_epochs}
+        elif self.LRScheduler.func.__name__ == 'CosineAnnealingWarmRestarts':
+            kwargs = {'T_0': step_each_epoch * max_epochs}
+        elif self.LRScheduler.func.__name__ == 'TwoStepCosineLR':
+            kwargs = {'T_max1': step_each_epoch * 200, 'T_max2': step_each_epoch * max_epochs}
+        else:
+            kwargs = {}
+        lr_scheduler = self.LRScheduler(optimizer, **kwargs)
+        return lr_scheduler
+
+    def is_rank0(self):
+        if self.use_dist:
+            return dist.get_rank() == 0
+        return True
 
     def train(self, log_writer=None):
         self.init_distributed()
@@ -569,24 +535,6 @@ class ConfigModel:
             dist.destroy_process_group()
         return
 
-    def _build_scheduler(self, optimizer, max_epochs, step_each_epoch):
-        if self.LRScheduler.func.__name__ == 'CosineAnnealingLR':
-            kwargs = {'T_max': step_each_epoch * max_epochs}
-        elif self.LRScheduler.func.__name__ == 'CosineAnnealingWarmRestarts':
-            kwargs = {'T_0': step_each_epoch * max_epochs}
-        elif self.LRScheduler.func.__name__ == 'TwoStepCosineLR':
-            kwargs = {'T_max1': step_each_epoch * 200, 'T_max2': step_each_epoch * max_epochs}
-        else:
-            kwargs = {}
-        lr_scheduler = self.LRScheduler(optimizer, **kwargs)
-        return lr_scheduler
-
-    def is_rank0(self):
-        if self.use_dist:
-            return dist.get_rank() == 0
-        return True
-
-
     @torch.no_grad()
     def det_one_image(self,img_or_path):
         self.model.eval()
@@ -611,21 +559,6 @@ class ConfigModel:
             dt_boxes = self.filter_tag_det_res(dt_boxes, img.shape)
         return dt_boxes,img
 
-    def crop_text_region(self, img, box):
-        x1, y1 = box[0]
-        x2, y2 = box[2]
-        cropped_img = img[y1:y2, x1:x2]
-        return cropped_img
-
-    def draw_text_region(self, img, box, text=''):
-        x1, y1 = box[0]
-        x2, y2 = box[2]
-
-        cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
-        cv2.putText(img, text, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
-
-        return img
-
     @torch.no_grad()
     def rec_one_image(self,img_or_path):
         self.model.eval()
@@ -642,8 +575,8 @@ class ConfigModel:
         post_result = self.postprocessor(preds)
         return post_result
 
-    def load_pretrained_model(self):
-        state_dict = torch.load(self.pretrained)  # 参数
+    def load_pretrained_model(self,path):
+        state_dict = torch.load(path)  # 参数
         self.model.load_state_dict(state_dict)
         return self.model
 
@@ -815,9 +748,6 @@ def load_model(model: nn.Module, logger, optimizer=None, checkpoints=None, pretr
     load model from checkpoint or pretrained_model
     """
 
-    # global_config = config["Global"]
-    # checkpoints = global_config.get('checkpoints')
-    # pretrained_model = global_config.get('pretrained_model')
     best_model_dict = {}
     is_float16 = False
 
@@ -874,37 +804,7 @@ def load_model(model: nn.Module, logger, optimizer=None, checkpoints=None, pretr
     return best_model_dict
 
 
-class BaseModel(nn.Module):
-    def __init__(self, in_channels, backbone, neck, head, return_all_feats=False):
-        super().__init__()
-        if backbone:
-            self.backbone = backbone(in_channels=in_channels)
-            in_channels = self.backbone.out_channels
-        if neck:
-            self.neck = neck(in_channels=in_channels)
-            in_channels = self.neck.out_channels
-        if head:
-            self.head = head(in_channels=in_channels)
-        self.return_all_feats = return_all_feats
 
-    def forward(self, x):
-        out_dict = {}
-        for module_name, module in self.named_children():
-            # print(module_name,module)
-            x = module(x)
-            if isinstance(x, dict):
-                out_dict.update(x)
-            else:
-                out_dict[f"{module_name}_out"] = x
-        if self.return_all_feats:
-            if self.training:
-                return out_dict
-            elif isinstance(x, dict):
-                return x
-            else:
-                return {list(out_dict.keys())[-1]: x}
-        else:
-            return x
 
 def draw_det_res(dt_boxes, img, img_name, save_path):
     if len(dt_boxes) > 0:

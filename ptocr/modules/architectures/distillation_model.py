@@ -16,10 +16,7 @@
 
 
 from torch import nn
-from ptocr.modules.transforms import build_transform
-from ptocr.modules.backbones import build_backbone
-from ptocr.modules.necks import build_neck
-from ptocr.modules.heads import build_head
+
 from .base_model import BaseModel
 from ptocr.utils.save_load import load_pretrained_params
 

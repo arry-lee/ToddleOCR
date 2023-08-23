@@ -123,6 +123,7 @@ def load_model(config, model: nn.Module, logger, optimizer=None, model_type='det
 
 
 def load_pretrained_params(model, path, logger):
+
     if path.endswith('.pdparams'):
         path = path.replace('.pdparams', '')
     assert os.path.exists(path + ".pdparams"), "The {}.pdparams does not exists!".format(path)
