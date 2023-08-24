@@ -25,33 +25,46 @@ from torch.nn.functional import hardsigmoid
 
 from ptocr.ops.misc import DeformableConvV2
 
+class Hardswish(nn.Module):
+    def forward(self, x):
+        out = x * F.relu6(x + 3, inplace=True) / 6
+        return out
 
-# from ptocr.ops import ConvBNLayer
+class Hardsigmoid(nn.Module):
+    def __init__(self, inplace=True):
+        super().__init__()
+        self.inplace = inplace
+
+    def forward(self, x):
+        # return (1.2 * x).add_(3.).clamp_(0., 6.).div_(6.)
+        return F.relu6(x + 3.0, inplace=True) / 6.0
 
 class ConvBNLayer(nn.Module):
     def __init__(
-            self,
-            in_channels,
-            out_channels,
-            kernel_size,
-            stride=1,
-            dilation=1,
-            groups=1,
-            bias=False,
-            act=None,  # 激活函数名
-            name=None,
-            **kwargs
-            # 不常用的东西放在kwargs里
-            # is_dcn=False,  # 是否使用deformable conv network
-            # dcn_groups=1,
-            # is_vd_mode=False,  # 是否使用平均池化
+        self,
+        in_channels,
+        out_channels,
+        kernel_size,
+        stride=1,
+        dilation=1,
+        groups=1,
+        bias=False,
+        act=None,  # 激活函数名
+        name=None,
+        **kwargs
+        # 不常用的东西放在kwargs里
+        # is_dcn=False,  # 是否使用deformable conv network
+        # dcn_groups=1,
+        # is_vd_mode=False,  # 是否使用平均池化
     ):
         super().__init__()
         self.is_vd_mode = kwargs.get("is_vd_mode", False)
 
         if self.is_vd_mode:
             stride = 1
-            self._pool2d_avg = nn.AvgPool2d(kernel_size=2, stride=2, padding=0, ceil_mode=True)
+            self._pool2d_avg = nn.AvgPool2d(
+                kernel_size=2, stride=2, padding=0, ceil_mode=True
+            )
 
         is_dcn = kwargs.get("is_dcn", False)
         if not is_dcn:
@@ -97,7 +110,7 @@ class ConvBNLayer(nn.Module):
 
         if isinstance(act, str):
             self.act = getattr(F, act)
-        elif isinstance(act, nn.Module):
+        elif issubclass(act, nn.Module):
             self.act = act()
         elif callable(act):
             self.act = act
@@ -113,49 +126,99 @@ class ConvBNLayer(nn.Module):
             x = self.act(x)
         return x
 
+
 class DepthWiseSeparable(nn.Module):
     def __init__(
-        self, num_features, num_filters1, num_filters2, num_groups, stride, scale, dw_size=3, padding=1, use_se=False
+        self,
+        num_features,
+        num_filters1,
+        num_filters2,
+        num_groups,
+        stride,
+        scale,
+        dw_size=3,
+        padding=1,
+        use_se=False,
     ):
         super().__init__()
         self.use_se = use_se
-        self._depthwise_conv = ConvBNLayer(in_channels=num_features, out_channels=int(num_filters1 * scale),
-                                           kernel_size=dw_size, stride=stride, padding=padding,
-                                           groups=int(num_groups * scale))
+        self.dw_conv = ConvBNLayer(
+            in_channels=num_features,
+            out_channels=int(num_filters1 * scale),
+            kernel_size=dw_size,
+            stride=stride,
+            padding=padding,
+            groups=int(num_groups * scale),
+            act=Hardswish,
+        )
         if use_se:
-            self._se = SEModule(int(num_filters1 * scale))
-        self._pointwise_conv = ConvBNLayer(in_channels=int(num_filters1 * scale),
-                                           out_channels=int(num_filters2 * scale), kernel_size=1, stride=1, padding=0)
+            self.se = SEModule(int(num_filters1 * scale))
+        self.pw_conv = ConvBNLayer(
+            in_channels=int(num_filters1 * scale),
+            out_channels=int(num_filters2 * scale),
+            kernel_size=1,
+            stride=1,
+            padding=0,
+            act=Hardswish,
+        )
 
-    def forward(self, inputs):
-        y = self._depthwise_conv(inputs)
+    def forward(self, x):
+        x = self.dw_conv(x)
         if self.use_se:
-            y = self._se(y)
-        y = self._pointwise_conv(y)
-        return y
+            x = self.se(x)
+        x = self.pw_conv(x)
+        return x
 
 
 class MobileNetV1Enhance(nn.Module):
-    def __init__(self, in_channels=3, scale=0.5, last_conv_stride=1, last_pool_type="max", **kwargs):
+    def __init__(
+        self,
+        in_channels=3,
+        scale=0.5,
+        last_conv_stride=1,
+        last_pool_type="max",
+        **kwargs
+    ):
         super().__init__()
         self.scale = scale
         self.block_list = []
 
-        self.conv1 = ConvBNLayer(in_channels=3, out_channels=int(32 * scale), kernel_size=3, stride=2, padding=1,
-                                 channels=3)
+        self.conv1 = ConvBNLayer(
+            in_channels=3,
+            out_channels=int(32 * scale),
+            kernel_size=3,
+            stride=2,
+            padding=1,
+            act=Hardswish,
+        )
 
         conv2_1 = DepthWiseSeparable(
-            num_features=int(32 * scale), num_filters1=32, num_filters2=64, num_groups=32, stride=1, scale=scale
+            num_features=int(32 * scale),
+            num_filters1=32,
+            num_filters2=64,
+            num_groups=32,
+            stride=1,
+            scale=scale,
         )
         self.block_list.append(conv2_1)
 
         conv2_2 = DepthWiseSeparable(
-            num_features=int(64 * scale), num_filters1=64, num_filters2=128, num_groups=64, stride=1, scale=scale
+            num_features=int(64 * scale),
+            num_filters1=64,
+            num_filters2=128,
+            num_groups=64,
+            stride=1,
+            scale=scale,
         )
         self.block_list.append(conv2_2)
 
         conv3_1 = DepthWiseSeparable(
-            num_features=int(128 * scale), num_filters1=128, num_filters2=128, num_groups=128, stride=1, scale=scale
+            num_features=int(128 * scale),
+            num_filters1=128,
+            num_filters2=128,
+            num_groups=128,
+            stride=1,
+            scale=scale,
         )
         self.block_list.append(conv3_1)
 
@@ -170,7 +233,12 @@ class MobileNetV1Enhance(nn.Module):
         self.block_list.append(conv3_2)
 
         conv4_1 = DepthWiseSeparable(
-            num_features=int(256 * scale), num_filters1=256, num_filters2=256, num_groups=256, stride=1, scale=scale
+            num_features=int(256 * scale),
+            num_filters1=256,
+            num_filters2=256,
+            num_groups=256,
+            stride=1,
+            scale=scale,
         )
         self.block_list.append(conv4_1)
 
@@ -241,18 +309,41 @@ class MobileNetV1Enhance(nn.Module):
 class SEModule(nn.Module):
     def __init__(self, channel, reduction=4):
         super().__init__()
-        self.avg_pool = AdaptiveAvgPool2d(1)
-        self.conv1 = Conv2d(
-            in_channels=channel, out_channels=channel // reduction, kernel_size=1, stride=1, padding=0, bias=True
+        self.avg_pool = nn.AdaptiveAvgPool2d(1)
+        self.conv1 = nn.Conv2d(
+            in_channels=channel,
+            out_channels=channel // reduction,
+            kernel_size=1,
+            stride=1,
+            padding=0,
         )
-        self.conv2 = Conv2d(
-            in_channels=channel // reduction, out_channels=channel, kernel_size=1, stride=1, padding=0, bias=True
+        self.relu = nn.ReLU()
+        self.conv2 = nn.Conv2d(
+            in_channels=channel // reduction,
+            out_channels=channel,
+            kernel_size=1,
+            stride=1,
+            padding=0,
         )
+        self.hardsigmoid = Hardsigmoid()
 
-    def forward(self, inputs):
-        outputs = self.avg_pool(inputs)
-        outputs = self.conv1(outputs)
-        outputs = F.relu(outputs)
-        outputs = self.conv2(outputs)
-        outputs = hardsigmoid(outputs)
-        return torch.multiply(inputs, outputs)
+    def forward(self, x):
+        identity = x
+        x = self.avg_pool(x)
+        x = self.conv1(x)
+        x = self.relu(x)
+        x = self.conv2(x)
+        x = self.hardsigmoid(x)
+        x = torch.mul(identity, x)
+        return x
+
+
+if __name__ == "__main__":
+    from torchsummary import summary
+
+    arr = torch.rand((1, 3, 32, 224))
+    model = MobileNetV1Enhance()
+    summary(model, input_size=(3, 32, 224), batch_size=1)
+    out = model(arr)
+    print(out.size())
+    # print(model)

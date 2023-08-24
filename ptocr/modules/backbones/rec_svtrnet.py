@@ -140,16 +140,16 @@ class Attention(nn.Module):
             C = self.C
         else:
             _, N, C = x.shape
-        qkv = self.qkv(x).reshape((0, N, 3, self.num_heads, C // self.num_heads)).transpose((2, 0, 3, 1, 4))
+        qkv = self.qkv(x).reshape((-1, N, 3, self.num_heads, C // self.num_heads)).permute(2, 0, 3, 1, 4)
         q, k, v = qkv[0] * self.scale, qkv[1], qkv[2]
 
-        attn = q.matmul(k.transpose((0, 1, 3, 2)))
+        attn = q.matmul(k.permute(0, 1, 3, 2))
         if self.mixer == "Local":
             attn += self.mask
         attn = nn.functional.softmax(attn, dim=-1)
         attn = self.attn_drop(attn)
 
-        x = (attn.matmul(v)).transpose((0, 2, 1, 3)).reshape((0, N, C))
+        x = (attn.matmul(v)).permute(0, 2, 1, 3).reshape((-1, N, C))
         x = self.proj(x)
         x = self.proj_drop(x)
         return x

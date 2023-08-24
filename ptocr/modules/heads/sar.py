@@ -40,15 +40,17 @@ class SAREncoder(nn.Module):
         # LSTM Encoder
         if enc_bi_rnn:
             direction = "bidirectional"
+            bidirectional = True
         else:
             direction = "forward"
+            bidirectional =False
         kwargs = dict(
             input_size=d_model,
             hidden_size=d_enc,
             num_layers=2,
-            time_major=False,
+            # time_major=False,
             dropout=enc_drop_rnn,
-            direction=direction,
+            bidirectional=bidirectional,
         )
         if enc_gru:
             self.rnn_encoder = nn.GRU(**kwargs)
@@ -162,17 +164,18 @@ class ParallelSARDecoder(BaseDecoder):
 
         # Decoder RNN layer
         if dec_bi_rnn:
-            direction = "bidirectional"
+            bidirectional = True
         else:
-            direction = "forward"
+            bidirectional = False
 
         kwargs = dict(
             input_size=encoder_rnn_out_size,
             hidden_size=encoder_rnn_out_size,
             num_layers=2,
-            time_major=False,
+            # time_major=False,
             dropout=dec_drop_rnn,
-            direction=direction,
+            bidirectional=bidirectional,
+
         )
         if dec_gru:
             self.rnn_decoder = nn.GRU(**kwargs)

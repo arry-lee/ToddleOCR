@@ -115,7 +115,7 @@ class EncoderWithSVTR(nn.Module):
         super().__init__()
         self.depth = depth
         self.use_guide = use_guide
-        self.conv1 = ConvBNLayer(in_channels, in_channels // 8, padding=1, act=Swish)
+        self.conv1 = ConvBNLayer(in_channels, in_channels // 8,kernel_size=3, padding=1, act=Swish)
         self.conv2 = ConvBNLayer(in_channels // 8, hidden_dims, kernel_size=1, act=Swish)
 
         self.svtr_block = nn.ModuleList(
@@ -129,7 +129,7 @@ class EncoderWithSVTR(nn.Module):
                     qkv_bias=qkv_bias,
                     qk_scale=qk_scale,
                     drop=drop_rate,
-                    act_layer=nn.Swish,
+                    act_layer=Swish,
                     attn_drop=attn_drop_rate,
                     drop_path=drop_path,
                     norm_layer="nn.LayerNorm",
@@ -140,11 +140,11 @@ class EncoderWithSVTR(nn.Module):
             ]
         )
         self.norm = nn.LayerNorm(hidden_dims, eps=1e-6)
-        self.conv3 = ConvBNLayer(hidden_dims, in_channels, kernel_size=1, act=nn.Swish)
+        self.conv3 = ConvBNLayer(hidden_dims, in_channels, kernel_size=1, act=Swish)
         # last conv-nxn, the input is concat of input tensor and conv3 output tensor
-        self.conv4 = ConvBNLayer(2 * in_channels, in_channels // 8, padding=1, act=nn.Swish)
+        self.conv4 = ConvBNLayer(2 * in_channels, in_channels // 8,kernel_size=3, padding=1, act=Swish)
 
-        self.conv1x1 = ConvBNLayer(in_channels // 8, dims, kernel_size=1, act=nn.Swish)
+        self.conv1x1 = ConvBNLayer(in_channels // 8, dims, kernel_size=1, act=Swish)
         self.out_channels = dims
         self.apply(self._init_weights)
 
@@ -171,12 +171,12 @@ class EncoderWithSVTR(nn.Module):
         z = self.conv2(z)
         # SVTR global block
         B, C, H, W = z.shape
-        z = z.flatten(2).transpose([0, 2, 1])
+        z = z.flatten(2).permute(0, 2, 1)
         for blk in self.svtr_block:
             z = blk(z)
         z = self.norm(z)
         # last stage
-        z = z.reshape([0, H, W, C]).transpose([0, 3, 1, 2])
+        z = z.reshape([-1, H, W, C]).permute(0, 3, 1, 2)
         z = self.conv3(z)
         z = torch.concat((h, z), dim=1)
         z = self.conv1x1(self.conv4(z))

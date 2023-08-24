@@ -15,19 +15,19 @@ class MultiHead(nn.Module):
         self.gtc_head = "sar"
         assert len(self.head_list) >= 2
         for idx, head_name in enumerate(self.head_list):
-            name = list(head_name)[0]
+            name = head_name.pop('class')
             if name == "SARHead":
-                sar_args = self.head_list[idx][name]
+                sar_args = head_name
                 self.sar_head = eval(name)(
                     in_channels=in_channels, out_channels=out_channels_list["SARLabelDecode"], **sar_args
                 )
             elif name == "CTCHead":
                 self.encoder_reshape = Im2Seq(in_channels)
-                neck_args = self.head_list[idx][name]["Neck"]
+                neck_args = head_name["Neck"]
                 encoder_type = neck_args.pop("name")
                 self.encoder = encoder_type
                 self.ctc_encoder = SequenceEncoder(in_channels=in_channels, encoder_type=encoder_type, **neck_args)
-                head_args = self.head_list[idx][name]["Head"]
+                head_args = head_name["Head"]
                 self.ctc_head = eval(name)(
                     in_channels=self.ctc_encoder.out_channels,
                     out_channels=out_channels_list["CTCLabelDecode"],
