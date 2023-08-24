@@ -83,39 +83,30 @@ class _:
 
     def __class_getitem__(cls, item):
         """方便实现Compose"""
-        if isinstance(item, tuple) and all(callable(it) for it in item):
-            return Compose(item)
+        # if isinstance(item, tuple) and all(callable(it) for it in item):
+        #     return Compose(item)
 
-"""
-    Train = _(
-        dataset=SimpleDataSet(
-            root:= "./train_data/",
-            label_file_list=["./train_data/train_list.txt"],
-            transforms=_[
-                _1 := DecodeImage(img_mode="BGR", channel_first=False),
-                _2 := RecAug(),
-                _3 := CTCLabelEncode(max_text_length, character_dict_path),
-                _4 := RecResizeImg(image_shape=[3, 32, 320]),
-                _5 := KeepKeys(keep_keys=["image", "label", "length"]),
-            ]
-        ),
-        shuffle=True,
-        batch_size=256,
-        drop_last=True,
-        num_workers=8)
+        out = [[],[],[]]
+        for i in item:
+            if isinstance(i,slice):
+                ls = [i.start,i.stop,i.step]
 
-    Eval = _(
-        dataset=SimpleDataSet(
-            root,
-            label_file_list=["./train_data/val_list.txt"],
-            transforms=_[_1, _3, _4, _5]
-        ),
-        shuffle=True,
-        batch_size=1,
-        drop_last=True,
-        num_workers=1)
+                last = None
+                for one in ls:
+                    if one is not None:
+                        last = one
+                        break
 
-"""
+                for i,one in enumerate(ls):
+                    if one is ...:
+                        out[i].append(last)
+                    elif one:
+                        out[i].append(one)
+            else:
+                for one in out:
+                    one.append(i)
+        return out
+
 class ConfigModel:
     """基于配置的训练"""
 
@@ -190,8 +181,8 @@ class ConfigModel:
         _model.to(self.device)
         return _model
 
-    def _dataset(self, mode="Train"):
-        return getattr(self, mode).Dataset(transforms=getattr(self, mode).transforms)
+    # def _dataset(self, mode="Train"):
+        # return getattr(self, mode).Dataset(transforms=getattr(self, mode).transforms)
 
     def _sampler(self, mode, dataset, seed, shuffle=None, drop_last=None):
         if mode == "train":
@@ -203,8 +194,32 @@ class ConfigModel:
             sampler = RandomSampler(dataset) if shuffle else SequentialSampler(dataset)
         return sampler
 
+    def _dataset(self, mode="Train"):
+        train_dict = {k:v for k,v in self.Data.__dict__.items() if not k.startswith('__')}
+        if mode=='Train':
+            cls = train_dict.pop('dataset')
+            return cls(transforms=self._transform(mode),**train_dict)
+        valid_dict = copy.deepcopy(train_dict)
+        valid_dict.update(self.Data.__annotations__)
+        cls = valid_dict.pop('dataset')
+        return cls(transforms=self._transform(mode),**valid_dict)
+
+    def _transform(self,mode='Train'):
+        train,valid,infer = self.Transforms
+        if mode=='Train':
+            return Compose(train)
+        elif mode == 'Eval':
+            return Compose(valid)
+        elif mode == 'Infer':
+            return Compose(infer)
+
     def _build_dataloader(self, mode, seed=None):
-        DATALOADER = getattr(self, mode).DATALOADER
+        if mode == 'Train':
+            DATALOADER = {k:v for k,v in self.Data.__dict__.items() if not k.startswith('__')}
+        elif mode == 'Eval':
+            DATALOADER = {k:v for k,v in self.Data.__dict__.items() if not k.startswith('__')}
+            DATALOADER.update(self.Loader.__annotations__)
+
         shuffle = DATALOADER["shuffle"] if mode == "train" else False
         drop_last = DATALOADER["drop_last"]
         batch_size = DATALOADER["batch_size"]
@@ -215,6 +230,7 @@ class ConfigModel:
             num_workers = DATALOADER["num_workers"]
             pin_memory = DATALOADER.get("pin_memory", True)
         collate_fn = DATALOADER.get("collate_fn", None)
+
         dataset = self._dataset(mode)
         sampler = self._sampler(mode, dataset, seed, shuffle, drop_last)
         batch_sampler = BatchSampler(sampler, batch_size, drop_last)
@@ -543,7 +559,7 @@ class ConfigModel:
         else:
             img = img_or_path
         data = {"image": img}
-        batch = self.Infer.transforms(data)
+        batch = self._transform('Infer')(data)
 
         images = np.expand_dims(batch[0], axis=0)
         shape_list = np.expand_dims(batch[1], axis=0)
@@ -567,7 +583,7 @@ class ConfigModel:
         else:
             img = img_or_path
         data = {"image": img}
-        batch = self.Infer.transforms(data)
+        batch = self._transform('Infer')(data)
 
         images = np.expand_dims(batch[0], axis=0)
         images = torch.Tensor(images)
@@ -673,7 +689,7 @@ class ConfigModel:
                 h, w = img_list[indices[ino]].shape[0:2]
                 wh_ratio = w * 1.0 / h
                 max_wh_ratio = max(max_wh_ratio, wh_ratio) # 计算最大宽高比
-                logger.info(f"计算最大宽高比{max_wh_ratio}")
+                # logger.info(f"计算最大宽高比{max_wh_ratio}")
             for ino in range(beg_img_no, end_img_no):
                 norm_img = self.resize_norm_img(img_list[indices[ino]], max_wh_ratio)# 统一缩放
                 # norm_img,_ = resize_norm_img_chinese(norm_img,[3, 32, 320])
@@ -683,11 +699,11 @@ class ConfigModel:
             norm_img_batch = norm_img_batch.copy()
 
             input_tensor = torch.from_numpy(norm_img_batch)
-            logger.info(input_tensor.shape)
+            # logger.info(input_tensor.shape)
             # self.predictor.run() # how
             # input_tensor = self.Infer.transforms(input_tensor)
             output_tensors = self.model(input_tensor)
-            logger.info(output_tensors)
+            # logger.info(output_tensors)
             # outputs = []
             # for output_tensor in output_tensors:
             #     output = output_tensor.numpy()
