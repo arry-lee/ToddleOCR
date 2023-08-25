@@ -35,6 +35,7 @@ class SimpleDataSet(VisionDataset):
             file_list = [file_list]
         data_lines = []
         for idx, file in enumerate(file_list):
+            file = os.path.join(self.root,file)
             with open(file, "rb") as f:
                 lines = f.readlines()
                 if ratio_list[idx] < 1.0:

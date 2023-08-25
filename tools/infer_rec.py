@@ -11,7 +11,7 @@ def rec(model=None,
         save_res_path=None,
         logger=None):
     post_processor = model.postprocessor
-    transforms = model._transform('Infer')
+    transforms = model.transforms('infer')
     model = model.model
     model.eval()
     if not os.path.exists(os.path.dirname(save_res_path)):

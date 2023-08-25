@@ -192,12 +192,12 @@ class Pipeline:
 
     @property
     def train_dataloader(self):
-        return self.build_dataloader('Train')
+        return self.build_dataloader('train')
 
     @property
     def valid_dataloader(self):
-        if self.config.get('Eval'):
-            return self.build_dataloader('Eval')
+        if self.config.get('eval'):
+            return self.build_dataloader('eval')
         return None
 
     def get_dataset(self, mode):
@@ -439,7 +439,7 @@ class Pipeline:
         # 不用从头开始，从最好的batch开始,需要所有的随机种子要固定
         for epoch in range(start_epoch, epoch_num + 1):
             if hasattr(train_dataloader.dataset, 'need_reset'):  # 数据集需要重置
-                train_dataloader = self.build_dataloader('Train', seed=epoch)  # 数据集都有随机种子
+                train_dataloader = self.build_dataloader('train', seed=epoch)  # 数据集都有随机种子
                 max_iter = len(train_dataloader) - 1 if platform.system() == "Windows" else len(train_dataloader)
 
             for idx, batch in enumerate(train_dataloader):
