@@ -12,7 +12,7 @@ import platform
 import sys
 import time
 from functools import partial
-from typing import Callable, Optional, Tuple, Type
+from typing import Callable, Optional, Tuple, Type,List
 import torch
 import torch.distributed as dist
 from loguru import logger
@@ -103,6 +103,7 @@ class ConfigModel:
 
     rec_image_shape: list = [3, 32, 320]
     rec_batch_num = 6
+    cls_batch_num = 6
     det_box_type = 'rect'
 
     def __init__(self, pretrained=None):
@@ -230,6 +231,45 @@ class ConfigModel:
         return post_result
 
     @torch.no_grad()
+    def cls(self, img_list):
+        img_list = copy.deepcopy(img_list)
+        img_num = len(img_list)
+        # Calculate the aspect ratio of all text bars
+        width_list = []
+        for img in img_list:
+            width_list.append(img.shape[1] / float(img.shape[0]))
+        # Sorting can speed up the cls process
+        indices = np.argsort(np.array(width_list))
+
+        cls_res = [["", 0.0]] * img_num
+        batch_num = self.cls_batch_num
+        for beg_img_no in range(0, img_num, batch_num):
+            end_img_no = min(img_num, beg_img_no + batch_num)
+            norm_img_batch = []
+            max_wh_ratio = 0
+            starttime = time.time()
+            for ino in range(beg_img_no, end_img_no):
+                h, w = img_list[indices[ino]].shape[0:2]
+                wh_ratio = w * 1.0 / h
+                max_wh_ratio = max(max_wh_ratio, wh_ratio)
+            for ino in range(beg_img_no, end_img_no):
+                norm_img = self.resize_norm_img(img_list[indices[ino]])
+                norm_img = norm_img[np.newaxis, :]
+                norm_img_batch.append(norm_img)
+            norm_img_batch = np.concatenate(norm_img_batch)
+            norm_img_batch = norm_img_batch.copy()
+
+            self.input_tensor.from_numpy(norm_img_batch)
+
+            prob_out = self.model(input_tensor)
+            cls_result = self.postprocessor(prob_out)
+            for rno in range(len(cls_result)):
+                label, score = cls_result[rno]
+                cls_res[indices[beg_img_no + rno]] = [label, score]
+                if "180" in label and score > self.cls_thresh:
+                    img_list[indices[beg_img_no + rno]] = cv2.rotate(img_list[indices[beg_img_no + rno]], 1)
+        return img_list, cls_res
+    @torch.no_grad()
     def rec(self, img_list):
         img_num = len(img_list)
         width_list = []
@@ -279,7 +319,7 @@ class ConfigModel:
         if cls:
             (img_crop_list, _) = cls(img_crop_list)
         if rec:
-            img_crop_list = rec.rec(img_crop_list)
+            img_crop_list = rec(img_crop_list)
         return img_crop_list
 
     def save(self, model_path, is_best=False, prefix='ppocr', **kwargs):

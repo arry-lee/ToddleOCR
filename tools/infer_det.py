@@ -21,9 +21,9 @@ def draw_det_res(dt_boxes, img, img_name, save_path):
 @torch.no_grad()
 def det(model, infer_img=None, save_res_path=None):
     postprocessor = model.postprocessor
-    transforms = model.Infer.transforms
+    transforms = model.transforms('infer')
     model = model.model
-    model.eval()
+
     if not os.path.exists(os.path.dirname(save_res_path)):
         os.makedirs(os.path.dirname(save_res_path))
     model.eval()

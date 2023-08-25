@@ -73,7 +73,7 @@ class ConvBNLayer(nn.Module):
 
         if isinstance(act, str):
             self.act = getattr(F, act)
-        elif issubclass(act, nn.Module):
+        elif isinstance(act,type) and issubclass(act, nn.Module):
             self.act = act()
         elif callable(act):
             self.act = act
