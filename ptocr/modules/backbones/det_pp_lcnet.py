@@ -15,6 +15,7 @@
 
 import os
 
+import paddle
 import torch
 import torch.nn as nn
 from torch.hub import download_url_to_file
@@ -217,8 +218,10 @@ class PPLCNet(nn.Module):
         if use_ssld:
             pretrained_url = pretrained_url.replace("_pretrained", "_ssld_pretrained")
         print(pretrained_url)
-        local_weight_path = download_url_to_file(pretrained_url, os.path.expanduser("~/.paddleclas/weights"))
+        # local_weight_path = download_url_to_file(pretrained_url, os.path.expanduser("~/.paddleclas/weights"))
         # todo convert to paddle model
+        local_weight_path = os.path.expanduser("~/.paddleclas/weights/PPLCNet_x1_0_ssld_pretrained.pt")
         param_state_dict = torch.load(local_weight_path)
+        # param_state_dict = {k:torch.tensor(v) for k,v in param_state_dict.items()}
         self.load_state_dict(param_state_dict)
         return

@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-
+from loguru import logger
 import torch.nn.functional as F
 import numpy as np
 __all__ = ['TableAttentionHead', 'SLAHead']
@@ -103,29 +103,34 @@ class SLAHead(nn.Module):
         self.loc_reg_num = loc_reg_num
 
         # structure
-        self.structure_attention_cell = AttentionGRUCell(in_channels, hidden_size, self.num_embeddings)
+        self.structure_attention_cell = AttentionGRUCell(in_channels,
+         hidden_size, self.num_embeddings)
 
         self.structure_generator = nn.Sequential(
-            nn.Linear(self.hidden_size, self.hidden_size), nn.Linear(hidden_size, out_channels, bias=True))
+            nn.Linear(self.hidden_size, self.hidden_size),
+             nn.Linear(hidden_size, out_channels))
 
         # loc
 
         self.loc_generator = nn.Sequential(
-            nn.Linear(self.hidden_size, self.hidden_size), nn.Linear(self.hidden_size, loc_reg_num), nn.Sigmoid())
+            nn.Linear(self.hidden_size, self.hidden_size),
+            nn.Linear(self.hidden_size, loc_reg_num), nn.Sigmoid())
 
 
     def forward(self, inputs, targets=None):
-        fea = inputs[-1] # 4ge,1,96,16,16
-        batch_size = fea.shape[0]#1
+
+        logger.info(len(inputs))
+        fea = inputs[-1]
+        batch_size = fea.size(0)
         # reshape
-        fea = torch.reshape(fea, [fea.shape[0], fea.shape[1], -1])
-        fea = fea.permute(0, 2, 1)  # (NTC)(batch, width, channels)
+        fea = fea.view(fea.size(0), fea.size(1), -1)
+        fea = fea.transpose(1, 2)  # (NTC)(batch, width, channels)
 
         hidden = torch.zeros((batch_size, self.hidden_size))
         structure_preds = torch.zeros((batch_size, self.max_text_length + 1, self.num_embeddings))
         loc_preds = torch.zeros((batch_size, self.max_text_length + 1, self.loc_reg_num))
-        structure_preds.stop_gradient = True
-        loc_preds.stop_gradient = True
+        structure_preds.requires_grad  = False
+        loc_preds.requires_grad = False
         if self.training and targets is not None:
             structure = targets[0]
             for i in range(self.max_text_length + 1):
@@ -133,7 +138,7 @@ class SLAHead(nn.Module):
                 structure_preds[:, i, :] = structure_step
                 loc_preds[:, i, :] = loc_step
         else:
-            pre_chars = torch.zeros([batch_size], dtype=torch.int32)
+            pre_chars = torch.zeros(batch_size, dtype=torch.int32)
             max_text_length = torch.tensor(self.max_text_length)
             # for export
             loc_step, structure_step = None, None
@@ -143,7 +148,7 @@ class SLAHead(nn.Module):
                 structure_preds[:, i, :] = structure_step
                 loc_preds[:, i, :] = loc_step
         if not self.training:
-            structure_preds = F.softmax(structure_preds)
+            structure_preds = F.softmax(structure_preds,dim=-1)
         return {"structure_probs": structure_preds, "loc_preds": loc_preds}
 
     def _decode(self, pre_chars, features, hidden):
@@ -167,7 +172,7 @@ class SLAHead(nn.Module):
     def _char_to_onehot(self, input_char):
         import paddle.nn.functional as F
         import paddle
-        input_char = paddle.Tensor(input_char.numpy())
+        input_char = paddle.to_ensor(input_char.numpy())
         input_ont_hot = F.one_hot(input_char, self.num_embeddings)
         input_ont_hot = torch.tensor(input_ont_hot.numpy())
         return input_ont_hot

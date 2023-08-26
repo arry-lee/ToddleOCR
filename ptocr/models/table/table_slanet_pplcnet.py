@@ -46,9 +46,16 @@ class Model(ConfigModel):
     save_res_path = "output/infer"
     model_type = "table"
     algorithm = "SLANet"
-    Backbone = _(PPLCNet, scale=1.0, pretrained=False, use_ssld=True)
+    Backbone = _(PPLCNet, scale=1.0, pretrained=True, use_ssld=True)
     Neck = _(CSPPAN, out_channels=96)
-    Head = _(SLAHead,out_channels=50, hidden_size=256, max_text_length=500, loc_reg_num=8)
+    postprocessor = TableLabelDecode(character_dict_path=character_dict_path,merge_no_span_structure=True)
+
+    Head = _(SLAHead,
+             out_channels=len(postprocessor.character),
+             hidden_size=256,
+             max_text_length=500,
+             loc_reg_num=8)
+
     loss = SLALoss(structure_weight=1.0, loc_weight=2.0, loc_loss="smooth_l1")
     metric = TableMetric(
         main_indicator="acc",
@@ -57,11 +64,8 @@ class Model(ConfigModel):
         box_format="xy4",
         del_thead_tbody=True,
     )
-    postprocessor = TableLabelDecode(character_dict_path=character_dict_path,merge_no_span_structure=True)
     Optimizer = _(Adam, betas=[0.9, 0.999], clip_norm=5.0, lr=0.001)
-    LRScheduler = _(
-        ConstantLR,
-    )
+    LRScheduler = _(ConstantLR,)
 
     class Data:
         dataset = PubTabDataSet
@@ -89,12 +93,12 @@ class Model(ConfigModel):
         TableBoxEncode(in_box_format="xy4", out_box_format="xy4") : ...,
         ResizeTableImage(max_len=488):...:ResizeTableImage(max_len=488,infer_mode=True),
         NormalizeImage(
-            scale="1./255.",
+            scale=1./255.,
             mean=[0.485, 0.456, 0.406],
             std=[0.229, 0.224, 0.225],
             order="hwc",
         ),
         PaddingTableImage(size=[488, 488]),
         ToCHWImage(),
-        KeepKeys("image", "structure", "bboxes", "bbox_masks", "shape"):...:KeepKeys("image","shape","max_len"),
+        KeepKeys("image", "structure", "bboxes", "bbox_masks", "shape"):...:KeepKeys("image","shape"),
     ]

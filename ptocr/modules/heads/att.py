@@ -68,7 +68,7 @@ class AttentionGRUCell(nn.Module):
 
     def forward(self, prev_hidden, batch_H, char_onehots):
         batch_H_proj = self.i2h(batch_H)
-        prev_hidden_proj = torch.unsqueeze(self.h2h(prev_hidden), dim=1)
+        prev_hidden_proj = self.h2h(prev_hidden.unsqueeze(1))
 
         res = torch.add(batch_H_proj, prev_hidden_proj)
         res = torch.tanh(res)
@@ -76,13 +76,13 @@ class AttentionGRUCell(nn.Module):
 
         alpha = F.softmax(e, dim=1)
         # alpha = torch.squeeze(alpha)
-        alpha = alpha.permute(0, 2, 1)
+        alpha = alpha.transpose(1, 2)#.permute(0, 2, 1)
         context = torch.squeeze(torch.bmm(alpha, batch_H), dim=1)
-        concat_context = torch.concat([context, char_onehots], 1)
+        concat_context = torch.cat([context, char_onehots], 1)
 
         cur_hidden = self.rnn(concat_context, prev_hidden)
 
-        return (cur_hidden,cur_hidden) ,alpha
+        return (cur_hidden,cur_hidden),alpha
 
 
 class AttentionLSTM(nn.Module):

@@ -26,11 +26,20 @@ def tab(model, infer_img=None,save_res_path=None):
                 img = f.read()
                 data = {'image': img}
             batch = transforms(data)
+            logger.info("变换后图像")
+            logger.info(batch)
             images = np.expand_dims(batch[0], axis=0)
-            shape_list = np.expand_dims(batch[1], axis=0)
+            shape_list = np.expand_dims(batch[-1], axis=0)
             images = torch.Tensor(images)
+            logger.info("输入张量")
+            logger.info(images)
             preds = model(images)
+            logger.info("预测结果")
+            logger.info(preds)
             post_result = post_process_class(preds, [shape_list])
+            logger.info("后处理结果")
+            logger.info(post_result)
+
             structure_str_list = post_result['structure_batch_list'][0]
             bbox_list = post_result['bbox_batch_list'][0]
             structure_str_list = structure_str_list[0]

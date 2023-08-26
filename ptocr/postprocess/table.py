@@ -42,7 +42,7 @@ class TableLabelDecode(AttnLabelDecode):
         ignored_tokens = self.get_ignored_tokens()
         end_idx = self.dict[self.end_str]
         structure_idx = structure_probs.argmax(axis=2)
-        structure_probs = structure_probs.max(axis=2)
+        structure_probs = structure_probs.max(axis=2)##?
         structure_batch_list = []
         bbox_batch_list = []
         batch_size = len(structure_idx)
