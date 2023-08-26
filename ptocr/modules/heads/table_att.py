@@ -106,20 +106,20 @@ class SLAHead(nn.Module):
         self.structure_attention_cell = AttentionGRUCell(in_channels, hidden_size, self.num_embeddings)
 
         self.structure_generator = nn.Sequential(
-            nn.Linear(self.hidden_size, self.hidden_size, nn.Linear(hidden_size, out_channels, bias=True))
-        )
+            nn.Linear(self.hidden_size, self.hidden_size), nn.Linear(hidden_size, out_channels, bias=True))
+
         # loc
 
         self.loc_generator = nn.Sequential(
-            nn.Linear(self.hidden_size, self.hidden_size, nn.Linear(self.hidden_size, loc_reg_num, nn.Sigmoid()))
-        )
+            nn.Linear(self.hidden_size, self.hidden_size), nn.Linear(self.hidden_size, loc_reg_num), nn.Sigmoid())
+
 
     def forward(self, inputs, targets=None):
-        fea = inputs[-1]
-        batch_size = fea.shape[0]
+        fea = inputs[-1] # 4ge,1,96,16,16
+        batch_size = fea.shape[0]#1
         # reshape
         fea = torch.reshape(fea, [fea.shape[0], fea.shape[1], -1])
-        fea = fea.transpose([0, 2, 1])  # (NTC)(batch, width, channels)
+        fea = fea.permute(0, 2, 1)  # (NTC)(batch, width, channels)
 
         hidden = torch.zeros((batch_size, self.hidden_size))
         structure_preds = torch.zeros((batch_size, self.max_text_length + 1, self.num_embeddings))
@@ -134,7 +134,7 @@ class SLAHead(nn.Module):
                 loc_preds[:, i, :] = loc_step
         else:
             pre_chars = torch.zeros([batch_size], dtype=torch.int32)
-            max_text_length = torch.Tensor(self.max_text_length)
+            max_text_length = torch.tensor(self.max_text_length)
             # for export
             loc_step, structure_step = None, None
             for i in range(max_text_length + 1):

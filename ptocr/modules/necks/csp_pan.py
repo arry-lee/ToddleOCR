@@ -12,34 +12,34 @@ class DPModule(nn.Module):
     """
     Depth-wise and point-wise module.
      Args:
-        in_channel (int): The input channels of this Module.
-        out_channel (int): The output channels of this Module.
+        in_channels (int): The input channels of this Module.
+        out_channels (int): The output channels of this Module.
         kernel_size (int): The conv2d kernel size of this Module.
         stride (int): The conv2d's stride of this Module.
         act (str): The activation function of this Module,
                    Now support `leaky_relu` and `hard_swish`.
     """
 
-    def __init__(self, in_channel=96, out_channel=96, kernel_size=3, stride=1, act="leaky_relu"):
+    def __init__(self, in_channels=96, out_channels=96, kernel_size=3, stride=1, act="leaky_relu"):
         super().__init__()
         # initializer = nn.init.KaimingUniform()
         self.act = act
         self.dwconv = nn.Conv2d(
-            in_channels=in_channel,
-            out_channels=out_channel,
+            in_channels=in_channels,
+            out_channels=out_channels,
             kernel_size=kernel_size,
-            groups=out_channel,
+            groups=out_channels,
             padding=(kernel_size - 1) // 2,
             stride=stride,
             bias=False,
         )
         nn.init.kaiming_uniform_(self.dwconv.weight)
-        self.bn1 = nn.BatchNorm2d(out_channel)
+        self.bn1 = nn.BatchNorm2d(out_channels)
         self.pwconv = nn.Conv2d(
-            in_channels=out_channel, out_channels=out_channel, kernel_size=1, groups=1, padding=0, bias=False
+            in_channels=out_channels, out_channels=out_channels, kernel_size=1, groups=1, padding=0, bias=False
         )
         nn.init.kaiming_uniform_(self.pwconv.weight)
-        self.bn2 = nn.BatchNorm2d(out_channel)
+        self.bn2 = nn.BatchNorm2d(out_channels)
 
     def act_func(self, x):
         if self.act == "leaky_relu":
@@ -83,9 +83,9 @@ class DarknetBottleneck(nn.Module):
         super().__init__()
         hidden_channels = int(out_channels * expansion)
         conv_func = DPModule if use_depthwise else ConvBNLayer
-        self.conv1 = ConvBNLayer(in_channel=in_channels, out_channel=hidden_channels, kernel_size=1, act=act)
+        self.conv1 = ConvBNLayer(in_channels=in_channels, out_channels=hidden_channels, kernel_size=1, act=act)
         self.conv2 = conv_func(
-            in_channel=hidden_channels, out_channel=out_channels, kernel_size=kernel_size, stride=1, act=act
+            in_channels=hidden_channels, out_channels=out_channels, kernel_size=kernel_size, stride=1, act=act
         )
         self.add_identity = add_identity and in_channels == out_channels
 
@@ -172,7 +172,7 @@ class CSPPAN(nn.Module):
     """
 
     def __init__(
-            self, in_channels, out_channels, kernel_size=5, num_csp_blocks=1, use_depthwise=True, act="hard_swish"
+            self, in_channels, out_channels, kernel_size=5, num_csp_blocks=1, use_depthwise=True, act="hardswish"
     ):
         super().__init__()
         self.in_channels = in_channels

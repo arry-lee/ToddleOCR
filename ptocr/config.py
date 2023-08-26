@@ -21,7 +21,6 @@ from torch.nn.parallel import DistributedDataParallel
 from torch.optim.lr_scheduler import LRScheduler
 from torch.utils.data import BatchSampler, DataLoader, DistributedSampler, RandomSampler, SequentialSampler
 from torchvision.transforms import Compose
-from ptocr import hub
 from ptocr.optim.lr_scheduler import warmup_scheduler
 from ptocr.utils.stats import TrainingStats
 from ptocr.utils.utility import AverageMeter, filter_tag_det_res, filter_tag_det_res_only_clip, resize_norm_img, sorted_boxes
@@ -40,6 +39,7 @@ class _:
             class_ = warmup_scheduler(class_, warmup_epochs)
             return partial(class_, **kwargs)
         if isinstance(class_, str):
+            from ptocr import hub # speed up
             class_ = hub(class_)
             return partial(class_, **kwargs)
 
