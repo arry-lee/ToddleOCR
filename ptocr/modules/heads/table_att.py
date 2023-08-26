@@ -139,7 +139,7 @@ class SLAHead(nn.Module):
             loc_step, structure_step = None, None
             for i in range(max_text_length + 1):
                 hidden, structure_step, loc_step = self._decode(pre_chars, fea, hidden)
-                pre_chars = structure_step.argmax(axis=1, dtype="int32")
+                pre_chars = structure_step.argmax(dim=1).to(dtype=torch.int32)
                 structure_preds[:, i, :] = structure_step
                 loc_preds[:, i, :] = loc_step
         if not self.training:
@@ -165,5 +165,9 @@ class SLAHead(nn.Module):
         return hidden, structure_step, loc_step
 
     def _char_to_onehot(self, input_char):
+        import paddle.nn.functional as F
+        import paddle
+        input_char = paddle.Tensor(input_char.numpy())
         input_ont_hot = F.one_hot(input_char, self.num_embeddings)
+        input_ont_hot = torch.tensor(input_ont_hot.numpy())
         return input_ont_hot
