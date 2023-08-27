@@ -67,22 +67,23 @@ class AttentionGRUCell(nn.Module):
         self.hidden_size = hidden_size
 
     def forward(self, prev_hidden, batch_H, char_onehots):
+
         batch_H_proj = self.i2h(batch_H)
-        prev_hidden_proj = self.h2h(prev_hidden.unsqueeze(1))
+        prev_hidden_proj = self.h2h(prev_hidden).unsqueeze(1)
 
         res = torch.add(batch_H_proj, prev_hidden_proj)
         res = torch.tanh(res)
         e = self.score(res)
 
-        alpha = F.softmax(e, dim=1)
+        alpha = F.softmax(e, dim=1) # 得分
         # alpha = torch.squeeze(alpha)
-        alpha = alpha.transpose(1, 2)#.permute(0, 2, 1)
+        alpha = alpha.transpose(1, 2)#.permute(0, 2, 1)1,1,256
         context = torch.squeeze(torch.bmm(alpha, batch_H), dim=1)
         concat_context = torch.cat([context, char_onehots], 1)
 
         cur_hidden = self.rnn(concat_context, prev_hidden)
-
-        return (cur_hidden,cur_hidden),alpha
+        print(prev_hidden==cur_hidden)
+        return cur_hidden,alpha
 
 
 class AttentionLSTM(nn.Module):
@@ -168,3 +169,60 @@ class AttentionLSTMCell(nn.Module):
         cur_hidden = self.rnn(concat_context, prev_hidden)
 
         return cur_hidden, alpha
+
+
+import math
+
+# from paddle.nn import GRUCell
+class GRUCell(nn.Module):
+    def __init__(self, input_size, hidden_size):
+        super(GRUCell, self).__init__()
+        self.hidden_size = hidden_size
+        self.input_size = input_size
+
+        std = 1.0 / math.sqrt(hidden_size)
+        self.weight_ih = nn.Parameter(torch.empty(3 * hidden_size, input_size))
+        self.weight_hh = nn.Parameter(torch.empty(3 * hidden_size, hidden_size))
+        self.bias_ih = nn.Parameter(torch.empty(3 * hidden_size))
+        self.bias_hh = nn.Parameter(torch.empty(3 * hidden_size))
+
+        nn.init.uniform_(self.weight_ih, -std, std)
+        nn.init.uniform_(self.weight_hh, -std, std)
+        nn.init.uniform_(self.bias_ih, -std, std)
+        nn.init.uniform_(self.bias_hh, -std, std)
+
+        self._gate_activation = F.sigmoid
+        self._activation = F.tanh
+
+    def forward(self, inputs, states=None):
+
+        # if states is None:
+        #     states = self.get_initial_states(inputs, self.state_shape)
+
+        pre_hidden = states
+        x_gates = torch.matmul(inputs, self.weight_ih.t())
+        # print(x_gates)
+        if self.bias_ih is not None:
+            x_gates = x_gates + self.bias_ih
+        h_gates = torch.matmul(pre_hidden, self.weight_hh.t())
+        if self.bias_hh is not None:
+            h_gates = h_gates + self.bias_hh
+
+        x_r, x_z, x_c = torch.chunk(x_gates, 3, dim=1)
+        h_r, h_z, h_c = torch.chunk(h_gates, 3, dim=1)
+
+        r = self._gate_activation(x_r + h_r)
+        z = self._gate_activation(x_z + h_z)
+        c = self._activation(x_c + r * h_c)  # apply reset gate after mm
+        h = (pre_hidden - c) * z + c
+        # assert torch.all(z)
+        # print(z)
+        # print(states==h)
+        return h, h
+
+    @property
+    def state_shape(self):
+        return (self.hidden_size,)
+
+    def extra_repr(self):
+        return '{input_size}, {hidden_size}'.format(**self.__dict__)
