@@ -44,7 +44,7 @@ class DPModule(nn.Module):
     def act_func(self, x):
         if self.act == "leaky_relu":
             x = F.leaky_relu(x)
-        elif self.act == "hard_swish":
+        elif self.act == "hardswish":
             x = F.hardswish(x)
         return x
 

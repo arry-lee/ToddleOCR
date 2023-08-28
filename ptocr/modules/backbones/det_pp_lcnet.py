@@ -79,11 +79,11 @@ class DepthWiseSeparable(nn.Module):
         super().__init__()
         self.use_se = use_se
         self.dw_conv = ConvBNLayer(
-            in_channels=num_features, out_channels=num_features, kernel_size=dw_size, stride=stride, groups=num_features
+            in_channels=num_features, out_channels=num_features, kernel_size=dw_size, stride=stride, groups=num_features,act='hardswish'
         )
         if use_se:
             self.se = SEModule(num_features)
-        self.pw_conv = ConvBNLayer(in_channels=num_features, out_channels=num_filters, kernel_size=1, stride=1)
+        self.pw_conv = ConvBNLayer(in_channels=num_features, out_channels=num_filters, kernel_size=1, stride=1,act='hardswish')
 
     def forward(self, x):
         x = self.dw_conv(x)
@@ -129,7 +129,7 @@ class PPLCNet(nn.Module):
         self.scale = scale
 
         self.conv1 = ConvBNLayer(
-            in_channels=in_channels, out_channels=make_divisible(16 * scale), kernel_size=3, stride=2
+            in_channels=in_channels, out_channels=make_divisible(16 * scale), kernel_size=3, stride=2,act='hardswish'
         )
 
         self.blocks2 = nn.Sequential(

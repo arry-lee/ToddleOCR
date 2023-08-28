@@ -175,7 +175,7 @@ class SLAHead(nn.Module):
                 structure_preds[:, i, :] = structure_step
                 loc_preds[:, i, :] = loc_step
         else:
-            pre_chars = torch.zeros(batch_size, dtype=torch.int64)
+            pre_chars = torch.zeros([batch_size], dtype=torch.int64)
             # max_text_length = torch.tensor(self.max_text_length)
             # for export
             loc_step, structure_step = None, None
@@ -210,8 +210,5 @@ class SLAHead(nn.Module):
         return cur_hidden, structure_step, loc_step
 
     def _char_to_onehot(self, input_char):
-        input_ont_hot = F.one_hot(
-            input_char.to(torch.int64), self.num_embeddings
-        )
-
+        input_ont_hot = F.one_hot(input_char.to(torch.int64), self.num_embeddings)
         return input_ont_hot
