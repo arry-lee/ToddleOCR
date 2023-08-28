@@ -1,18 +1,21 @@
 import copy
 import warnings
+
+warnings.filterwarnings('ignore')
+
 import cv2
 import numpy as np
+
 from ptocr.modules.architectures import BaseModel
 from tools.infer.utility import get_minarea_rect_crop, get_rotate_crop_image
-warnings.filterwarnings('ignore')
+
 import datetime
 import os
 import pickle
 import platform
-import sys
 import time
 from functools import partial
-from typing import Callable, Optional, Tuple, Type,List
+from typing import Callable, Optional, Tuple, Type, List
 import torch
 import torch.distributed as dist
 from loguru import logger
@@ -23,9 +26,12 @@ from torch.utils.data import BatchSampler, DataLoader, DistributedSampler, Rando
 from torchvision.transforms import Compose
 from ptocr.optim.lr_scheduler import warmup_scheduler
 from ptocr.utils.stats import TrainingStats
-from ptocr.utils.utility import AverageMeter, filter_tag_det_res, filter_tag_det_res_only_clip, resize_norm_img, sorted_boxes
+from ptocr.utils.utility import AverageMeter, filter_tag_det_res, filter_tag_det_res_only_clip, resize_norm_img, \
+    sorted_boxes
 from tools.train import valid
+
 torch.autograd.set_detect_anomaly(True)
+
 
 class _:
 
@@ -39,7 +45,7 @@ class _:
             class_ = warmup_scheduler(class_, warmup_epochs)
             return partial(class_, **kwargs)
         if isinstance(class_, str):
-            from ptocr import hub # speed up
+            from ptocr import hub  # speed up
             class_ = hub(class_)
             return partial(class_, **kwargs)
 
@@ -63,6 +69,7 @@ class _:
                     one.append(i)
         return out
 
+
 class ConfigModel:
     epoch_num: int
     log_window_size: int
@@ -74,8 +81,8 @@ class ConfigModel:
     metric_during_train: bool = False
     pretrained_model: Optional[str] = None
     checkpoints: Optional[str] = None
-    distributed:bool = False
-    calc_epoch_interval:int= 1
+    distributed: bool = False
+    calc_epoch_interval: int = 1
     model_type: str
     algorithm: str
 
@@ -99,7 +106,6 @@ class ConfigModel:
     LRScheduler: Type[torch.optim.lr_scheduler.LRScheduler] | partial
     postprocessor: Callable
     metric: Callable
-
 
     rec_image_shape: list = [3, 32, 320]
     rec_batch_num = 6
@@ -179,7 +185,8 @@ class ConfigModel:
         else:
             sampler = RandomSampler(dataset) if shuffle else SequentialSampler(dataset)
         batch_sampler = BatchSampler(sampler, batch_size, drop_last)
-        data_loader = DataLoader(dataset=dataset, batch_sampler=batch_sampler, num_workers=num_workers, pin_memory=pin_memory, collate_fn=collate_fn)
+        data_loader = DataLoader(dataset=dataset, batch_sampler=batch_sampler, num_workers=num_workers,
+                                 pin_memory=pin_memory, collate_fn=collate_fn)
         return data_loader
 
     def _build_scheduler(self, optimizer, max_epochs, step_each_epoch):
@@ -269,6 +276,7 @@ class ConfigModel:
                 if "180" in label and score > self.cls_thresh:
                     img_list[indices[beg_img_no + rno]] = cv2.rotate(img_list[indices[beg_img_no + rno]], 1)
         return img_list, cls_res
+
     @torch.no_grad()
     def rec(self, img_list):
         img_num = len(img_list)
@@ -391,7 +399,9 @@ class ConfigModel:
             if len(valid_dataloader) == 0:
                 logger.info('No Images in eval dataset, evaluation during training will be disabled')
                 start_eval_step = 1e+111
-            logger.info('During the training process, after the {}th iteration, an evaluation is run every {} iterations'.format(start_eval_step, eval_batch_step))
+            logger.info(
+                'During the training process, after the {}th iteration, an evaluation is run every {} iterations'.format(
+                    start_eval_step, eval_batch_step))
         save_epoch_step = self.save_epoch_step
         save_model_dir = self.save_model_dir
         os.makedirs(save_model_dir, exist_ok=True)
@@ -465,38 +475,51 @@ class ConfigModel:
                 train_stats.update(stats)
                 if log_writer and self.is_rank0:
                     log_writer.log_metrics(metrics=train_stats.get(), prefix='TRAIN', step=global_step)
-                if self.is_rank0 and (global_step > 0 and global_step % log_batch_step == 0 or idx >= len(train_dataloader) - 1):
+                if self.is_rank0 and (
+                        global_step > 0 and global_step % log_batch_step == 0 or idx >= len(train_dataloader) - 1):
                     logs = train_stats.log()
                     eta_sec = ((epoch_num + 1 - epoch) * len(train_dataloader) - idx - 1) * eta_meter.avg
                     eta_sec_format = str(datetime.timedelta(seconds=int(eta_sec)))
-                    strs = 'epoch: [{}/{}], global_step: {}, {}, avg_reader_cost: {:.5f} s, avg_batch_cost: {:.5f} s, avg_samples: {}, ips: {:.5f} samples/s, eta: {}'.format(epoch, epoch_num, global_step, logs, train_reader_cost / log_batch_step, train_batch_cost / log_batch_step, total_samples / log_batch_step, total_samples / train_batch_cost, eta_sec_format)
+                    strs = 'epoch: [{}/{}], global_step: {}, {}, avg_reader_cost: {:.5f} s, avg_batch_cost: {:.5f} s, avg_samples: {}, ips: {:.5f} samples/s, eta: {}'.format(
+                        epoch, epoch_num, global_step, logs, train_reader_cost / log_batch_step,
+                        train_batch_cost / log_batch_step, total_samples / log_batch_step,
+                        total_samples / train_batch_cost, eta_sec_format)
                     logger.info(strs)
                     total_samples = 0
                     train_reader_cost = 0.0
                     train_batch_cost = 0.0
-                if global_step > start_eval_step and (global_step - start_eval_step) % eval_batch_step == 0 and self.is_rank0:
-                    cur_metric = valid(model, valid_dataloader, post_processor, metric_, model_type, extra_input=extra_input)
-                    cur_metric_str = 'cur metric, {}'.format(', '.join(['{}: {}'.format(k, v) for (k, v) in cur_metric.items()]))
+                if global_step > start_eval_step and (
+                        global_step - start_eval_step) % eval_batch_step == 0 and self.is_rank0:
+                    cur_metric = valid(model, valid_dataloader, post_processor, metric_, model_type,
+                                       extra_input=extra_input)
+                    cur_metric_str = 'cur metric, {}'.format(
+                        ', '.join(['{}: {}'.format(k, v) for (k, v) in cur_metric.items()]))
                     logger.info(cur_metric_str)
                     if log_writer is not None:
                         log_writer.log_metrics(metrics=cur_metric, prefix='EVAL', step=global_step)
                     if cur_metric[main_indicator] >= best_model_dict[main_indicator]:
                         best_model_dict.update(cur_metric)
                         best_model_dict['best_epoch'] = epoch
-                        self.save(save_model_dir, is_best=True, prefix='best_accuracy', best_model_dict=best_model_dict, epoch=epoch, global_step=global_step)
-                    best_str = 'best metric, {}'.format(', '.join(['{}: {}'.format(k, v) for (k, v) in best_model_dict.items()]))
+                        self.save(save_model_dir, is_best=True, prefix='best_accuracy', best_model_dict=best_model_dict,
+                                  epoch=epoch, global_step=global_step)
+                    best_str = 'best metric, {}'.format(
+                        ', '.join(['{}: {}'.format(k, v) for (k, v) in best_model_dict.items()]))
                     logger.info(best_str)
                     if log_writer is not None:
-                        log_writer.log_metrics(metrics={'best_{}'.format(main_indicator): best_model_dict[main_indicator]}, prefix='EVAL', step=global_step)
+                        log_writer.log_metrics(
+                            metrics={'best_{}'.format(main_indicator): best_model_dict[main_indicator]}, prefix='EVAL',
+                            step=global_step)
                         log_writer.log_model(is_best=True, prefix='best_accuracy', metadata=best_model_dict)
                 reader_start = time.time()
             if self.is_rank0:
                 logger.info('Save model checkpoint to {}'.format(save_model_dir))
-                self.save(save_model_dir, is_best=False, prefix='latest', best_model_dict=best_model_dict, epoch=epoch, global_step=global_step)
+                self.save(save_model_dir, is_best=False, prefix='latest', best_model_dict=best_model_dict, epoch=epoch,
+                          global_step=global_step)
                 if log_writer is not None:
                     log_writer.log_model(is_best=False, prefix='latest')
                 if epoch > 0 and epoch % save_epoch_step == 0:
-                    self.save(save_model_dir, is_best=False, prefix='iter_epoch_{}'.format(epoch), best_model_dict=best_model_dict, epoch=epoch, global_step=global_step)
+                    self.save(save_model_dir, is_best=False, prefix='iter_epoch_{}'.format(epoch),
+                              best_model_dict=best_model_dict, epoch=epoch, global_step=global_step)
                     if log_writer is not None:
                         log_writer.log_model(is_best=False, prefix='iter_epoch_{}'.format(epoch))
         best_str = f"best metric, {', '.join((f'{k}: {v}' for (k, v) in best_model_dict.items()))}"
