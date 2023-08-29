@@ -1,3 +1,13 @@
+<p align="center">
+ <img src="./doc/toddleocr.png" align="middle" width = "600"/>
+<p align="center">
+<p align="left">
+    <a href="./LICENSE"><img src="https://img.shields.io/badge/license-Apache%202-dfd.svg"></a>
+    <a href=""><img src="https://img.shields.io/badge/python-3.7+-aff.svg"></a>
+    <a href=""><img src="https://img.shields.io/badge/os-linux%2C%20win%2C%20mac-pink.svg"></a>
+    <a href="https://github.com/arry-lee/ToddleOCR/stargazers"><img src="https://img.shields.io/github/stars/arry-lee/ToddleOCR?color=ccf"></a>
+</p>
+
 # ToddleOCR 拓牍
 本项目源于 PaddleOCR, 作者处于学习的目的改成了 Torch 实现的版本，命名为 ToddleOCR，有三层意思：
 1. 结合了 Torch 和 Paddle，所以叫 Toddle
