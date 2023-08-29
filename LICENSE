@@ -1,3 +1,27 @@
+Copyright (c) 2023 Arry Lee(arry_lee@qq.com). All rights reserved.
+
+This work is a modification and derivation based on
+PaddleOCR (https://github.com/PaddlePaddle/PaddleOCR),
+and it has been developed into a separate original work.
+
+Under the Apache License, Version 2.0 (http://www.apache.org/licenses/),
+you are granted the permission to use, copy, and distribute this derivative work,
+subject to the following conditions:
+
+   1. Retain the original PaddleOCR code and its derivative works' copyright
+      notice in both the source code and object code of your derivative work.
+
+   2. Your derivative work must remain compatible with the license of PaddleOCR
+      and adhere to the terms and conditions of the Apache License.
+
+   3. Your derivative work must not contain any content that violates laws and
+      regulations or infringes upon the rights of others.
+
+   4. If you have made modifications to this work, please clearly indicate your
+      modifications in the relevant files and add your own copyright notice.
+
+Here is the copyright statement for PaddleOCR:
+
 Copyright (c) 2016 PaddlePaddle Authors. All Rights Reserved
 
                                  Apache License

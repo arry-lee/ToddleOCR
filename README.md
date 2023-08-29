@@ -15,3 +15,7 @@
 3. Toddle 的中文名音译为 “拓牍”，意思是从竹片上拓印文字，引申为从图片上读取文字
 
 项目在探索阶段
+
+
+## 许可证书
+本项目的发布受<a href="https://github.com/arry-lee/ToddleOCR/blob/torchocr/LICENSE">Apache 2.0 license</a>许可认证。
