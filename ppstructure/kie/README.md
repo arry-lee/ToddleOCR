@@ -125,7 +125,7 @@ cd PaddleOCR
 pip install -r requirements.txt
 pip install -r ppstructure/kie/requirements.txt
 # 安装PaddleOCR引擎用于预测
-pip install paddleocr -U
+pip install toddleocr -U
 ```
 
 The visualized results of SER are saved in the `./output` folder by default. Examples of results are as follows.

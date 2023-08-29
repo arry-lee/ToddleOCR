@@ -69,9 +69,9 @@ class SerPredictor:
 
         load_model(config, self.model, model_type=config["Model"]["model_type"])
 
-        from paddleocr import PaddleOCR
+        from toddleocr import ToddleOCR
 
-        self.ocr_engine = PaddleOCR(
+        self.ocr_engine = ToddleOCR(
             use_angle_cls=False,
             show_log=False,
             rec_model_dir=global_config.get("kie_rec_model_dir", None),

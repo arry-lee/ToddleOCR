@@ -69,7 +69,7 @@ def transmodel():
 
     t_keys =[ k for k in x.keys() if not k.endswith('.num_batches_tracked')]
     # print(t_keys)
-    paddle_params = paddle.load(r'D:\dev\github\PaddleOCR\model\ch_ppocr_server_v2.0_rec_pre\best_accuracy.pdparams')
+    paddle_params = paddle.load(r'D:\dev\github\ToddleOCR\model\ch_ppocr_server_v2.0_rec_pre\best_accuracy.pdparams')
     print(type(paddle_params))
 
     keys = list(paddle_params.keys())
@@ -121,5 +121,5 @@ def transmodel():
 if __name__ == '__main__':
     # transmodel()
     m = Model()
-    m.rec("D:\dev\github\PaddleOCR\doc\imgs_words\ch\word_4.jpg",
-          r"D:\dev\github\PaddleOCR\model\ch_ppocr_server_v2.0_rec_pre\best_accuracy.pth")
+    m.rec("D:\dev\github\ToddleOCR\doc\imgs_words\ch\word_4.jpg",
+          r"D:\dev\github\ToddleOCR\model\ch_ppocr_server_v2.0_rec_pre\best_accuracy.pth")

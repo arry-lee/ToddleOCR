@@ -105,12 +105,12 @@ PaddleOCR的Python代码遵循 [PEP8规范](https://www.python.org/dev/peps/pep-
   > 检测+方向分类器+识别全流程：设置方向分类器参数 `--use_angle_cls true` 后可对竖排文本进行识别。
   >
   > ```
-  > paddleocr --image_dir ./imgs/11.jpg --use_angle_cls true
+  > toddle--image_dir ./imgs/11.jpg --use_angle_cls true
   > ```
 
 - 变量引用：如果在行内引用到代码变量或命令参数，需要用行内代码表示，例如上方  `--use_angle_cls true` ，并在前后各空一格
 
-- 统一命名：如PP-OCRv2、PP-OCR mobile、`paddleocr` whl包、PPOCRLabel、Paddle Lite等
+- 统一命名：如PP-OCRv2、PP-OCR mobile、`toddle whl包、PPOCRLabel、Paddle Lite等
 
 - 补充说明：通过引用格式 `>` 补充说明，或对注意事项进行说明
 

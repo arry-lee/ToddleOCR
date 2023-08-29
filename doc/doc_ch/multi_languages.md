@@ -29,7 +29,7 @@ PaddleOCR 旨在打造一套丰富、领先、且实用的OCR工具库，不仅�
 
 - [1 安装](#安装)
     - [1.1 paddle 安装](#paddle安装)
-    - [1.2 paddleocr package 安装](#paddleocr_package_安装)  
+    - [1.2 toddlepackage 安装](#paddleocr_package_安装)  
 
 - [2 快速使用](#快速使用)
     - [2.1 命令行运行](#命令行运行)
@@ -52,17 +52,17 @@ pip install paddlepaddle-gpu
 ```
 
 <a name="paddleocr_package_安装"></a>
-### 1.2 paddleocr package 安装
+### 1.2 toddlepackage 安装
 
 
 pip 安装
 ```
-pip install "paddleocr>=2.0.6" # 推荐使用2.0.6版本
+pip install "toddle=2.0.6" # 推荐使用2.0.6版本
 ```
 本地构建并安装
 ```
 python3 setup.py bdist_wheel
-pip3 install dist/paddleocr-x.x.x-py3-none-any.whl # x.x.x是paddleocr的版本号
+pip3 install dist/toddlex.x.x-py3-none-any.whl # x.x.x是paddleocr的版本号
 ```
 
 <a name="快速使用"></a>
@@ -74,7 +74,7 @@ pip3 install dist/paddleocr-x.x.x-py3-none-any.whl # x.x.x是paddleocr的版本�
 查看帮助信息
 
 ```
-paddleocr -h
+toddle-h
 ```
 
 * 整图预测（检测+识别）
@@ -83,7 +83,7 @@ Paddleocr目前支持80个语种，可以通过修改--lang参数进行切换，
 
 ``` bash
 
-paddleocr --image_dir doc/imgs_en/254.jpg --lang=en
+toddle--image_dir doc/imgs_en/254.jpg --lang=en
 ```
 
 <div align="center">
@@ -107,7 +107,7 @@ paddleocr --image_dir doc/imgs_en/254.jpg --lang=en
 * 识别预测
 
 ```bash
-paddleocr --image_dir doc/imgs_words_en/word_308.png --det false --lang=en
+toddle--image_dir doc/imgs_words_en/word_308.png --det false --lang=en
 ```
 
 结果是一个tuple，返回识别结果和识别置信度
@@ -119,7 +119,7 @@ paddleocr --image_dir doc/imgs_words_en/word_308.png --det false --lang=en
 * 检测预测
 
 ```
-paddleocr --image_dir PaddleOCR/doc/imgs/11.jpg --rec false
+toddle--image_dir PaddleOCR/doc/imgs/11.jpg --rec false
 ```
 
 结果是一个list，每个item只包含文本框
@@ -139,7 +139,7 @@ ppocr 也支持在python脚本中运行，便于嵌入到您自己的代码中 �
 * 整图预测（检测+识别）
 
 ```
-from paddleocr import PaddleOCR, draw_ocr
+from toddleimport PaddleOCR, draw_ocr
 
 # 同样也是通过修改 lang 参数切换语种
 ocr = PaddleOCR(lang="korean") # 首次执行会自动下载模型文件

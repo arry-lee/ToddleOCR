@@ -74,7 +74,7 @@ PaddleOCR希望可以通过AI的力量助力任何一位有梦想的开发者实
 
 PaddleOCR非常欢迎社区贡献以PaddleOCR为核心的各种服务、部署实例与软件应用，经过认证的社区贡献会被添加在上述社区贡献表中，为广大开发者增加曝光，也是PaddleOCR的荣耀，其中：
 
-- 项目形式：官方社区认证的项目代码应有良好的规范和结构，同时，还应配备一个详细的README.md，说明项目的使用方法。通过在requirements.txt文件中增加一行 `paddleocr` 可以自动收录到PaddleOCR的usedby中。
+- 项目形式：官方社区认证的项目代码应有良好的规范和结构，同时，还应配备一个详细的README.md，说明项目的使用方法。通过在requirements.txt文件中增加一行 `toddle 可以自动收录到PaddleOCR的usedby中。
 
 - 合入方式：如果是对PaddleOCR现有工具的更新升级，则会合入主repo。如果为PaddleOCR拓展了新功能，请先与官方人员联系，确认项目是否合入主repo，*即使新功能未合入主repo，我们同样也会以社区贡献的方式为您的个人项目增加曝光。*
 

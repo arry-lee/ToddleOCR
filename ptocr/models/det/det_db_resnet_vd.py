@@ -95,4 +95,4 @@ def transmodel():
     torch.save(d, 'D:\\dev\\.model\\paddocr\\ch_ppocr_server_v2.0_det_train\\best_accuracy.pth')
 if __name__ == '__main__':
     m = Model()
-    m.infer('D:\\dev\\github\\PaddleOCR\\doc\\imgs\\11.jpg', 'D:\\dev\\.model\\paddocr\\ch_ppocr_server_v2.0_det_train\\best_accuracy.pth')
+    m.infer('D:\\dev\\github\\ToddleOCR\\doc\\imgs\\11.jpg', 'D:\\dev\\.model\\paddocr\\ch_ppocr_server_v2.0_det_train\\best_accuracy.pth')

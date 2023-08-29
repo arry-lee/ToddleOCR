@@ -110,5 +110,5 @@ class Hub:
                     raise ValueError("model_type is not specified")
         return class_
 
-# x = get_all(r"D:\dev\github\PaddleOCR\ptocr\modules\backbones\resnet\rec_resnet_32.py")
+# x = get_all(r"D:\dev\github\ToddleOCR\ptocr\modules\backbones\resnet\rec_resnet_32.py")
 # print(x)

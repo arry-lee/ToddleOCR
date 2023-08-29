@@ -33,14 +33,14 @@ from ppocr.utils.visual import draw_ser_results
 from ppocr.utils.utility import get_image_file_list, check_and_read
 from ppstructure.utility import parse_args
 
-from paddleocr import PaddleOCR
+from toddleocr import ToddleOCR
 
 logger = get_logger()
 
 
 class SerPredictor:
     def __init__(self, args):
-        self.ocr_engine = PaddleOCR(
+        self.ocr_engine = ToddleOCR(
             use_angle_cls=args.use_angle_cls,
             det_model_dir=args.det_model_dir,
             rec_model_dir=args.rec_model_dir,

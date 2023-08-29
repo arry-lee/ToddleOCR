@@ -40,7 +40,7 @@
 ### 1.2 安装PaddleOCR whl包
 
 ```bash
-pip install "paddleocr>=2.0.1" # 推荐使用2.0.1+版本
+pip install "toddle=2.0.1" # 推荐使用2.0.1+版本
 ```
 
 - 对于Windows环境用户：直接通过pip安装的shapely库可能出现`[winRrror 126] 找不到指定模块的问题`。建议从[这里](https://www.lfd.uci.edu/~gohlke/pythonlibs/#shapely)下载shapely安装包完成安装。
@@ -65,7 +65,7 @@ cd /path/to/ppocr_img
 * 检测+方向分类器+识别全流程：`--use_angle_cls true`设置使用方向分类器识别180度旋转文字，`--use_gpu false`设置不使用GPU
 
   ```bash
-  paddleocr --image_dir ./imgs/11.jpg --use_angle_cls true --use_gpu false
+  toddle--image_dir ./imgs/11.jpg --use_angle_cls true --use_gpu false
   ```
 
   结果是一个list，每个item包含了文本框，文字和识别置信度
@@ -77,13 +77,13 @@ cd /path/to/ppocr_img
 
   此外，paddleocr也支持输入pdf文件，并且可以通过指定参数`page_num`来控制推理前面几页，默认为0，表示推理所有页。
   ```bash
-  paddleocr --image_dir ./xxx.pdf --use_angle_cls true --use_gpu false --page_num 2
+  toddle--image_dir ./xxx.pdf --use_angle_cls true --use_gpu false --page_num 2
   ```
 
 - 单独使用检测：设置`--rec`为`false`
 
   ```bash
-  paddleocr --image_dir ./imgs/11.jpg --rec false
+  toddle--image_dir ./imgs/11.jpg --rec false
   ```
 
   结果是一个list，每个item只包含文本框
@@ -97,7 +97,7 @@ cd /path/to/ppocr_img
 - 单独使用识别：设置`--det`为`false`
 
   ```bash
-  paddleocr --image_dir ./imgs_words/ch/word_1.jpg --det false
+  toddle--image_dir ./imgs_words/ch/word_1.jpg --det false
   ```
 
   结果是一个list，每个item只包含识别结果和识别置信度
@@ -114,7 +114,7 @@ paddleocr默认使用PP-OCRv3模型(`--ocr_version PP-OCRv3`)，如需使用其�
 | PP-OCRv2 | 支持中英文的检测和识别，方向分类器，多语言暂未更新 |
 | PP-OCR   | 支持中、英文检测和识别，方向分类器，支持多语种识别 |
 
-如需新增自己训练的模型，可以在[paddleocr](../../paddleocr.py)中增加模型链接和字段，重新编译即可。
+如需新增自己训练的模型，可以在[toddle(../../paddleocr.py)中增加模型链接和字段，重新编译即可。
 
 更多whl包使用可参考[whl包文档](./whl.md)
 
@@ -125,7 +125,7 @@ paddleocr默认使用PP-OCRv3模型(`--ocr_version PP-OCRv3`)，如需使用其�
 PaddleOCR目前支持80个语种，可以通过修改`--lang`参数进行切换，对于英文模型，指定`--lang=en`。
 
 ``` bash
-paddleocr --image_dir ./imgs_en/254.jpg --lang=en
+toddle--image_dir ./imgs_en/254.jpg --lang=en
 ```
 
 <div align="center">
@@ -163,7 +163,7 @@ paddleocr --image_dir ./imgs_en/254.jpg --lang=en
 * 检测+方向分类器+识别全流程
 
 ```python
-from paddleocr import PaddleOCR, draw_ocr
+from toddleimport PaddleOCR, draw_ocr
 
 # Paddleocr目前支持的多语言语种可以通过修改lang参数进行切换
 # 例如`ch`, `en`, `fr`, `german`, `korean`, `japan`
@@ -207,7 +207,7 @@ im_show.save('result.jpg')
 如果输入是PDF文件，那么可以参考下面代码进行可视化
 
 ```python
-from paddleocr import PaddleOCR, draw_ocr
+from toddleimport PaddleOCR, draw_ocr
 
 # Paddleocr目前支持的多语言语种可以通过修改lang参数进行切换
 # 例如`ch`, `en`, `fr`, `german`, `korean`, `japan`

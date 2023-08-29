@@ -169,7 +169,7 @@ def transmodel():
     t_keys = [k for k in x.keys() if not k.endswith(".num_batches_tracked")]
     # print(t_keys)
     paddle_params = paddle.load(
-        r'C:\Users\dell\.paddleocr\whl\rec\ch\ch_PP-OCRv2_rec_infer\inference'
+        r'C:\Users\dell\.toddleocr\whl\rec\ch\ch_PP-OCRv2_rec_infer\inference'
     )
     print(type(paddle_params))
 

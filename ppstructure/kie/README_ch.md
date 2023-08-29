@@ -119,7 +119,7 @@ cd PaddleOCR
 pip install -r requirements.txt
 pip install -r ppstructure/kie/requirements.txt
 # 安装PaddleOCR引擎用于预测
-pip install paddleocr -U
+pip install toddleocr -U
 ```
 
 ### 4.2 快速开始

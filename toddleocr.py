@@ -36,8 +36,8 @@ def _import_file(module_name, file_path, make_importable=False):
 
 
 tools = _import_file("tools", os.path.join(__dir__, "tools/__init__.py"), make_importable=True)
-ppocr = importlib.import_module("ppocr", "paddleocr")
-ppstructure = importlib.import_module("ppstructure", "paddleocr")
+ppocr = importlib.import_module("ppocr", "toddleocr")
+ppstructure = importlib.import_module("ppstructure", "toddleocr")
 
 from tools.infer import predict_system
 from ptocr.utils.logging import get_logger
@@ -49,7 +49,7 @@ from tools.infer.utility import draw_ocr, init_args, str2bool, check_gpu
 
 
 __all__ = [
-    "PaddleOCR",
+    "ToddleOCR",
     "PPStructure",
     "draw_ocr",
     "download_with_progressbar",
@@ -58,7 +58,7 @@ __all__ = [
 SUPPORT_DET_MODEL = ["DB"]
 VERSION = "2.6.1.0"
 SUPPORT_REC_MODEL = ["CRNN", "SVTR_LCNet"]
-BASE_DIR = os.path.expanduser("~/.paddleocr/")
+BASE_DIR = os.path.expanduser("~/.toddleocr/")
 
 DEFAULT_OCR_MODEL_VERSION = "PP-OCRv3"
 SUPPORT_OCR_MODEL_VERSION = ["PP-OCR", "PP-OCRv2", "PP-OCRv3"]
@@ -458,12 +458,12 @@ def check_img(img):
     return img
 
 
-class PaddleOCR(predict_system.TextSystem):
+class ToddleOCR(predict_system.TextSystem):
     def __init__(self, **kwargs):
         """
-        paddleocr package
+        toddleocr package
         args:
-            **kwargs: other params show in paddleocr --help
+            **kwargs: other params show in toddleocr --help
         """
         params = parse_args(mMain=False)
         params.__dict__.update(**kwargs)
@@ -517,7 +517,7 @@ class PaddleOCR(predict_system.TextSystem):
 
     def ocr(self, img, det=True, rec=True, cls=True, bin=False, inv=False, alpha_color=(255, 255, 255)):
         """
-        OCR with PaddleOCR
+        OCR with ToddleOCR
         args：
             img: img for OCR, support ndarray, img_path and list or ndarray
             det: use text detection or not. If False, only rec will be exec. Default is True
@@ -665,7 +665,7 @@ def main():
         logger.error("no images find in {}".format(args.image_dir))
         return
     if args.type == "ocr":
-        engine = PaddleOCR(**(args.__dict__))
+        engine = ToddleOCR(**(args.__dict__))
     elif args.type == "structure":
         engine = PPStructure(**(args.__dict__))
     else:

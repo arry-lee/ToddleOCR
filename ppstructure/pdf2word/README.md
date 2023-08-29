@@ -19,7 +19,7 @@ PDF2Word是PaddleOCR社区开发者 [whjdark](https://github.com/whjdark) 基于
 > - 初次安装程序根据不同设备需要等待1-2分钟不等
 > - 使用Office与WPS打开的Word结果会出现不同，推荐以Office为准
 > - 本程序使用 [QPT](https://github.com/QPT-Family/QPT) 进行应用程序打包，感谢 [GT-ZhangAcer](https://github.com/GT-ZhangAcer) 对打包过程的支持
-> - 应用程序仅支持正版win10，11系统，不支持盗版Windows系统，若在安装过程中出现报错或缺少依赖，推荐直接使用 `paddleocr` whl包应用PDF2Word功能，详情可查看[链接](https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.6/ppstructure/docs/quickstart.md)
+> - 应用程序仅支持正版win10，11系统，不支持盗版Windows系统，若在安装过程中出现报错或缺少依赖，推荐直接使用 `toddleocr` whl包应用PDF2Word功能，详情可查看[链接](https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.6/ppstructure/docs/quickstart.md)
 
 ### 脚本启动界面
 
@@ -32,7 +32,7 @@ python pdf2word.py
 
 ### PaddleOCR whl包
 
-针对Linux、Mac用户或已经拥有Python环境的用户，**推荐安装 `paddleocr` whl包直接应用PDF2Word功能**，详情可查看[链接](https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.6/ppstructure/docs/quickstart.md)
+针对Linux、Mac用户或已经拥有Python环境的用户，**推荐安装 `toddleocr` whl包直接应用PDF2Word功能**，详情可查看[链接](https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.6/ppstructure/docs/quickstart.md)
 
 <a name="download"></a>
 
@@ -46,4 +46,4 @@ python pdf2word.py
 
 ## 3.版本说明
 
-v0.2版：新加入PDF解析功能，仅提供full版本，打包了所有依赖包与模型文件，尽可能避免安装失败问题。若仍然安装失败，推荐使用 `paddleocr` whl包
+v0.2版：新加入PDF解析功能，仅提供full版本，打包了所有依赖包与模型文件，尽可能避免安装失败问题。若仍然安装失败，推荐使用 `toddleocr` whl包

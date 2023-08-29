@@ -126,7 +126,7 @@ if __name__ == "__main__":
     x = m.model.state_dict()  # save("/output/rec_svtr/zero.pth")
     print(x.keys())
 
-    paddle_params = paddle.load(r'D:\dev\github\PaddleOCR\model\rec_svtr_tiny_none_ctc_en_train\best_accuracy.pdparams')
+    paddle_params = paddle.load(r'D:\dev\github\ToddleOCR\model\rec_svtr_tiny_none_ctc_en_train\best_accuracy.pdparams')
     print(type(paddle_params))
 
     keys = list(paddle_params.keys())

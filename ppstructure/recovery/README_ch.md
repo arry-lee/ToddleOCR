@@ -104,9 +104,9 @@ pip3 install pdf2docx-0.0.0-py3-none-any.whl
 `use_pdf2docx_api`表示使用PDF解析的方式进行版面恢复，通过whl包的形式方便快速使用，代码如下，更多信息详见 [quickstart](../docs/quickstart.md)。
 
 ```bash
-# 安装 paddleocr，推荐使用2.6版本
-pip3 install "paddleocr>=2.6"
-paddleocr --image_dir=ppstructure/recovery/UnrealText.pdf --type=structure --recovery=true --use_pdf2docx_api=true
+# 安装 toddleocr，推荐使用2.6版本
+pip3 install "toddleocr>=2.6"
+toddleocr --image_dir=ppstructure/recovery/UnrealText.pdf --type=structure --recovery=true --use_pdf2docx_api=true
 ```
 
 通过命令行的方式：
@@ -135,14 +135,14 @@ python3 predict_system.py \
 提供如下代码实现版面恢复，也提供了whl包的形式方便快速使用，代码如下，更多信息详见 [quickstart](../docs/quickstart.md)。
 
 ```bash
-# 安装 paddleocr，推荐使用2.6版本
-pip3 install "paddleocr>=2.6"
+# 安装 toddleocr，推荐使用2.6版本
+pip3 install "toddleocr>=2.6"
 # 中文测试图
-paddleocr --image_dir=ppstructure/docs/table/1.png --type=structure --recovery=true
+toddleocr --image_dir=ppstructure/docs/table/1.png --type=structure --recovery=true
 # 英文测试图
-paddleocr --image_dir=ppstructure/docs/table/1.png --type=structure --recovery=true --lang='en'
+toddleocr --image_dir=ppstructure/docs/table/1.png --type=structure --recovery=true --lang='en'
 # pdf测试文件
-paddleocr --image_dir=ppstructure/recovery/UnrealText.pdf --type=structure --recovery=true --lang='en'
+toddleocr --image_dir=ppstructure/recovery/UnrealText.pdf --type=structure --recovery=true --lang='en'
 ```
 
 <a name="4.1"></a>

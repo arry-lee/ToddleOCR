@@ -44,8 +44,8 @@
 ### 1.2 安装PaddleOCR whl包
 
 ```bash
-# 安装 paddleocr，推荐使用2.6版本
-pip3 install "paddleocr>=2.6.0.3"
+# 安装 toddleocr，推荐使用2.6版本
+pip3 install "toddleocr>=2.6.0.3"
 
 # 安装 图像方向分类依赖包paddleclas（如不需要图像方向分类功能，可跳过）
 pip3 install paddleclas>=2.4.3
@@ -61,25 +61,25 @@ pip3 install paddleclas>=2.4.3
 <a name="211"></a>
 #### 2.1.1 图像方向分类+版面分析+表格识别
 ```bash
-paddleocr --image_dir=ppstructure/docs/table/1.png --type=structure --image_orientation=true
+toddleocr --image_dir=ppstructure/docs/table/1.png --type=structure --image_orientation=true
 ```
 
 <a name="212"></a>
 #### 2.1.2 版面分析+表格识别
 ```bash
-paddleocr --image_dir=ppstructure/docs/table/1.png --type=structure
+toddleocr --image_dir=ppstructure/docs/table/1.png --type=structure
 ```
 
 <a name="213"></a>
 #### 2.1.3 版面分析
 ```bash
-paddleocr --image_dir=ppstructure/docs/table/1.png --type=structure --table=false --ocr=false
+toddleocr --image_dir=ppstructure/docs/table/1.png --type=structure --table=false --ocr=false
 ```
 
 <a name="214"></a>
 #### 2.1.4 表格识别
 ```bash
-paddleocr --image_dir=ppstructure/docs/table/table.jpg --type=structure --layout=false
+toddleocr --image_dir=ppstructure/docs/table/table.jpg --type=structure --layout=false
 ```
 
 <a name="215"></a>
@@ -99,18 +99,18 @@ paddleocr --image_dir=ppstructure/docs/table/table.jpg --type=structure --layout
 通过PDF解析(只支持pdf格式的输入)：
 
 ```bash
-paddleocr --image_dir=ppstructure/recovery/UnrealText.pdf --type=structure --recovery=true --use_pdf2docx_api=true
+toddleocr --image_dir=ppstructure/recovery/UnrealText.pdf --type=structure --recovery=true --use_pdf2docx_api=true
 ```
 
 通过OCR技术：
 
 ```bash
 # 中文测试图
-paddleocr --image_dir=ppstructure/docs/table/1.png --type=structure --recovery=true
+toddleocr --image_dir=ppstructure/docs/table/1.png --type=structure --recovery=true
 # 英文测试图
-paddleocr --image_dir=ppstructure/docs/table/1.png --type=structure --recovery=true --lang='en'
+toddleocr --image_dir=ppstructure/docs/table/1.png --type=structure --recovery=true --lang='en'
 # pdf测试文件
-paddleocr --image_dir=ppstructure/recovery/UnrealText.pdf --type=structure --recovery=true --lang='en'
+toddleocr --image_dir=ppstructure/recovery/UnrealText.pdf --type=structure --recovery=true --lang='en'
 ```
 
 <a name="22"></a>
@@ -123,7 +123,7 @@ paddleocr --image_dir=ppstructure/recovery/UnrealText.pdf --type=structure --rec
 ```python
 import os
 import cv2
-from paddleocr import PPStructure,draw_structure_result,save_structure_res
+from toddleocr import PPStructure,draw_structure_result,save_structure_res
 
 table_engine = PPStructure(show_log=True, image_orientation=True)
 
@@ -152,7 +152,7 @@ im_show.save('result.jpg')
 ```python
 import os
 import cv2
-from paddleocr import PPStructure,draw_structure_result,save_structure_res
+from toddleocr import PPStructure,draw_structure_result,save_structure_res
 
 table_engine = PPStructure(show_log=True)
 
@@ -181,7 +181,7 @@ im_show.save('result.jpg')
 ```python
 import os
 import cv2
-from paddleocr import PPStructure,save_structure_res
+from toddleocr import PPStructure,save_structure_res
 
 table_engine = PPStructure(table=False, ocr=False, show_log=True)
 
@@ -203,7 +203,7 @@ for line in result:
 ```python
 import os
 import cv2
-from paddleocr import PPStructure,save_structure_res
+from toddleocr import PPStructure,save_structure_res
 
 table_engine = PPStructure(layout=False, show_log=True)
 
@@ -230,8 +230,8 @@ for line in result:
 ```python
 import os
 import cv2
-from paddleocr import PPStructure,save_structure_res
-from paddleocr.ppstructure.recovery.recovery_to_doc import sorted_layout_boxes, convert_info_docx
+from toddleocr import PPStructure, save_structure_res
+from toddleocr.ppstructure.recovery.recovery_to_doc import sorted_layout_boxes, convert_info_docx
 
 # 中文测试图
 table_engine = PPStructure(recovery=True)
@@ -245,8 +245,8 @@ result = table_engine(img)
 save_structure_res(result, save_folder, os.path.basename(img_path).split('.')[0])
 
 for line in result:
-    line.pop('img')
-    print(line)
+  line.pop('img')
+  print(line)
 
 h, w, _ = img.shape
 res = sorted_layout_boxes(result, w)

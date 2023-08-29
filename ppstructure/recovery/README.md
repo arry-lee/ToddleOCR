@@ -108,9 +108,9 @@ pip3 install pdf2docx-0.0.0-py3-none-any.whl
 `use_pdf2docx_api` use PDF parse for layout recovery, The whl package is also provided  for quick use, follow the above code, for more infomation please refer to [quickstart](../docs/quickstart_en.md) for details.
 
 ```bash
-# install paddleocr
-pip3 install "paddleocr>=2.6"
-paddleocr --image_dir=ppstructure/recovery/UnrealText.pdf --type=structure --recovery=true --use_pdf2docx_api=true
+# install toddleocr
+pip3 install "toddleocr>=2.6"
+toddleocr --image_dir=ppstructure/recovery/UnrealText.pdf --type=structure --recovery=true --use_pdf2docx_api=true
 ```
 
 Command line:
@@ -138,7 +138,7 @@ We can restore the test picture through the layout information, OCR detection an
 The whl package is also provided  for quick use, follow the above code, for more infomation please refer to [quickstart](../docs/quickstart_en.md) for details.
 
 ```bash
-paddleocr --image_dir=ppstructure/docs/table/1.png --type=structure --recovery=true --lang='en'
+toddleocr --image_dir=ppstructure/docs/table/1.png --type=structure --recovery=true --lang='en'
 ```
 
 <a name="4.1"></a>

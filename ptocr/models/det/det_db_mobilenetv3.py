@@ -49,7 +49,7 @@ class Model(ConfigModel):
     Optimizer = _(Adam,betas=[0.9, 0.999], lr=0.001)
     LRScheduler = _(ConstantLR,)
     class Train:
-        # D:\dev\github\PaddleOCR\ptocr\models\det\ch_PP - OCRv3\det_db_mobilenetv3.py
+        # D:\dev\github\ToddleOCR\ptocr\models\det\ch_PP - OCRv3\det_db_mobilenetv3.py
         Dataset = _(SimpleDataSet, root="./train_data/icdar2015/text_localization/",
                     label_file_list=['./train_data/icdar2015/text_localization/train_icdar2015_label.txt'], ratio_list=[1.0])
         transforms = _[DecodeImage(img_mode="BGR", channel_first=False), DetLabelEncode(), IaaAugment(augmenter_args=[{'type': 'Fliplr', 'args': {'p': 0.5}}, {'type': 'Affine', 'args': {'rotate': [-10, 10]}}, {'type': 'Resize', 'args': {'size': [0.5, 3]}}]), EastRandomCropData(size=[640, 640], max_tries=50, keep_ratio=True), MakeBorderMap(shrink_ratio=0.4, thresh_min=0.3, thresh_max=0.7), MakeShrinkMap(shrink_ratio=0.4, min_text_size=8), NormalizeImage(scale="1./255.", mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], order="hwc"), ToCHWImage(), KeepKeys(keep_keys=['image', 'threshold_map', 'threshold_mask', 'shrink_map', 'shrink_mask'])]
@@ -68,6 +68,6 @@ if __name__ == '__main__':
 
     m = Model()
     # print(m.model.parameters().keys())
-    m.infer(r"D:\dev\github\PaddleOCR\doc\imgs\11.jpg","output/db_mv3/best_accuracy.pth")
+    m.infer(r"D:\dev\github\ToddleOCR\doc\imgs\11.jpg","output/db_mv3/best_accuracy.pth")
     # for i in m.model.parameters():
     #     print(i.size())

@@ -46,8 +46,8 @@ For more software version requirements, please refer to the instructions in [Ins
 ### 1.2 Install PaddleOCR Whl Package
 
 ```bash
-# Install paddleocr, version 2.6 is recommended
-pip3 install "paddleocr>=2.6.0.3"
+# Install toddleocr, version 2.6 is recommended
+pip3 install "toddleocr>=2.6.0.3"
 
 # Install the image direction classification dependency package paddleclas (if you do not use the image direction classification, you can skip it)
 pip3 install paddleclas>=2.4.3
@@ -63,25 +63,25 @@ pip3 install paddleclas>=2.4.3
 <a name="211"></a>
 #### 2.1.1 image orientation + layout analysis + table recognition
 ```bash
-paddleocr --image_dir=ppstructure/docs/table/1.png --type=structure --image_orientation=true
+toddleocr --image_dir=ppstructure/docs/table/1.png --type=structure --image_orientation=true
 ```
 
 <a name="212"></a>
 #### 2.1.2 layout analysis + table recognition
 ```bash
-paddleocr --image_dir=ppstructure/docs/table/1.png --type=structure
+toddleocr --image_dir=ppstructure/docs/table/1.png --type=structure
 ```
 
 <a name="213"></a>
 #### 2.1.3 layout analysis
 ```bash
-paddleocr --image_dir=ppstructure/docs/table/1.png --type=structure --table=false --ocr=false
+toddleocr --image_dir=ppstructure/docs/table/1.png --type=structure --table=false --ocr=false
 ```
 
 <a name="214"></a>
 #### 2.1.4 table recognition
 ```bash
-paddleocr --image_dir=ppstructure/docs/table/table.jpg --type=structure --layout=false
+toddleocr --image_dir=ppstructure/docs/table/table.jpg --type=structure --layout=false
 ```
 
 <a name="215"></a>
@@ -101,13 +101,13 @@ Two layout recovery methods are provided, For detailed usage tutorials, please r
 Recovery by using PDF parse (only support pdf as input):
 
 ```bash
-paddleocr --image_dir=ppstructure/recovery/UnrealText.pdf --type=structure --recovery=true --use_pdf2docx_api=true
+toddleocr --image_dir=ppstructure/recovery/UnrealText.pdf --type=structure --recovery=true --use_pdf2docx_api=true
 ```
 
 Recovery by using OCR：
 
 ```bash
-paddleocr --image_dir=ppstructure/docs/table/1.png --type=structure --recovery=true --lang='en'
+toddleocr --image_dir=ppstructure/docs/table/1.png --type=structure --recovery=true --lang='en'
 ```
 
 <a name="22"></a>
@@ -119,7 +119,7 @@ paddleocr --image_dir=ppstructure/docs/table/1.png --type=structure --recovery=t
 ```python
 import os
 import cv2
-from paddleocr import PPStructure,draw_structure_result,save_structure_res
+from toddleocr import PPStructure,draw_structure_result,save_structure_res
 
 table_engine = PPStructure(show_log=True, image_orientation=True)
 
@@ -148,7 +148,7 @@ im_show.save('result.jpg')
 ```python
 import os
 import cv2
-from paddleocr import PPStructure,draw_structure_result,save_structure_res
+from toddleocr import PPStructure,draw_structure_result,save_structure_res
 
 table_engine = PPStructure(show_log=True)
 
@@ -177,7 +177,7 @@ im_show.save('result.jpg')
 ```python
 import os
 import cv2
-from paddleocr import PPStructure,save_structure_res
+from toddleocr import PPStructure,save_structure_res
 
 table_engine = PPStructure(table=False, ocr=False, show_log=True)
 
@@ -198,7 +198,7 @@ for line in result:
 ```python
 import os
 import cv2
-from paddleocr import PPStructure,save_structure_res
+from toddleocr import PPStructure,save_structure_res
 
 table_engine = PPStructure(layout=False, show_log=True)
 
@@ -224,8 +224,8 @@ Key information extraction does not currently support use by the whl package. Fo
 ```python
 import os
 import cv2
-from paddleocr import PPStructure,save_structure_res
-from paddleocr.ppstructure.recovery.recovery_to_doc import sorted_layout_boxes, convert_info_docx
+from toddleocr import PPStructure, save_structure_res
+from toddleocr.ppstructure.recovery.recovery_to_doc import sorted_layout_boxes, convert_info_docx
 
 # Chinese image
 table_engine = PPStructure(recovery=True)
@@ -239,8 +239,8 @@ result = table_engine(img)
 save_structure_res(result, save_folder, os.path.basename(img_path).split('.')[0])
 
 for line in result:
-    line.pop('img')
-    print(line)
+  line.pop('img')
+  print(line)
 
 h, w, _ = img.shape
 res = sorted_layout_boxes(result, w)

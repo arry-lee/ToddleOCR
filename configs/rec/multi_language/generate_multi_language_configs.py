@@ -114,7 +114,7 @@ assert os.path.isfile(
     "./rec_multi_language_lite_train.yml"
 ), "Loss basic configuration file rec_multi_language_lite_train.yml.\
 You can download it from \
-https://github.com/PaddlePaddle/PaddleOCR/tree/dygraph/configs/rec/multi_language/"
+https://github.com/PaddlePaddle/ToddleOCR/tree/dygraph/configs/rec/multi_language/"
 
 global_config = yaml.load(open("./rec_multi_language_lite_train.yml", "rb"), Loader=yaml.Loader)
 project_path = os.path.abspath(os.path.join(os.getcwd(), "../../../"))
@@ -171,7 +171,7 @@ class ArgsParser(ArgumentParser):
         assert os.path.isfile(
             os.path.join(project_path, global_config["Global"]["character_dict_path"])
         ), "Loss default dictionary file {}_dict.txt.You can download it from \
-https://github.com/PaddlePaddle/PaddleOCR/tree/dygraph/ppocr/utils/dict/".format(
+https://github.com/PaddlePaddle/ToddleOCR/tree/dygraph/ppocr/utils/dict/".format(
             lang
         )
         return lang

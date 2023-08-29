@@ -14,7 +14,7 @@
 
 from setuptools import setup
 from io import open
-from paddleocr import VERSION
+from toddleocr import VERSION
 
 
 def load_requirements(file_list=None):
@@ -36,33 +36,31 @@ def readme():
 
 
 setup(
-    name="paddleocr",
-    packages=["paddleocr"],
-    package_dir={"paddleocr": ""},
+    name="toddleocr",
+    packages=["toddleocr"],
+    package_dir={"toddleocr": ""},
     include_package_data=True,
-    entry_points={"console_scripts": ["paddleocr= paddleocr.paddleocr:main"]},
+    entry_points={"console_scripts": ["toddleocr= paddleocr.toddleocr:main"]},
     version=VERSION,
     install_requires=load_requirements(["requirements.txt", "ppstructure/recovery/requirements.txt"]),
     license="Apache License 2.0",
-    description="Awesome OCR toolkits based on PaddlePaddle （8.6M ultra-lightweight pre-trained model, support training and deployment among server, mobile, embedded and IoT devices",
+    description="Awesome OCR toolkits based on Torch （8.6M ultra-lightweight pre-trained model, support training and deployment among server, mobile, embedded and IoT devices",
     long_description=readme(),
     long_description_content_type="text/markdown",
-    url="https://github.com/PaddlePaddle/PaddleOCR",
-    download_url="https://github.com/PaddlePaddle/PaddleOCR.git",
+    url="https://github.com/arry-lee/ToddleOCR",
+    download_url="https://github.com/arry-lee/ToddleOCR.git",
     keywords=[
-        "ocr textdetection textrecognition paddleocr crnn east star-net rosetta ocrlite db chineseocr chinesetextdetection chinesetextrecognition"
+        "ocr textdetection textrecognition toddleocr crnn east star-net rosetta ocrlite db chineseocr chinesetextdetection chinesetextrecognition"
     ],
     classifiers=[
         "Intended Audience :: Developers",
         "Operating System :: OS Independent",
         "Natural Language :: Chinese (Simplified)",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.2",
-        "Programming Language :: Python :: 3.3",
-        "Programming Language :: Python :: 3.4",
-        "Programming Language :: Python :: 3.5",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Topic :: Utilities",
     ],
 )
