@@ -88,6 +88,7 @@ class ConfigModel:
 
     class Data:
         dataset: None
+        root: None
 
     class Loader:
         shuffle = False
