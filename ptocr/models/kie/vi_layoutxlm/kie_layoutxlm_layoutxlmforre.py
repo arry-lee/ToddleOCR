@@ -39,10 +39,10 @@ class Model(ConfigModel):
     Optimizer = _(AdamW,beta1=0.9, beta2=0.999, clip_norm=10, lr=5e-05)
     LRScheduler = _(ConstantLR,warmup_epoch=10)
     class Train:
-        Dataset = _(SimpleDataSet, root="train_data/XFUND/zh_train/image", label_file_list=['train_data/XFUND/zh_train/train.json'], ratio_list=[1.0])
+        Dataset = _(SimpleDataSet, root="train_data/XFUND/zh_train/image", label_files=['train_data/XFUND/zh_train/train.json'], ratio_list=[1.0])
         transforms = _[DecodeImage(img_mode="RGB", channel_first=False), VQATokenLabelEncode(contains_re=True, algorithm="LayoutXLM", class_path="train_data/XFUND/class_list_xfun.txt", use_textline_bbox_info=True, order_method="tb-yx"), VQATokenPad(max_seq_len=512, return_attention_mask=True), VQAReTokenRelation(), VQAReTokenChunk(max_seq_len=512), TensorizeEntitiesRelations(), Resize(size=[224, 224]), NormalizeImage(scale=1, mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], order="hwc"), ToCHWImage(), KeepKeys(keep_keys=['input_ids', 'bbox', 'attention_mask', 'token_type_ids', 'entities', 'relations'])]
         DATALOADER = _(shuffle=True, drop_last=False, batch_size=2, num_workers=4)
     class Eval:
-        Dataset = _(SimpleDataSet, root="train_data/XFUND/zh_val/image", label_file_list=['train_data/XFUND/zh_val/val.json'])
+        Dataset = _(SimpleDataSet, root="train_data/XFUND/zh_val/image", label_files=['train_data/XFUND/zh_val/val.json'])
         transforms = _[DecodeImage(img_mode="RGB", channel_first=False), VQATokenLabelEncode(contains_re=True, algorithm="LayoutXLM", class_path="train_data/XFUND/class_list_xfun.txt", use_textline_bbox_info=True, order_method="tb-yx"), VQATokenPad(max_seq_len=512, return_attention_mask=True), VQAReTokenRelation(), VQAReTokenChunk(max_seq_len=512), TensorizeEntitiesRelations(), Resize(size=[224, 224]), NormalizeImage(scale=1, mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], order="hwc"), ToCHWImage(), KeepKeys(keep_keys=['input_ids', 'bbox', 'attention_mask', 'token_type_ids', 'entities', 'relations'])]
         DATALOADER = _(shuffle=False, drop_last=False, batch_size=8, num_workers=8)

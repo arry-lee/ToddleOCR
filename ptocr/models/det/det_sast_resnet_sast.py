@@ -39,10 +39,10 @@ class Model(ConfigModel):
     Optimizer = _(Adam,betas=[0.9, 0.999], lr=0.001)
     LRScheduler = _(ConstantLR,)
     class Train:
-        Dataset = _(SimpleDataSet, root="./train_data/", label_file_list=['./train_data/art_latin_icdar_14pt/train_no_tt_test/train_label_json.txt', './train_data/total_text_icdar_14pt/train_label_json.txt'], ratio_list=[0.5, 0.5])
+        Dataset = _(SimpleDataSet, root="./train_data/", label_files=['./train_data/art_latin_icdar_14pt/train_no_tt_test/train_label_json.txt', './train_data/total_text_icdar_14pt/train_label_json.txt'], ratio_list=[0.5, 0.5])
         transforms = _[DecodeImage(img_mode="BGR", channel_first=False), DetLabelEncode(), SASTProcessTrain(image_shape=[512, 512], min_crop_side_ratio=0.3, min_crop_size=24, min_text_size=4, max_text_size=512), KeepKeys(keep_keys=['image', 'score_map', 'border_map', 'training_mask', 'tvo_map', 'tco_map'])]
         DATALOADER = _(shuffle=True, drop_last=False, batch_size=4, num_workers=4)
     class Eval:
-        Dataset = _(SimpleDataSet, root="./train_data/", label_file_list=['./train_data/total_text_icdar_14pt/test_label_json.txt'])
+        Dataset = _(SimpleDataSet, root="./train_data/", label_files=['./train_data/total_text_icdar_14pt/test_label_json.txt'])
         transforms = _[DecodeImage(img_mode="BGR", channel_first=False), DetLabelEncode(), DetResizeForTest(resize_long=768), NormalizeImage(scale="1./255.", mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], order="hwc"), ToCHWImage(), KeepKeys(keep_keys=['image', 'shape', 'polys', 'ignore_tags'])]
         DATALOADER = _(shuffle=False, drop_last=False, batch_size=1, num_workers=2)

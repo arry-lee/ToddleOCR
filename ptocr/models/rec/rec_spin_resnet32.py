@@ -45,10 +45,10 @@ class Model(ConfigModel):
     Optimizer = _(AdamW,beta1=0.9, beta2=0.999)
     LRScheduler = _(PiecewiseLR,decay_epochs=[3, 4, 5], values=[0.001, 0.0003, 9e-05, 2.7e-05], clip_norm=5)
     class Train:
-        Dataset = _(SimpleDataSet, root="./train_data/ic15_data/", label_file_list=['./train_data/ic15_data/rec_gt_train.txt'])
+        Dataset = _(SimpleDataSet, root="./train_data/ic15_data/", label_files=['./train_data/ic15_data/rec_gt_train.txt'])
         transforms = _[DecodeImage(img_mode="BGR", channel_first=False), SPINLabelEncode(), SPINRecResizeImg(image_shape=[100, 32], interpolation=2, mean=[127.5], std=[127.5]), KeepKeys(keep_keys=['image', 'label', 'length'])]
         DATALOADER = _(shuffle=True, batch_size=8, drop_last=True, num_workers=4)
     class Eval:
-        Dataset = _(SimpleDataSet, root="./train_data/ic15_data", label_file_list=['./train_data/ic15_data/rec_gt_test.txt'])
+        Dataset = _(SimpleDataSet, root="./train_data/ic15_data", label_files=['./train_data/ic15_data/rec_gt_test.txt'])
         transforms = _[DecodeImage(img_mode="BGR", channel_first=False), SPINLabelEncode(), SPINRecResizeImg(image_shape=[100, 32], interpolation=2, mean=[127.5], std=[127.5]), KeepKeys(keep_keys=['image', 'label', 'length'])]
         DATALOADER = _(shuffle=False, drop_last=False, batch_size=8, num_workers=2)

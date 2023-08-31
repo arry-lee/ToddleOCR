@@ -42,7 +42,7 @@ class Model(ConfigModel):
     class Data:
         dataset = SimpleDataSet
         root = './train_data/icdar2015/text_localization/'
-        label_file_list: ['train_data/icdar2015/text_localization/test_icdar2015_label.txt'] = ['./train_data/icdar2015/text_localization/train_icdar2015_label.txt']
+        label_files: ['train_data/icdar2015/text_localization/test_icdar2015_label.txt'] = ['./train_data/icdar2015/text_localization/train_icdar2015_label.txt']
         ratio_list = [1.0]
 
     class Loader:

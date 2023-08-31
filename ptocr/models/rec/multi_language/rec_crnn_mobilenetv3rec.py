@@ -43,10 +43,10 @@ class Model(ConfigModel):
     Optimizer = _(Adam,betas=[0.9, 0.999], lr=0.001)
     LRScheduler = _(CosineAnnealingLR,)
     class Train:
-        Dataset = _(SimpleDataSet, root="train_data/", label_file_list=['./train_data/train_list.txt'])
+        Dataset = _(SimpleDataSet, root="train_data/", label_files=['./train_data/train_list.txt'])
         transforms = _[DecodeImage(img_mode="BGR", channel_first=False), RecAug(), CTCLabelEncode(), RecResizeImg(image_shape=[3, 32, 320]), KeepKeys(keep_keys=['image', 'label', 'length'])]
         DATALOADER = _(shuffle=True, batch_size=256, drop_last=True, num_workers=8)
     class Eval:
-        Dataset = _(SimpleDataSet, root="train_data/", label_file_list=['./train_data/val_list.txt'])
+        Dataset = _(SimpleDataSet, root="train_data/", label_files=['./train_data/val_list.txt'])
         transforms = _[DecodeImage(img_mode="BGR", channel_first=False), CTCLabelEncode(), RecResizeImg(image_shape=[3, 32, 320]), KeepKeys(keep_keys=['image', 'label', 'length'])]
         DATALOADER = _(shuffle=False, drop_last=False, batch_size=256, num_workers=8)

@@ -43,7 +43,7 @@ class Model(ConfigModel):
     Optimizer = _(Adam,betas=[0.9, 0.999])
     LRScheduler = _(PiecewiseLR,decay_epochs=[3, 4], values=[0.001, 0.0001, 1e-05])
     class Train:
-        Dataset = _(SimpleDataSet, label_file_list=['./train_data/train_list.txt'], root="./train_data/", ratio_list=1.0)
+        Dataset = _(SimpleDataSet, label_files=['./train_data/train_list.txt'], root="./train_data/", ratio_list=1.0)
         transforms = _[DecodeImage(img_mode="BGR", channel_first=False), SARLabelEncode(), SARRecResizeImg(image_shape=[3, 48, 48, 160], width_downsample_ratio=0.25), KeepKeys(keep_keys=['image', 'label', 'valid_ratio'])]
         DATALOADER = _(shuffle=True, batch_size=64, drop_last=True, num_workers=8, pin_memory=False)
     class Eval:

@@ -40,10 +40,10 @@ class Model(ConfigModel):
     Optimizer = _(Adam,betas=[0.9, 0.999], lr=0.001)
     LRScheduler = _(MultiStepLR,milestones=[12, 15], gamma=0.1, warmup_epoch=0.02)
     class Train:
-        Dataset = _(PubTabDataSet, root="train_data/table/pubtabnet/train/", label_file_list=['train_data/table/pubtabnet/PubTabNet_2.0.0_train.jsonl'])
+        Dataset = _(PubTabDataSet, root="train_data/table/pubtabnet/train/", label_files=['train_data/table/pubtabnet/PubTabNet_2.0.0_train.jsonl'])
         transforms = _[DecodeImage(img_mode="BGR", channel_first=False), TableMasterLabelEncode(learn_empty_box=False, merge_no_span_structure=True, replace_empty_cell_token=True, loc_reg_num=4, max_text_length=500), ResizeTableImage(max_len=480, resize_bboxes=True), PaddingTableImage(size=[480, 480]), TableBoxEncode(in_box_format="xywh", out_box_format="xywh"), NormalizeImage(scale="1./255.", mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5], order="hwc"), ToCHWImage(), KeepKeys(keep_keys=['image', 'structure', 'bboxes', 'bbox_masks', 'shape'])]
         DATALOADER = _(shuffle=True, batch_size=10, drop_last=True, num_workers=8)
     class Eval:
-        Dataset = _(PubTabDataSet, root="train_data/table/pubtabnet/val/", label_file_list=['train_data/table/pubtabnet/PubTabNet_2.0.0_val.jsonl'])
+        Dataset = _(PubTabDataSet, root="train_data/table/pubtabnet/val/", label_files=['train_data/table/pubtabnet/PubTabNet_2.0.0_val.jsonl'])
         transforms = _[DecodeImage(img_mode="BGR", channel_first=False), TableMasterLabelEncode(learn_empty_box=False, merge_no_span_structure=True, replace_empty_cell_token=True, loc_reg_num=4, max_text_length=500), ResizeTableImage(max_len=480, resize_bboxes=True), PaddingTableImage(size=[480, 480]), TableBoxEncode(in_box_format="xywh", out_box_format="xywh"), NormalizeImage(scale="1./255.", mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5], order="hwc"), ToCHWImage(), KeepKeys(keep_keys=['image', 'structure', 'bboxes', 'bbox_masks', 'shape'])]
         DATALOADER = _(shuffle=False, drop_last=False, batch_size=10, num_workers=8)

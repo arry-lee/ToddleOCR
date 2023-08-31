@@ -48,7 +48,7 @@ class Model(ConfigModel):
     class Data:
         dataset = SimpleDataSet
         root = "./train_data/cls"
-        label_file_list: "val_list.txt" = "train_list.txt"
+        label_files: "val_list.txt" = "train_list.txt"
 
     class Loader:
         shuffle: False = True

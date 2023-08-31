@@ -43,10 +43,10 @@ class Model(ConfigModel):
     Optimizer = _(Adam,betas=[0.9, 0.999], lr=0.001)
     LRScheduler = _(CosineAnnealingWarmRestarts,T_0=5)
     class Train:
-        Dataset = _(SimpleDataSet, root="./train_data/", ext_op_transform_idx=1, label_file_list=['./train_data/train_list.txt'])
+        Dataset = _(SimpleDataSet, root="./train_data/", ext_op_transform_idx=1, label_files=['./train_data/train_list.txt'])
         transforms = _[DecodeImage(img_mode="BGR", channel_first=False), RecConAug(prob=0.5, ext_data_num=2, image_shape=[48, 320, 3]), RecAug(), MultiLabelEncode(), RecResizeImg(image_shape=[3, 48, 320]), KeepKeys(keep_keys=['image', 'label_ctc', 'label_sar', 'length', 'valid_ratio'])]
         DATALOADER = _(shuffle=True, batch_size=128, drop_last=True, num_workers=4)
     class Eval:
-        Dataset = _(SimpleDataSet, root="./train_data", label_file_list=['./train_data/val_list.txt'])
+        Dataset = _(SimpleDataSet, root="./train_data", label_files=['./train_data/val_list.txt'])
         transforms = _[DecodeImage(img_mode="BGR", channel_first=False), MultiLabelEncode(), RecResizeImg(image_shape=[3, 48, 320]), KeepKeys(keep_keys=['image', 'label_ctc', 'label_sar', 'length', 'valid_ratio'])]
         DATALOADER = _(shuffle=False, drop_last=False, batch_size=128, num_workers=4)

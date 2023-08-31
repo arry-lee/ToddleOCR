@@ -59,7 +59,7 @@ class Model(ConfigModel):
         Dataset = _(
             SimpleDataSet,
             root="./train_data/wildreceipt/",
-            label_file_list=["./train_data/wildreceipt/wildreceipt_train.txt"],
+            label_files=["./train_data/wildreceipt/wildreceipt_train.txt"],
             ratio_list=[1.0],
         )
         transforms = _[
@@ -96,7 +96,7 @@ class Model(ConfigModel):
         Dataset = _(
             SimpleDataSet,
             root="./train_data/wildreceipt",
-            label_file_list=["./train_data/wildreceipt/wildreceipt_test.txt"],
+            label_files=["./train_data/wildreceipt/wildreceipt_test.txt"],
         )
         transforms = _[
             DecodeImage(img_mode="RGB", channel_first=False),

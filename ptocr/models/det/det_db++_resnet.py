@@ -43,10 +43,10 @@ class Model(ConfigModel):
     Optimizer = _(SGD,momentum=0.9, lr=0.007, weight_decay=0.0001)
     LRScheduler = _(PolynomialLR,total_iters=1000, power=0.9)
     class Train:
-        Dataset = _(SimpleDataSet, root="./train_data/", label_file_list=['./train_data/TD_TR/TD500/train_gt_labels.txt', './train_data/TD_TR/TR400/gt_labels.txt'], ratio_list=[1.0, 1.0])
+        Dataset = _(SimpleDataSet, root="./train_data/", label_files=['./train_data/TD_TR/TD500/train_gt_labels.txt', './train_data/TD_TR/TR400/gt_labels.txt'], ratio_list=[1.0, 1.0])
         transforms = _[DecodeImage(img_mode="BGR", channel_first=False), DetLabelEncode(), IaaAugment(augmenter_args=[{'type': 'Fliplr', 'args': {'p': 0.5}}, {'type': 'Affine', 'args': {'rotate': [-10, 10]}}, {'type': 'Resize', 'args': {'size': [0.5, 3]}}]), EastRandomCropData(size=[640, 640], max_tries=10, keep_ratio=True), MakeShrinkMap(shrink_ratio=0.4, min_text_size=8), MakeBorderMap(shrink_ratio=0.4, thresh_min=0.3, thresh_max=0.7), NormalizeImage(scale="1./255.", mean=[0.48109378172549, 0.45752457890196, 0.40787054090196], std=[1.0, 1.0, 1.0], order="hwc"), ToCHWImage(), KeepKeys(keep_keys=['image', 'threshold_map', 'threshold_mask', 'shrink_map', 'shrink_mask'])]
         DATALOADER = _(shuffle=True, drop_last=False, batch_size=4, num_workers=8)
     class Eval:
-        Dataset = _(SimpleDataSet, root="./train_data/", label_file_list=['./train_data/TD_TR/TD500/test_gt_labels.txt'])
+        Dataset = _(SimpleDataSet, root="./train_data/", label_files=['./train_data/TD_TR/TD500/test_gt_labels.txt'])
         transforms = _[DecodeImage(img_mode="BGR", channel_first=False), DetLabelEncode(), DetResizeForTest(image_shape=[736, 736], keep_ratio=True), NormalizeImage(scale="1./255.", mean=[0.48109378172549, 0.45752457890196, 0.40787054090196], std=[1.0, 1.0, 1.0], order="hwc"), ToCHWImage(), KeepKeys(keep_keys=['image', 'shape', 'polys', 'ignore_tags'])]
         DATALOADER = _(shuffle=False, drop_last=False, batch_size=1, num_workers=2)

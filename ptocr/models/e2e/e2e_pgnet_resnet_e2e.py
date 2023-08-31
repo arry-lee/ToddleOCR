@@ -46,10 +46,10 @@ class Model(ConfigModel):
     Optimizer = _(Adam,betas=[0.9, 0.999], lr=0.001)
     LRScheduler = _(CosineAnnealingWarmRestarts,T_0=50)
     class Train:
-        Dataset = _(PGDataSet, root="./train_data/total_text/train", label_file_list=['./train_data/total_text/train/train.txt'], ratio_list=[1.0])
+        Dataset = _(PGDataSet, root="./train_data/total_text/train", label_files=['./train_data/total_text/train/train.txt'], ratio_list=[1.0])
         transforms = _[DecodeImage(img_mode="BGR", channel_first=False), E2ELabelEncodeTrain(), PGProcessTrain(batch_size=14, use_resize=True, use_random_crop=False, min_crop_size=24, min_text_size=4, max_text_size=512, point_gather_mode="align"), KeepKeys(keep_keys=['images', 'tcl_maps', 'tcl_label_maps', 'border_maps', 'direction_maps', 'training_masks', 'label_list', 'pos_list', 'pos_mask'])]
         DATALOADER = _(shuffle=True, drop_last=True, batch_size=14, num_workers=16)
     class Eval:
-        Dataset = _(PGDataSet, root="./train_data/total_text/test", label_file_list=['./train_data/total_text/test/test.txt'])
+        Dataset = _(PGDataSet, root="./train_data/total_text/test", label_files=['./train_data/total_text/test/test.txt'])
         transforms = _[DecodeImage(img_mode="BGR", channel_first=False), E2ELabelEncodeTest(), E2EResizeForTest(max_side_len=768), NormalizeImage(scale="1./255.", mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], order="hwc"), ToCHWImage(), KeepKeys(keep_keys=['image', 'shape', 'polys', 'texts', 'ignore_tags', 'img_id'])]
         DATALOADER = _(shuffle=False, drop_last=False, batch_size=1, num_workers=2)
