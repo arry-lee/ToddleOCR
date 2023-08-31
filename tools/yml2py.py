@@ -130,7 +130,7 @@ def yaml2py(old_file):
 
     filename = os.path.join(path, f"{mode}_{algo}_{backbone}.pyi".lower())
     # os.remove(filename)
-    new = filename.replace("configs", "models")
+    new = filename.replace("configs", "models").replace('-','_').replace('++','plus').lower()
     os.makedirs(os.path.dirname(new), exist_ok=True)
     with open(new, "w") as f:
         f.write("\n".join(lines))
@@ -209,12 +209,12 @@ def trans_train_eval2(imports, lines, mode, yml_data):
         if isinstance(e[k],list):
             e[k]=[f"{i.removeprefix(e_root)}" if isinstance(i,str) else i for i in e[k]]
             if len(e[k])==1:
-                e[k]=f'"{e[k][0]}"'
+                e[k]=f'"{e[k][0].removeprefix("/")}"'
 
         if isinstance(t[k],list):
             t[k]=[f"{i.removeprefix(t_root)}" if isinstance(i,str) else i for i in t[k]]
             if len(t[k])==1:
-                t[k]=f'"{t[k][0]}"'
+                t[k]=f'"{t[k][0].removeprefix("/")}"'
 
         if e[k] == t[k]:
             lines.append(f"        {k} = {e[k]}")
