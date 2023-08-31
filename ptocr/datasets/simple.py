@@ -13,8 +13,8 @@ class SimpleDataSet(VisionDataset):
         # self.logger = logger
         self.mode = dataset_config.get('mode','train').lower()
         self.delimiter = dataset_config.get("delimiter", "\t")
-        label_file_list = dataset_config.pop("label_file_list")
-        data_source_num = len(label_file_list)
+        label_files = dataset_config.pop("label_files")
+        data_source_num = len(label_files)
         ratio_list = dataset_config.get("ratio_list", 1.0)
         if isinstance(ratio_list, (float, int)):
             ratio_list = [float(ratio_list)] * int(data_source_num)
@@ -26,7 +26,7 @@ class SimpleDataSet(VisionDataset):
             random.seed(self.seed)
             np.random.seed(self.seed)
 
-        self.data_lines = self.get_image_info_list(label_file_list, ratio_list)
+        self.data_lines = self.get_image_info_list(label_files, ratio_list)
         self.data_idx_order_list = list(range(len(self.data_lines)))
         self.need_reset = True in [x < 1 for x in ratio_list]
 

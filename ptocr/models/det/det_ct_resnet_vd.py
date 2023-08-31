@@ -84,7 +84,7 @@ class Model(ConfigModel):
     class Data:
         dataset = SimpleDataSet
         root = "./train_data/total_text/train",
-        label_file_list: "test.txt" = "train.txt",
+        label_files: "test.txt" = "train.txt",
         ratio_list = [1.0]
 
     class Loader:

@@ -51,12 +51,12 @@ class Model(ConfigModel):
     class Train:
         # D:\dev\github\ToddleOCR\ptocr\models\det\ch_PP - OCRv3\det_db_mobilenetv3.py
         Dataset = _(SimpleDataSet, root="./train_data/icdar2015/text_localization/",
-                    label_file_list=['./train_data/icdar2015/text_localization/train_icdar2015_label.txt'], ratio_list=[1.0])
+                    label_files=['./train_data/icdar2015/text_localization/train_icdar2015_label.txt'], ratio_list=[1.0])
         transforms = _[DecodeImage(img_mode="BGR", channel_first=False), DetLabelEncode(), IaaAugment(augmenter_args=[{'type': 'Fliplr', 'args': {'p': 0.5}}, {'type': 'Affine', 'args': {'rotate': [-10, 10]}}, {'type': 'Resize', 'args': {'size': [0.5, 3]}}]), EastRandomCropData(size=[640, 640], max_tries=50, keep_ratio=True), MakeBorderMap(shrink_ratio=0.4, thresh_min=0.3, thresh_max=0.7), MakeShrinkMap(shrink_ratio=0.4, min_text_size=8), NormalizeImage(scale="1./255.", mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], order="hwc"), ToCHWImage(), KeepKeys(keep_keys=['image', 'threshold_map', 'threshold_mask', 'shrink_map', 'shrink_mask'])]
         DATALOADER = _(shuffle=False, drop_last=False, batch_size=2, num_workers=1)
     class Eval:
         Dataset = _(SimpleDataSet, root="./train_data/icdar2015/text_localization/",
-                    label_file_list=['./train_data/icdar2015/text_localization/test_icdar2015_label.txt'])
+                    label_files=['./train_data/icdar2015/text_localization/test_icdar2015_label.txt'])
         transforms = _[DecodeImage(img_mode="BGR", channel_first=False), DetLabelEncode(), DetResizeForTest(image_shape=[736, 1280]), NormalizeImage(scale="1./255.", mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], order="hwc"), ToCHWImage(), KeepKeys(keep_keys=['image', 'shape', 'polys', 'ignore_tags'])]
         DATALOADER = _(shuffle=False, drop_last=False, batch_size=1, num_workers=1)
     class Infer:

@@ -35,10 +35,10 @@ class Model(ConfigModel):
     Optimizer = _(AdamW,beta1=0.9, beta2=0.999, lr=5e-05)
     LRScheduler = _(PolynomialLR,total_iters=200, warmup_epoch=2)
     class Train:
-        Dataset = _(SimpleDataSet, root="train_data/XFUND/zh_train/image", label_file_list=['train_data/XFUND/zh_train/train.json'], ratio_list=[1.0])
+        Dataset = _(SimpleDataSet, root="train_data/XFUND/zh_train/image", label_files=['train_data/XFUND/zh_train/train.json'], ratio_list=[1.0])
         transforms = _[DecodeImage(img_mode="RGB", channel_first=False), VQATokenLabelEncode(contains_re=False, algorithm="LayoutXLM", class_path="train_data/XFUND/class_list_xfun.txt"), VQATokenPad(max_seq_len=512, return_attention_mask=True), VQASerTokenChunk(max_seq_len=512), Resize(size=[224, 224]), NormalizeImage(scale=1, mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], order="hwc"), ToCHWImage(), KeepKeys(keep_keys=['input_ids', 'bbox', 'attention_mask', 'token_type_ids', 'image', 'labels'])]
         DATALOADER = _(shuffle=True, drop_last=False, batch_size=8, num_workers=4)
     class Eval:
-        Dataset = _(SimpleDataSet, root="train_data/XFUND/zh_val/image", label_file_list=['train_data/XFUND/zh_val/val.json'])
+        Dataset = _(SimpleDataSet, root="train_data/XFUND/zh_val/image", label_files=['train_data/XFUND/zh_val/val.json'])
         transforms = _[DecodeImage(img_mode="RGB", channel_first=False), VQATokenLabelEncode(contains_re=False, algorithm="LayoutXLM", class_path="train_data/XFUND/class_list_xfun.txt"), VQATokenPad(max_seq_len=512, return_attention_mask=True), VQASerTokenChunk(max_seq_len=512), Resize(size=[224, 224]), NormalizeImage(scale=1, mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], order="hwc"), ToCHWImage(), KeepKeys(keep_keys=['input_ids', 'bbox', 'attention_mask', 'token_type_ids', 'image', 'labels'])]
         DATALOADER = _(shuffle=False, drop_last=False, batch_size=8, num_workers=4)

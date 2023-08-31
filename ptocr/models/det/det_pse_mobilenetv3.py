@@ -42,10 +42,10 @@ class Model(ConfigModel):
     Optimizer = _(Adam,betas=[0.9, 0.999], lr=0.001)
     LRScheduler = _(StepLR,step_size=200, gamma=0.1)
     class Train:
-        Dataset = _(SimpleDataSet, root="./train_data/icdar2015/text_localization/", label_file_list=['./train_data/icdar2015/text_localization/train_icdar2015_label.txt'], ratio_list=[1.0])
+        Dataset = _(SimpleDataSet, root="./train_data/icdar2015/text_localization/", label_files=['./train_data/icdar2015/text_localization/train_icdar2015_label.txt'], ratio_list=[1.0])
         transforms = _[DecodeImage(img_mode="BGR", channel_first=False), DetLabelEncode(), ColorJitter(brightness=0.12549019607843137, saturation=0.5), IaaAugment(augmenter_args=[{'type': 'Resize', 'args': {'size': [0.5, 3]}}, {'type': 'Fliplr', 'args': {'p': 0.5}}, {'type': 'Affine', 'args': {'rotate': [-10, 10]}}]), MakePseGt(kernel_num=7, min_shrink_ratio=0.4, size=640), RandomCropImgMask(size=[640, 640], main_key="gt_text", crop_keys=['image', 'gt_text', 'gt_kernels', 'mask']), NormalizeImage(scale="1./255.", mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], order="hwc"), ToCHWImage(), KeepKeys(keep_keys=['image', 'gt_text', 'gt_kernels', 'mask'])]
         DATALOADER = _(shuffle=True, drop_last=False, batch_size=16, num_workers=8)
     class Eval:
-        Dataset = _(SimpleDataSet, root="./train_data/icdar2015/text_localization/", label_file_list=['./train_data/icdar2015/text_localization/test_icdar2015_label.txt'], ratio_list=[1.0])
+        Dataset = _(SimpleDataSet, root="./train_data/icdar2015/text_localization/", label_files=['./train_data/icdar2015/text_localization/test_icdar2015_label.txt'], ratio_list=[1.0])
         transforms = _[DecodeImage(img_mode="BGR", channel_first=False), DetLabelEncode(), DetResizeForTest(limit_side_len=736, limit_type="min"), NormalizeImage(scale="1./255.", mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], order="hwc"), ToCHWImage(), KeepKeys(keep_keys=['image', 'shape', 'polys', 'ignore_tags'])]
         DATALOADER = _(shuffle=False, drop_last=False, batch_size=1, num_workers=8)

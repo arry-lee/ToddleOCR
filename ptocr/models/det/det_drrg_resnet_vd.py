@@ -42,10 +42,10 @@ class Model(ConfigModel):
     Optimizer = _(SGD,momentum=0.9, lr=0.028, weight_decay=0.0001)
     LRScheduler = _(PolynomialLR,total_iters=1200, power=0.9)
     class Train:
-        Dataset = _(SimpleDataSet, root="./train_data/ctw1500/imgs/", label_file_list=['./train_data/ctw1500/imgs/training.txt'])
+        Dataset = _(SimpleDataSet, root="./train_data/ctw1500/imgs/", label_files=['./train_data/ctw1500/imgs/training.txt'])
         transforms = _[DecodeImage(img_mode="BGR", channel_first=False, ignore_orientation=True), DetLabelEncode(), ColorJitter(brightness=0.12549019607843137, saturation=0.5), RandomScaling(), RandomCropFlip(crop_ratio=0.5), RandomCropPolyInstances(crop_ratio=0.8, min_side_ratio=0.3), RandomRotatePolyInstances(rotate_ratio=0.5, max_angle=60, pad_with_fixed_color=False), SquareResizePad(target_size=800, pad_ratio=0.6), IaaAugment(augmenter_args=[{'type': 'Fliplr', 'args': {'p': 0.5}}]), DRRGTargets(), NormalizeImage(scale="1./255.", mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], order="hwc"), ToCHWImage(), KeepKeys(keep_keys=['image', 'gt_text_mask', 'gt_center_region_mask', 'gt_mask', 'gt_top_height_map', 'gt_bot_height_map', 'gt_sin_map', 'gt_cos_map', 'gt_comp_attribs'])]
         DATALOADER = _(shuffle=True, drop_last=False, batch_size=4, num_workers=8)
     class Eval:
-        Dataset = _(SimpleDataSet, root="./train_data/ctw1500/imgs/", label_file_list=['./train_data/ctw1500/imgs/test.txt'])
+        Dataset = _(SimpleDataSet, root="./train_data/ctw1500/imgs/", label_files=['./train_data/ctw1500/imgs/test.txt'])
         transforms = _[DecodeImage(img_mode="BGR", channel_first=False, ignore_orientation=True), DetLabelEncode(), DetResizeForTest(limit_type="min", limit_side_len=640), NormalizeImage(scale="1./255.", mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], order="hwc"), Pad(), ToCHWImage(), KeepKeys(keep_keys=['image', 'shape', 'polys', 'ignore_tags'])]
         DATALOADER = _(shuffle=False, drop_last=False, batch_size=1, num_workers=2)

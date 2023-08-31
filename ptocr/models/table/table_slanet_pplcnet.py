@@ -70,7 +70,7 @@ class Model(ConfigModel):
     class Data:
         dataset = PubTabDataSet
         root: "train_data/table/val" = ("train_data/table/train/",)
-        label_file_list: ["train_data/table/val.txt"] = [
+        label_files: ["train_data/table/val.txt"] = [
             "train_data/table/train.txt"
         ]
 

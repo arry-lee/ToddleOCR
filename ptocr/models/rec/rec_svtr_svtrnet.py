@@ -88,7 +88,7 @@ class Model(ConfigModel):
         Dataset = _(
             SimpleDataSet,
             root="./train_data",
-            label_file_list=["./train_data/train_list.txt"],
+            label_files=["./train_data/train_list.txt"],
             ext_op_transform_idx=1,
         )
         transforms = _[
@@ -107,7 +107,7 @@ class Model(ConfigModel):
         Dataset = _(
             SimpleDataSet,
             root="./train_data",
-            label_file_list=["./train_data/val_list.txt"],
+            label_files=["./train_data/val_list.txt"],
         )
         transforms = _[
             DecodeImage(img_mode="BGR", channel_first=False),

@@ -41,10 +41,10 @@ class Model(ConfigModel):
     Optimizer = _(Adam,betas=[0.9, 0.999], clip_norm=5.0, lr=0.001)
     LRScheduler = _(ConstantLR,)
     class Train:
-        Dataset = _(PubTabDataSet, root="train_data/table/pubtabnet/train/", label_file_list=['train_data/table/pubtabnet/PubTabNet_2.0.0_train.jsonl'])
+        Dataset = _(PubTabDataSet, root="train_data/table/pubtabnet/train/", label_files=['train_data/table/pubtabnet/PubTabNet_2.0.0_train.jsonl'])
         transforms = _[DecodeImage(img_mode="BGR", channel_first=False), TableLabelEncode(learn_empty_box=False, merge_no_span_structure=False, replace_empty_cell_token=False, loc_reg_num=4, max_text_length=500), TableBoxEncode(), ResizeTableImage(max_len=488), NormalizeImage(scale="1./255.", mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], order="hwc"), PaddingTableImage(size=[488, 488]), ToCHWImage(), KeepKeys(keep_keys=['image', 'structure', 'bboxes', 'bbox_masks', 'shape'])]
         DATALOADER = _(shuffle=True, batch_size=48, drop_last=True, num_workers=1)
     class Eval:
-        Dataset = _(PubTabDataSet, root="train_data/table/pubtabnet/val/", label_file_list=['train_data/table/pubtabnet/PubTabNet_2.0.0_val.jsonl'])
+        Dataset = _(PubTabDataSet, root="train_data/table/pubtabnet/val/", label_files=['train_data/table/pubtabnet/PubTabNet_2.0.0_val.jsonl'])
         transforms = _[DecodeImage(img_mode="BGR", channel_first=False), TableLabelEncode(learn_empty_box=False, merge_no_span_structure=False, replace_empty_cell_token=False, loc_reg_num=4, max_text_length=500), TableBoxEncode(), ResizeTableImage(max_len=488), NormalizeImage(scale="1./255.", mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], order="hwc"), PaddingTableImage(size=[488, 488]), ToCHWImage(), KeepKeys(keep_keys=['image', 'structure', 'bboxes', 'bbox_masks', 'shape'])]
         DATALOADER = _(shuffle=False, drop_last=False, batch_size=48, num_workers=1)

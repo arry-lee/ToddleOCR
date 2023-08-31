@@ -9,8 +9,8 @@ class PGDataSet(VisionDataset):
     def __init__(self, root, transforms=None, **kwargs):
         super().__init__(root, transforms)
         self.delimiter = kwargs.get("delimiter", "\t")
-        label_file_list = kwargs.pop("label_file_list")
-        data_source_num = len(label_file_list)
+        label_files = kwargs.pop("label_files")
+        data_source_num = len(label_files)
         ratio_list = kwargs.get("ratio_list", [1.0])
         self.seed = kwargs.get("seed", None)
 
@@ -22,7 +22,7 @@ class PGDataSet(VisionDataset):
             ratio_list = [float(ratio_list)] * int(data_source_num)
         assert len(ratio_list) == data_source_num, "The length of ratio_list should be the same as the file_list."
 
-        self.data_lines = self.get_image_info_list(label_file_list,ratio_list)
+        self.data_lines = self.get_image_info_list(label_files,ratio_list)
         self.data_idx_order_list = list(range(len(self.data_lines)))
         self.need_reset = True in [x < 1 for x in ratio_list]
 

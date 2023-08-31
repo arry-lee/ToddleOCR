@@ -39,10 +39,10 @@ class Model(ConfigModel):
     Optimizer = _(Adam,betas=[0.9, 0.999])
     LRScheduler = _(ConstantLR,)
     class Train:
-        Dataset = _(SimpleDataSet, root="./train_data/icdar2015/text_localization/", label_file_list=['./train_data/icdar2015/text_localization/train_icdar2015_label.txt'], ratio_list=[1.0])
+        Dataset = _(SimpleDataSet, root="./train_data/icdar2015/text_localization/", label_files=['./train_data/icdar2015/text_localization/train_icdar2015_label.txt'], ratio_list=[1.0])
         transforms = _[DecodeImage(img_mode="BGR", channel_first=False), DetLabelEncode(), EASTProcessTrain(image_shape=[512, 512], background_ratio=0.125, min_crop_side_ratio=0.1, min_text_size=10), KeepKeys(keep_keys=['image', 'score_map', 'geo_map', 'training_mask'])]
         DATALOADER = _(shuffle=True, drop_last=False, batch_size=16, num_workers=8)
     class Eval:
-        Dataset = _(SimpleDataSet, root="./train_data/icdar2015/text_localization/", label_file_list=['./train_data/icdar2015/text_localization/test_icdar2015_label.txt'])
+        Dataset = _(SimpleDataSet, root="./train_data/icdar2015/text_localization/", label_files=['./train_data/icdar2015/text_localization/test_icdar2015_label.txt'])
         transforms = _[DecodeImage(img_mode="BGR", channel_first=False), DetLabelEncode(), DetResizeForTest(limit_side_len=2400, limit_type="max"), NormalizeImage(scale="1./255.", mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], order="hwc"), ToCHWImage(), KeepKeys(keep_keys=['image', 'shape', 'polys', 'ignore_tags'])]
         DATALOADER = _(shuffle=False, drop_last=False, batch_size=1, num_workers=2)

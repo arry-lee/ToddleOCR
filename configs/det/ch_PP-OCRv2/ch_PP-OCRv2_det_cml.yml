@@ -1,4 +1,4 @@
-Global:
+ Global:
   use_gpu: true
   epoch_num: 1200
   log_window_size: 20
