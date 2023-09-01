@@ -240,6 +240,13 @@ class ConfigModel:
 
     @torch.no_grad()
     def cls(self, img_list):
+        if not isinstance(img_list,list):
+            if isinstance(img_list, str):
+                img = cv2.imread(img_list)
+            else:
+                img = img_or_path
+            img_list = [img]
+
         img_list = copy.deepcopy(img_list)
         img_num = len(img_list)
         # Calculate the aspect ratio of all text bars
@@ -248,7 +255,7 @@ class ConfigModel:
             width_list.append(img.shape[1] / float(img.shape[0]))
         # Sorting can speed up the cls process
         indices = np.argsort(np.array(width_list))
-
+        self.model.eval()
         cls_res = [["", 0.0]] * img_num
         batch_num = self.cls_batch_num
         for beg_img_no in range(0, img_num, batch_num):
@@ -261,20 +268,20 @@ class ConfigModel:
                 wh_ratio = w * 1.0 / h
                 max_wh_ratio = max(max_wh_ratio, wh_ratio)
             for ino in range(beg_img_no, end_img_no):
-                norm_img = self.resize_norm_img(img_list[indices[ino]])
+                norm_img = resize_norm_img(img_list[indices[ino]],max_wh_ratio,self.rec_image_shape)
                 norm_img = norm_img[np.newaxis, :]
                 norm_img_batch.append(norm_img)
             norm_img_batch = np.concatenate(norm_img_batch)
             norm_img_batch = norm_img_batch.copy()
 
-            self.input_tensor.from_numpy(norm_img_batch)
+            input_tensor= torch.from_numpy(norm_img_batch)
 
             prob_out = self.model(input_tensor)
             cls_result = self.postprocessor(prob_out)
             for rno in range(len(cls_result)):
                 label, score = cls_result[rno]
                 cls_res[indices[beg_img_no + rno]] = [label, score]
-                if "180" in label and score > self.cls_thresh:
+                if "180" in label and score > 0.5:
                     img_list[indices[beg_img_no + rno]] = cv2.rotate(img_list[indices[beg_img_no + rno]], 1)
         return img_list, cls_res
 

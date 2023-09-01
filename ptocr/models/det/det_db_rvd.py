@@ -26,7 +26,7 @@ class Model(ConfigModel):
     save_epoch_step = 1200
     eval_batch_step = [3000, 2000]
     metric_during_train = False
-    pretrained_model = None
+    pretrained_model = "../model/ch_ppocr_server_v2.0_det_train/best_accuracy.pth"
     checkpoints = None
     model_type = 'det'
     algorithm = 'DB'
@@ -42,7 +42,7 @@ class Model(ConfigModel):
     class Data:
         dataset = SimpleDataSet
         root = './train_data/icdar2015/text_localization/'
-        label_files: ['train_data/icdar2015/text_localization/test_icdar2015_label.txt'] = ['./train_data/icdar2015/text_localization/train_icdar2015_label.txt']
+        label_files: ['test_icdar2015_label.txt'] = ['train_icdar2015_label.txt']
         ratio_list = [1.0]
 
     class Loader:

@@ -193,7 +193,7 @@ def sorted_boxes(dt_boxes):
     return _boxes
 
 
-def resize_norm_img(self, img, max_wh_ratio, rec_image_shape):
+def resize_norm_img(img, max_wh_ratio, rec_image_shape):
     imgC, imgH, imgW = rec_image_shape
     assert imgC == img.shape[2]
     imgW = int((imgH * max_wh_ratio))
