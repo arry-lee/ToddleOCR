@@ -109,6 +109,7 @@ class ConfigModel:
     metric: Callable
 
     rec_image_shape: list = [3, 32, 320]
+    cls_image_shape:list = [3,48,192]
     rec_batch_num = 6
     cls_batch_num = 6
     det_box_type = 'rect'
@@ -244,7 +245,7 @@ class ConfigModel:
             if isinstance(img_list, str):
                 img = cv2.imread(img_list)
             else:
-                img = img_or_path
+                img = img_list
             img_list = [img]
 
         img_list = copy.deepcopy(img_list)
@@ -268,7 +269,7 @@ class ConfigModel:
                 wh_ratio = w * 1.0 / h
                 max_wh_ratio = max(max_wh_ratio, wh_ratio)
             for ino in range(beg_img_no, end_img_no):
-                norm_img = resize_norm_img(img_list[indices[ino]],max_wh_ratio,self.rec_image_shape)
+                norm_img = resize_norm_img(img_list[indices[ino]],max_wh_ratio,self.cls_image_shape)
                 norm_img = norm_img[np.newaxis, :]
                 norm_img_batch.append(norm_img)
             norm_img_batch = np.concatenate(norm_img_batch)
