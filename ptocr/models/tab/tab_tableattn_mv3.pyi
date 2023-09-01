@@ -30,7 +30,7 @@ class Model(ConfigModel):
     max_text_length = 500
     box_format = "xyxy"
     infer_mode = False
-    model_type = 'table'
+    model_type = 'tab'
     algorithm = 'TableAttn'
     Backbone = _(MobileNetV3, scale=1.0, model_name="small", disable_se=True)
     Head = _(TableAttentionHead, hidden_size=256, max_text_length=500, loc_reg_num=4)

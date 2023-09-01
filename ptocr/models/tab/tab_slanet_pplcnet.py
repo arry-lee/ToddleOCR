@@ -44,7 +44,7 @@ class Model(ConfigModel):
     infer_mode = False
     use_sync_bn = True
     save_res_path = "output/infer"
-    model_type = "table"
+    model_type = "tab"
     algorithm = "SLANet"
     Backbone = _(PPLCNet, scale=1.0, pretrained=True, use_ssld=True)
     Neck = _(CSPPAN, out_channels=96)

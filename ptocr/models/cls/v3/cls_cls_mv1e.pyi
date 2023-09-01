@@ -13,6 +13,9 @@ from ptocr.transforms.operators import DecodeImage, KeepKeys
 from ptocr.transforms.rec_img_aug import BaseDataAugmentation
 from ptocr.transforms.randaugment import RandAugment
 from ptocr.transforms.ssl_img_aug import SSLRotateResize
+from ptocr.utils.collate_fn import SSLRotateCollate
+
+
 class Model(ConfigModel):
     debug = False
     use_gpu = True

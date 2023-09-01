@@ -239,8 +239,8 @@ def filter_tag_det_res(dt_boxes, image_shape):
     for box in dt_boxes:
         if type(box) is list:
             box = np.array(box)
-        box = self.order_points_clockwise(box)
-        box = self.clip_det_res(box, img_height, img_width)
+        box = order_points_clockwise(box)
+        box = clip_det_res(box, img_height, img_width)
         rect_width = int(np.linalg.norm(box[0] - box[1]))
         rect_height = int(np.linalg.norm(box[0] - box[3]))
         if rect_width <= 3 or rect_height <= 3:
@@ -256,7 +256,7 @@ def filter_tag_det_res_only_clip(dt_boxes, image_shape):
     for box in dt_boxes:
         if type(box) is list:
             box = np.array(box)
-        box = self.clip_det_res(box, img_height, img_width)
+        box = clip_det_res(box, img_height, img_width)
         dt_boxes_new.append(box)
     dt_boxes = np.array(dt_boxes_new)
     return dt_boxes

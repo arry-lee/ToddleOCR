@@ -131,6 +131,7 @@ def yaml2py(old_file):
     filename = os.path.join(path, f"{mode}_{algo}_{backbone}.pyi".lower())
     # os.remove(filename)
     new = filename.replace("configs", "models").replace('-','_').replace('++','plus').lower()
+
     os.makedirs(os.path.dirname(new), exist_ok=True)
     with open(new, "w") as f:
         f.write("\n".join(lines))

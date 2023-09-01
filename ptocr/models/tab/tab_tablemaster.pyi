@@ -29,7 +29,7 @@ class Model(ConfigModel):
     infer_mode = False
     max_text_length = 500
     box_format = "xywh"
-    model_type = 'table'
+    model_type = 'tab'
     algorithm = 'TableMaster'
     Backbone = _(TableResNetExtra, gcb_config={'ratio': 0.0625, 'headers': 1, 'att_scale': False, 'fusion_type': 'channel_add', 'layers': [False, True, True, True]}, layers=[1, 2, 5, 3])
     Head = _(TableMasterHead, hidden_size=512, headers=8, dropout=0, d_ff=2024, max_text_length=500, loc_reg_num=4)

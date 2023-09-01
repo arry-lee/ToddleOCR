@@ -32,7 +32,7 @@ class Model(ConfigModel):
     box_format = "xy4"
     infer_mode = False
     use_sync_bn = True
-    model_type = 'table'
+    model_type = 'tab'
     algorithm = 'SLANet'
     Backbone = _(PPLCNet, scale=1.0, pretrained=True, use_ssld=True)
     Neck = _(CSPPAN, out_channels=96)

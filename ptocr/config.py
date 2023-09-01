@@ -115,7 +115,7 @@ class ConfigModel:
 
     def __init__(self, pretrained=None):
         self.use_gpu = self.use_gpu and torch.cuda.is_available()
-        self.init_distributed()
+        self._init_distributed()
         self.model = self._build_model()
         self.pretrained = pretrained or self.pretrained_model
         if self.pretrained:
@@ -123,7 +123,7 @@ class ConfigModel:
         self.rank = dist.get_rank() if self.distributed else 0
         self.is_rank0 = self.rank == 0
 
-    def init_distributed(self):
+    def _init_distributed(self):
         if self.distributed:
             dist.init_process_group(backend='gloo')
             self.rank = dist.get_rank()
@@ -202,7 +202,7 @@ class ConfigModel:
         return self.LRScheduler(optimizer, **kwargs)
 
     @torch.no_grad()
-    def det_one_image(self, img_or_path):
+    def _det_one_image(self, img_or_path):
         self.model.eval()
         if isinstance(img_or_path, str):
             img = cv2.imread(img_or_path)
@@ -224,7 +224,7 @@ class ConfigModel:
         return (dt_boxes, img)
 
     @torch.no_grad()
-    def rec_one_image(self, img_or_path):
+    def _rec_one_image(self, img_or_path):
         self.model.eval()
         if isinstance(img_or_path, str):
             img = cv2.imread(img_or_path)
@@ -280,6 +280,9 @@ class ConfigModel:
 
     @torch.no_grad()
     def rec(self, img_list):
+        if not isinstance(img_list,list):
+            return self._rec_one_image(img_list)
+
         img_num = len(img_list)
         width_list = []
         for img in img_list:
@@ -313,7 +316,7 @@ class ConfigModel:
 
     @torch.no_grad()
     def det(self, img, cls=None, rec=None):
-        (dt_boxes, img) = self.det_one_image(img)
+        (dt_boxes, img) = self._det_one_image(img)
         ori_im = img.copy()
         img_crop_list = []
         dt_boxes = sorted_boxes(dt_boxes)
@@ -331,7 +334,7 @@ class ConfigModel:
             img_crop_list = rec(img_crop_list)
         return img_crop_list
 
-    def save(self, model_path, is_best=False, prefix='ppocr', **kwargs):
+    def save(self, model_path, is_best=False, prefix='toddleocr', **kwargs):
         os.makedirs(model_path, exist_ok=True)
         model_prefix = os.path.join(model_path, prefix)
         torch.save(self.optimizer.state_dict(), model_prefix + '.pto')
@@ -375,7 +378,7 @@ class ConfigModel:
         return self.model
 
     def train(self, log_writer=None):
-        self.init_distributed()
+        self._init_distributed()
         train_dataloader = self._build_dataloader('train')
         valid_dataloader = self._build_dataloader('eval')
         logger.info('train dataloader has {} iters'.format(len(train_dataloader)))
@@ -530,3 +533,7 @@ class ConfigModel:
         if self.distributed:
             dist.destroy_process_group()
         return
+
+    def __call__(self, *args, **kwargs):
+        f = getattr(self,self.model_type.lower())
+        return f(*args,**kwargs)

@@ -97,11 +97,12 @@ class DSConv(nn.Module):
 
 
 class DBFPN(nn.Module):
+    """DB的颈部"""
     def __init__(self, in_channels, out_channels, use_asf=False, **kwargs):
         super().__init__()
         self.out_channels = out_channels
         self.use_asf = use_asf
-
+        # 四个层结构相同但是要重新做是因为权重不同
         self.in2_conv = nn.Conv2d(
             in_channels=in_channels[0],
             out_channels=self.out_channels,
