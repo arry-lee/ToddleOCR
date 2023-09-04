@@ -31,7 +31,7 @@ class Model(ConfigModel):
     max_text_length = 25
     infer_mode = False
     use_space_char = True
-    distributed = True
+    distributed = False
     model_type = 'rec'
     algorithm = 'CRNN'
     Transform = None

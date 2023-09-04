@@ -30,7 +30,7 @@ class Model(ConfigModel):
     checkpoints = None
     save_infer_dir = None
     use_visualdl = False
-    distributed = True
+    distributed = False
     model_type = 'det'
     algorithm = 'DB'
     Transform = None

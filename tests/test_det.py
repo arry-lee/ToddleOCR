@@ -17,3 +17,9 @@ class TestModel(TestCase):
     def test_cls(self):
         cm = ClsModel()
         r = cm("../doc/imgs_words/ch/word_2r.jpg")
+
+    def test_det_v3(self):
+        from ptocr.models.det.v3.det_db_mv3_rse import Model
+        m = Model(r'D:\dev\.model\toddleocr\zh_ocr_det_v3\inference.pt')
+        r = m(img)
+        print(r)
