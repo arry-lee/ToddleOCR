@@ -38,7 +38,7 @@ SUPPORT_DET_MODEL = ["DB"]
 VERSION = "v1.0.0"
 SUPPORT_REC_MODEL = ["CRNN", "SVTR_LCNet"]
 BASE_DIR = __dir__
-
+BASE_URL = "https://github.com/arry-lee/ToddleOCR/releases/download/weights/"
 DEFAULT_OCR_MODEL_VERSION = "v3"
 SUPPORT_OCR_MODEL_VERSION = ["v3"]
 # DEFAULT_STRUCTURE_MODEL_VERSION = "PP-StructureV2"
@@ -438,15 +438,15 @@ class ToddleOCR:
         det_model_config, det_model_cls = get_model_config("OCR", params.ocr_version, "det", det_lang)
 
         params.det_model_dir, det_url = confirm_model_dir_url(
-            params.det_model_dir, os.path.join(BASE_DIR, "weights"), det_model_config["url"]
+            params.det_model_dir, os.path.join(BASE_DIR, "weights"), BASE_URL+det_model_config["url"]
         )
         rec_model_config, rec_model_cls = get_model_config("OCR", params.ocr_version, "rec", lang)
         params.rec_model_dir, rec_url = confirm_model_dir_url(
-            params.rec_model_dir, os.path.join(BASE_DIR, "weights"), rec_model_config["url"]
+            params.rec_model_dir, os.path.join(BASE_DIR, "weights"), BASE_URL+rec_model_config["url"]
         )
         cls_model_config, cls_model_cls = get_model_config("OCR", params.ocr_version, "cls", "ch")
         params.cls_model_dir, cls_url = confirm_model_dir_url(
-            params.cls_model_dir, os.path.join(BASE_DIR, "weights"), cls_model_config["url"]
+            params.cls_model_dir, os.path.join(BASE_DIR, "weights"), BASE_URL+cls_model_config["url"]
         )
         if params.ocr_version == "v3":
             rec_model_cls.rec_image_shape = (3, 48, 320)
