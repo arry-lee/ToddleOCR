@@ -38,6 +38,7 @@ SUPPORT_DET_MODEL = ["DB"]
 VERSION = "v1.0.0"
 SUPPORT_REC_MODEL = ["CRNN", "SVTR_LCNet"]
 BASE_DIR = __dir__
+print(BASE_DIR,os.getcwd())
 BASE_URL = "https://github.com/arry-lee/ToddleOCR/releases/download/weights/"
 DEFAULT_OCR_MODEL_VERSION = "v3"
 SUPPORT_OCR_MODEL_VERSION = ["v3"]

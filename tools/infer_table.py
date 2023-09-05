@@ -8,7 +8,7 @@ from loguru import logger
 
 from ptocr.utils.utility import get_image_file_list
 from ptocr.utils.visual import draw_rectangle
-from tools.infer.utility import draw_boxes
+from tools.utility import draw_boxes
 
 
 @torch.no_grad()

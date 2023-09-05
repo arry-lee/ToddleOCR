@@ -20,7 +20,7 @@ from shapely.geometry import Polygon
 
 from ptocr.transforms.iaa_augment import IaaAugment
 from ptocr.transforms.random_crop_data import is_poly_outside_rect
-from tools.infer.utility import get_rotate_crop_image
+from tools.utility import get_rotate_crop_image
 
 
 class CopyPaste:

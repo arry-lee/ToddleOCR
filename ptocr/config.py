@@ -7,7 +7,7 @@ import cv2
 import numpy as np
 
 from ptocr.modules.architectures import BaseModel
-from tools.infer.utility import get_minarea_rect_crop, get_rotate_crop_image
+from tools.utility import get_minarea_rect_crop, get_rotate_crop_image
 
 import datetime
 import os
