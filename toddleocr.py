@@ -26,7 +26,7 @@ ptocr = importlib.import_module("ptocr", "toddleocr")
 from loguru import logger
 from ptocr.utils.utility import check_and_read, alpha_to_color, binarize_img
 from ptocr.utils.network import maybe_download, download_with_progressbar, is_link, confirm_model_dir_url
-from tools.infer.utility import draw_ocr, init_args, str2bool, check_gpu
+from tools.utility import draw_ocr, init_args, str2bool, check_gpu
 
 __all__ = [
     "ToddleOCR",
