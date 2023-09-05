@@ -35,7 +35,7 @@ import tools.infer.utility as utility
 from ptocr.utils.logging import get_logger
 from ptocr.utils.utility import get_image_file_list, check_and_read
 
-logger = get_logger()
+from loguru import logger
 
 
 class TextRecognizer:

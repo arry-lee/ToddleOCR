@@ -19,11 +19,10 @@ import tarfile
 import requests
 from tqdm import tqdm
 
-from ptocr.utils.logging import get_logger
+from loguru import logger
 
 
 def download_with_progressbar(url, save_path):
-    logger = get_logger()
     response = requests.get(url, stream=True)
     if response.status_code == 200:
         total_size_in_bytes = int(response.headers.get("content-length", 1))
@@ -41,10 +40,8 @@ def download_with_progressbar(url, save_path):
 
 def maybe_download(model_storage_directory, url):
     # using custom model
-    tar_file_name_list = [".pdiparams", ".pdiparams.info", ".pdmodel"]
-    if not os.path.exists(os.path.join(model_storage_directory, "inference.pdiparams")) or not os.path.exists(
-        os.path.join(model_storage_directory, "inference.pdmodel")
-    ):
+    tar_file_name_list = [".pt"]
+    if not os.path.exists(os.path.join(model_storage_directory, "inference.pt")):
         assert url.endswith(".tar"), "Only supports tar compressed package"
         tmp_path = os.path.join(model_storage_directory, url.split("/")[-1])
         print("download {} to {}".format(url, tmp_path))

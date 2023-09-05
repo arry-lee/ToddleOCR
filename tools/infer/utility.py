@@ -608,7 +608,7 @@ def get_minarea_rect_crop(img, points):
 
 
 def check_gpu(use_gpu):
-    if use_gpu and not torch.is_compiled_with_cuda():
+    if use_gpu and not torch.cuda.is_available():
         use_gpu = False
     return use_gpu
 
