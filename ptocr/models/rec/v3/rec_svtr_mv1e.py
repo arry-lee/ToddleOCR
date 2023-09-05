@@ -33,7 +33,7 @@ class Model(ConfigModel):
     log_window_size = 20
     max_text_length = 25
     metric_during_train = True
-    pretrained_model = "../model/ch_PP-OCRv3_rec_train/best_accuracy.pt"
+    pretrained_model = None#"../model/ch_PP-OCRv3_rec_train/best_accuracy.pt"
     save_epoch_step = 3
     save_infer_dir = None
     save_model_dir = "./output/v3_en_mobile"
