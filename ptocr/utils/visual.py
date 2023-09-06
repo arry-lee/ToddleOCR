@@ -109,3 +109,44 @@ def draw_rectangle(img_path, boxes):
         x1, y1, x2, y2 = box
         cv2.rectangle(img_show, (x1, y1), (x2, y2), (255, 0, 0), 2)
     return img_show
+
+
+def table_view(image_file,pred_html,output):
+    f_html = open(os.path.join(output, "show.html"), mode="w", encoding="utf-8")
+    f_html.write("<html>\n<body>\n")
+    f_html.write('<table border="1">\n')
+    f_html.write('<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />')
+    f_html.write("<tr>\n")
+    f_html.write("<td>img name\n")
+    f_html.write("<td>ori image</td>")
+    f_html.write("<td>table html</td>")
+    f_html.write("<td>cell box</td>")
+    f_html.write("</tr>\n")
+    f_html.write("<tr>\n")
+    f_html.write(f"<td> {os.path.basename(image_file)} <br/>\n")
+    f_html.write(f'<td><img src="{image_file}" width=640></td>\n')
+    f_html.write(
+        '<td><table  border="1">'
+        + pred_html.replace("<html><body><table>", "").replace("</table></body></html>", "")
+        + "</table></td>\n"
+    )
+    f_html.write(f'<td><img src="{os.path.basename(image_file)}" width=640></td>\n')
+    f_html.write("</tr>\n")
+    f_html.write("</table>\n")
+    f_html.close()
+    import webbrowser
+    webbrowser.open(os.path.join(output, "show.html"))
+
+
+def expand(pix, det_box, shape):
+    x0, y0, x1, y1 = det_box
+    h, w, c = shape
+    tmp_x0 = x0 - pix
+    tmp_x1 = x1 + pix
+    tmp_y0 = y0 - pix
+    tmp_y1 = y1 + pix
+    x0_ = tmp_x0 if tmp_x0 >= 0 else 0
+    x1_ = tmp_x1 if tmp_x1 <= w else w
+    y0_ = tmp_y0 if tmp_y0 >= 0 else 0
+    y1_ = tmp_y1 if tmp_y1 <= h else h
+    return x0_, y0_, x1_, y1_

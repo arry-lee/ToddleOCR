@@ -35,3 +35,26 @@ class TestModel(TestCase):
         rm = RecModel(r'D:\dev\.model\toddleocr\zh_ocr_rec_v3\inference.pt')
         r = m(img,rec=rm)
         print(r)
+
+    def test_table_one(self):
+        from ptocr.models.tab.tab_slanet_pplcnet import Model
+        m = Model('../model/ch_ppstructure_mobile_v2.0_SLANet_train/best_accuracy.pt')
+        r = m.table_one_image('../ppstructure/docs/table/table.jpg')
+        print(r)
+
+    def test_infer_table(self):
+        from tools.infer_table import tab
+        from ptocr.models.tab.tab_slanet_pplcnet import Model
+        m = Model('../model/ch_ppstructure_mobile_v2.0_SLANet_train/best_accuracy.pt')
+        tab(m,'../ppstructure/docs/table/table.jpg','./table')
+
+    def test_table(self):
+        from ptocr.models.tab.tab_slanet_pplcnet import Model as TabModel
+        from ptocr.models.det.v3.det_db_mv3_rse import Model as DetModel
+        from ptocr.models.rec.v3.rec_svtr_mv1e import Model as RecModel
+        dm = DetModel(r'D:\dev\.model\toddleocr\zh_ocr_det_v3\inference.pt')
+        rm = RecModel(r'D:\dev\.model\toddleocr\zh_ocr_rec_v3\inference.pt')
+        tm = TabModel('../model/ch_ppstructure_mobile_v2.0_SLANet_train/best_accuracy.pt')
+
+        r = tm.table('../ppstructure/docs/table/table.jpg',det=dm,rec=rm)
+        print(r['html'])
