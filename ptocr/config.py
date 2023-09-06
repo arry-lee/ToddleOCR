@@ -1,8 +1,8 @@
 import copy
 import warnings
 
-from ppstructure.table.matcher import TableMatch
-from ppstructure.table.table_master_match import TableMasterMatcher
+from structure.table.matcher import TableMatch
+from structure.table.table_master_match import TableMasterMatcher
 from ptocr.utils.visual import table_view, expand
 
 warnings.filterwarnings("ignore")
