@@ -25,7 +25,12 @@ ptocr = importlib.import_module("ptocr", "toddleocr")
 
 from loguru import logger
 from ptocr.utils.utility import check_and_read, alpha_to_color, binarize_img
-from ptocr.utils.network import maybe_download, download_with_progressbar, is_link, confirm_model_dir_url
+from ptocr.utils.network import (
+    maybe_download,
+    download_with_progressbar,
+    is_link,
+    confirm_model_dir_url,
+)
 from tools.utility import draw_ocr, init_args, str2bool, check_gpu
 
 __all__ = [
@@ -38,7 +43,7 @@ SUPPORT_DET_MODEL = ["DB"]
 VERSION = "v1.0.0"
 SUPPORT_REC_MODEL = ["CRNN", "SVTR_LCNet"]
 BASE_DIR = __dir__
-print(BASE_DIR,os.getcwd())
+print(BASE_DIR, os.getcwd())
 BASE_URL = "https://github.com/arry-lee/ToddleOCR/releases/download/weights/"
 DEFAULT_OCR_MODEL_VERSION = "v3"
 SUPPORT_OCR_MODEL_VERSION = ["v3"]
@@ -107,7 +112,8 @@ MODEL_URLS = {
             },
             "cls": {
                 "model": "ptocr.models.cls.v2.cls_cls_mv3",
-                "ch": {"url": "zh_ocr_cls_v1.tar"}},
+                "ch": {"url": "zh_ocr_cls_v1.tar"},
+            },
         },
         # "v2": {
         #     "det": {"ch": {"url": "zh_ocr_det_v2.tar"}},
@@ -201,13 +207,13 @@ MODEL_URLS = {
         },
         "v2": {
             "table": {
-                "model":"ptocr.models.tab.tab_slanet_pplcnet",
+                "model": "ptocr.models.tab.tab_slanet_pplcnet",
                 "en": {
-                    "url": "en_tab_str_m2_slanet.tar",
+                    "url": "en_str_tab_m2.tar",
                     "dict": "ptocr/utils/dict/table_structure_dict.txt",
                 },
                 "ch": {
-                    "url": "zh_tab_str_m2_slanet.tar",
+                    "url": "zh_str_tab_m2.tar",
                     "dict": "ptocr/utils/dict/table_structure_dict_ch.txt",
                 },
             },
@@ -241,9 +247,9 @@ def parse_args(main=True):
         choices=SUPPORT_OCR_MODEL_VERSION,
         default="v3",
         help="OCR Model version, the current model support list is as follows: "
-             "1. v3 Support Chinese and English detection and recognition model, and direction classifier model"
-             "2. v2 Support Chinese detection and recognition model. "
-             "3. v1 support Chinese detection, recognition and direction classifier and multilingual recognition model.",
+        "1. v3 Support Chinese and English detection and recognition model, and direction classifier model"
+        "2. v2 Support Chinese detection and recognition model. "
+        "3. v1 support Chinese detection, recognition and direction classifier and multilingual recognition model.",
     )
     parser.add_argument(
         "--structure_version",
@@ -251,12 +257,16 @@ def parse_args(main=True):
         choices=SUPPORT_STRUCTURE_MODEL_VERSION,
         default="v2",
         help="Model version, the current model support list is as follows:"
-             " 1. PP-Structure Support en table structure model."
-             " 2. PP-StructureV2 Support ch and en table structure model.",
+        " 1. PP-Structure Support en table structure model."
+        " 2. PP-StructureV2 Support ch and en table structure model.",
     )
 
     for action in parser._actions:
-        if action.dest in ["rec_char_dict_path", "table_char_dict_path", "layout_dict_path"]:
+        if action.dest in [
+            "rec_char_dict_path",
+            "table_char_dict_path",
+            "layout_dict_path",
+        ]:
             action.default = None
     if main:
         return parser.parse_args()
@@ -331,7 +341,21 @@ def parse_lang(lang):
         "lez",
         "tab",
     ]
-    devanagari_lang = ["hi", "mr", "ne", "bh", "mai", "ang", "bho", "mah", "sck", "new", "gom", "sa", "bgc"]
+    devanagari_lang = [
+        "hi",
+        "mr",
+        "ne",
+        "bh",
+        "mai",
+        "ang",
+        "bho",
+        "mah",
+        "sck",
+        "new",
+        "gom",
+        "sa",
+        "bgc",
+    ]
     if lang in latin_lang:
         lang = "latin"
     elif lang in arabic_lang:
@@ -340,7 +364,9 @@ def parse_lang(lang):
         lang = "cyrillic"
     elif lang in devanagari_lang:
         lang = "devanagari"
-    assert lang in MODEL_URLS["OCR"][DEFAULT_OCR_MODEL_VERSION]["rec"], "param lang must in {}, but got {}".format(
+    assert (
+        lang in MODEL_URLS["OCR"][DEFAULT_OCR_MODEL_VERSION]["rec"]
+    ), "param lang must in {}, but got {}".format(
         MODEL_URLS["OCR"][DEFAULT_OCR_MODEL_VERSION]["rec"].keys(), lang
     )
     if lang == "ch":
@@ -382,12 +408,14 @@ def get_model_config(type, version, model_type, lang):
         else:
             logger.error(
                 "lang {} is not support, we only support {} for {} models".format(
-                    lang, model_urls[DEFAULT_MODEL_VERSION][model_type].keys(), model_type
+                    lang,
+                    model_urls[DEFAULT_MODEL_VERSION][model_type].keys(),
+                    model_type,
                 )
             )
             sys.exit(-1)
-    module = importlib.import_module(model_urls[version][model_type]['model'])
-    model = getattr(module, 'Model')
+    module = importlib.import_module(model_urls[version][model_type]["model"])
+    model = getattr(module, "Model")
 
     return model_urls[version][model_type][lang], model
 
@@ -439,22 +467,38 @@ class ToddleOCR:
         lang, det_lang = parse_lang(params.lang)
 
         # init model dir
-        det_model_config, det_model_cls = get_model_config("OCR", params.ocr_version, "det", det_lang)
+        det_model_config, det_model_cls = get_model_config(
+            "OCR", params.ocr_version, "det", det_lang
+        )
 
         params.det_model_dir, det_url = confirm_model_dir_url(
-            params.det_model_dir, os.path.join(BASE_DIR, "weights"), BASE_URL+det_model_config["url"]
+            params.det_model_dir,
+            os.path.join(BASE_DIR, "weights"),
+            BASE_URL + det_model_config["url"],
         )
-        rec_model_config, rec_model_cls = get_model_config("OCR", params.ocr_version, "rec", lang)
+        rec_model_config, rec_model_cls = get_model_config(
+            "OCR", params.ocr_version, "rec", lang
+        )
         params.rec_model_dir, rec_url = confirm_model_dir_url(
-            params.rec_model_dir, os.path.join(BASE_DIR, "weights"), BASE_URL+rec_model_config["url"]
+            params.rec_model_dir,
+            os.path.join(BASE_DIR, "weights"),
+            BASE_URL + rec_model_config["url"],
         )
-        cls_model_config, cls_model_cls = get_model_config("OCR", params.ocr_version, "cls", "ch")
+        cls_model_config, cls_model_cls = get_model_config(
+            "OCR", params.ocr_version, "cls", "ch"
+        )
         params.cls_model_dir, cls_url = confirm_model_dir_url(
-            params.cls_model_dir, os.path.join(BASE_DIR, "weights"), BASE_URL+cls_model_config["url"]
+            params.cls_model_dir,
+            os.path.join(BASE_DIR, "weights"),
+            BASE_URL + cls_model_config["url"],
         )
-        tab_model_config, tab_model_cls = get_model_config("STRUCTURE", params.structure_version, "table", "ch")
+        tab_model_config, tab_model_cls = get_model_config(
+            "STRUCTURE", params.structure_version, "table", "ch"
+        )
         params.tab_model_config, tab_url = confirm_model_dir_url(
-            params.tab_model_dir, os.path.join(BASE_DIR, "weights"), BASE_URL+tab_model_config["url"]
+            params.tab_model_dir,
+            os.path.join(BASE_DIR, "weights"),
+            BASE_URL + tab_model_config["url"],
         )
 
         if params.ocr_version == "v3":
@@ -476,21 +520,33 @@ class ToddleOCR:
             sys.exit(0)
 
         if params.rec_char_dict_path is None:
-            params.rec_char_dict_path = str(Path(__file__).parent / rec_model_config["dict"])
+            params.rec_char_dict_path = str(
+                Path(__file__).parent / rec_model_config["dict"]
+            )
 
         rec_model_cls.character_dict_path = params.rec_char_dict_path
 
         logger.debug(params)
-        self.det_model = det_model_cls(params.det_model_dir + '/inference.pt')
-        self.cls_model = cls_model_cls(params.cls_model_dir + '/inference.pt')
-        self.rec_model = rec_model_cls(params.rec_model_dir + '/inference.pt')
+        self.det_model = det_model_cls(params.det_model_dir + "/inference.pt")
+        self.cls_model = cls_model_cls(params.cls_model_dir + "/inference.pt")
+        self.rec_model = rec_model_cls(params.rec_model_dir + "/inference.pt")
         # if params.table_char_dict_path is None:
         #     params.table_char_dict_path = str(Path(__file__).parent / tab_model_config["dict"])
 
         # tab_model_cls.character_dict_path = str(Path(__file__).parent / tab_model_config["dict"])
-        self.tab_model = tab_model_cls(params.tab_model_dir + '/inference.pt')
+        self.tab_model = tab_model_cls(params.tab_model_dir + "/inference.pt")
 
-    def ocr(self, img, det=True, rec=True, cls=True, tab=False, bin=False, inv=False, alpha_color=(255, 255, 255)):
+    def ocr(
+        self,
+        img,
+        det=True,
+        rec=True,
+        cls=True,
+        tab=False,
+        bin=False,
+        inv=False,
+        alpha_color=(255, 255, 255),
+    ):
         """
         OCR with ToddleOCR
         args：
@@ -523,6 +579,7 @@ class ToddleOCR:
             imgs = [img]
         else:
             imgs = img
+
         def preprocess_image(_image):
             _image = alpha_to_color(_image, alpha_color)
             if inv:
@@ -535,7 +592,7 @@ class ToddleOCR:
         for idx, img in enumerate(imgs):
             img = preprocess_image(img)
             if tab:
-                res = tab(img,det=self.det_model,rec=rec,view=None)
+                res = tab(img, det=self.det_model, rec=rec, view=None)
                 ocr_res.append(res)
             else:
                 dt_boxes = self.det_model(img, cls=cls, rec=rec)
@@ -547,11 +604,12 @@ class ToddleOCR:
         return ocr_res
 
 
-if __name__ == '__main__':
-    t = ToddleOCR(det_model_dir='weights/zh_ocr_det_v3',
-        cls_model_dir='weights/zh_ocr_cls_v1',
-        rec_model_dir='weights/zh_ocr_rec_v3',
-        tab_model_dir='D:\dev\github\ToddleOCR\model\ch_ppstructure_mobile_v2.0_SLANet_infer'
+if __name__ == "__main__":
+    t = ToddleOCR(
+        det_model_dir="weights/zh_ocr_det_v3",
+        cls_model_dir="weights/zh_ocr_cls_v1",
+        rec_model_dir="weights/zh_ocr_rec_v3",
+        tab_model_dir="weights/zh_str_tab_m2",
     )
-    r = t.ocr(r'D:\dev\github\ToddleOCR\doc\imgs\00018069.jpg',tab=True)
+    r = t.ocr(r"doc/imgs/00018069.jpg", tab=True)
     print(r)
