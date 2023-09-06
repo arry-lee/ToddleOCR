@@ -56,5 +56,5 @@ class TestModel(TestCase):
         rm = RecModel(r'D:\dev\.model\toddleocr\zh_ocr_rec_v3\inference.pt')
         tm = TabModel('../model/ch_ppstructure_mobile_v2.0_SLANet_train/best_accuracy.pt')
 
-        r = tm.table('../ppstructure/docs/table/table.jpg',det=dm,rec=rm)
+        r = tm.table(r'D:\dev\github\ToddleOCR\doc\imgs\00018069.jpg',det=dm,rec=rm)
         print(r['html'])

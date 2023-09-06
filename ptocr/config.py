@@ -805,14 +805,15 @@ class ConfigModel:
         dt_boxes, rec_res = self._ocr(copy.deepcopy(img), det, rec)
         result["boxes"] = dt_boxes  # [x.tolist() for x in dt_boxes]
         result["rec_res"] = rec_res
+
         if self.algorithm in ["TableMaster"]:
             match = TableMasterMatcher()
         else:
             match = TableMatch(filter_ocr_result=True)
-
-        pred_html = match(structure_res, dt_boxes, rec_res)
-        result["html"] = pred_html
-        if view=='html':
-            output = output or '.'
-            table_view(img_or_path,pred_html,output)
+        if result["cell_bbox"]:
+            pred_html = match(structure_res, dt_boxes, rec_res)
+            result["html"] = pred_html
+            if view=='html':
+                output = output or '.'
+                table_view(img_or_path,pred_html,output)
         return result

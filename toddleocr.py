@@ -42,8 +42,8 @@ print(BASE_DIR,os.getcwd())
 BASE_URL = "https://github.com/arry-lee/ToddleOCR/releases/download/weights/"
 DEFAULT_OCR_MODEL_VERSION = "v3"
 SUPPORT_OCR_MODEL_VERSION = ["v3"]
-# DEFAULT_STRUCTURE_MODEL_VERSION = "PP-StructureV2"
-# SUPPORT_STRUCTURE_MODEL_VERSION = ["PP-Structure", "PP-StructureV2"]
+DEFAULT_STRUCTURE_MODEL_VERSION = "v2"
+SUPPORT_STRUCTURE_MODEL_VERSION = ["v2"]
 
 MODEL_URLS = {
     "OCR": {
@@ -190,38 +190,39 @@ MODEL_URLS = {
         #     "cls": {"ch": {"url": "zh_ocr_cls_v1.tar"}},
         # },
     },
-    # "STRUCTURE": {
-    #     "v1": {
-    #         "table": {
-    #             "en": {
-    #                 "url": "en_tab_str_v1.tar",
-    #                 "dict": "ptocr/utils/dict/table_structure_dict.txt",
-    #             }
-    #         }
-    #     },
-    #     "v2": {
-    #         "table": {
-    #             "en": {
-    #                 "url": "en_tab_str_m2_slanet.tar",
-    #                 "dict": "ptocr/utils/dict/table_structure_dict.txt",
-    #             },
-    #             "ch": {
-    #                 "url": "zh_tab_str_m2_slanet.tar",
-    #                 "dict": "ptocr/utils/dict/table_structure_dict_ch.txt",
-    #             },
-    #         },
-    #         "layout": {
-    #             "en": {
-    #                 "url": "en_lay_det_x1_picodet.tar",
-    #                 "dict": "ptocr/utils/dict/layout_dict/layout_publaynet_dict.txt",
-    #             },
-    #             "ch": {
-    #                 "url": "ch_lay_det_x1_picodet.tar",
-    #                 "dict": "ptocr/utils/dict/layout_dict/layout_cdla_dict.txt",
-    #             },
-    #         },
-    #     },
-    # },
+    "STRUCTURE": {
+        "v1": {
+            "table": {
+                "en": {
+                    "url": "en_tab_str_v1.tar",
+                    "dict": "ptocr/utils/dict/table_structure_dict.txt",
+                }
+            }
+        },
+        "v2": {
+            "table": {
+                "model":"ptocr.models.tab.tab_slanet_pplcnet",
+                "en": {
+                    "url": "en_tab_str_m2_slanet.tar",
+                    "dict": "ptocr/utils/dict/table_structure_dict.txt",
+                },
+                "ch": {
+                    "url": "zh_tab_str_m2_slanet.tar",
+                    "dict": "ptocr/utils/dict/table_structure_dict_ch.txt",
+                },
+            },
+            # "layout": {
+            #     "en": {
+            #         "url": "en_lay_det_x1_picodet.tar",
+            #         "dict": "ptocr/utils/dict/layout_dict/layout_publaynet_dict.txt",
+            #     },
+            #     "ch": {
+            #         "url": "ch_lay_det_x1_picodet.tar",
+            #         "dict": "ptocr/utils/dict/layout_dict/layout_cdla_dict.txt",
+            #     },
+            # },
+        },
+    },
 }
 
 
@@ -244,15 +245,15 @@ def parse_args(main=True):
              "2. v2 Support Chinese detection and recognition model. "
              "3. v1 support Chinese detection, recognition and direction classifier and multilingual recognition model.",
     )
-    # parser.add_argument(
-    #     "--structure_version",
-    #     type=str,
-    #     choices=SUPPORT_STRUCTURE_MODEL_VERSION,
-    #     default="PP-StructureV2",
-    #     help="Model version, the current model support list is as follows:"
-    #          " 1. PP-Structure Support en table structure model."
-    #          " 2. PP-StructureV2 Support ch and en table structure model.",
-    # )
+    parser.add_argument(
+        "--structure_version",
+        type=str,
+        choices=SUPPORT_STRUCTURE_MODEL_VERSION,
+        default="v2",
+        help="Model version, the current model support list is as follows:"
+             " 1. PP-Structure Support en table structure model."
+             " 2. PP-StructureV2 Support ch and en table structure model.",
+    )
 
     for action in parser._actions:
         if action.dest in ["rec_char_dict_path", "table_char_dict_path", "layout_dict_path"]:
@@ -356,6 +357,8 @@ def parse_lang(lang):
 def get_model_config(type, version, model_type, lang):
     if type == "OCR":
         DEFAULT_MODEL_VERSION = DEFAULT_OCR_MODEL_VERSION
+    elif type == "STRUCTURE":
+        DEFAULT_MODEL_VERSION = DEFAULT_STRUCTURE_MODEL_VERSION
     else:
         raise NotImplementedError
 
@@ -449,6 +452,11 @@ class ToddleOCR:
         params.cls_model_dir, cls_url = confirm_model_dir_url(
             params.cls_model_dir, os.path.join(BASE_DIR, "weights"), BASE_URL+cls_model_config["url"]
         )
+        tab_model_config, tab_model_cls = get_model_config("STRUCTURE", params.structure_version, "table", "ch")
+        params.tab_model_config, tab_url = confirm_model_dir_url(
+            params.tab_model_dir, os.path.join(BASE_DIR, "weights"), BASE_URL+tab_model_config["url"]
+        )
+
         if params.ocr_version == "v3":
             rec_model_cls.rec_image_shape = (3, 48, 320)
         else:
@@ -458,6 +466,7 @@ class ToddleOCR:
             maybe_download(params.det_model_dir, det_url)
             maybe_download(params.rec_model_dir, rec_url)
             maybe_download(params.cls_model_dir, cls_url)
+            maybe_download(params.tab_model_dir, tab_url)
 
         if params.det_algorithm not in SUPPORT_DET_MODEL:
             logger.error("det_algorithm must in {}".format(SUPPORT_DET_MODEL))
@@ -475,8 +484,13 @@ class ToddleOCR:
         self.det_model = det_model_cls(params.det_model_dir + '/inference.pt')
         self.cls_model = cls_model_cls(params.cls_model_dir + '/inference.pt')
         self.rec_model = rec_model_cls(params.rec_model_dir + '/inference.pt')
+        # if params.table_char_dict_path is None:
+        #     params.table_char_dict_path = str(Path(__file__).parent / tab_model_config["dict"])
 
-    def ocr(self, img, det=True, rec=True, cls=True, bin=False, inv=False, alpha_color=(255, 255, 255)):
+        # tab_model_cls.character_dict_path = str(Path(__file__).parent / tab_model_config["dict"])
+        self.tab_model = tab_model_cls(params.tab_model_dir + '/inference.pt')
+
+    def ocr(self, img, det=True, rec=True, cls=True, tab=False, bin=False, inv=False, alpha_color=(255, 255, 255)):
         """
         OCR with ToddleOCR
         args：
@@ -501,6 +515,8 @@ class ToddleOCR:
             cls = self.cls_model
         if rec:
             rec = self.rec_model
+        if tab:
+            tab = self.tab_model
 
         img = check_img(img)
         if not isinstance(img, list):
@@ -518,11 +534,16 @@ class ToddleOCR:
         ocr_res = []
         for idx, img in enumerate(imgs):
             img = preprocess_image(img)
-            dt_boxes = self.det_model(img, cls=cls, rec=rec)
-            if not dt_boxes:
-                ocr_res.append(None)
-                continue
-            ocr_res.append(dt_boxes)
+            if tab:
+                res = tab(img,det=self.det_model,rec=rec,view=None)
+                ocr_res.append(res)
+            else:
+                dt_boxes = self.det_model(img, cls=cls, rec=rec)
+
+                if not dt_boxes:
+                    ocr_res.append(None)
+                    continue
+                ocr_res.append(dt_boxes)
         return ocr_res
 
 
@@ -530,6 +551,7 @@ if __name__ == '__main__':
     t = ToddleOCR(det_model_dir='weights/zh_ocr_det_v3',
         cls_model_dir='weights/zh_ocr_cls_v1',
         rec_model_dir='weights/zh_ocr_rec_v3',
+        tab_model_dir='D:\dev\github\ToddleOCR\model\ch_ppstructure_mobile_v2.0_SLANet_infer'
     )
-    r = t.ocr("./doc/imgs/11.jpg")
+    r = t.ocr(r'D:\dev\github\ToddleOCR\doc\imgs\00018069.jpg',tab=True)
     print(r)
