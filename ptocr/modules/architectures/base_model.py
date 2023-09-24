@@ -2,8 +2,10 @@ from torch import nn
 
 
 class BaseModel(nn.Module):
-    def __init__(self, in_channels, backbone, neck, head, return_all_feats=False):
+    def __init__(self, in_channels, backbone, neck, head, transform=None,return_all_feats=False):
         super().__init__()
+        if transform:
+            self.transform = transform()
         if backbone:
             self.backbone = backbone(in_channels=in_channels)
             in_channels = self.backbone.out_channels

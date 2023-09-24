@@ -40,12 +40,15 @@ class DecodeImage:
         img = data["image"]
         if isinstance(img,np.ndarray):
             return data
-        img = np.frombuffer(img, dtype="uint8")
-
-        if self.ignore_orientation:
-            img = cv2.imdecode(img, cv2.IMREAD_IGNORE_ORIENTATION | cv2.IMREAD_COLOR)
+        if isinstance(img,Image.Image):
+            img = np.asarray(img, dtype="uint8")
         else:
-            img = cv2.imdecode(img, 1)
+            img = np.frombuffer(img, dtype="uint8")
+            if self.ignore_orientation:
+                img = cv2.imdecode(img, cv2.IMREAD_IGNORE_ORIENTATION | cv2.IMREAD_COLOR)
+            else:
+                img = cv2.imdecode(img, 1)
+
         if img is None:
             return None
         if self.img_mode == "GRAY":

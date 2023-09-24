@@ -44,7 +44,7 @@ from ptocr.utils.utility import (
     sorted_boxes,
 )
 from tools.train import valid
-
+import types
 torch.autograd.set_detect_anomaly(True)
 
 
@@ -52,7 +52,7 @@ class _:
     def __new__(cls, class_=None, /, **kwargs):
         if class_ is None:
             return kwargs
-        if isinstance(class_, type):
+        if isinstance(class_, type|types.FunctionType):
             return partial(class_, **kwargs)
         if issubclass(class_, LRScheduler) and "warmup_epoch" in kwargs:
             warmup_epochs = kwargs.pop("warmup_epoch")
@@ -153,6 +153,7 @@ class ConfigModel:
             backbone=self.Backbone,
             neck=self.Neck,
             head=self.Head,
+            transform=self.Transform
         )
         use_sync_bn = getattr(self, "use_sync_bn", False)
         if use_sync_bn:
@@ -178,25 +179,26 @@ class ConfigModel:
         return cls(transforms=self.transforms(mode), **valid_dict)
 
     def transforms(self, mode="train"):
-        (train, valid, infer) = self.Transforms
-        if mode == "train":
-            return Compose(train)
-        if mode == "eval":
-            return Compose(valid)
-        if mode == "infer":
-            return Compose(infer)
-
+        if hasattr(self,"Transforms"):
+            (train, valid, infer) = self.Transforms
+            if mode == "train":
+                return Compose(train)
+            if mode == "eval":
+                return Compose(valid)
+            if mode == "infer":
+                return Compose(infer)
+        return None
     def _build_dataloader(self, mode="train", seed=None):
         if mode == "train":
             dataloader = {
                 k: v
-                for (k, v) in self.Data.__dict__.items()
+                for (k, v) in self.Loader.__dict__.items()
                 if not k.startswith("__")
             }
         elif mode == "eval":
             dataloader = {
                 k: v
-                for (k, v) in self.Data.__dict__.items()
+                for (k, v) in self.Loader.__dict__.items()
                 if not k.startswith("__")
             }
             dataloader.update(self.Loader.__annotations__)
@@ -204,7 +206,7 @@ class ConfigModel:
         drop_last = dataloader["drop_last"]
         batch_size = dataloader["batch_size"]
         if not self.use_gpu:
-            num_workers = 0
+            num_workers = 1
             pin_memory = False
         else:
             num_workers = dataloader["num_workers"]
