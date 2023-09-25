@@ -26,7 +26,7 @@ class CocoSegment(CocoDetection):
             label_file: str,
             transforms = None
     ) -> None:
-        super().__init__(root, label_file, transform=ToTensor(), target_transform=None, transforms=transforms)
+        super().__init__(root, label_file,transforms=transforms)
 
     def _load_target(self, id: int):
         anns = self.coco.loadAnns(self.coco.getAnnIds(id))
@@ -44,15 +44,15 @@ class CocoSegment(CocoDetection):
             out.append(dict(masks=mask, boxes=bbox, labels=label))
         return out
 
-    def __getitem__(self, index: int):
-        id = self.ids[index]
-        image = self._load_image(id)
-        target = self._load_target(id)
-
-        if self.transforms is not None:
-            image, target = self.transforms(image, target)
-
-        return dict(images=image, targets=target)
+    # def __getitem__(self, index: int):
+    #     id = self.ids[index]
+    #     image = self._load_image(id)
+    #     target = self._load_target(id)
+    #
+    #     if self.transforms is not None:
+    #         image, target = self.transforms(image, target)
+    #
+    #     return dict(images=image, targets=target)
 
 # c = CocoSegment("d:/dev/.data/CCSE/kaiti_chinese_stroke_2021/test2021",
 #     "D:/dev/.data/CCSE/kaiti_chinese_stroke_2021/annotations/instances_test2021.json",

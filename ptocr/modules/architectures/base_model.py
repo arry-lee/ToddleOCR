@@ -2,12 +2,23 @@ from torch import nn
 
 
 class BaseModel(nn.Module):
-    def __init__(self, in_channels, backbone, neck, head, transform=None,return_all_feats=False):
+    """"""
+    def __init__(self,
+                 in_channels,
+                 backbone,
+                 neck,
+                 head,
+                 transform=None,
+                 return_all_feats=False):
         super().__init__()
         if transform:
             self.transform = transform()
         if backbone:
+            # assert isinstance(backbone,type)
+            print(backbone)
             self.backbone = backbone(in_channels=in_channels)
+            print(self.backbone)
+
             in_channels = self.backbone.out_channels
         if neck:
             self.neck = neck(in_channels=in_channels)
@@ -20,16 +31,19 @@ class BaseModel(nn.Module):
         out_dict = {}
         for module_name, module in self.named_children():
             x = module(x)
-            if isinstance(x, dict):
-                out_dict.update(x)
-            else:
-                out_dict[f"{module_name}_out"] = x
-        if self.return_all_feats:
-            if self.training:
-                return out_dict
-            elif isinstance(x, dict):
-                return x
-            else:
-                return {list(out_dict.keys())[-1]: x}
-        else:
-            return x
+        return x
+        #     if isinstance(x, dict):
+        #         out_dict.update(x)
+        #         x[f"{module_name}_out"]= x.copy()
+        #         # x = y
+        #     else:
+        #         out_dict[f"{module_name}_out"] = x
+        # if self.return_all_feats:
+        #     if self.training:
+        #         return out_dict
+        #     elif isinstance(x, dict):
+        #         return x
+        #     else:
+        #         return {list(out_dict.keys())[-1]: x}
+        # else:
+        #     return x

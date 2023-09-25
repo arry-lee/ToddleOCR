@@ -23,15 +23,15 @@ def warmup_scheduler(scheduler_class, warmup_epoch):
     """预热调度器，就是在warmup_epochs代内将学习率从0慢慢增加到预热学习率"""
 
     def decorator(cls):
-        @wraps(cls)
+        # @wraps(cls)
         class WarmUpScheduler(cls):
             def __init__(self, optimizer, *args, **kwargs):
                 super().__init__(optimizer, *args, **kwargs)
-                self.warmup_epochs = warmup_epoch
+                # self.warmup_epochs = warmup_epoch
 
             def get_lr(self):
-                if self.last_epoch < self.warmup_epochs:
-                    alpha = self.last_epoch / self.warmup_epochs
+                if self.last_epoch < warmup_epoch:
+                    alpha = self.last_epoch / warmup_epoch
                     return [base_lr * alpha for base_lr in self.base_lrs]
                 else:
                     return super().get_lr()

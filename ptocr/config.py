@@ -52,11 +52,13 @@ class _:
     def __new__(cls, class_=None, /, **kwargs):
         if class_ is None:
             return kwargs
-        if isinstance(class_, type|types.FunctionType):
-            return partial(class_, **kwargs)
+
         if issubclass(class_, LRScheduler) and "warmup_epoch" in kwargs:
             warmup_epochs = kwargs.pop("warmup_epoch")
             class_ = warmup_scheduler(class_, warmup_epochs)
+            return partial(class_, **kwargs)
+
+        if isinstance(class_, type|types.FunctionType):
             return partial(class_, **kwargs)
         if isinstance(class_, str):
             from ptocr import hub  # speed up
@@ -543,6 +545,8 @@ class ConfigModel:
                     predict = model(batch)
                 elif algorithm in ["CAN"]:
                     predict = model(batch[:3])
+                elif model_type in ['cse']:
+                    predict = model(batch)
                 else:
                     predict = model(images)
                 loss = criterion(predict, batch)

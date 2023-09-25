@@ -140,6 +140,10 @@ def valid(model,
                 evaluator(preds, batch_numpy)
             elif model_type in ['can']:
                 evaluator(preds[0], batch_numpy[2:], epoch_reset=(idx == 0))
+            elif model_type in ['cse']:
+                post_result = post_processor(preds)
+                evaluator(post_result, batch[1])
+
             else:
                 post_result = post_processor(preds, batch_numpy[1])
                 evaluator(post_result, batch_numpy)
