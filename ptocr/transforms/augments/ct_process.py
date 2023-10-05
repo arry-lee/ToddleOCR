@@ -1,17 +1,3 @@
-# copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 import random
 
 import cv2
@@ -231,7 +217,7 @@ class GroupRandomCropPadding:
         for idx in range(len(imgs)):
             if len(imgs[idx].shape) == 3:
                 s3_length = int(imgs[idx].shape[-1])
-                img = imgs[idx][i : i + t_h, j : j + t_w, :]
+                img = imgs[idx][i: i + t_h, j: j + t_w, :]
                 img_p = cv2.copyMakeBorder(
                     img,
                     0,
@@ -242,7 +228,7 @@ class GroupRandomCropPadding:
                     value=tuple(0 for i in range(s3_length)),
                 )
             else:
-                img = imgs[idx][i : i + t_h, j : j + t_w]
+                img = imgs[idx][i: i + t_h, j: j + t_w]
                 img_p = cv2.copyMakeBorder(img, 0, p_h - t_h, 0, p_w - t_w, borderType=cv2.BORDER_CONSTANT, value=(0,))
             n_imgs.append(img_p)
 

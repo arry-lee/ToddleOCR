@@ -1,20 +1,3 @@
-# copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-"""
-This code is refer from:
-https://github.com/FangShancheng/ABINet/blob/main/transforms.py
-"""
 import math
 import numbers
 import random
@@ -85,7 +68,7 @@ class CVRandomAffine:
 
         if translate is not None:
             assert (
-                isinstance(translate, (tuple, list)) and len(translate) == 2
+                    isinstance(translate, (tuple, list)) and len(translate) == 2
             ), "translate should be a list or tuple and it must be of length 2."
             for t in translate:
                 if not (0.0 <= t <= 1.0):
@@ -94,7 +77,7 @@ class CVRandomAffine:
 
         if scale is not None:
             assert (
-                isinstance(scale, (tuple, list)) and len(scale) == 2
+                    isinstance(scale, (tuple, list)) and len(scale) == 2
             ), "scale should be a list or tuple and it must be of length 2."
             for s in scale:
                 if s <= 0:
@@ -108,7 +91,7 @@ class CVRandomAffine:
                 self.shear = [shear]
             else:
                 assert isinstance(shear, (tuple, list)) and (
-                    len(shear) == 2
+                        len(shear) == 2
                 ), "shear should be a list or tuple and it must be of length 2."
                 self.shear = shear
         else:
@@ -284,7 +267,7 @@ class CVGaussianNoise:
             raise Exception("degree must be number or list with length 2")
 
     def __call__(self, img):
-        noise = np.random.normal(self.mean, self.var**0.5, img.shape)
+        noise = np.random.normal(self.mean, self.var ** 0.5, img.shape)
         img = np.clip(img + noise, 0, 255).astype(np.uint8)
         return img
 
@@ -385,7 +368,7 @@ class SVTRDeterioration:
 
 class SVTRGeometry:
     def __init__(
-        self, aug_type=0, degrees=15, translate=(0.3, 0.3), scale=(0.5, 2.0), shear=(45, 15), distortion=0.5, p=0.5
+            self, aug_type=0, degrees=15, translate=(0.3, 0.3), scale=(0.5, 2.0), shear=(45, 15), distortion=0.5, p=0.5
     ):
         self.aug_type = aug_type
         self.p = p

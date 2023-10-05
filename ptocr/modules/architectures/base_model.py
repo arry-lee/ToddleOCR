@@ -2,7 +2,6 @@ from torch import nn
 
 
 class BaseModel(nn.Module):
-    """"""
     def __init__(self,
                  in_channels,
                  backbone,
@@ -14,11 +13,7 @@ class BaseModel(nn.Module):
         if transform:
             self.transform = transform()
         if backbone:
-            # assert isinstance(backbone,type)
-            print(backbone)
             self.backbone = backbone(in_channels=in_channels)
-            print(self.backbone)
-
             in_channels = self.backbone.out_channels
         if neck:
             self.neck = neck(in_channels=in_channels)
@@ -47,3 +42,14 @@ class BaseModel(nn.Module):
         #         return {list(out_dict.keys())[-1]: x}
         # else:
         #     return x
+
+
+class Tranformer:
+
+    def encode(self, data):
+        """输入转换器"""
+        return data
+
+    def decode(self, data):
+        """输出转换器"""
+        return data

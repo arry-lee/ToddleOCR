@@ -407,7 +407,7 @@ class ConfigModel:
     def save(self, model_path, is_best=False, prefix="toddleocr", **kwargs):
         os.makedirs(model_path, exist_ok=True)
         model_prefix = os.path.join(model_path, prefix)
-        torch.save(self.optimizer.state_dict(), model_prefix + ".pto")
+        # torch.save(self.optimizer.state_dict(), model_prefix + ".pto")
         torch.save(self.model.state_dict(), model_prefix + ".pth")
         with open(model_prefix + ".states", "wb") as f:
             pickle.dump(kwargs, f, protocol=2)
@@ -538,7 +538,9 @@ class ConfigModel:
                 if idx >= max_iter:
                     break
                 lr = lr_scheduler.get_lr()
+
                 images = batch[0]
+                # 这里应该是由模型本身决定的，没有必要细分 fixme
                 if model_type == "table" or extra_input:
                     predict = model(images, data=batch[1:])
                 elif model_type in ["kie", "sr"]:
@@ -549,11 +551,14 @@ class ConfigModel:
                     predict = model(batch)
                 else:
                     predict = model(images)
-                loss = criterion(predict, batch)
+                loss = criterion(predict, batch) # 训练时候才使用
+
                 with torch.autograd.detect_anomaly():
                     loss["loss"].backward()
                 optimizer.step()
                 optimizer.zero_grad()
+
+                # metric 也应当传入所有数据
                 if metric_during_train and epoch % calc_epoch_interval == 0:
                     batch = [item.numpy() for item in batch]
                     if model_type in ["kie", "sr"]:
@@ -578,6 +583,7 @@ class ConfigModel:
                         metric_(post_result, batch)
                     metric = metric_.get_metric()
                     train_stats.update(metric)
+
                 train_batch_time = time.time() - reader_start
                 train_batch_cost += train_batch_time
                 eta_meter.update(train_batch_time)
@@ -722,7 +728,7 @@ class ConfigModel:
             log_writer.close()
         if self.distributed:
             dist.destroy_process_group()
-        return
+        return # 增加一个意外中断，保研数据的功能
 
     def __call__(self, *args, **kwargs):
         f = getattr(self, self.model_type.lower())

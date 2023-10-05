@@ -1,6 +1,4 @@
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
 from torch import nn
 from torch.nn import functional as F
 
@@ -90,6 +88,7 @@ def label_smooth(label, prior_dist=None, eps=0.1):
 
 class KLJSLoss:
     """用于计算 KL 散度（Kullback-Leibler Divergence）和 JS 散度（Jensen-Shannon Divergence）的损失函数"""
+
     def __init__(self, mode="kl"):
         assert mode in ["kl", "js", "KL", "JS"], "mode can only be one of ['kl', 'KL', 'js', 'JS']"
         self.mode = mode
@@ -97,12 +96,12 @@ class KLJSLoss:
     def __call__(self, p1, p2, reduction="mean", eps=1e-5):
         if self.mode.lower() == "kl":
             loss = torch.multiply(p2, torch.log((p2 + eps) / (p1 + eps) + eps))
-            loss = loss+torch.multiply(p1, torch.log((p1 + eps) / (p2 + eps) + eps))
-            loss = loss*0.5
+            loss = loss + torch.multiply(p1, torch.log((p1 + eps) / (p2 + eps) + eps))
+            loss = loss * 0.5
         elif self.mode.lower() == "js":
             loss = torch.multiply(p2, torch.log((2 * p2 + eps) / (p1 + p2 + eps) + eps))
-            loss = loss+torch.multiply(p1, torch.log((2 * p1 + eps) / (p1 + p2 + eps) + eps))
-            loss = loss*0.5
+            loss = loss + torch.multiply(p1, torch.log((2 * p1 + eps) / (p1 + p2 + eps) + eps))
+            loss = loss * 0.5
         else:
             raise ValueError("The mode.lower() if KLJSLoss should be one of ['kl', 'js']")
 
@@ -209,7 +208,8 @@ class LossFromOutput(nn.Module):
 
 class BalanceLoss(nn.Module):
     def __init__(
-        self, balance_loss=True, main_loss_type="DiceLoss", negative_ratio=3, return_origin=False, eps=1e-6, **kwargs
+            self, balance_loss=True, main_loss_type="DiceLoss", negative_ratio=3, return_origin=False, eps=1e-6,
+            **kwargs
     ):
         """
         The BalanceLoss for Differentiable Binarization text detection
@@ -266,7 +266,7 @@ class BalanceLoss(nn.Module):
         negative_loss = torch.reshape(negative_loss, shape=[-1])
         # torch.sort()
         if negative_count > 0:
-            sort_loss,_ = negative_loss.sort(descending=True)
+            sort_loss, _ = negative_loss.sort(descending=True)
             # print(sort_loss,_)
             negative_loss = sort_loss[:negative_count]
             # negative_loss, _ = torch.topk(negative_loss, k=negative_count_int)
@@ -295,6 +295,7 @@ class DiceLoss(nn.Module):
     总而言之，Dice Loss是一种用于图像分割任务的损失函数，通过衡量预测分割结果与真实分割结果之间的重叠程度来评估分割准确性。
     它在医学图像分割和其他相关领域中被广泛应用。
     """
+
     def __init__(self, eps=1e-6):
         super().__init__()
         self.eps = eps
@@ -336,6 +337,6 @@ class BCELoss(nn.Module):
         super().__init__()
         self.reduction = reduction
 
-    def forward(self, input, label, mask=None, weight=None, name=None): # for mask
+    def forward(self, input, label, mask=None, weight=None, name=None):  # for mask
         loss = F.binary_cross_entropy(input, label, reduction=self.reduction)
         return loss

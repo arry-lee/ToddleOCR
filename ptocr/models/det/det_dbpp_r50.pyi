@@ -14,7 +14,7 @@ from ptocr.transforms.operators import DecodeImage, NormalizeImage, KeepKeys, De
 from ptocr.transforms.label_ops import DetLabelEncode
 from ptocr.transforms.iaa_augment import IaaAugment
 from ptocr.transforms.random_crop_data import EastRandomCropData
-from ptocr.transforms.make_shrink_map import MakeShrinkMap
+from ptocr.transforms import MakeShrinkMap
 from ptocr.transforms.make_border_map import MakeBorderMap
 class Model(ConfigModel):
     debug = False

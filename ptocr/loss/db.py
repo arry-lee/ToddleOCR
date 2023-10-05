@@ -16,10 +16,6 @@ This code is refer from:
 https://github.com/WenmuZhou/DBNet.pytorch/blob/master/models/losses/DB_loss.py
 """
 
-
-
-
-
 from torch import nn
 
 from .basic import BalanceLoss, DiceLoss, MaskL1Loss
@@ -33,7 +29,7 @@ class DBLoss(nn.Module):
     """
 
     def __init__(
-        self, balance_loss=True, main_loss_type="DiceLoss", alpha=5, beta=10, ohem_ratio=3, eps=1e-6, **kwargs
+            self, balance_loss=True, main_loss_type="DiceLoss", alpha=5, beta=10, ohem_ratio=3, eps=1e-6, **kwargs
     ):
         super().__init__()
         self.alpha = alpha

@@ -1,30 +1,8 @@
-"""
-# Copyright (c) 2020 PaddlePaddle Authors. All Rights Reserved
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-"""
-
-
-
-
-
-
 import math
 import sys
 
 import cv2
 import numpy as np
-import six
 from PIL import Image
 
 
@@ -38,9 +16,9 @@ class DecodeImage:
 
     def __call__(self, data):
         img = data["image"]
-        if isinstance(img,np.ndarray):
+        if isinstance(img, np.ndarray):
             return data
-        if isinstance(img,Image.Image):
+        if isinstance(img, Image.Image):
             img = np.asarray(img, dtype="uint8")
         else:
             img = np.frombuffer(img, dtype="uint8")
@@ -144,7 +122,7 @@ class Pad:
         if self.size:
             resize_h2, resize_w2 = self.size
             assert (
-                img_h < resize_h2 and img_w < resize_w2
+                    img_h < resize_h2 and img_w < resize_w2
             ), "(h, w) of target size should be greater than (img_h, img_w)"
         else:
             resize_h2 = max(int(math.ceil(img.shape[0] / self.size_div) * self.size_div), self.size_div)
@@ -427,15 +405,15 @@ class KieResize:
 
 class SRResize:
     def __init__(
-        self,
-        imgH=32,
-        imgW=128,
-        down_sample_scale=4,
-        keep_ratio=False,
-        min_ratio=1,
-        mask=False,
-        infer_mode=False,
-        **kwargs
+            self,
+            imgH=32,
+            imgW=128,
+            down_sample_scale=4,
+            keep_ratio=False,
+            min_ratio=1,
+            mask=False,
+            infer_mode=False,
+            **kwargs
     ):
         self.imgH = imgH
         self.imgW = imgW

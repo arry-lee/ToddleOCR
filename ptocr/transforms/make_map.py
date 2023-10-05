@@ -1,26 +1,3 @@
-# copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-"""
-This code is refer from:
-https://github.com/WenmuZhou/DBNet.pytorch/blob/master/data_loader/modules/make_border_map.py
-"""
-
-
-
-
-
-
 import cv2
 import numpy as np
 
@@ -31,7 +8,7 @@ import warnings
 
 warnings.simplefilter("ignore")
 
-__all__ = ["MakeBorderMap"]
+__all__ = ["MakeBorderMap", "MakeShrinkMap"]
 
 
 class MakeBorderMap:
@@ -98,12 +75,12 @@ class MakeBorderMap:
         xmax_valid = min(max(0, xmax), canvas.shape[1] - 1)
         ymin_valid = min(max(0, ymin), canvas.shape[0] - 1)
         ymax_valid = min(max(0, ymax), canvas.shape[0] - 1)
-        canvas[ymin_valid : ymax_valid + 1, xmin_valid : xmax_valid + 1] = np.fmax(
+        canvas[ymin_valid: ymax_valid + 1, xmin_valid: xmax_valid + 1] = np.fmax(
             1
             - distance_map[
-                ymin_valid - ymin : ymax_valid - ymax + height, xmin_valid - xmin : xmax_valid - xmax + width
-            ],
-            canvas[ymin_valid : ymax_valid + 1, xmin_valid : xmax_valid + 1],
+              ymin_valid - ymin: ymax_valid - ymax + height, xmin_valid - xmin: xmax_valid - xmax + width
+              ],
+            canvas[ymin_valid: ymax_valid + 1, xmin_valid: xmax_valid + 1],
         )
 
     def _distance(self, xs, ys, point_1, point_2):
@@ -119,7 +96,7 @@ class MakeBorderMap:
         square_distance = np.square(point_1[0] - point_2[0]) + np.square(point_1[1] - point_2[1])
 
         cosin = (square_distance - square_distance_1 - square_distance_2) / (
-            2 * np.sqrt(square_distance_1 * square_distance_2)
+                2 * np.sqrt(square_distance_1 * square_distance_2)
         )
         square_sin = 1 - np.square(cosin)
         square_sin = np.nan_to_num(square_sin)
@@ -141,3 +118,91 @@ class MakeBorderMap:
         )
         cv2.line(result, tuple(ex_point_2), tuple(point_2), 4096.0, 1, lineType=cv2.LINE_AA, shift=0)
         return ex_point_1, ex_point_2
+
+
+class MakeShrinkMap:
+    """
+    Making binary mask from detection data with ICDAR format.
+    Typically following the process of class `MakeICDARData`.
+    """
+
+    def __init__(self, min_text_size=8, shrink_ratio=0.4, **kwargs):
+        self.min_text_size = min_text_size
+        self.shrink_ratio = shrink_ratio
+
+    def __call__(self, data):
+        image = data["image"]
+        text_polys = data["polys"]
+        ignore_tags = data["ignore_tags"]
+
+        h, w = image.shape[:2]
+        text_polys, ignore_tags = self.validate_polygons(text_polys, ignore_tags, h, w)
+        gt = np.zeros((h, w), dtype=np.float32)
+        mask = np.ones((h, w), dtype=np.float32)
+        for i in range(len(text_polys)):
+            polygon = text_polys[i]
+            height = max(polygon[:, 1]) - min(polygon[:, 1])
+            width = max(polygon[:, 0]) - min(polygon[:, 0])
+            if ignore_tags[i] or min(height, width) < self.min_text_size:
+                cv2.fillPoly(mask, polygon.astype(np.int32)[np.newaxis, :, :], 0)
+                ignore_tags[i] = True
+            else:
+                polygon_shape = Polygon(polygon)
+                subject = [tuple(l) for l in polygon]
+                padding = pyclipper.PyclipperOffset()
+                padding.AddPath(subject, pyclipper.JT_ROUND, pyclipper.ET_CLOSEDPOLYGON)
+                shrinked = []
+
+                # Increase the shrink ratio every time we get multiple polygon returned back
+                possible_ratios = np.arange(self.shrink_ratio, 1, self.shrink_ratio)
+                np.append(possible_ratios, 1)
+                # print(possible_ratios)
+                for ratio in possible_ratios:
+                    # print(f"Change shrink ratio to {ratio}")
+                    distance = polygon_shape.area * (1 - np.power(ratio, 2)) / polygon_shape.length
+                    shrinked = padding.Execute(-distance)
+                    if len(shrinked) == 1:
+                        break
+
+                if shrinked == []:
+                    cv2.fillPoly(mask, polygon.astype(np.int32)[np.newaxis, :, :], 0)
+                    ignore_tags[i] = True
+                    continue
+
+                for each_shirnk in shrinked:
+                    shirnk = np.array(each_shirnk).reshape(-1, 2)
+                    cv2.fillPoly(gt, [shirnk.astype(np.int32)], 1)
+
+        data["shrink_map"] = gt
+        data["shrink_mask"] = mask
+        return data
+
+    def validate_polygons(self, polygons, ignore_tags, h, w):
+        """
+        polygons (numpy.array, required): of shape (num_instances, num_points, 2)
+        """
+        if len(polygons) == 0:
+            return polygons, ignore_tags
+        assert len(polygons) == len(ignore_tags)
+        for polygon in polygons:
+            polygon[:, 0] = np.clip(polygon[:, 0], 0, w - 1)
+            polygon[:, 1] = np.clip(polygon[:, 1], 0, h - 1)
+
+        for i in range(len(polygons)):
+            area = self.polygon_area(polygons[i])
+            if abs(area) < 1:
+                ignore_tags[i] = True
+            if area > 0:
+                polygons[i] = polygons[i][::-1, :]
+        return polygons, ignore_tags
+
+    def polygon_area(self, polygon):
+        """
+        compute polygon area
+        """
+        area = 0
+        q = polygon[-1]
+        for p in polygon:
+            area += p[0] * q[1] - p[1] * q[0]
+            q = p
+        return area / 2.0

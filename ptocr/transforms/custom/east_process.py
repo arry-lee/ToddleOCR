@@ -25,7 +25,7 @@ __all__ = ["EASTProcessTrain"]
 
 class EASTProcessTrain:
     def __init__(
-        self, image_shape=[512, 512], background_ratio=0.125, min_crop_side_ratio=0.1, min_text_size=10, **kwargs
+            self, image_shape=[512, 512], background_ratio=0.125, min_crop_side_ratio=0.1, min_text_size=10, **kwargs
     ):
         self.input_size = image_shape[1]
         self.random_scale = np.array([0.5, 1, 2.0, 3.0])
@@ -121,7 +121,7 @@ class EASTProcessTrain:
             if abs(p_area) < 1:
                 continue
             if p_area > 0:
-                #'poly in wrong direction'
+                # 'poly in wrong direction'
                 if not tag:
                     tag = True  # reversed cases should be ignore
                 poly = poly[(0, 3, 2, 1), :]
@@ -282,10 +282,10 @@ class EASTProcessTrain:
             poly = np.round(poly, decimals=0).astype(np.int32)
             minx = np.min(poly[:, 0])
             maxx = np.max(poly[:, 0])
-            w_array[minx + pad_w : maxx + pad_w] = 1
+            w_array[minx + pad_w: maxx + pad_w] = 1
             miny = np.min(poly[:, 1])
             maxy = np.max(poly[:, 1])
-            h_array[miny + pad_h : maxy + pad_h] = 1
+            h_array[miny + pad_h: maxy + pad_h] = 1
         # ensure the cropped area not across a text
         h_axis = np.where(h_array == 0)[0]
         w_axis = np.where(w_array == 0)[0]
@@ -308,10 +308,10 @@ class EASTProcessTrain:
                 continue
             if polys.shape[0] != 0:
                 poly_axis_in_area = (
-                    (polys[:, :, 0] >= xmin)
-                    & (polys[:, :, 0] <= xmax)
-                    & (polys[:, :, 1] >= ymin)
-                    & (polys[:, :, 1] <= ymax)
+                        (polys[:, :, 0] >= xmin)
+                        & (polys[:, :, 0] <= xmax)
+                        & (polys[:, :, 1] >= ymin)
+                        & (polys[:, :, 1] <= ymax)
                 )
                 selected_polys = np.where(np.sum(poly_axis_in_area, axis=1) == 4)[0]
             else:
@@ -320,14 +320,14 @@ class EASTProcessTrain:
             if len(selected_polys) == 0:
                 # no text in this area
                 if crop_background:
-                    im = im[ymin : ymax + 1, xmin : xmax + 1, :]
+                    im = im[ymin: ymax + 1, xmin: xmax + 1, :]
                     polys = []
                     tags = []
                     return im, polys, tags
                 else:
                     continue
 
-            im = im[ymin : ymax + 1, xmin : xmax + 1, :]
+            im = im[ymin: ymax + 1, xmin: xmax + 1, :]
             polys = polys[selected_polys]
             tags = tags[selected_polys]
             polys[:, :, 0] -= xmin
@@ -338,7 +338,7 @@ class EASTProcessTrain:
     def crop_background_infor(self, im, text_polys, text_tags):
         im, text_polys, text_tags = self.crop_area(im, text_polys, text_tags, crop_background=True)
 
-        #???
+        # ???
         if len(text_polys) == 0:
             return None
         # pad and resize image
