@@ -5,8 +5,9 @@ import numpy as np
 from PIL import Image
 from shapely.geometry import Polygon
 
-from ptocr.transforms.augments.iaa_augment import IaaAugment
-from ptocr.transforms.functional import is_poly_outside_rect
+from .iaa_augment import IaaAugment
+from ..functional import is_poly_outside_rect
+
 from tools.utility import get_rotate_crop_image
 
 

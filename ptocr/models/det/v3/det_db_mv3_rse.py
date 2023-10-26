@@ -14,17 +14,17 @@ from ptocr.postprocess.db import DBPostProcess
 from torch.optim import Adam
 from torch.optim.lr_scheduler import CosineAnnealingWarmRestarts
 from ptocr.datasets.simple import SimpleDataSet
-from ptocr.transforms.operators import (
+from ptocr.transforms import (
     DecodeImage,
     NormalizeImage,
     KeepKeys,
     DetResizeForTest,
     ToCHWImage,
 )
-from ptocr.transforms.label_ops import DetLabelEncode
-from ptocr.transforms.iaa_augment import IaaAugment
-from ptocr.transforms.random_crop_data import EastRandomCropData
-from ptocr.transforms.make_border_map import MakeBorderMap
+from ptocr.transforms import DetLabelEncode
+from ptocr.transforms import IaaAugment
+from ptocr.transforms import EastRandomCropData
+from ptocr.transforms import MakeBorderMap
 from ptocr.transforms import MakeShrinkMap
 
 

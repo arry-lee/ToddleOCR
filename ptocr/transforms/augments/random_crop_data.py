@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 import random
 
-from ptocr.transforms.functional import is_poly_outside_rect, crop_area
+from ..functional import is_poly_outside_rect, crop_area
 
 
 class EastRandomCropData:

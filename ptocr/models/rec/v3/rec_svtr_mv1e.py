@@ -11,9 +11,9 @@ from ptocr.postprocess.rec import CTCLabelDecode
 from torch.optim import Adam
 from torch.optim.lr_scheduler import CosineAnnealingWarmRestarts
 from ptocr.datasets.simple import SimpleDataSet
-from ptocr.transforms.operators import KeepKeys, DecodeImage
-from ptocr.transforms.rec_img_aug import RecAug, RecConAug, RecResizeImg
-from ptocr.transforms.label_ops import MultiLabelEncode
+from ptocr.transforms import KeepKeys, DecodeImage
+from ptocr.transforms import RecAug, RecConAug, RecResizeImg
+from ptocr.transforms import MultiLabelEncode
 
 CHARACTER_DICT_PATH = (
     "D:/dev/github/ToddleOCR/ptocr/utils/ppocr_keys_v1.txt"

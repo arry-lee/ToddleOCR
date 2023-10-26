@@ -21,7 +21,7 @@ from PIL import Image
 from torchvision.transforms import Compose
 
 from .abinet_aug import CVColorJitter, CVDeterioration, CVGeometry, SVTRDeterioration, SVTRGeometry
-from .text_image_aug import tia_distort, tia_perspective, tia_stretch
+from ..text_image_aug import tia_distort, tia_perspective, tia_stretch
 from ..functional import resize_norm_img
 
 

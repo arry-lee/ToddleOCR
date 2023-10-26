@@ -43,7 +43,7 @@ SUPPORT_DET_MODEL = ["DB"]
 VERSION = "v1.0.0"
 SUPPORT_REC_MODEL = ["CRNN", "SVTR_LCNet"]
 BASE_DIR = __dir__
-print(BASE_DIR, os.getcwd())
+
 BASE_URL = "https://github.com/arry-lee/ToddleOCR/releases/download/weights/"
 DEFAULT_OCR_MODEL_VERSION = "v3"
 SUPPORT_OCR_MODEL_VERSION = ["v3"]
@@ -247,9 +247,9 @@ def parse_args(main=True):
         choices=SUPPORT_OCR_MODEL_VERSION,
         default="v3",
         help="OCR Model version, the current model support list is as follows: "
-        "1. v3 Support Chinese and English detection and recognition model, and direction classifier model"
-        "2. v2 Support Chinese detection and recognition model. "
-        "3. v1 support Chinese detection, recognition and direction classifier and multilingual recognition model.",
+             "1. v3 Support Chinese and English detection and recognition model, and direction classifier model"
+             "2. v2 Support Chinese detection and recognition model. "
+             "3. v1 support Chinese detection, recognition and direction classifier and multilingual recognition model.",
     )
     parser.add_argument(
         "--structure_version",
@@ -257,8 +257,8 @@ def parse_args(main=True):
         choices=SUPPORT_STRUCTURE_MODEL_VERSION,
         default="v2",
         help="Model version, the current model support list is as follows:"
-        " 1. PP-Structure Support en table structure model."
-        " 2. PP-StructureV2 Support ch and en table structure model.",
+             " 1. PP-Structure Support en table structure model."
+             " 2. PP-StructureV2 Support ch and en table structure model.",
     )
 
     for action in parser._actions:
@@ -365,7 +365,7 @@ def parse_lang(lang):
     elif lang in devanagari_lang:
         lang = "devanagari"
     assert (
-        lang in MODEL_URLS["OCR"][DEFAULT_OCR_MODEL_VERSION]["rec"]
+            lang in MODEL_URLS["OCR"][DEFAULT_OCR_MODEL_VERSION]["rec"]
     ), "param lang must in {}, but got {}".format(
         MODEL_URLS["OCR"][DEFAULT_OCR_MODEL_VERSION]["rec"].keys(), lang
     )
@@ -526,7 +526,7 @@ class ToddleOCR:
 
         rec_model_cls.character_dict_path = params.rec_char_dict_path
 
-        logger.debug(params)
+        # logger.debug(params)
         self.det_model = det_model_cls(params.det_model_dir + "/inference.pt")
         self.cls_model = cls_model_cls(params.cls_model_dir + "/inference.pt")
         self.rec_model = rec_model_cls(params.rec_model_dir + "/inference.pt")
@@ -537,15 +537,15 @@ class ToddleOCR:
         self.tab_model = tab_model_cls(params.tab_model_dir + "/inference.pt")
 
     def ocr(
-        self,
-        img,
-        det=True,
-        rec=True,
-        cls=True,
-        tab=False,
-        bin=False,
-        inv=False,
-        alpha_color=(255, 255, 255),
+            self,
+            img,
+            det=True,
+            rec=True,
+            cls=True,
+            tab=False,
+            bin=False,
+            inv=False,
+            alpha_color=(255, 255, 255),
     ):
         """
         OCR with ToddleOCR
@@ -562,10 +562,10 @@ class ToddleOCR:
         if isinstance(img, list) and det == True:
             logger.error("When input a list of images, det must be false")
             exit(0)
-        if cls == True and self.use_angle_cls == False:
-            logger.warning(
-                "Since the angle classifier is not initialized, it will not be used during the forward process"
-            )
+        # if cls == True and self.use_angle_cls == False:
+        #     logger.warning(
+        #         "Since the angle classifier is not initialized, it will not be used during the forward process"
+        #     )
 
         if cls:
             cls = self.cls_model

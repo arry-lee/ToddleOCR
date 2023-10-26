@@ -13,9 +13,9 @@ from ptocr.postprocess.rec import CTCLabelDecode
 from torch.optim import Adam
 from torch.optim.lr_scheduler import CosineAnnealingWarmRestarts
 from ptocr.datasets.simple import SimpleDataSet
-from ptocr.transforms.operators import KeepKeys, DecodeImage
-from ptocr.transforms.rec_img_aug import RecAug, RecResizeImg
-from ptocr.transforms.label_ops import CTCLabelEncode
+from ptocr.transforms import KeepKeys, DecodeImage
+from ptocr.transforms import RecAug, RecResizeImg
+from ptocr.transforms import CTCLabelEncode
 
 
 class Model(ConfigModel):

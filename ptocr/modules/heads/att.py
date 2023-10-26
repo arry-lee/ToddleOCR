@@ -82,7 +82,6 @@ class AttentionGRUCell(nn.Module):
         concat_context = torch.cat([context, char_onehots], 1)
 
         cur_hidden = self.rnn(concat_context, prev_hidden)
-        print(prev_hidden==cur_hidden)
         return cur_hidden,alpha
 
 

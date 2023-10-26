@@ -116,6 +116,7 @@ class ConfigModel:
 
     Transforms: List[List[Callable]]
 
+    # Transform: Type[nn.Module] | partial
     Backbone: Type[nn.Module] | partial
     Neck: Type[nn.Module] | partial
     Head: Type[nn.Module] | partial
@@ -155,12 +156,12 @@ class ConfigModel:
             backbone=self.Backbone,
             neck=self.Neck,
             head=self.Head,
-            transform=self.Transform
+            # transform=self.Transform
         )
         use_sync_bn = getattr(self, "use_sync_bn", False)
         if use_sync_bn:
             _model = torch.nn.SyncBatchNorm.convert_sync_batchnorm(_model)
-            logger.info("convert_sync_batchnorm")
+            # logger.info("convert_sync_batchnorm")
         if self.distributed:
             _model = DistributedDataParallel(_model)
         _model.to("cuda" if self.use_gpu else "cpu")
@@ -270,7 +271,7 @@ class ConfigModel:
         images = torch.Tensor(images)
         preds = self.model(images)
         post_result = self.postprocessor(preds, shape_list)
-        logger.info("det_result:{}".format(post_result))
+        # logger.info("det_result:{}".format(post_result))
         dt_boxes = post_result[0]["points"]
         if self.det_box_type == "poly":
             dt_boxes = filter_tag_det_res_only_clip(dt_boxes, img.shape)
@@ -377,7 +378,7 @@ class ConfigModel:
             input_tensor = torch.from_numpy(norm_img_batch)
             output_tensors = self.model(input_tensor)
             rec_result = self.postprocessor(output_tensors)
-            logger.info(rec_result)
+            # logger.info(rec_result)
             for rno in range(len(rec_result)):
                 rec_res[indices[beg_img_no + rno]] = rec_result[rno]
         return rec_res
@@ -746,8 +747,6 @@ class ConfigModel:
         data = {"image": img}
 
         batch = self.transforms("infer")(data)
-        logger.info("变换后图像")
-        logger.info(batch)
 
         if batch[0] is None:
             return None, 0
@@ -755,15 +754,15 @@ class ConfigModel:
         images = np.expand_dims(batch[0], axis=0)
         shape_list = np.expand_dims(batch[-1], axis=0)
         images = torch.Tensor(images)
-        logger.info("输入张量")
-        logger.info(images)
+        # logger.info("输入张量")
+        # logger.info(images)
 
         preds = self.model(images)
-        logger.info("预测结果")
-        logger.info(preds)
+        # logger.info("预测结果")
+        # logger.info(preds)
         post_result = self.postprocessor(preds, [shape_list])
-        logger.info("后处理结果")
-        logger.info(post_result)
+        # logger.info("后处理结果")
+        # logger.info(post_result)
 
         structure_str_list = post_result["structure_batch_list"][0]
         bbox_list = post_result["bbox_batch_list"][0]

@@ -9,10 +9,10 @@ from ptocr.postprocess.cls import ClsPostProcess
 from torch.optim import Adam
 from torch.optim.lr_scheduler import CosineAnnealingLR
 from ptocr.datasets.simple import SimpleDataSet
-from ptocr.transforms.operators import DecodeImage, KeepKeys
-from ptocr.transforms.rec_img_aug import BaseDataAugmentation
-from ptocr.transforms.randaugment import RandAugment
-from ptocr.transforms.ssl_img_aug import SSLRotateResize
+from ptocr.transforms import DecodeImage, KeepKeys
+from ptocr.transforms import BaseDataAugmentation
+from ptocr.transforms import RandAugment
+from ptocr.transforms import SSLRotateResize
 from ptocr.utils.collate_fn import SSLRotateCollate
 
 

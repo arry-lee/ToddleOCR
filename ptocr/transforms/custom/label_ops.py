@@ -6,8 +6,8 @@ import numpy as np
 from loguru import logger
 from shapely.geometry import LineString, Point, Polygon
 
-from ptocr.transforms.vqa.augment import order_by_tbyx
-from ptocr.utils.logging import get_logger
+from ..vqa.augment import order_by_tbyx
+
 
 
 class ClsLabelEncode:

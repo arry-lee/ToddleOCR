@@ -1,3 +1,9 @@
+from .east_process import *
+from .fce_aug import *
+from .fce_targets import FCENetTargets
+from .label_ops import *
+from .make_pse_gt import MakePseGt
+from .pg_process import *
 from .rec_img_aug import (
     BaseDataAugmentation,
     RecAug,
@@ -17,20 +23,4 @@ from .rec_img_aug import (
     RFLRecResizeImg,
     SVTRRecAug,
 )
-
-from .make_pse_gt import MakePseGt
-
-
-
-from .operators import *
-from .label_ops import *
-
-from .east_process import *
 from .sast_process import *
-from .pg_process import *
-from .table_ops import *
-
-from .vqa import *
-
-from .fce_aug import *
-from .fce_targets import FCENetTargets

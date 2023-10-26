@@ -9,10 +9,10 @@ from ptocr.postprocess.cls import ClsPostProcess
 from torch.optim import Adam
 from torch.optim.lr_scheduler import CosineAnnealingLR
 from ptocr.datasets.simple import SimpleDataSet
-from ptocr.transforms.operators import DecodeImage, KeepKeys
-from ptocr.transforms.label_ops import ClsLabelEncode
-from ptocr.transforms.rec_img_aug import ClsResizeImg, BaseDataAugmentation
-from ptocr.transforms.randaugment import RandAugment
+from ptocr.transforms import DecodeImage, KeepKeys
+from ptocr.transforms import ClsLabelEncode
+from ptocr.transforms import ClsResizeImg, BaseDataAugmentation
+from ptocr.transforms import RandAugment
 class Model(ConfigModel):
     use_gpu = True
     epoch_num = 100

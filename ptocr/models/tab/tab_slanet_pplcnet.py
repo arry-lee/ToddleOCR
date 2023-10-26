@@ -13,14 +13,14 @@ from ptocr.postprocess.table import TableLabelDecode
 from torch.optim import Adam
 from torch.optim.lr_scheduler import ConstantLR
 from ptocr.datasets.pubtab import PubTabDataSet
-from ptocr.transforms.operators import (
+from ptocr.transforms import (
     KeepKeys,
     NormalizeImage,
     ToCHWImage,
     DecodeImage,
 )
-from ptocr.transforms.label_ops import TableBoxEncode, TableLabelEncode
-from ptocr.transforms.table_ops import ResizeTableImage, PaddingTableImage
+from ptocr.transforms import TableBoxEncode, TableLabelEncode
+from ptocr.transforms import ResizeTableImage, PaddingTableImage
 
 
 class Model(ConfigModel):
