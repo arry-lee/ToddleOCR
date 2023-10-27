@@ -49,6 +49,18 @@ torch.autograd.set_detect_anomaly(True)
 
 
 class _:
+    """
+    这是一个多功能的辅助类，有以下几个语法功能：
+    1. 类似偏函数的偏类：_(DBHead,arg1=0,arg2=1) ==> partial(DBHead, **kwargs)
+    2. 字符串动态导入类：_("DBHead",arg1=0,arg2=1) ==> partial(DBHead, **kwargs)
+    3. 没有位置参数等效于字典：_(arg1=0,arg2=1) ==> dict(arg1=0,arg2=1)
+    4. 预热学习率规划器：
+    5. 等效并列列表,用于 Transformers： _[train:eval:infer,train:eval:...],
+        三个位置分别表示训练，测试，推理模式下的预处理器，
+        特别的：...省略号表示同前一个，
+            空的或None表示该位置不需要这个预处理器，例如[DecodeLabel:...:]表示训练和测试需要DecodeLabel，推理不需要
+        这种表示方法是为了简化配置，共享处理器减少实例的创建
+    """
     def __new__(cls, class_=None, /, **kwargs):
         if class_ is None:
             return kwargs
@@ -91,6 +103,19 @@ class _:
 
 
 class ConfigModel:
+    """
+    配置类，摒弃yaml的配置方法，采用纯python语言，类yaml的配置方法，但更灵活
+    而且可以使用复杂的引用计算，所配即所得
+
+    Data 和 Loader 子类采用 注解语法区分训练时配置和测试时配置，例如：
+        class Loader:
+            shuffle:False = True
+            drop_last:True = False
+            batch_size:1 = 8
+            num_workers: 0 = 4
+    等号后面表示训练时参数，冒号后面表示测试时参数，没有冒号则相同
+    这种表示方法同样是为了简化配置
+    """
     epoch_num: int
     log_window_size: int
     log_batch_step: int
