@@ -11,16 +11,6 @@ import logging
 import numpy as np
 from pathlib import Path
 
-
-def _import_file(module_name, file_path, make_importable=False):
-    spec = importlib.util.spec_from_file_location(module_name, file_path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    if make_importable:
-        sys.modules[module_name] = module
-    return module
-
-
 ptocr = importlib.import_module("ptocr", "toddleocr")
 
 from loguru import logger
@@ -32,12 +22,6 @@ from ptocr.utils.network import (
     confirm_model_dir_url,
 )
 from tools.utility import draw_ocr, init_args, str2bool, check_gpu, draw_ocr_box_txt
-
-__all__ = [
-    "ToddleOCR",
-    "draw_ocr",
-    "download_with_progressbar",
-]
 
 SUPPORT_DET_MODEL = ["DB"]
 VERSION = "v1.0.0"
@@ -449,11 +433,6 @@ def check_img(img):
 
 class ToddleOCR:
     def __init__(self, **kwargs):
-        """
-        toddleocr package
-        args:
-            **kwargs: other params show in toddleocr --help
-        """
         params = parse_args(main=False)
         params.__dict__.update(**kwargs)
         # assert params.ocr_version in SUPPORT_OCR_MODEL_VERSION, "ocr_version must in {}, but get {}".format(
@@ -505,7 +484,7 @@ class ToddleOCR:
             rec_model_cls.rec_image_shape = (3, 48, 320)
         else:
             rec_model_cls.rec_image_shape = (3, 32, 320)
-        # download model if using paddle infer
+
         if not params.use_onnx:
             maybe_download(params.det_model_dir, det_url)
             maybe_download(params.rec_model_dir, rec_url)
@@ -525,19 +504,13 @@ class ToddleOCR:
             )
 
         rec_model_cls.character_dict_path = params.rec_char_dict_path
-
-        # logger.debug(params)
         self.det_model = det_model_cls(params.det_model_dir + "/inference.pt")
         self.cls_model = cls_model_cls(params.cls_model_dir + "/inference.pt")
         self.rec_model = rec_model_cls(params.rec_model_dir + "/inference.pt")
-        # if params.table_char_dict_path is None:
-        #     params.table_char_dict_path = str(Path(__file__).parent / tab_model_config["dict"])
-
-        # tab_model_cls.character_dict_path = str(Path(__file__).parent / tab_model_config["dict"])
+        tab_model_cls.character_dict_path = str(Path(__file__).parent / tab_model_config["dict"])
         self.tab_model = tab_model_cls(params.tab_model_dir + "/inference.pt")
 
-    def ocr(
-            self,
+    def ocr(self,
             img,
             det=True,
             rec=True,
@@ -611,12 +584,14 @@ if __name__ == "__main__":
         rec_model_dir="weights/zh_ocr_rec_v3",
         tab_model_dir="weights/zh_str_tab_m2",
     )
-    r = t.ocr(r"doc/imgs/00018069.jpg", tab=True)[0]
+    img = "train_data/icdar2015/text_localization/ch4_test_images/img_47.jpg"
+    r = t.ocr(img, tab=True)[0]
     print(r)
     from PIL import Image
 
-    im = Image.open(r"doc/imgs/00018069.jpg")
-    boxes = [[(int(i[0]), int(i[1])), (int(i[2]), int(i[1])), (int(i[2]), int(i[3])), (int(i[0]), int(i[3]))] for i in r['boxes']]
+    im = Image.open(img)
+    boxes = [[(int(i[0]), int(i[1])), (int(i[2]), int(i[1])), (int(i[2]), int(i[3])), (int(i[0]), int(i[3]))] for i in
+             r['boxes']]
 
     print(boxes)
     res = draw_ocr_box_txt(im, boxes, [t[0] for t in r['rec_res']])

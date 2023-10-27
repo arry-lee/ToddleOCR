@@ -4,6 +4,7 @@ from .fce_targets import FCENetTargets
 from .label_ops import *
 from .make_pse_gt import MakePseGt
 from .pg_process import *
+from .make_map import *
 from .rec_img_aug import (
     BaseDataAugmentation,
     RecAug,
@@ -24,3 +25,4 @@ from .rec_img_aug import (
     SVTRRecAug,
 )
 from .sast_process import *
+from .table_ops import *

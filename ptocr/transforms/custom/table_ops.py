@@ -1,5 +1,3 @@
-import sys
-import six
 import cv2
 import numpy as np
 
