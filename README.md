@@ -78,6 +78,81 @@ python toddleocr.py input.jpg
 
 这将输出检测到的文字区域和对应的识别结果。
 
+## 如何配置新的算法
+
+与PaddleOCR相比，本项目摒弃yaml的配置方法，采用纯python语言，类yaml的配置方法，但更灵活，而且可以使用复杂的引用计算，并且所见即所得，具体的请参考
+ptocr/config.py 中的ConfigModel类，继承并重写你的参数。
+
+关于配置的语法，只有两点需要特别注意的，为了方便配置和简化配置量 ,项目内部定义了一个辅助类，提供了一些语法糖，如下：
+
+1. 使用 _ 类，这是一个多功能的辅助类，有以下几个语法功能：
+    1. 类似偏函数的偏类：`_(DBHead,arg1=0,arg2=1) ==> partial(DBHead, **kwargs)`
+    2. 字符串动态导入类：`_("DBHead",arg1=0,arg2=1) ==> partial(DBHead, **kwargs)`
+    3. 没有位置参数等效于字典：`_(arg1=0,arg2=1) ==> dict(arg1=0,arg2=1)`
+    4. 预热学习率规划器：
+    5. 等效并列列表,用于 Transformers： `_[train:eval:infer,train:eval:...]`,
+       切片语法的三个位置分别表示训练，测试，推理模式下的预处理器，
+       特别的：...省略号表示同前一个，
+       空的或None表示该位置不需要这个预处理器，例如[DecodeLabel:...:]表示训练和测试需要DecodeLabel，推理不需要,这种表示方法是为了
+       **简化配置，共享处理器减少实例的创建**
+
+    ```python
+    class _:
+    
+        def __new__(cls, class_=None, /, **kwargs):
+            if class_ is None:
+                return kwargs
+    
+            if issubclass(class_, LRScheduler) and "warmup_epoch" in kwargs:
+                warmup_epochs = kwargs.pop("warmup_epoch")
+                class_ = warmup_scheduler(class_, warmup_epochs)
+                return partial(class_, **kwargs)
+    
+            if isinstance(class_, type | types.FunctionType):
+                return partial(class_, **kwargs)
+    
+            if isinstance(class_, str):
+                from tools.modelhub import Hub
+                hub = Hub(os.path.dirname(__file__))  # 这个操作很耗时，尽量不使用字符串形式的导入
+    
+                class_ = hub(class_)
+                return partial(class_, **kwargs)
+    
+        def __class_getitem__(cls, item):
+            out = [[], [], []]
+            for i in item:
+                if isinstance(i, slice):
+                    ls = [i.start, i.stop, i.step]
+                    last = None
+                    for one in ls:
+                        if one is not None:
+                            last = one
+                            break
+                    for i, one in enumerate(ls):
+                        if one is ...:
+                            out[i].append(last)
+                        elif one:
+                            out[i].append(one)
+                else:
+                    for one in out:
+                        one.append(i)
+            return out
+    ```
+
+2. 使用注解语法区分训练参数和测试参数
+   ConfigModel 有两个内部类 Data 和 Loader 子类可以采用注解语法区分训练时配置和测试时配置，例如：
+    ```python
+    class Loader:
+        shuffle:False = True
+        drop_last:True = False
+        batch_size:1 = 8
+        num_workers: 0 = 4
+   ```
+   **等号后面表示训练时参数，冒号后面表示测试时参数**，没有冒号则相同
+   这种表示方法同样是为了简化配置
+
+更多的可以参考已经实现的算法，例如`models/det/det_db_rvd.py`
+
 ## 贡献
 
 如果你对ToddleOCR感兴趣，并且希望为项目做出贡献，欢迎提交问题、提出建议或者发送Pull Request。我们乐于接受来自社区的贡献，共同推动项目的发展。
