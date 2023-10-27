@@ -60,8 +60,11 @@ class _:
 
         if isinstance(class_, type|types.FunctionType):
             return partial(class_, **kwargs)
+
         if isinstance(class_, str):
-            from ptocr import hub  # speed up
+
+            from tools.modelhub import Hub
+            hub = Hub(os.path.dirname(__file__)) # 这个操作很耗时，尽量不使用字符串形式的导入
 
             class_ = hub(class_)
             return partial(class_, **kwargs)
