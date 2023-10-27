@@ -442,7 +442,7 @@ class ToddleOCR:
 
         if not params.show_log:
             logger.setLevel(logging.INFO)
-        self.use_angle_cls = params.use_angle_cls
+        self.use_angle_cls = True#params.use_angle_cls
         lang, det_lang = parse_lang(params.lang)
 
         # init model dir
@@ -535,10 +535,10 @@ class ToddleOCR:
         if isinstance(img, list) and det == True:
             logger.error("When input a list of images, det must be false")
             exit(0)
-        # if cls == True and self.use_angle_cls == False:
-        #     logger.warning(
-        #         "Since the angle classifier is not initialized, it will not be used during the forward process"
-        #     )
+        if cls == True and self.use_angle_cls == False:
+            logger.warning(
+                "Since the angle classifier is not initialized, it will not be used during the forward process"
+            )
 
         if cls:
             cls = self.cls_model
@@ -578,21 +578,22 @@ class ToddleOCR:
 
 
 if __name__ == "__main__":
+    import sys
     t = ToddleOCR(
         det_model_dir="weights/zh_ocr_det_v3",
         cls_model_dir="weights/zh_ocr_cls_v1",
         rec_model_dir="weights/zh_ocr_rec_v3",
         tab_model_dir="weights/zh_str_tab_m2",
     )
-    img = "train_data/icdar2015/text_localization/ch4_test_images/img_47.jpg"
-    r = t.ocr(img, tab=True)[0]
+    img = sys.argv[1]
+    r = t.ocr(img, tab=False)[0]
     print(r)
     from PIL import Image
 
     im = Image.open(img)
-    boxes = [[(int(i[0]), int(i[1])), (int(i[2]), int(i[1])), (int(i[2]), int(i[3])), (int(i[0]), int(i[3]))] for i in
-             r['boxes']]
-
+    # boxes = [[(int(i[0]), int(i[1])), (int(i[2]), int(i[1])), (int(i[2]), int(i[3])), (int(i[0]), int(i[3]))] for i in
+    #          r['boxes']]
+    boxes = r['boxes']
     print(boxes)
     res = draw_ocr_box_txt(im, boxes, [t[0] for t in r['rec_res']])
     res.show()

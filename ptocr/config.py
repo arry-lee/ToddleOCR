@@ -390,7 +390,7 @@ class ConfigModel:
     def det(self, img, cls=None, rec=None):
         (dt_boxes, img) = self._det_one_image(img)
         if not rec:
-            return dt_boxes
+            return {'boxes':dt_boxes}
         ori_im = img.copy()
         img_crop_list = []
         dt_boxes = sorted_boxes(dt_boxes)
@@ -406,7 +406,7 @@ class ConfigModel:
             (img_crop_list, _) = cls(img_crop_list)
         if rec:
             img_crop_list = rec(img_crop_list)
-        return img_crop_list
+        return {'boxes':dt_boxes,'rec_res':img_crop_list}
 
     def save(self, model_path, is_best=False, prefix="toddleocr", **kwargs):
         os.makedirs(model_path, exist_ok=True)
