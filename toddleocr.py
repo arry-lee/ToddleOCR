@@ -31,7 +31,7 @@ from ptocr.utils.network import (
     is_link,
     confirm_model_dir_url,
 )
-from tools.utility import draw_ocr, init_args, str2bool, check_gpu
+from tools.utility import draw_ocr, init_args, str2bool, check_gpu, draw_ocr_box_txt
 
 __all__ = [
     "ToddleOCR",
@@ -611,5 +611,13 @@ if __name__ == "__main__":
         rec_model_dir="weights/zh_ocr_rec_v3",
         tab_model_dir="weights/zh_str_tab_m2",
     )
-    r = t.ocr(r"doc/imgs/00018069.jpg", tab=True)
+    r = t.ocr(r"doc/imgs/00018069.jpg", tab=True)[0]
     print(r)
+    from PIL import Image
+
+    im = Image.open(r"doc/imgs/00018069.jpg")
+    boxes = [[(int(i[0]), int(i[1])), (int(i[2]), int(i[1])), (int(i[2]), int(i[3])), (int(i[0]), int(i[3]))] for i in r['boxes']]
+
+    print(boxes)
+    res = draw_ocr_box_txt(im, boxes, [t[0] for t in r['rec_res']])
+    res.show()

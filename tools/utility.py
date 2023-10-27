@@ -296,7 +296,7 @@ def draw_ocr_box_txt(
     img_show = Image.new("RGB", (w * 2, h), (255, 255, 255))
     img_show.paste(img_left, (0, 0, w, h))
     img_show.paste(Image.fromarray(img_right), (w, 0, w * 2, h))
-    return np.array(img_show)
+    return img_show
 
 
 def draw_box_txt_fine(img_size, box, txt, font_path="./doc/fonts/simfang.ttf"):
@@ -342,7 +342,7 @@ def draw_box_txt_fine(img_size, box, txt, font_path="./doc/fonts/simfang.ttf"):
 def create_font(txt, sz, font_path="./doc/fonts/simfang.ttf"):
     font_size = int(sz[1] * 0.99)
     font = ImageFont.truetype(font_path, font_size, encoding="utf-8")
-    length = font.getsize(txt)[0]
+    length = font.getlength(txt)
     if length > sz[0]:
         font_size = int(font_size * sz[0] / length)
         font = ImageFont.truetype(font_path, font_size, encoding="utf-8")
