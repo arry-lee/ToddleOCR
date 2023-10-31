@@ -1,3 +1,5 @@
+import os
+
 from setuptools import setup
 from io import open
 from toddleocr import VERSION
@@ -20,6 +22,11 @@ def readme():
         README = f.read()
     return README
 
+cwd = os.path.dirname(os.path.abspath(__file__))
+
+version_txt = os.path.join(cwd, "version.txt")
+with open(version_txt) as f:
+    version = f.readline().strip()
 
 setup(
     name="toddleocr",
@@ -27,7 +34,7 @@ setup(
     package_dir={"toddleocr": ""},
     include_package_data=True,
     entry_points={"console_scripts": ["toddleocr= paddleocr.toddleocr:main"]},
-    version=VERSION,
+    version=version,
     install_requires=load_requirements(),
     license="Apache License 2.0",
     description="Awesome OCR toolkits based on Torch （8.6M ultra-lightweight pre-trained model, support training and deployment among server, mobile, embedded and IoT devices",
@@ -38,6 +45,7 @@ setup(
     keywords=[
         "ocr textdetection textrecognition toddleocr crnn east star-net rosetta ocrlite db chineseocr chinesetextdetection chinesetextrecognition"
     ],
+    python_requires=">=3.8",
     classifiers=[
         "Intended Audience :: Developers",
         "Operating System :: OS Independent",

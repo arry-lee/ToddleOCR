@@ -1,5 +1,5 @@
 <p align="center">
- <img src="./doc/toddleocr.png" align="middle" width = "600"/>
+ <img src="docs/toddleocr.png" align="middle" width = "600"/>
 <p align="center">
 <p align="left">
     <a href="./LICENSE"><img src="https://img.shields.io/badge/license-Apache%202-dfd.svg"></a>
@@ -73,7 +73,7 @@ pip install -r requirements.txt
 2. 运行OCR示例脚本：
 
 ```shell
-python toddleocr.py input.jpg
+python toddleocr input.jpg
 ```
 
 这将输出检测到的文字区域和对应的识别结果。
