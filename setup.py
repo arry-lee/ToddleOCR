@@ -1,8 +1,7 @@
 import os
 
-from setuptools import setup
+from setuptools import setup, find_packages
 from io import open
-from toddleocr import VERSION
 
 
 def load_requirements(file_list=None):
@@ -30,10 +29,10 @@ with open(version_txt) as f:
 
 setup(
     name="toddleocr",
-    packages=["toddleocr"],
-    package_dir={"toddleocr": ""},
+    packages=find_packages(exclude=("test",)),
+    # package_dir={"toddleocr": ""},
     include_package_data=True,
-    entry_points={"console_scripts": ["toddleocr= paddleocr.toddleocr:main"]},
+    entry_points={"console_scripts": ["toddleocr = toddleocr.__main__:main"]},
     version=version,
     install_requires=load_requirements(),
     license="Apache License 2.0",

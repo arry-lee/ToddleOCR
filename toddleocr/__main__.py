@@ -576,7 +576,7 @@ class ToddleOCR:
         return ocr_res
 
 
-if __name__ == "__main__":
+def main():
     import sys
     t = ToddleOCR(
         det_model_dir="weights/zh_ocr_det_v3",
@@ -588,7 +588,6 @@ if __name__ == "__main__":
     r = t.ocr(img, tab=False)[0]
     print(r)
     from PIL import Image
-
     im = Image.open(img)
     # boxes = [[(int(i[0]), int(i[1])), (int(i[2]), int(i[1])), (int(i[2]), int(i[3])), (int(i[0]), int(i[3]))] for i in
     #          r['boxes']]
@@ -596,3 +595,7 @@ if __name__ == "__main__":
     print(boxes)
     res = draw_ocr_box_txt(im, boxes, [t[0] for t in r['rec_res']])
     res.show()
+
+
+if __name__ == "__main__":
+    main()

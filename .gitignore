@@ -36,3 +36,7 @@ test_tipc/web/node_modules/
 *.pdparams
 /checkpoints/
 /train_data/
+*.pt
+*.pdf
+*.pptx
+*.tar.gz

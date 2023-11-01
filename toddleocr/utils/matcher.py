@@ -1,4 +1,4 @@
-# copyright (c) 2022 PaddlePaddle Authors. All Rights Reserve.
+#  Copyright (c) 2023. Arry Lee, <arry_lee@qq.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 import numpy as np
 
-from structure.table.table_master_match import deal_bb, deal_eb_token
+from utils.table_master_match import deal_bb, deal_eb_token
 
 
 def distance(box_1, box_2):

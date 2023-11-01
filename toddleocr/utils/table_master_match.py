@@ -1,4 +1,4 @@
-# copyright (c) 2022 PaddlePaddle Authors. All Rights Reserve.
+#  Copyright (c) 2023. Arry Lee, <arry_lee@qq.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,15 +16,14 @@ This code is refer from:
 https://github.com/JiaquanYe/TableMASTER-mmocr/blob/master/table_recognition/match.py
 """
 
-import os
-import re
-import cv2
-import glob
 import copy
+import glob
 import math
+import os
 import pickle
-import numpy as np
+import re
 
+import numpy as np
 from shapely.geometry import Polygon, MultiPoint
 
 """
