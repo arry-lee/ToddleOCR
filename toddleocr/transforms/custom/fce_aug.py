@@ -19,9 +19,9 @@ import math
 
 import cv2
 import numpy as np
-
-from toddleocr.utils.poly_nms import poly_intersection
 from shapely.geometry import Polygon
+
+from toddleocr.ops.poly_nms import poly_intersection
 
 
 class RandomScaling:

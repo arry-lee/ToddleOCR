@@ -152,7 +152,7 @@ PaddleOCR内置了一部分字典，可以按需使用。
 
 `ptocr/utils/ppocr_keys_v1.txt` 是一个包含6623个字符的中文字典
 
-`ppocr/utils/ic15_dict.txt` 是一个包含36个字符的英文字典
+`ppocr/utils/dict/ic15_dict.txt` 是一个包含36个字符的英文字典
 
 `ppocr/utils/dict/french_dict.txt` 是一个包含118个字符的法文字典
 
@@ -162,7 +162,7 @@ PaddleOCR内置了一部分字典，可以按需使用。
 
 `ppocr/utils/dict/german_dict.txt` 是一个包含131个字符的德文字典
 
-`ppocr/utils/en_dict.txt` 是一个包含96个字符的英文字典
+`ppocr/utils/dict/en96_dict.txt` 是一个包含96个字符的英文字典
 
 
 目前的多语言模型仍处在demo阶段，会持续优化模型并补充语种，**非常欢迎您为我们提供其他语言的字典和字体**，

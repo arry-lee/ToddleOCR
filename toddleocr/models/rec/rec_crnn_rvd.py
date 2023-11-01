@@ -11,7 +11,13 @@ from toddleocr.modules.backbones.resnet.rec_resnet_vd import ResNet_Rec_Vd
 from toddleocr.modules.heads.ctc import CTCHead
 from toddleocr.modules.necks.rnn import SequenceEncoder
 from toddleocr.postprocess.rec import CTCLabelDecode
-from toddleocr.transforms import CTCLabelEncode, DecodeImage, KeepKeys, RecAug, RecResizeImg
+from toddleocr.transforms import (
+    CTCLabelEncode,
+    DecodeImage,
+    KeepKeys,
+    RecAug,
+    RecResizeImg,
+)
 from torch.optim import Adam
 from torch.optim.lr_scheduler import CosineAnnealingWarmRestarts
 
@@ -30,7 +36,7 @@ class Model(ConfigModel):
     save_infer_dir = None
     use_visualdl = False
     infer_img = "doc/imgs_words/ch/word_1.jpg"
-    character_dict_path = "toddleocr/utils/ppocr_keys_v1.txt"
+    character_dict_path = "toddleocr/utils/dict/chinese_sim_dict.txt"
     max_text_length = 25
     infer_mode = False
     use_space_char = True
@@ -62,12 +68,12 @@ class Model(ConfigModel):
             RecAug(),
             CTCLabelEncode(
                 max_text_length=25,
-                character_dict_path="toddleocr/utils/ppocr_keys_v1.txt",
+                character_dict_path="toddleocr/utils/dict/chinese_sim_dict.txt",
                 use_space_char=True,
             ),
             RecResizeImg(
                 image_shape=[3, 32, 320],
-                character_dict_path="toddleocr/utils/ppocr_keys_v1.txt",
+                character_dict_path="toddleocr/utils/dict/chinese_sim_dict.txt",
             ),
             KeepKeys(keep_keys=["image", "label", "length"]),
         ]
@@ -83,12 +89,12 @@ class Model(ConfigModel):
             DecodeImage(img_mode="BGR", channel_first=False),
             CTCLabelEncode(
                 max_text_length=25,
-                character_dict_path="toddleocr/utils/ppocr_keys_v1.txt",
+                character_dict_path="toddleocr/utils/dict/chinese_sim_dict.txt",
                 use_space_char=True,
             ),
             RecResizeImg(
                 image_shape=[3, 32, 320],
-                character_dict_path="toddleocr/utils/ppocr_keys_v1.txt",
+                character_dict_path="toddleocr/utils/dict/chinese_sim_dict.txt",
             ),
             KeepKeys(keep_keys=["image", "label", "length"]),
         ]
@@ -100,7 +106,7 @@ class Model(ConfigModel):
             RecResizeImg(
                 image_shape=[3, 32, 320],
                 infer_mode=True,
-                character_dict_path="toddleocr/utils/ppocr_keys_v1.txt",
+                character_dict_path="toddleocr/utils/dict/chinese_sim_dict.txt",
             ),
             KeepKeys(keep_keys=["image"]),
         ]

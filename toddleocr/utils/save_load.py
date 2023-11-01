@@ -4,7 +4,7 @@ import pickle
 
 import torch
 
-__all__ = ["load_model", "save_model"]
+# __all__ = ["load_model", "save_model"]
 
 from torch import nn
 
@@ -133,7 +133,6 @@ def load_model(config, model: nn.Module, logger, optimizer=None, model_type="det
 
 
 def load_pretrained_params(model, path, logger):
-
     if path.endswith(".pdparams"):
         path = path.replace(".pdparams", "")
     assert os.path.exists(

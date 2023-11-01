@@ -35,7 +35,7 @@ class Model(ConfigModel):
     use_visualdl = False
     infer_visual_type = "EN"
     valid_set = "totaltext"
-    character_dict_path = "ppocr/utils/ic15_dict.txt"
+    character_dict_path = "ppocr/utils/dict/ic15_dict.txt"
     character_type = "EN"
     max_text_length = 50
     max_text_nums = 30
@@ -47,12 +47,12 @@ class Model(ConfigModel):
     Neck = _(
         PGFPN,
     )
-    Head = _(PGHead, character_dict_path="ppocr/utils/ic15_dict.txt")
+    Head = _(PGHead, character_dict_path="ppocr/utils/dict/ic15_dict.txt")
     loss = PGLoss(tcl_bs=64, max_text_length=50, max_text_nums=30, pad_num=36)
     metric = E2EMetric(
         mode="A",
         gt_mat_dir="./train_data/total_text/gt",
-        character_dict_path="ppocr/utils/ic15_dict.txt",
+        character_dict_path="ppocr/utils/dict/ic15_dict.txt",
         main_indicator="f_score_e2e",
     )
     postprocessor = PGPostProcess(

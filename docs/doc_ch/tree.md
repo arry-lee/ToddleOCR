@@ -186,7 +186,7 @@ PaddleOCR
 │   └── utils                               // 工具
 │       ├── dict                            // 小语种字典
 │            ....  
-│       ├── ic15_dict.txt                   // 英文数字字典，区分大小写
+│       ├── dict/ic15_dict.txt                   // 英文数字字典，区分大小写
 │       ├── ppocr_keys_v1.txt               // 中文字典，用于训练中文模型
 │       ├── logging.py                      // logger
 │       ├── save_load.py                    // 模型保存和加载函数

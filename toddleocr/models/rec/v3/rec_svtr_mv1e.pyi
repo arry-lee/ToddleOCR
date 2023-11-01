@@ -27,7 +27,7 @@ class Model(ConfigModel):
     checkpoints = None
     save_infer_dir = None
     use_visualdl = False
-    character_dict_path = "ppocr/utils/en_dict.txt"
+    character_dict_path = "ppocr/utils/dict/en96_dict.txt"
     max_text_length = 25
     infer_mode = False
     use_space_char = True

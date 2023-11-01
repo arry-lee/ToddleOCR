@@ -244,7 +244,7 @@ class RecResizeImg:
         self,
         image_shape,
         infer_mode=False,
-        character_dict_path="./toddleocr/utils/ppocr_keys_v1.txt",
+        character_dict_path="./toddleocr/utils/dict/chinese_sim_dict.txt",
         padding=True,
         **kwargs
     ):
@@ -269,7 +269,7 @@ class VLRecResizeImg:
         self,
         image_shape,
         infer_mode=False,
-        character_dict_path="./toddleocr/utils/ppocr_keys_v1.txt",
+        character_dict_path="./toddleocr/utils/dict/chinese_sim_dict.txt",
         padding=True,
         **kwargs
     ):

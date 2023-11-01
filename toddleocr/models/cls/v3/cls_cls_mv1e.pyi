@@ -29,7 +29,7 @@ class Model(ConfigModel):
     checkpoints = None
     save_infer_dir = None
     use_visualdl = False
-    character_dict_path = "toddleocr/utils/ppocr_keys_v1.txt"
+    character_dict_path = "toddleocr/utils/dict/chinese_sim_dict.txt"
     max_text_length = 25
     infer_mode = False
     use_space_char = True

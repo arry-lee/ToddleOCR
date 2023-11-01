@@ -3,7 +3,7 @@ import os
 import sys
 
 sys.path.append(os.getcwd())
-from toddleocr.config import _, ConfigModel
+from toddleocr.config import _, ConfigModel, PROJECT_DIR
 from toddleocr.datasets.pubtab import PubTabDataSet
 from toddleocr.loss.table_att import SLALoss
 from toddleocr.metrics.table import TableMetric
@@ -24,6 +24,10 @@ from toddleocr.transforms import (
 from torch.optim import Adam
 from torch.optim.lr_scheduler import ConstantLR
 
+CHARACTER_DICT_PATH = os.path.join(
+    PROJECT_DIR, "utils/dict/table_structure_dict_ch.txt"
+)
+
 
 class Model(ConfigModel):
     use_gpu = True
@@ -38,8 +42,8 @@ class Model(ConfigModel):
     checkpoints = None
     save_infer_dir = "./output/SLANet_ch/infer"
     use_visualdl = False
-    infer_img = "ppstructure/docs/table/table.jpg"
-    character_dict_path = "toddleocr/utils/dict/table_structure_dict_ch.txt"
+    infer_img = ""
+    character_dict_path = CHARACTER_DICT_PATH
     character_type = "en"
     max_text_length = 500
     box_format = "xy4"

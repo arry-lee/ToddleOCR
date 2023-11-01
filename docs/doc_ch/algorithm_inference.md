@@ -283,7 +283,7 @@ python3 tools/export_model.py -c configs/rec/rec_r34_vd_none_bilstm_ctc.yml -o G
 CRNN 文本识别模型推理，可以执行如下命令：
 
 ```
-python3 tools/infer/predict_rec.py --image_dir="./doc/imgs_words_en/word_336.png" --rec_model_dir="./inference/rec_crnn/" --rec_image_shape="3, 32, 100" --rec_char_dict_path="./ppocr/utils/ic15_dict.txt"
+python3 tools/infer/predict_rec.py --image_dir="./doc/imgs_words_en/word_336.png" --rec_model_dir="./inference/rec_crnn/" --rec_image_shape="3, 32, 100" --rec_char_dict_path="./ppocr/utils/dict/ic15_dict.txt"
 ```
 
 ![](../imgs_words_en/word_336.png)
@@ -298,7 +298,7 @@ Predicts of ./doc/imgs_words_en/word_336.png:('super', 0.9999073)
 
 - 训练时采用的图像分辨率不同，训练上述模型采用的图像分辨率是[3，32，100]，而中文模型训练时，为了保证长文本的识别效果，训练时采用的图像分辨率是[3, 32, 320]。预测推理程序默认的形状参数是训练中文采用的图像分辨率，即[3, 32, 320]。因此，这里推理上述英文模型时，需要通过参数rec_image_shape设置识别图像的形状。
 
-- 字符列表，DTRB论文中实验只是针对26个小写英文本母和10个数字进行实验，总共36个字符。所有大小字符都转成了小写字符，不在上面列表的字符都忽略，认为是空格。因此这里没有输入字符字典，而是通过如下命令生成字典.因此在推理时需要设置参数rec_char_dict_path，指定为英文字典"./ppocr/utils/ic15_dict.txt"。
+- 字符列表，DTRB论文中实验只是针对26个小写英文本母和10个数字进行实验，总共36个字符。所有大小字符都转成了小写字符，不在上面列表的字符都忽略，认为是空格。因此这里没有输入字符字典，而是通过如下命令生成字典.因此在推理时需要设置参数rec_char_dict_path，指定为英文字典"./ppocr/utils/dict/ic15_dict.txt"。
 
 ```
 self.character_str = "0123456789abcdefghijklmnopqrstuvwxyz"
@@ -313,7 +313,7 @@ dict_character = list(self.character_str)
 python3 tools/infer/predict_rec.py --image_dir="./doc/imgs_words_en/word_336.png" \
                                    --rec_model_dir="./inference/srn/" \
                                    --rec_image_shape="1, 64, 256" \
-                                   --rec_char_dict_path="./ppocr/utils/ic15_dict.txt" \
+                                   --rec_char_dict_path="./ppocr/utils/dict/ic15_dict.txt" \
                                    --rec_algorithm="SRN"
 ```
 
@@ -398,7 +398,7 @@ python3 tools/infer/predict_system.py --image_dir="./doc/imgs/00018069.jpg" --de
 下面给出基于EAST文本检测和STAR-Net文本识别执行命令：
 
 ```
-python3 tools/infer/predict_system.py --image_dir="./doc/imgs_en/img_10.jpg" --det_model_dir="./inference/det_east/" --det_algorithm="EAST" --rec_model_dir="./inference/starnet/" --rec_image_shape="3, 32, 100" --rec_char_dict_path="./ppocr/utils/ic15_dict.txt"
+python3 tools/infer/predict_system.py --image_dir="./doc/imgs_en/img_10.jpg" --det_model_dir="./inference/det_east/" --det_algorithm="EAST" --rec_model_dir="./inference/starnet/" --rec_image_shape="3, 32, 100" --rec_char_dict_path="./ppocr/utils/dict/ic15_dict.txt"
 ```
 
 执行命令后，识别结果图像如下：
@@ -513,7 +513,7 @@ PSE算法相关参数如下
 |  e2e_limit_side_len | int | 768 | 端到端的输入图像边长限制 |
 |  e2e_limit_type | str | "max" | 端到端的边长限制类型，目前支持`min`, `max`，`min`表示保证图像最短边不小于`e2e_limit_side_len`，`max`表示保证图像最长边不大于`e2e_limit_side_len` |
 |  e2e_pgnet_score_thresh | float | 0.5 | 端到端得分阈值，小于该阈值的结果会被丢弃 |
-|  e2e_char_dict_path | str | "./ppocr/utils/ic15_dict.txt" | 识别的字典文件路径 |
+|  e2e_char_dict_path | str | "./ppocr/utils/dict/ic15_dict.txt" | 识别的字典文件路径 |
 |  e2e_pgnet_valid_set | str | "totaltext" | 验证集名称，目前支持`totaltext`, `partvgg`，不同数据集对应的后处理方式不同，与训练过程保持一致即可 |
 |  e2e_pgnet_mode | str | "fast" | PGNet的检测结果得分计算方法，支持`fast`和`slow`，`fast`是根据polygon的外接矩形边框内的所有像素计算平均得分，`slow`是根据原始polygon内的所有像素计算平均得分，计算速度相对较慢一些，但是更加准确一些。 |
 

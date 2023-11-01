@@ -2,7 +2,7 @@ import os
 import sys
 
 sys.path.append(os.getcwd())
-from toddleocr.config import _, ConfigModel
+from toddleocr.config import _, ConfigModel, PROJECT_DIR
 from toddleocr.datasets.simple import SimpleDataSet
 from toddleocr.loss.compose import MultiLoss
 from toddleocr.metrics.rec import RecMetric
@@ -20,11 +20,8 @@ from toddleocr.transforms import (
 from torch.optim import Adam
 from torch.optim.lr_scheduler import CosineAnnealingWarmRestarts
 
-from pathlib import Path
-DICT_DIR = Path(__file__).parent.parent.parent.parent
-CHARACTER_DICT_PATH = (DICT_DIR/"utils/ppocr_keys_v1.txt").__str__()
-print(os.getcwd())
-print(CHARACTER_DICT_PATH)
+CHARACTER_DICT_PATH = os.path.join(PROJECT_DIR, "utils/dict/chinese_sim_dict.txt")
+
 MAX_TEXT_LENGTH = 25
 USE_SPACE_CHAR = True
 

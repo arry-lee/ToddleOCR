@@ -24,7 +24,7 @@ import pickle
 import re
 
 import numpy as np
-from shapely.geometry import Polygon, MultiPoint
+from shapely.geometry import MultiPoint, Polygon
 
 """
 Useful function in matching.
@@ -146,9 +146,13 @@ def is_inside(center_point, corner_point):
     """
     x_flag = False
     y_flag = False
-    if (center_point[0] >= corner_point[0][0]) and (center_point[0] <= corner_point[1][0]):
+    if (center_point[0] >= corner_point[0][0]) and (
+        center_point[0] <= corner_point[1][0]
+    ):
         x_flag = True
-    if (center_point[1] >= corner_point[0][1]) and (center_point[1] <= corner_point[1][1]):
+    if (center_point[1] >= corner_point[0][1]) and (
+        center_point[1] <= corner_point[1][1]
+    ):
         y_flag = True
     if x_flag and y_flag:
         return True
@@ -267,9 +271,16 @@ def sort_bbox(end2end_xywh_bboxes, no_match_end2end_indexes):
         sorted_bbox_groups[idx] = bg
 
     # flatten, get final result
-    end2end_sorted_idx_list, end2end_sorted_bbox_list = flatten(sorted_groups, sorted_bbox_groups)
+    end2end_sorted_idx_list, end2end_sorted_bbox_list = flatten(
+        sorted_groups, sorted_bbox_groups
+    )
 
-    return end2end_sorted_idx_list, end2end_sorted_bbox_list, sorted_groups, sorted_bbox_groups
+    return (
+        end2end_sorted_idx_list,
+        end2end_sorted_bbox_list,
+        sorted_groups,
+        sorted_bbox_groups,
+    )
 
 
 def get_bboxes_list(end2end_result, structure_master_result):
@@ -298,7 +309,12 @@ def get_bboxes_list(end2end_result, structure_master_result):
     xywh_bbox = xyxy2xywh(src_bboxes)
     structure_master_xywh_bboxes = xywh_bbox
 
-    return end2end_xyxy_bboxes, end2end_xywh_bboxes, structure_master_xywh_bboxes, structure_master_xyxy_bboxes
+    return (
+        end2end_xyxy_bboxes,
+        end2end_xywh_bboxes,
+        structure_master_xywh_bboxes,
+        structure_master_xyxy_bboxes,
+    )
 
 
 def center_rule_match(end2end_xywh_bboxes, structure_master_xyxy_bboxes):
@@ -313,7 +329,12 @@ def center_rule_match(end2end_xywh_bboxes, structure_master_xyxy_bboxes):
     for i, end2end_xywh in enumerate(end2end_xywh_bboxes):
         for j, master_xyxy in enumerate(structure_master_xyxy_bboxes):
             x_end2end, y_end2end = end2end_xywh[0], end2end_xywh[1]
-            x_master1, y_master1, x_master2, y_master2 = master_xyxy[0], master_xyxy[1], master_xyxy[2], master_xyxy[3]
+            x_master1, y_master1, x_master2, y_master2 = (
+                master_xyxy[0],
+                master_xyxy[1],
+                master_xyxy[2],
+                master_xyxy[3],
+            )
             center_point_end2end = (x_end2end, y_end2end)
             corner_point_master = ((x_master1, y_master1), (x_master2, y_master2))
             if is_inside(center_point_end2end, corner_point_master):
@@ -321,7 +342,9 @@ def center_rule_match(end2end_xywh_bboxes, structure_master_xyxy_bboxes):
     return match_pairs_list
 
 
-def iou_rule_match(end2end_xyxy_bboxes, end2end_xyxy_indexes, structure_master_xyxy_bboxes):
+def iou_rule_match(
+    end2end_xyxy_bboxes, end2end_xyxy_indexes, structure_master_xyxy_bboxes
+):
     """
     Use iou to find matching list.
     choose max iou value bbox as match pair.
@@ -331,7 +354,9 @@ def iou_rule_match(end2end_xyxy_bboxes, end2end_xyxy_indexes, structure_master_x
     :return: match pairs list, e.g. [[0,1], [1,2], ...]
     """
     match_pair_list = []
-    for end2end_xyxy_index, end2end_xyxy in zip(end2end_xyxy_indexes, end2end_xyxy_bboxes):
+    for end2end_xyxy_index, end2end_xyxy in zip(
+        end2end_xyxy_indexes, end2end_xyxy_bboxes
+    ):
         max_iou = 0
         max_match = [None, None]
         for j, master_xyxy in enumerate(structure_master_xyxy_bboxes):
@@ -450,7 +475,9 @@ def reduce_repeat_bb(text_list, break_token):
 def get_match_text_dict(match_dict, end2end_info, break_token=" "):
     match_text_dict = dict()
     for master_index, end2end_index_list in match_dict.items():
-        text_list = [end2end_info[end2end_index]["text"] for end2end_index in end2end_index_list]
+        text_list = [
+            end2end_info[end2end_index]["text"] for end2end_index in end2end_index_list
+        ]
         text_list = reduce_repeat_bb(text_list, break_token)
         text = break_token.join(text_list)
         match_text_dict[master_index] = text
@@ -470,9 +497,9 @@ def merge_span_token(master_token_list):
     while master_token_list[pointer] != "</tbody>":
         try:
             if master_token_list[pointer] == "<td":
-                if master_token_list[pointer + 1].startswith(" colspan=") or master_token_list[pointer + 1].startswith(
-                    " rowspan="
-                ):
+                if master_token_list[pointer + 1].startswith(
+                    " colspan="
+                ) or master_token_list[pointer + 1].startswith(" rowspan="):
                     """
                     example:
                     pattern <td colspan="3">
@@ -482,9 +509,9 @@ def merge_span_token(master_token_list):
                     pointer += 4
                     new_master_token_list.append(tmp)
 
-                elif master_token_list[pointer + 2].startswith(" colspan=") or master_token_list[
-                    pointer + 2
-                ].startswith(" rowspan="):
+                elif master_token_list[pointer + 2].startswith(
+                    " colspan="
+                ) or master_token_list[pointer + 2].startswith(" rowspan="):
                     """
                     example:
                     pattern <td rowspan="2" colspan="3">
@@ -537,7 +564,9 @@ def deal_eb_token(master_token):
     master_token = master_token.replace("<eb7></eb7>", "<td><b><i></i></b></td>")
     master_token = master_token.replace("<eb8></eb8>", "<td><b><i> </i></b></td>")
     master_token = master_token.replace("<eb9></eb9>", "<td><i></i></td>")
-    master_token = master_token.replace("<eb10></eb10>", "<td><b> \u2028 \u2028 </b></td>")
+    master_token = master_token.replace(
+        "<eb10></eb10>", "<td><b> \u2028 \u2028 </b></td>"
+    )
     return master_token
 
 
@@ -560,7 +589,9 @@ def insert_text_to_token(master_token_list, match_text_dict):
                 text_count += 1
                 continue
             else:
-                master_token = master_token.replace("><", ">{}<".format(match_text_dict[text_count]))
+                master_token = master_token.replace(
+                    "><", ">{}<".format(match_text_dict[text_count])
+                )
                 text_count += 1
         master_token = deal_eb_token(master_token)
         merged_result_list.append(master_token)
@@ -588,7 +619,10 @@ def deal_isolate_span(thead_part):
 
     # 2. find out span number, by step 1 results.
     span_pattern = (
-        ' rowspan="(\d)+" colspan="(\d)+"|' ' colspan="(\d)+" rowspan="(\d)+"|' ' rowspan="(\d)+"|' ' colspan="(\d)+"'
+        ' rowspan="(\d)+" colspan="(\d)+"|'
+        ' colspan="(\d)+" rowspan="(\d)+"|'
+        ' rowspan="(\d)+"|'
+        ' colspan="(\d)+"'
     )
     corrected_list = []
     for isolate_item in isolate_list:
@@ -733,7 +767,9 @@ class Matcher:
         self.end2end_file = end2end_file
         self.structure_master_file = structure_master_file
         self.end2end_results = pickle_load(end2end_file, prefix="end2end")
-        self.structure_master_results = pickle_load(structure_master_file, prefix="structure")
+        self.structure_master_results = pickle_load(
+            structure_master_file, prefix="structure"
+        )
 
     def match(self):
         """
@@ -758,17 +794,25 @@ class Matcher:
             ) = get_bboxes_list(end2end_result, structure_master_result)
 
             # rule 1: center rule
-            center_rule_match_list = center_rule_match(end2end_xywh_bboxes, structure_master_xyxy_bboxes)
+            center_rule_match_list = center_rule_match(
+                end2end_xywh_bboxes, structure_master_xyxy_bboxes
+            )
             match_list.extend(center_rule_match_list)
 
             # rule 2: iou rule
             # firstly, find not match index in previous step.
-            center_no_match_end2end_indexs = find_no_match(match_list, len(end2end_xywh_bboxes), type="end2end")
+            center_no_match_end2end_indexs = find_no_match(
+                match_list, len(end2end_xywh_bboxes), type="end2end"
+            )
             if len(center_no_match_end2end_indexs) > 0:
-                center_no_match_end2end_xyxy = end2end_xyxy_bboxes[center_no_match_end2end_indexs]
+                center_no_match_end2end_xyxy = end2end_xyxy_bboxes[
+                    center_no_match_end2end_indexs
+                ]
                 # secondly, iou rule match
                 iou_rule_match_list = iou_rule_match(
-                    center_no_match_end2end_xyxy, center_no_match_end2end_indexs, structure_master_xyxy_bboxes
+                    center_no_match_end2end_xyxy,
+                    center_no_match_end2end_indexs,
+                    structure_master_xyxy_bboxes,
                 )
                 match_list.extend(iou_rule_match_list)
 
@@ -776,13 +820,22 @@ class Matcher:
             # match between no-match end2end bboxes and no-match master bboxes.
             # it will return master_bboxes_nums match-pairs.
             # firstly, find not match index in previous step.
-            centerIou_no_match_end2end_indexs = find_no_match(match_list, len(end2end_xywh_bboxes), type="end2end")
+            centerIou_no_match_end2end_indexs = find_no_match(
+                match_list, len(end2end_xywh_bboxes), type="end2end"
+            )
             centerIou_no_match_master_indexs = find_no_match(
                 match_list, len(structure_master_xywh_bboxes), type="master"
             )
-            if len(centerIou_no_match_master_indexs) > 0 and len(centerIou_no_match_end2end_indexs) > 0:
-                centerIou_no_match_end2end_xywh = end2end_xywh_bboxes[centerIou_no_match_end2end_indexs]
-                centerIou_no_match_master_xywh = structure_master_xywh_bboxes[centerIou_no_match_master_indexs]
+            if (
+                len(centerIou_no_match_master_indexs) > 0
+                and len(centerIou_no_match_end2end_indexs) > 0
+            ):
+                centerIou_no_match_end2end_xywh = end2end_xywh_bboxes[
+                    centerIou_no_match_end2end_indexs
+                ]
+                centerIou_no_match_master_xywh = structure_master_xywh_bboxes[
+                    centerIou_no_match_master_indexs
+                ]
                 distance_match_list = distance_rule_match(
                     centerIou_no_match_end2end_indexs,
                     centerIou_no_match_end2end_xywh,
@@ -798,7 +851,9 @@ class Matcher:
             # For these render end2end bboxes, we will make some virtual master bboxes, and get matching.
             # The above extra insert bboxes will be further processed in "formatOutput" function.
             # After this operation, it will increase TEDS score.
-            no_match_end2end_indexes = find_no_match(match_list, len(end2end_xywh_bboxes), type="end2end")
+            no_match_end2end_indexes = find_no_match(
+                match_list, len(end2end_xywh_bboxes), type="end2end"
+            )
             if len(no_match_end2end_indexes) > 0:
                 no_match_end2end_xywh = end2end_xywh_bboxes[no_match_end2end_indexes]
                 # sort the render no-match end2end bbox in row
@@ -809,7 +864,9 @@ class Matcher:
                     sorted_bboxes_groups,
                 ) = sort_bbox(no_match_end2end_xywh, no_match_end2end_indexes)
                 # make virtual master bboxes, and get matching with the no-match end2end bboxes.
-                extra_match_list = extra_match(end2end_sorted_indexes_list, len(structure_master_xywh_bboxes))
+                extra_match_list = extra_match(
+                    end2end_sorted_indexes_list, len(structure_master_xywh_bboxes)
+                )
                 match_list_add_extra_match = copy.deepcopy(match_list)
                 match_list_add_extra_match.extend(extra_match_list)
             else:

@@ -1,3 +1,5 @@
+#  Copyright (c) 2023. Arry Lee, <arry_lee@qq.com>
+
 import argparse
 import math
 import os
@@ -80,12 +82,10 @@ def init_args():
     parser.add_argument(
         "--rec_char_dict_path",
         type=str,
-        default="./toddleocr/utils/ppocr_keys_v1.txt",
+        default="./toddleocr/utils/dict/chinese_sim_dict.txt",
     )
     parser.add_argument("--use_space_char", type=str2bool, default=True)
-    parser.add_argument(
-        "--vis_font_path", type=str, default="./doc/fonts/simfang.ttf"
-    )
+    parser.add_argument("--vis_font_path", type=str, default="./doc/fonts/simfang.ttf")
     parser.add_argument("--drop_score", type=float, default=0.5)
 
     # params for e2e
@@ -97,7 +97,7 @@ def init_args():
     # PGNet parmas
     parser.add_argument("--e2e_pgnet_score_thresh", type=float, default=0.5)
     parser.add_argument(
-        "--e2e_char_dict_path", type=str, default="./ppocr/utils/ic15_dict.txt"
+        "--e2e_char_dict_path", type=str, default="./ppocr/utils/dict/ic15_dict.txt"
     )
     parser.add_argument("--e2e_pgnet_valid_set", type=str, default="totaltext")
     parser.add_argument("--e2e_pgnet_mode", type=str, default="fast")
@@ -121,9 +121,7 @@ def init_args():
     parser.add_argument("--sr_batch_num", type=int, default=1)
 
     #
-    parser.add_argument(
-        "--draw_img_save_dir", type=str, default="./inference_results"
-    )
+    parser.add_argument("--draw_img_save_dir", type=str, default="./inference_results")
     parser.add_argument("--save_crop_res", type=str2bool, default=False)
     parser.add_argument("--crop_res_save_dir", type=str, default="./output")
 
@@ -143,8 +141,6 @@ def init_args():
 def parse_args():
     parser = init_args()
     return parser.parse_args()
-
-
 
 
 def get_output_tensors(args, mode, predictor):
@@ -242,9 +238,7 @@ def draw_ocr(
         scores = [1] * len(boxes)
     box_num = len(boxes)
     for i in range(box_num):
-        if scores is not None and (
-            scores[i] < drop_score or math.isnan(scores[i])
-        ):
+        if scores is not None and (scores[i] < drop_score or math.isnan(scores[i])):
             continue
         box = np.reshape(np.array(boxes[i]), [-1, 1, 2]).astype(np.int64)
         image = cv2.polylines(np.array(image), [box], True, (255, 0, 0), 2)

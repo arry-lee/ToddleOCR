@@ -1,7 +1,8 @@
 from unittest import TestCase
 
-
 img = "../doc/imgs/11.jpg"
+
+
 class TestModel(TestCase):
 
     def test_det(self):
@@ -12,7 +13,7 @@ class TestModel(TestCase):
         # r = dm(img)
         rm = RecModel()
         cm = ClsModel()
-        r = dm(img,rec=rm)
+        r = dm(img, rec=rm)
         print(r)
 
     def test_cls(self):
@@ -23,17 +24,17 @@ class TestModel(TestCase):
     def test_det_v3(self):
         from toddleocr.models.det.v3.det_db_mv3_rse import Model
         from toddleocr.models.rec.v3.rec_svtr_mv1e import Model as RecModel
-        m = Model(r'D:\dev\.model\toddleocr\zh_ocr_det_v3\inference.pt')
+        m = Model(r'../weights/zh_ocr_det_v3/inference.pt')
         rm = RecModel()
-        r = m(img,rec=rm)
+        r = m(img, rec=rm)
         print(r)
 
     def test_rec_v3(self):
         from toddleocr.models.det.v3.det_db_mv3_rse import Model
         from toddleocr.models.rec.v3.rec_svtr_mv1e import Model as RecModel
-        m = Model(r'D:\dev\.model\toddleocr\zh_ocr_det_v3\inference.pt')
-        rm = RecModel(r'D:\dev\.model\toddleocr\zh_ocr_rec_v3\inference.pt')
-        r = m(img,rec=rm)
+        m = Model(r'../weights/zh_ocr_det_v3/inference.pt')
+        rm = RecModel(r'../weights/zh_ocr_rec_v3/inference.pt')
+        r = m(img, rec=rm)
         print(r)
 
     def test_table_one(self):
@@ -43,18 +44,18 @@ class TestModel(TestCase):
         print(r)
 
     def test_infer_table(self):
-        from tools.infer_table import tab
+        from toddleocr.utils.infer.infer_table import tab
         from toddleocr.models.tab.tab_slanet_pplcnet import Model
         m = Model('../model/ch_ppstructure_mobile_v2.0_SLANet_train/best_accuracy.pt')
-        tab(m,'../ppstructure/docs/table/table.jpg','./table')
+        tab(m, '../ppstructure/docs/table/table.jpg', './table')
 
     def test_table(self):
         from toddleocr.models.tab.tab_slanet_pplcnet import Model as TabModel
         from toddleocr.models.det.v3.det_db_mv3_rse import Model as DetModel
         from toddleocr.models.rec.v3.rec_svtr_mv1e import Model as RecModel
-        dm = DetModel(r'D:\dev\.model\toddleocr\zh_ocr_det_v3\inference.pt')
-        rm = RecModel(r'D:\dev\.model\toddleocr\zh_ocr_rec_v3\inference.pt')
+        dm = DetModel(r'../weights/zh_ocr_det_v3/inference.pt')
+        rm = RecModel(r'../weights/zh_ocr_rec_v3/inference.pt')
         tm = TabModel('../model/ch_ppstructure_mobile_v2.0_SLANet_train/best_accuracy.pt')
 
-        r = tm.table(r'D:\dev\github\ToddleOCR\doc\imgs\00018069.jpg',det=dm,rec=rm)
+        r = tm.table(r'../doc/imgs/00018069.jpg', det=dm, rec=rm)
         print(r['html'])

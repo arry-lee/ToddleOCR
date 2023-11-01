@@ -16,7 +16,13 @@ from toddleocr.modules.heads.ctc import CTCHead
 from toddleocr.modules.necks.rnn import SequenceEncoder
 from toddleocr.optim.lr_scheduler import PiecewiseLR
 from toddleocr.postprocess.rec import CTCLabelDecode
-from toddleocr.transforms import CTCLabelEncode, DecodeImage, KeepKeys, RecAug, RecResizeImg
+from toddleocr.transforms import (
+    CTCLabelEncode,
+    DecodeImage,
+    KeepKeys,
+    RecAug,
+    RecResizeImg,
+)
 from torch.optim import Adam
 
 
@@ -35,7 +41,7 @@ class Model(ConfigModel):
     save_infer_dir = None
     use_visualdl = False
     infer_img = "doc/imgs_words/ch/word_1.jpg"
-    character_dict_path = "toddleocr/utils/ppocr_keys_v1.txt"
+    character_dict_path = "toddleocr/utils/dict/chinese_sim_dict.txt"
     max_text_length = 25
     infer_mode = False
     use_space_char = True

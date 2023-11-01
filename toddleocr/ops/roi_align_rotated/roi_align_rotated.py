@@ -15,16 +15,18 @@
 This code is refer from:
 https://github.com/open-mmlab/mmcv/blob/master/mmcv/ops/roi_align_rotated.py
 """
+import os.path
 
-import torch
 import torch.nn as nn
+
+from config import PROJECT_DIR
 from torch.utils.cpp_extension import load
 
 custom_ops = load(
     name="custom_jit_ops",
     sources=[
-        "D:/dev/github/ToddleOCR/toddleocr/ops/roi_align_rotated/roi_align_rotated.cc",
-        "D:/dev/github/ToddleOCR/toddleocr/ops/roi_align_rotated/roi_align_rotated.cu",
+        os.path.join(PROJECT_DIR, "ops/roi_align_rotated/roi_align_rotated.cc"),
+        os.path.join(PROJECT_DIR, "ops/roi_align_rotated/roi_align_rotated.cu"),
     ],
 )
 

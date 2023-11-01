@@ -7,7 +7,7 @@ sys.path.append(os.path.join(__dir__, ".."))
 
 import numpy as np
 import torch
-from toddleocr.utils.locality_aware_nms import nms_locality
+from toddleocr.ops.locality_aware_nms import nms_locality
 
 
 class SASTPostProcess:

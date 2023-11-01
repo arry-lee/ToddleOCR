@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import torch
 
-from toddleocr.utils.locality_aware_nms import nms_locality
+from toddleocr.ops.locality_aware_nms import nms_locality
 
 __all__ = ["EASTPostProcess"]
 

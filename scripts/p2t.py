@@ -85,9 +85,7 @@ def convert_params_to_torch(static_model_path, save_path):
 
 #
 # 调用函数
-static_model_path = 'model/ch_ppstructure_mobile_v2.0_SLANet_train/best_accuracy.pdparams'
-save_path = 'model/ch_ppstructure_mobile_v2.0_SLANet_train/best_accuracy.pt'
-convert_params_to_torch(static_model_path, save_path)
-
-# m = Model('model/ch_ppocr_mobile_v2.0_cls_train/best_accuracy.pt')
-# x = cls(m,"D:\dev\github\ToddleOCR\doc\imgs_words\ch")
+# static_model_path = 'model/ch_ppstructure_mobile_v2.0_SLANet_train/best_accuracy.pdparams'
+# save_path = 'model/ch_ppstructure_mobile_v2.0_SLANet_train/best_accuracy.pt'
+# convert_params_to_torch(static_model_path, save_path)
+#

@@ -1,6 +1,8 @@
+#  Copyright (c) 2023. Arry Lee, <arry_lee@qq.com>
+
 import numpy as np
 
-from utils.table_master_match import deal_bb, deal_eb_token
+from postprocess.table_master_match import deal_bb, deal_eb_token
 
 
 def distance(box_1, box_2):
@@ -52,9 +54,13 @@ class TableMatch:
             dt_boxes, rec_res = self._filter_ocr_result(pred_bboxes, dt_boxes, rec_res)
         matched_index = self.match_result(dt_boxes, pred_bboxes)
         if self.use_master:
-            pred_html, pred = self.get_pred_html_master(pred_structures, matched_index, rec_res)
+            pred_html, pred = self.get_pred_html_master(
+                pred_structures, matched_index, rec_res
+            )
         else:
-            pred_html, pred = self.get_pred_html(pred_structures, matched_index, rec_res)
+            pred_html, pred = self.get_pred_html(
+                pred_structures, matched_index, rec_res
+            )
         return pred_html
 
     def match_result(self, dt_boxes, pred_bboxes):
@@ -74,7 +80,9 @@ class TableMatch:
                 )  # compute iou and l1 distance
             sorted_distances = distances.copy()
             # select det box by iou and l1 distance
-            sorted_distances = sorted(sorted_distances, key=lambda item: (item[1], item[0]))
+            sorted_distances = sorted(
+                sorted_distances, key=lambda item: (item[1], item[0])
+            )
             if distances.index(sorted_distances[0]) not in matched.keys():
                 matched[distances.index(sorted_distances[0])] = [i]
             else:
@@ -90,7 +98,10 @@ class TableMatch:
                     end_html.extend("<td>")
                 if td_index in matched_index.keys():
                     b_with = False
-                    if "<b>" in ocr_contents[matched_index[td_index][0]] and len(matched_index[td_index]) > 1:
+                    if (
+                        "<b>" in ocr_contents[matched_index[td_index][0]]
+                        and len(matched_index[td_index]) > 1
+                    ):
                         b_with = True
                         end_html.extend("<b>")
                     for i, td_index_index in enumerate(matched_index[td_index]):
@@ -106,7 +117,10 @@ class TableMatch:
                                 content = content[:-4]
                             if len(content) == 0:
                                 continue
-                            if i != len(matched_index[td_index]) - 1 and " " != content[-1]:
+                            if (
+                                i != len(matched_index[td_index]) - 1
+                                and " " != content[-1]
+                            ):
                                 content += " "
                         end_html.extend(content)
                     if b_with:
@@ -128,7 +142,10 @@ class TableMatch:
                 txt = ""
                 b_with = False
                 if td_index in matched_index.keys():
-                    if "<b>" in ocr_contents[matched_index[td_index][0]] and len(matched_index[td_index]) > 1:
+                    if (
+                        "<b>" in ocr_contents[matched_index[td_index][0]]
+                        and len(matched_index[td_index]) > 1
+                    ):
                         b_with = True
                     for i, td_index_index in enumerate(matched_index[td_index]):
                         content = ocr_contents[td_index_index][0]
@@ -143,7 +160,10 @@ class TableMatch:
                                 content = content[:-4]
                             if len(content) == 0:
                                 continue
-                            if i != len(matched_index[td_index]) - 1 and " " != content[-1]:
+                            if (
+                                i != len(matched_index[td_index]) - 1
+                                and " " != content[-1]
+                            ):
                                 content += " "
                         txt += content
                 if b_with:

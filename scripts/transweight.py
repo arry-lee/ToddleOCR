@@ -59,11 +59,11 @@ MODEL_URLS = {
             "rec": {
                 "ch": {
                     "url": "https://paddleocr.bj.bcebos.com/PP-OCRv3/chinese/ch_PP-OCRv3_rec_infer.tar",
-                    "dict": "./toddleocr/utils/ppocr_keys_v1.txt",
+                    "dict": "./toddleocr/utils/dict/chinese_sim_dict.txt",
                 },
                 "en": {
                     "url": "https://paddleocr.bj.bcebos.com/PP-OCRv3/english/en_PP-OCRv3_rec_infer.tar",
-                    "dict": "./ppocr/utils/en_dict.txt",
+                    "dict": "./ppocr/utils/dict/en96_dict.txt",
                 },
                 "korean": {
                     "url": "https://paddleocr.bj.bcebos.com/PP-OCRv3/multilingual/korean_PP-OCRv3_rec_infer.tar",
@@ -121,7 +121,7 @@ MODEL_URLS = {
             "rec": {
                 "ch": {
                     "url": "https://paddleocr.bj.bcebos.com/PP-OCRv2/chinese/ch_PP-OCRv2_rec_infer.tar",
-                    "dict": "./toddleocr/utils/ppocr_keys_v1.txt",
+                    "dict": "./toddleocr/utils/dict/chinese_sim_dict.txt",
                 }
             },
             "cls": {
@@ -145,11 +145,11 @@ MODEL_URLS = {
             "rec": {
                 "ch": {
                     "url": "https://paddleocr.bj.bcebos.com/dygraph_v2.0/ch/ch_ppocr_mobile_v2.0_rec_infer.tar",
-                    "dict": "./toddleocr/utils/ppocr_keys_v1.txt",
+                    "dict": "./toddleocr/utils/dict/chinese_sim_dict.txt",
                 },
                 "en": {
                     "url": "https://paddleocr.bj.bcebos.com/dygraph_v2.0/multilingual/en_number_mobile_v2.0_rec_infer.tar",
-                    "dict": "./ppocr/utils/en_dict.txt",
+                    "dict": "./ppocr/utils/dict/en96_dict.txt",
                 },
                 "french": {
                     "url": "https://paddleocr.bj.bcebos.com/dygraph_v2.0/multilingual/french_mobile_v2.0_rec_infer.tar",
@@ -383,7 +383,7 @@ te_ocr_rec_v3.tar
 # f(MODEL_URLS)
 #
 # print(MODEL_URLS)
-# M = {'OCR': {'PP-OCRv3': {'det': {'ch': {'url': 'zh_ocr_det_v3.tar'}, 'en': {'url': 'en_ocr_det_v3.tar'}, 'ml': {'url': 'ml_ocr_det_v3.tar'}}, 'rec': {'ch': {'url': 'zh_ocr_rec_v3.tar', 'dict_path': './toddleocr/utils/ppocr_keys_v1.txt'}, 'en': {'url': 'en_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/en_dict.txt'}, 'korean': {'url': 'ko_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/korean_dict.txt'}, 'japan': {'url': 'ja_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/japan_dict.txt'}, 'chinese_cht': {'url': 'ch_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/chinese_cht_dict.txt'}, 'ta': {'url': 'ta_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/ta_dict.txt'}, 'te': {'url': 'te_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/te_dict.txt'}, 'ka': {'url': 'ka_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/ka_dict.txt'}, 'latin': {'url': 'la_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/latin_dict.txt'}, 'arabic': {'url': 'ar_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/arabic_dict.txt'}, 'cyrillic': {'url': 'ru_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/cyrillic_dict.txt'}, 'devanagari': {'url': 'hi_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/devanagari_dict.txt'}}, 'cls': {'ch': {'url': 'zh_ocr_cls_v1.tar'}}}, 'PP-OCRv2': {'det': {'ch': {'url': 'zh_ocr_det_v2.tar'}}, 'rec': {'ch': {'url': 'zh_ocr_rec_v2.tar', 'dict_path': './toddleocr/utils/ppocr_keys_v1.txt'}}, 'cls': {'ch': {'url': 'zh_ocr_cls_v1.tar'}}}, 'PP-OCR': {'det': {'ch': {'url': 'zh_ocr_det_v1.tar'}, 'en': {'url': 'en_ocr_det_v1.tar'}, 'structure': {'url': 'en_tab_det_v1.tar'}}, 'rec': {'ch': {'url': 'zh_ocr_rec_v1.tar', 'dict_path': './toddleocr/utils/ppocr_keys_v1.txt'}, 'en': {'url': 'en_ocr_rec_m2.tar', 'dict_path': './ppocr/utils/en_dict.txt'}, 'french': {'url': 'fr_ocr_rec_m2.tar', 'dict_path': './ppocr/utils/dict/french_dict.txt'}, 'german': {'url': 'de_ocr_rec_m2.tar', 'dict_path': './ppocr/utils/dict/german_dict.txt'}, 'korean': {'url': 'ko_ocr_rec_m2.tar', 'dict_path': './ppocr/utils/dict/korean_dict.txt'}, 'japan': {'url': 'ja_ocr_rec_m2.tar', 'dict_path': './ppocr/utils/dict/japan_dict.txt'}, 'chinese_cht': {'url': 'ch_ocr_rec_m2.tar', 'dict_path': './ppocr/utils/dict/chinese_cht_dict.txt'}, 'ta': {'url': 'ta_ocr_rec_m2.tar', 'dict_path': './ppocr/utils/dict/ta_dict.txt'}, 'te': {'url': 'te_ocr_rec_m2.tar', 'dict_path': './ppocr/utils/dict/te_dict.txt'}, 'ka': {'url': 'ka_ocr_rec_m2.tar', 'dict_path': './ppocr/utils/dict/ka_dict.txt'}, 'latin': {'url': 'la_ocr_rec_v1.tar', 'dict_path': './ppocr/utils/dict/latin_dict.txt'}, 'arabic': {'url': 'ar_ocr_rec_v1.tar', 'dict_path': './ppocr/utils/dict/arabic_dict.txt'}, 'cyrillic': {'url': 'ru_ocr_rec_v1.tar', 'dict_path': './ppocr/utils/dict/cyrillic_dict.txt'}, 'devanagari': {'url': 'hi_ocr_rec_v1.tar', 'dict_path': './ppocr/utils/dict/devanagari_dict.txt'}, 'structure': {'url': 'en_tab_rec_v1.tar', 'dict_path': 'ppocr/utils/dict/table_dict.txt'}}, 'cls': {'ch': {'url': 'zh_ocr_cls_v1.tar'}}}}, 'STRUCTURE': {'PP-Structure': {'table': {'en': {'url': 'en_tab_str_v1.tar', 'dict_path': 'ppocr/utils/dict/table_structure_dict.txt'}}}, 'PP-StructureV2': {'table': {'en': {'url': 'en_tab_str_m2_slanet.tar', 'dict_path': 'ppocr/utils/dict/table_structure_dict.txt'}, 'ch': {'url': 'zh_tab_str_m2_slanet.tar', 'dict_path': 'ppocr/utils/dict/table_structure_dict_ch.txt'}}, 'layout': {'en': {'url': 'en_lay_det_x1_picodet.tar', 'dict_path': 'ppocr/utils/dict/layout_dict/layout_publaynet_dict.txt'}, 'ch': {'url': 'ch_lay_det_x1_picodet.tar', 'dict_path': 'ppocr/utils/dict/layout_dict/layout_cdla_dict.txt'}}}}}
+# M = {'OCR': {'PP-OCRv3': {'det': {'ch': {'url': 'zh_ocr_det_v3.tar'}, 'en': {'url': 'en_ocr_det_v3.tar'}, 'ml': {'url': 'ml_ocr_det_v3.tar'}}, 'rec': {'ch': {'url': 'zh_ocr_rec_v3.tar', 'dict_path': './toddleocr/utils/dict/chinese_sim_dict.txt'}, 'en': {'url': 'en_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/en96_dict.txt'}, 'korean': {'url': 'ko_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/korean_dict.txt'}, 'japan': {'url': 'ja_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/japan_dict.txt'}, 'chinese_cht': {'url': 'ch_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/chinese_cht_dict.txt'}, 'ta': {'url': 'ta_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/ta_dict.txt'}, 'te': {'url': 'te_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/te_dict.txt'}, 'ka': {'url': 'ka_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/ka_dict.txt'}, 'latin': {'url': 'la_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/latin_dict.txt'}, 'arabic': {'url': 'ar_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/arabic_dict.txt'}, 'cyrillic': {'url': 'ru_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/cyrillic_dict.txt'}, 'devanagari': {'url': 'hi_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/devanagari_dict.txt'}}, 'cls': {'ch': {'url': 'zh_ocr_cls_v1.tar'}}}, 'PP-OCRv2': {'det': {'ch': {'url': 'zh_ocr_det_v2.tar'}}, 'rec': {'ch': {'url': 'zh_ocr_rec_v2.tar', 'dict_path': './toddleocr/utils/dict/chinese_sim_dict.txt'}}, 'cls': {'ch': {'url': 'zh_ocr_cls_v1.tar'}}}, 'PP-OCR': {'det': {'ch': {'url': 'zh_ocr_det_v1.tar'}, 'en': {'url': 'en_ocr_det_v1.tar'}, 'structure': {'url': 'en_tab_det_v1.tar'}}, 'rec': {'ch': {'url': 'zh_ocr_rec_v1.tar', 'dict_path': './toddleocr/utils/dict/chinese_sim_dict.txt'}, 'en': {'url': 'en_ocr_rec_m2.tar', 'dict_path': './ppocr/utils/dict/en96_dict.txt'}, 'french': {'url': 'fr_ocr_rec_m2.tar', 'dict_path': './ppocr/utils/dict/french_dict.txt'}, 'german': {'url': 'de_ocr_rec_m2.tar', 'dict_path': './ppocr/utils/dict/german_dict.txt'}, 'korean': {'url': 'ko_ocr_rec_m2.tar', 'dict_path': './ppocr/utils/dict/korean_dict.txt'}, 'japan': {'url': 'ja_ocr_rec_m2.tar', 'dict_path': './ppocr/utils/dict/japan_dict.txt'}, 'chinese_cht': {'url': 'ch_ocr_rec_m2.tar', 'dict_path': './ppocr/utils/dict/chinese_cht_dict.txt'}, 'ta': {'url': 'ta_ocr_rec_m2.tar', 'dict_path': './ppocr/utils/dict/ta_dict.txt'}, 'te': {'url': 'te_ocr_rec_m2.tar', 'dict_path': './ppocr/utils/dict/te_dict.txt'}, 'ka': {'url': 'ka_ocr_rec_m2.tar', 'dict_path': './ppocr/utils/dict/ka_dict.txt'}, 'latin': {'url': 'la_ocr_rec_v1.tar', 'dict_path': './ppocr/utils/dict/latin_dict.txt'}, 'arabic': {'url': 'ar_ocr_rec_v1.tar', 'dict_path': './ppocr/utils/dict/arabic_dict.txt'}, 'cyrillic': {'url': 'ru_ocr_rec_v1.tar', 'dict_path': './ppocr/utils/dict/cyrillic_dict.txt'}, 'devanagari': {'url': 'hi_ocr_rec_v1.tar', 'dict_path': './ppocr/utils/dict/devanagari_dict.txt'}, 'structure': {'url': 'en_tab_rec_v1.tar', 'dict_path': 'ppocr/utils/dict/table_dict.txt'}}, 'cls': {'ch': {'url': 'zh_ocr_cls_v1.tar'}}}}, 'STRUCTURE': {'PP-Structure': {'table': {'en': {'url': 'en_tab_str_v1.tar', 'dict_path': 'ppocr/utils/dict/table_structure_dict.txt'}}}, 'PP-StructureV2': {'table': {'en': {'url': 'en_tab_str_m2_slanet.tar', 'dict_path': 'ppocr/utils/dict/table_structure_dict.txt'}, 'ch': {'url': 'zh_tab_str_m2_slanet.tar', 'dict_path': 'ppocr/utils/dict/table_structure_dict_ch.txt'}}, 'layout': {'en': {'url': 'en_lay_det_x1_picodet.tar', 'dict_path': 'ppocr/utils/dict/layout_dict/layout_publaynet_dict.txt'}, 'ch': {'url': 'ch_lay_det_x1_picodet.tar', 'dict_path': 'ppocr/utils/dict/layout_dict/layout_cdla_dict.txt'}}}}}
 import numpy
 import torch
 from loguru import logger
@@ -406,11 +406,11 @@ M = {
             "rec": {
                 "ch": {
                     "url": "zh_ocr_rec_v3.tar",
-                    "dict": "./toddleocr/utils/ppocr_keys_v1.txt",
+                    "dict": "./toddleocr/utils/dict/chinese_sim_dict.txt",
                 },
                 "en": {
                     "url": "en_ocr_rec_v3.tar",
-                    "dict": "./ppocr/utils/en_dict.txt",
+                    "dict": "./ppocr/utils/dict/en96_dict.txt",
                 },
                 "korean": {
                     "url": "ko_ocr_rec_v3.tar",
@@ -460,7 +460,7 @@ M = {
             "rec": {
                 "ch": {
                     "url": "zh_ocr_rec_v2.tar",
-                    "dict": "./toddleocr/utils/ppocr_keys_v1.txt",
+                    "dict": "./toddleocr/utils/dict/chinese_sim_dict.txt",
                 }
             },
             "cls": {"ch": {"url": "zh_ocr_cls_v1.tar"}},
@@ -474,11 +474,11 @@ M = {
             "rec": {
                 "ch": {
                     "url": "zh_ocr_rec_v1.tar",
-                    "dict": "./toddleocr/utils/ppocr_keys_v1.txt",
+                    "dict": "./toddleocr/utils/dict/chinese_sim_dict.txt",
                 },
                 "en": {
                     "url": "en_ocr_rec_m2.tar",
-                    "dict": "./ppocr/utils/en_dict.txt",
+                    "dict": "./ppocr/utils/dict/en96_dict.txt",
                 },
                 "french": {
                     "url": "fr_ocr_rec_m2.tar",
@@ -577,7 +577,7 @@ import paddle
 
 
 def transmodel(model_cls,
-        pdmodel=r'D:\dev\.model\toddleocr\zh_ocr_det_v3\inference',
+        pdmodel,
         linear_prefix=(),
 ):
     """det model"""
@@ -655,8 +655,6 @@ def indict(p, dc):
     return p
 
 
-# transmodel(md,r'D:\dev\.model\toddleocr\en_ocr_det_v3\inference')
-# transmodel(md,r'D:\dev\.model\toddleocr\ml_ocr_det_v3\inference')
 
 
 ls = ["ar_ocr_rec_v3",
@@ -672,7 +670,7 @@ ls = ["ar_ocr_rec_v3",
       "ta_ocr_rec_v3",
       "te_ocr_rec_v3", ]
 
-# M = {'OCR': {'PP-OCRv3': {'det': {'ch': {'url': 'zh_ocr_det_v3.tar'}, 'en': {'url': 'en_ocr_det_v3.tar'}, 'ml': {'url': 'ml_ocr_det_v3.tar'}}, 'rec': {'ch': {'url': 'zh_ocr_rec_v3.tar', 'dict_path': './toddleocr/utils/ppocr_keys_v1.txt'}, 'en': {'url': 'en_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/en_dict.txt'}, 'korean': {'url': 'ko_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/korean_dict.txt'}, 'japan': {'url': 'ja_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/japan_dict.txt'}, 'chinese_cht': {'url': 'ch_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/chinese_cht_dict.txt'}, 'ta': {'url': 'ta_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/ta_dict.txt'}, 'te': {'url': 'te_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/te_dict.txt'}, 'ka': {'url': 'ka_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/ka_dict.txt'}, 'latin': {'url': 'la_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/latin_dict.txt'}, 'arabic': {'url': 'ar_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/arabic_dict.txt'}, 'cyrillic': {'url': 'ru_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/cyrillic_dict.txt'}, 'devanagari': {'url': 'hi_ocr_rec_v3.tar
+# M = {'OCR': {'PP-OCRv3': {'det': {'ch': {'url': 'zh_ocr_det_v3.tar'}, 'en': {'url': 'en_ocr_det_v3.tar'}, 'ml': {'url': 'ml_ocr_det_v3.tar'}}, 'rec': {'ch': {'url': 'zh_ocr_rec_v3.tar', 'dict_path': './toddleocr/utils/dict/chinese_sim_dict.txt'}, 'en': {'url': 'en_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/en96_dict.txt'}, 'korean': {'url': 'ko_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/korean_dict.txt'}, 'japan': {'url': 'ja_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/japan_dict.txt'}, 'chinese_cht': {'url': 'ch_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/chinese_cht_dict.txt'}, 'ta': {'url': 'ta_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/ta_dict.txt'}, 'te': {'url': 'te_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/te_dict.txt'}, 'ka': {'url': 'ka_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/ka_dict.txt'}, 'latin': {'url': 'la_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/latin_dict.txt'}, 'arabic': {'url': 'ar_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/arabic_dict.txt'}, 'cyrillic': {'url': 'ru_ocr_rec_v3.tar', 'dict_path': './ppocr/utils/dict/cyrillic_dict.txt'}, 'devanagari': {'url': 'hi_ocr_rec_v3.tar
 # for i in ls:
 from toddleocr.models.rec.v3.rec_svtr_mv1e import Model
 

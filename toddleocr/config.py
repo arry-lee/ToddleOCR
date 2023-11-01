@@ -1,10 +1,11 @@
 import copy
 import warnings
 
+from postprocess.matcher import TableMatch
+from postprocess.table_master_match import TableMasterMatcher
+
 from toddleocr.utils.visual import expand, table_view
 
-from structure.table.matcher import TableMatch
-from structure.table.table_master_match import TableMasterMatcher
 
 warnings.filterwarnings("ignore")
 
@@ -33,8 +34,6 @@ from toddleocr.utils.utility import (
     resize_norm_img,
     sorted_boxes,
 )
-from utils.valid import valid
-from tools.utility import get_minarea_rect_crop, get_rotate_crop_image
 from torch import nn
 from torch.nn.parallel import DistributedDataParallel
 from torch.optim.lr_scheduler import LRScheduler
@@ -46,8 +45,12 @@ from torch.utils.data import (
     SequentialSampler,
 )
 from torchvision.transforms import Compose
+from utils.init_args import get_minarea_rect_crop, get_rotate_crop_image
+from utils.valid import valid
 
 torch.autograd.set_detect_anomaly(True)
+
+PROJECT_DIR = os.path.dirname(__file__)
 
 
 class _:
@@ -78,7 +81,7 @@ class _:
 
         if isinstance(class_, str):
 
-            from tools.modelhub import Hub
+            from utils.modelhub import Hub
 
             hub = Hub(os.path.dirname(__file__))  # 这个操作很耗时，尽量不使用字符串形式的导入
 

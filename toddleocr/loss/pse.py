@@ -18,7 +18,7 @@ https://github.com/whai362/PSENet/blob/python3/models/head/psenet_head.py
 
 import torch
 
-from toddleocr.utils.iou import iou
+from toddleocr.ops.iou import iou
 from torch import nn
 from torch.nn import functional as F
 

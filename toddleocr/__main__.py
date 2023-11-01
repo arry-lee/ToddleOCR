@@ -1,23 +1,24 @@
 #  Copyright (c) 2023. Arry Lee, <arry_lee@qq.com>
 
 import importlib
-import os
-
-import cv2
 import logging
-import numpy as np
+import os
+import sys
 from pathlib import Path
 
+import cv2
+import numpy as np
 
 from loguru import logger
-from utils.utility import check_and_read, alpha_to_color, binarize_img
-from utils.network import (
-    maybe_download,
+from utils.downloader import (
+    confirm_model_dir_url,
     download_with_progressbar,
     is_link,
-    confirm_model_dir_url,
+    maybe_download,
 )
-from tools.utility import draw_ocr, init_args, str2bool, check_gpu, draw_ocr_box_txt
+from utils.init_args import check_gpu, draw_ocr, draw_ocr_box_txt, init_args, str2bool
+
+from utils.utility import alpha_to_color, binarize_img, check_and_read
 
 SUPPORT_DET_MODEL = ["DB"]
 VERSION = "v1.0.0"
@@ -46,11 +47,11 @@ MODEL_URLS = {
                 "model": "models.rec.v3.rec_svtr_mv1e",
                 "ch": {
                     "url": "zh_ocr_rec_v3.tar",
-                    "dict": "utils/ptocr_keys_v1.txt",
+                    "dict": "utils/dict/chinese_sim_dict.txt",
                 },
                 "en": {
                     "url": "en_ocr_rec_v3.tar",
-                    "dict": "utils/en_dict.txt",
+                    "dict": "utils/dict/en96_dict.txt",
                 },
                 "korean": {
                     "url": "ko_ocr_rec_v3.tar",
@@ -103,7 +104,7 @@ MODEL_URLS = {
         #     "rec": {
         #         "ch": {
         #             "url": "zh_ocr_rec_v2.tar",
-        #             "dict": "utils/ptocr_keys_v1.txt",
+        #             "dict": "utils/dict/chinese_sim_dict.txt",
         #         }
         #     },
         #     "cls": {"ch": {"url": "zh_ocr_cls_v1.tar"}},
@@ -117,11 +118,11 @@ MODEL_URLS = {
         #     "rec": {
         #         "ch": {
         #             "url": "zh_ocr_rec_v1.tar",
-        #             "dict": "utils/ptocr_keys_v1.txt",
+        #             "dict": "utils/dict/chinese_sim_dict.txt",
         #         },
         #         "en": {
         #             "url": "en_ocr_rec_m2.tar",
-        #             "dict": "utils/en_dict.txt",
+        #             "dict": "utils/dict/en96_dict.txt",
         #         },
         #         "french": {
         #             "url": "fr_ocr_rec_m2.tar",
@@ -230,9 +231,9 @@ def parse_args(main=True):
         choices=SUPPORT_OCR_MODEL_VERSION,
         default="v3",
         help="OCR Model version, the current model support list is as follows: "
-             "1. v3 Support Chinese and English detection and recognition model, and direction classifier model"
-             "2. v2 Support Chinese detection and recognition model. "
-             "3. v1 support Chinese detection, recognition and direction classifier and multilingual recognition model.",
+        "1. v3 Support Chinese and English detection and recognition model, and direction classifier model"
+        "2. v2 Support Chinese detection and recognition model. "
+        "3. v1 support Chinese detection, recognition and direction classifier and multilingual recognition model.",
     )
     parser.add_argument(
         "--structure_version",
@@ -240,8 +241,8 @@ def parse_args(main=True):
         choices=SUPPORT_STRUCTURE_MODEL_VERSION,
         default="v2",
         help="Model version, the current model support list is as follows:"
-             " 1. PP-Structure Support en table structure model."
-             " 2. PP-StructureV2 Support ch and en table structure model.",
+        " 1. PP-Structure Support en table structure model."
+        " 2. PP-StructureV2 Support ch and en table structure model.",
     )
 
     for action in parser._actions:
@@ -348,7 +349,7 @@ def parse_lang(lang):
     elif lang in devanagari_lang:
         lang = "devanagari"
     assert (
-            lang in MODEL_URLS["OCR"][DEFAULT_OCR_MODEL_VERSION]["rec"]
+        lang in MODEL_URLS["OCR"][DEFAULT_OCR_MODEL_VERSION]["rec"]
     ), "param lang must in {}, but got {}".format(
         MODEL_URLS["OCR"][DEFAULT_OCR_MODEL_VERSION]["rec"].keys(), lang
     )
@@ -441,7 +442,7 @@ class ToddleOCR:
 
         if not params.show_log:
             logger.setLevel(logging.INFO)
-        self.use_angle_cls = True#params.use_angle_cls
+        self.use_angle_cls = True  # params.use_angle_cls
         lang, det_lang = parse_lang(params.lang)
 
         # init model dir
@@ -506,18 +507,21 @@ class ToddleOCR:
         self.det_model = det_model_cls(params.det_model_dir + "/inference.pt")
         self.cls_model = cls_model_cls(params.cls_model_dir + "/inference.pt")
         self.rec_model = rec_model_cls(params.rec_model_dir + "/inference.pt")
-        tab_model_cls.character_dict_path = str(Path(__file__).parent / tab_model_config["dict"])
+        tab_model_cls.character_dict_path = str(
+            Path(__file__).parent / tab_model_config["dict"]
+        )
         self.tab_model = tab_model_cls(params.tab_model_dir + "/inference.pt")
 
-    def ocr(self,
-            img,
-            det=True,
-            rec=True,
-            cls=True,
-            tab=False,
-            bin=False,
-            inv=False,
-            alpha_color=(255, 255, 255),
+    def ocr(
+        self,
+        img,
+        det=True,
+        rec=True,
+        cls=True,
+        tab=False,
+        bin=False,
+        inv=False,
+        alpha_color=(255, 255, 255),
     ):
         """
         OCR with ToddleOCR
@@ -578,6 +582,7 @@ class ToddleOCR:
 
 def main():
     import sys
+
     t = ToddleOCR(
         det_model_dir="weights/zh_ocr_det_v3",
         cls_model_dir="weights/zh_ocr_cls_v1",
@@ -588,12 +593,13 @@ def main():
     r = t.ocr(img, tab=False)[0]
     print(r)
     from PIL import Image
+
     im = Image.open(img)
     # boxes = [[(int(i[0]), int(i[1])), (int(i[2]), int(i[1])), (int(i[2]), int(i[3])), (int(i[0]), int(i[3]))] for i in
     #          r['boxes']]
-    boxes = r['boxes']
+    boxes = r["boxes"]
     print(boxes)
-    res = draw_ocr_box_txt(im, boxes, [t[0] for t in r['rec_res']])
+    res = draw_ocr_box_txt(im, boxes, [t[0] for t in r["rec_res"]])
     res.show()
 
 

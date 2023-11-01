@@ -5,7 +5,7 @@ import numpy as np
 from PIL import Image
 from shapely.geometry import Polygon
 
-from tools.utility import get_rotate_crop_image
+from utils.init_args import get_rotate_crop_image
 
 from ..functional import is_poly_outside_rect
 

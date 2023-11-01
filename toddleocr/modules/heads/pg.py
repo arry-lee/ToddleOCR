@@ -11,7 +11,10 @@ class PGHead(nn.Module):
     """ """
 
     def __init__(
-        self, in_channels, character_dict_path="ppocr/utils/ic15_dict.txt", **kwargs
+        self,
+        in_channels,
+        character_dict_path="ppocr/utils/dict/ic15_dict.txt",
+        **kwargs
     ):
         super().__init__()
 

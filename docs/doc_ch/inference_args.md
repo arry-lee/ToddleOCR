@@ -104,7 +104,7 @@ PSE算法相关参数如下
 |  e2e_limit_side_len | int | 768 | 端到端的输入图像边长限制 |
 |  e2e_limit_type | str | "max" | 端到端的边长限制类型，目前支持`min`, `max`，`min`表示保证图像最短边不小于`e2e_limit_side_len`，`max`表示保证图像最长边不大于`e2e_limit_side_len` |
 |  e2e_pgnet_score_thresh | float | 0.5 | 端到端得分阈值，小于该阈值的结果会被丢弃 |
-|  e2e_char_dict_path | str | "./ppocr/utils/ic15_dict.txt" | 识别的字典文件路径 |
+|  e2e_char_dict_path | str | "./ppocr/utils/dict/ic15_dict.txt" | 识别的字典文件路径 |
 |  e2e_pgnet_valid_set | str | "totaltext" | 验证集名称，目前支持`totaltext`, `partvgg`，不同数据集对应的后处理方式不同，与训练过程保持一致即可 |
 |  e2e_pgnet_mode | str | "fast" | PGNet的检测结果得分计算方法，支持`fast`和`slow`，`fast`是根据polygon的外接矩形边框内的所有像素计算平均得分，`slow`是根据原始polygon内的所有像素计算平均得分，计算速度相对较慢一些，但是更加准确一些。 |
 

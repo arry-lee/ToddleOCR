@@ -3,7 +3,7 @@ import numpy as np
 import torch
 from numpy.fft import ifft
 
-from toddleocr.utils.poly_nms import poly_nms, valid_boundary
+from toddleocr.ops.poly_nms import poly_nms, valid_boundary
 
 __all__ = ["FCEPostProcess"]
 
