@@ -8,7 +8,12 @@ from toddleocr.modules.backbones.table_master_resnet import TableResNetExtra
 from toddleocr.modules.heads.table_master import TableMasterHead
 from toddleocr.postprocess.table import TableMasterLabelDecode
 from toddleocr.transforms.label_ops import TableBoxEncode, TableMasterLabelEncode
-from toddleocr.transforms.operators import DecodeImage, KeepKeys, NormalizeImage, ToCHWImage
+from toddleocr.transforms.operators import (
+    DecodeImage,
+    KeepKeys,
+    NormalizeImage,
+    ToCHWImage,
+)
 from toddleocr.transforms.table_ops import PaddingTableImage, ResizeTableImage
 from torch.optim import Adam
 from torch.optim.lr_scheduler import MultiStepLR

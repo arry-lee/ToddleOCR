@@ -14,9 +14,9 @@
 
 import numpy as np
 import scipy.io as io
+from shapely.geometry import Polygon as plg
 
 from toddleocr.utils.e2e_metric.polygon_fast import area, area_of_intersection, iod
-from shapely.geometry import Polygon as plg
 
 
 def get_socre_A(gt_dir, pred_dict):

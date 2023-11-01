@@ -16,11 +16,11 @@ import math
 
 import cv2
 import numpy as np
+from skimage.morphology._skeletonize import thin
 
 from toddleocr.utils.e2e_utils.extract_textpoint_fast import (
     sort_and_expand_with_direction_v2,
 )
-from skimage.morphology._skeletonize import thin
 
 __all__ = ["PGProcessTrain"]
 

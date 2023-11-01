@@ -9,7 +9,12 @@ from toddleocr.modules.heads.table_att import SLAHead
 from toddleocr.modules.necks.csp_pan import CSPPAN
 from toddleocr.postprocess.table import TableLabelDecode
 from toddleocr.transforms.label_ops import TableBoxEncode, TableLabelEncode
-from toddleocr.transforms.operators import DecodeImage, KeepKeys, NormalizeImage, ToCHWImage
+from toddleocr.transforms.operators import (
+    DecodeImage,
+    KeepKeys,
+    NormalizeImage,
+    ToCHWImage,
+)
 from toddleocr.transforms.table_ops import PaddingTableImage, ResizeTableImage
 from torch.optim import Adam
 from torch.optim.lr_scheduler import ConstantLR

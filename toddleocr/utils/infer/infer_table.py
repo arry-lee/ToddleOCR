@@ -12,19 +12,21 @@ from tools.utility import draw_boxes
 
 
 @torch.no_grad()
-def tab(model, infer_img=None,save_res_path=None):
-    transforms = model.transforms('infer')
+def tab(model, infer_img=None, save_res_path=None):
+    transforms = model.transforms("infer")
     post_process_class = model.postprocessor
     model = model.model
     model.eval()
     # save_res_path = model.save_res_path
     os.makedirs(save_res_path, exist_ok=True)
-    with open(os.path.join(save_res_path, 'infer.txt'), mode='w', encoding='utf-8') as f_w:
+    with open(
+        os.path.join(save_res_path, "infer.txt"), mode="w", encoding="utf-8"
+    ) as f_w:
         for file in get_image_file_list(infer_img):
-            logger.info('infer_img: {}'.format(file))
-            with open(file, 'rb') as f:
+            logger.info("infer_img: {}".format(file))
+            with open(file, "rb") as f:
                 img = f.read()
-                data = {'image': img}
+                data = {"image": img}
             batch = transforms(data)
             logger.info("变换后图像")
             logger.info(batch)
@@ -40,17 +42,21 @@ def tab(model, infer_img=None,save_res_path=None):
             logger.info("后处理结果")
             logger.info(post_result)
 
-            structure_str_list = post_result['structure_batch_list'][0]
-            bbox_list = post_result['bbox_batch_list'][0]
+            structure_str_list = post_result["structure_batch_list"][0]
+            bbox_list = post_result["bbox_batch_list"][0]
             structure_str_list = structure_str_list[0]
-            structure_str_list = ['<html>', '<body>', '<table>'] + structure_str_list + ['</table>', '</body>', '</html>']
+            structure_str_list = (
+                ["<html>", "<body>", "<table>"]
+                + structure_str_list
+                + ["</table>", "</body>", "</html>"]
+            )
             bbox_list_str = json.dumps(bbox_list.tolist())
-            logger.info('result: {}, {}'.format(structure_str_list, bbox_list_str))
-            f_w.write('result: {}, {}\n'.format(structure_str_list, bbox_list_str))
+            logger.info("result: {}, {}".format(structure_str_list, bbox_list_str))
+            f_w.write("result: {}, {}\n".format(structure_str_list, bbox_list_str))
             if len(bbox_list) > 0 and len(bbox_list[0]) == 4:
                 img = draw_rectangle(file, bbox_list)
             else:
                 img = draw_boxes(cv2.imread(file), bbox_list)
             cv2.imwrite(os.path.join(save_res_path, os.path.basename(file)), img)
-            logger.info('save result to {}'.format(save_res_path))
-        logger.info('success!')
+            logger.info("save result to {}".format(save_res_path))
+        logger.info("success!")

@@ -8,12 +8,12 @@ from tqdm import tqdm
 
 
 def valid(
-        model,
-        valid_dataloader,
-        post_processor,
-        evaluator,
-        model_type=None,
-        extra_input=False,
+    model,
+    valid_dataloader,
+    post_processor,
+    evaluator,
+    model_type=None,
+    extra_input=False,
 ):
     model.eval()
     with torch.no_grad():
