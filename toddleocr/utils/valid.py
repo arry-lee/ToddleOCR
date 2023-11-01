@@ -1,5 +1,5 @@
-# 一个通用的训练脚本
-# 角色:
+#  Copyright (c) 2023. Arry Lee, <arry_lee@qq.com>
+
 import platform
 import time
 
@@ -8,12 +8,12 @@ from tqdm import tqdm
 
 
 def valid(
-    model,
-    valid_dataloader,
-    post_processor,
-    evaluator,
-    model_type=None,
-    extra_input=False,
+        model,
+        valid_dataloader,
+        post_processor,
+        evaluator,
+        model_type=None,
+        extra_input=False,
 ):
     model.eval()
     with torch.no_grad():

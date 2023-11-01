@@ -4,6 +4,7 @@ from loguru import logger
 
 from toddleocr.utils.utility import get_image_file_list
 
+
 @torch.no_grad()
 def cls(model=None, infer_img=None):
     transform = model.transforms('infer')

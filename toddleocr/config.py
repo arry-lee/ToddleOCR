@@ -33,7 +33,7 @@ from toddleocr.utils.utility import (
     resize_norm_img,
     sorted_boxes,
 )
-from tools.train import valid
+from utils.valid import valid
 from tools.utility import get_minarea_rect_crop, get_rotate_crop_image
 from torch import nn
 from torch.nn.parallel import DistributedDataParallel
