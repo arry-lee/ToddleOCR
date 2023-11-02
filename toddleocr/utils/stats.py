@@ -3,7 +3,7 @@ import datetime
 
 import numpy as np
 
-__all__ = ["TrainingStats", "Time"]
+__all__ = ["TrainingStats"]
 
 
 class SmoothedValue:
@@ -19,10 +19,6 @@ class SmoothedValue:
 
     def get_median_value(self):
         return np.median(self.deque)
-
-
-def Time():
-    return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
 
 
 class TrainingStats:
