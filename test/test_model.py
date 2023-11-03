@@ -55,7 +55,7 @@ class TestModel(TestCase):
         from toddleocr.models.rec.v3.rec_svtr_mv1e import Model as RecModel
         dm = DetModel(r'../weights/zh_ocr_det_v3/inference.pt')
         rm = RecModel(r'../weights/zh_ocr_rec_v3/inference.pt')
-        tm = TabModel('../model/ch_ppstructure_mobile_v2.0_SLANet_train/best_accuracy.pt')
+        tm = TabModel("../weights/zh_str_tab_m2/inference.pt")
 
-        r = tm.table(r'../doc/imgs/00018069.jpg', det=dm, rec=rm)
-        print(r['html'])
+        r = tm.tab("assert/table_bank.jpg", det=dm, rec=rm)
+        print(r)

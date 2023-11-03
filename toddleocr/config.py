@@ -747,7 +747,6 @@ class ConfigModel:
             img = img_or_path
 
         self.model.eval()
-        starttime = time.time()
         data = {"image": img}
 
         batch = self.transforms("infer")(data)
@@ -758,15 +757,8 @@ class ConfigModel:
         images = np.expand_dims(batch[0], axis=0)
         shape_list = np.expand_dims(batch[-1], axis=0)
         images = torch.Tensor(images)
-        # logger.info("输入张量")
-        # logger.info(images)
-
         preds = self.model(images)
-        # logger.info("预测结果")
-        # logger.info(preds)
         post_result = self.postprocessor(preds, [shape_list])
-        # logger.info("后处理结果")
-        # logger.info(post_result)
 
         structure_str_list = post_result["structure_batch_list"][0]
         bbox_list = post_result["bbox_batch_list"][0]
@@ -776,12 +768,12 @@ class ConfigModel:
             + structure_str_list
             + ["</table>", "</body>", "</html>"]
         )
-        elapse = time.time() - starttime
-        return (structure_str_list, bbox_list), elapse
+
+        return structure_str_list, bbox_list
 
     def _ocr(self, img, det, rec):
         h, w = img.shape[:2]
-        dt_boxes = det(copy.deepcopy(img))
+        dt_boxes = det(copy.deepcopy(img))['boxes']
         dt_boxes = sorted_boxes(dt_boxes)
         r_boxes = []
         for box in dt_boxes:
@@ -812,7 +804,7 @@ class ConfigModel:
         else:
             img = img_or_path
         result = {}
-        structure_res, elapse = self.table_one_image(copy.deepcopy(img))
+        structure_res = self.table_one_image(copy.deepcopy(img))
         if not rec:
             return structure_res
 

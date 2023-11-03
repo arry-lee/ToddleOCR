@@ -162,8 +162,7 @@ class SLAHead(nn.Module):
         loc_preds = torch.zeros(
             (batch_size, self.max_text_length + 1, self.loc_reg_num)
         )
-        # structure_preds.requires_grad = False
-        # loc_preds.requires_grad = False
+
         if self.training and targets is not None:
             structure = targets[0]
             for i in range(self.max_text_length + 1):
@@ -174,8 +173,6 @@ class SLAHead(nn.Module):
                 loc_preds[:, i, :] = loc_step
         else:
             pre_chars = torch.zeros([batch_size], dtype=torch.int64)
-            # max_text_length = torch.tensor(self.max_text_length)
-            # for export
             loc_step, structure_step = None, None
             for i in range(self.max_text_length + 1):
                 hidden, structure_step, loc_step = self._decode(pre_chars, fea, hidden)
@@ -197,8 +194,6 @@ class SLAHead(nn.Module):
         emb_feature = self.emb(pre_chars)
         # output shape is b * self.hidden_size
         cur_hidden, alpha = self.structure_attention_cell(hidden, features, emb_feature)
-        # hidden=cur_hidden
-
         # structure
         structure_step = self.structure_generator(cur_hidden)
         # loc
