@@ -31,13 +31,13 @@ CHARACTER_DICT_PATH = os.path.join(
 
 class Model(ConfigModel):
     use_gpu = True
-    epoch_num = 400
-    log_window_size = 20
-    log_batch_step = 20
+    epoch_num = 2
+    log_window_size = 5
+    log_batch_step = 5
     save_model_dir = "./output/SLANet_ch"
-    save_epoch_step = 400
+    save_epoch_step = 1
     eval_batch_step = [0, 331]
-    metric_during_train = True
+    metric_during_train = False
     pretrained_model = None
     checkpoints = None
     save_infer_dir = "./output/SLANet_ch/infer"
@@ -48,7 +48,7 @@ class Model(ConfigModel):
     max_text_length = 500
     box_format = "xy4"
     infer_mode = False
-    use_sync_bn = True
+    use_sync_bn = False
     save_res_path = "output/infer"
     model_type = "tab"
     algorithm = "SLANet"
@@ -57,7 +57,7 @@ class Model(ConfigModel):
     postprocessor = TableLabelDecode(
         character_dict_path=character_dict_path, merge_no_span_structure=True
     )
-
+    print(len(postprocessor.character))
     Head = _(
         SLAHead,
         out_channels=len(postprocessor.character),
@@ -71,22 +71,22 @@ class Model(ConfigModel):
         main_indicator="acc",
         compute_bbox_metric=False,
         loc_reg_num=8,
-        box_format="xy4",
+        box_format=box_format,
         del_thead_tbody=True,
     )
-    Optimizer = _(Adam, betas=[0.9, 0.999], clip_norm=5.0, lr=0.001)
+    Optimizer = _(Adam, betas=[0.9, 0.999], lr=0.001)
     LRScheduler = _(
         ConstantLR,
     )
 
     class Data:
         dataset = PubTabDataSet
-        root: "train_data/table/val" = ("train_data/table/train/",)
-        label_files: ["train_data/table/val.txt"] = ["train_data/table/train.txt"]
+        root: r"D:\dev\github\ToddleOCR\train_data\PubTabNet\examples\examples" = r"D:\dev\github\ToddleOCR\train_data\PubTabNet\examples\examples"
+        label_files: [r"D:\dev\github\ToddleOCR\train_data\PubTabNet\examples\PubTabNet_Examples.jsonl"] = [r"D:\dev\github\ToddleOCR\train_data\PubTabNet\examples\PubTabNet_Examples.jsonl"]
 
     class Loader:
         shuffle: False = True
-        batch_size = 48
+        batch_size = 4
         drop_last: False = True
         num_workers = 1
 
@@ -97,10 +97,10 @@ class Model(ConfigModel):
             learn_empty_box=False,
             merge_no_span_structure=True,
             replace_empty_cell_token=False,
-            loc_reg_num=8,
+            loc_reg_num=4,
             max_text_length=500,
         ) : ...,
-        TableBoxEncode(in_box_format="xy4", out_box_format="xy4") : ...,
+        TableBoxEncode(in_box_format=box_format, out_box_format=box_format) : ...,
         ResizeTableImage(max_len=488) : ... : ResizeTableImage(
             max_len=488, infer_mode=True
         ),

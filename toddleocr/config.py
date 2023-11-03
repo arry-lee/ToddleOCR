@@ -1,10 +1,10 @@
 import copy
 import warnings
 
-from postprocess.matcher import TableMatch
-from postprocess.table_master_match import TableMasterMatcher
+from .postprocess.matcher import TableMatch
+from .postprocess.table_master_match import TableMasterMatcher
 
-from toddleocr.utils.visual import expand, table_view
+from .utils.visual import expand, table_view
 
 
 warnings.filterwarnings("ignore")
@@ -564,8 +564,8 @@ class ConfigModel:
 
                 images = batch[0]
                 # 这里应该是由模型本身决定的，没有必要细分 fixme
-                if model_type == "table" or extra_input:
-                    predict = model(images, data=batch[1:])
+                if model_type == "tab" or extra_input:
+                    predict = model(images, targets=batch[1:])
                 elif model_type in ["kie", "sr"]:
                     predict = model(batch)
                 elif algorithm in ["CAN"]:

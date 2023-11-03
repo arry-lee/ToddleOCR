@@ -40,7 +40,7 @@ class Model(ConfigModel):
     use_sync_bn = True
     model_type = "tab"
     algorithm = "SLANet"
-    Backbone = _(PPLCNet, scale=1.0, pretrained=True, use_ssld=True)
+    Backbone = _(PPLCNet, scale=1.0, pretrained=False, use_ssld=True)
     Neck = _(CSPPAN, out_channels=96)
     Head = _(SLAHead, hidden_size=256, max_text_length=500, loc_reg_num=8)
     loss = SLALoss(structure_weight=1.0, loc_weight=2.0, loc_loss="smooth_l1")

@@ -30,7 +30,7 @@ class PubTabDataSet(VisionDataset):
 
         self.data_lines = self.get_image_info_list(label_files, ratio_list)
 
-        self.need_reset = True in [x < 1 for x in ratio_list]
+        # self.need_reset = True in [x < 1 for x in ratio_list]
 
     def get_image_info_list(self, file_list, ratio_list=None):
         if isinstance(file_list, str):
@@ -64,45 +64,27 @@ class PubTabDataSet(VisionDataset):
         self.data_lines = data_lines
 
     def __getitem__(self, idx):
-        try:
-            data_line = self.data_lines[idx]
-            data_line = data_line.decode("utf-8").strip("\n")
-            info = json.loads(data_line)
-            file_name = info["filename"]
-            cells = info["html"]["cells"].copy()
-            structure = info["html"]["structure"]["tokens"].copy()
+        data_line = self.data_lines[idx]
+        data_line = data_line.decode("utf-8").strip("\n")
+        info = json.loads(data_line)
+        file_name = info["filename"]
+        cells = info["html"]["cells"].copy()
+        structure = info["html"]["structure"]["tokens"].copy()
 
-            img_path = os.path.join(self.root, file_name)
-            if not os.path.exists(img_path):
-                raise Exception("{} does not exist!".format(img_path))
-            data = {
-                "img_path": img_path,
-                "cells": cells,
-                "structure": structure,
-                "file_name": file_name,
-            }
+        img_path = os.path.join(self.root, file_name)
+        if not os.path.exists(img_path):
+            raise Exception("{} does not exist!".format(img_path))
+        data = {
+            "img_path": img_path,
+            "cells": cells,
+            "structure": structure,
+            "file_name": file_name,
+        }
 
-            with open(data["img_path"], "rb") as f:
-                img = f.read()
-                data["image"] = img
-            outs = self.transforms(data)
-        except:
-            import traceback
-
-            err = traceback.format_exc()
-            print(
-                "When parsing line {}, error happened with msg: {}".format(
-                    data_line, err
-                )
-            )
-            outs = None
-        if outs is None:
-            rnd_idx = (
-                np.random.randint(self.__len__())
-                if self.mode == "train"
-                else (idx + 1) % self.__len__()
-            )
-            return self.__getitem__(rnd_idx)
+        with open(data["img_path"], "rb") as f:
+            img = f.read()
+            data["image"] = img
+        outs = self.transforms(data)
         return outs
 
     def __len__(self):

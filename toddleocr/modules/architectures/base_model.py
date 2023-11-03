@@ -18,10 +18,13 @@ class BaseModel(nn.Module):
             self.head = head(in_channels=in_channels)
         self.return_all_feats = return_all_feats
 
-    def forward(self, x):
+    def forward(self, x, **kwargs):
         out_dict = {}
         for module_name, module in self.named_children():
-            x = module(x)
+            if module is self.head:
+                x = module(x,**kwargs)
+            else:
+                x = module(x)
         return x
         #     if isinstance(x, dict):
         #         out_dict.update(x)
