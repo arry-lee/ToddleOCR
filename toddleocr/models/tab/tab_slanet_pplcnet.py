@@ -31,15 +31,15 @@ CHARACTER_DICT_PATH = os.path.join(
 
 class Model(ConfigModel):
     use_gpu = True
-    epoch_num = 2
+    epoch_num = 1
     log_window_size = 5
     log_batch_step = 5
     save_model_dir = "./output/SLANet_ch"
     save_epoch_step = 1
     eval_batch_step = [0, 331]
     metric_during_train = False
-    pretrained_model = None
-    checkpoints = None
+    pretrained_model = "D:/dev/github/ToddleOCR/weights/zh_str_tab_m2/inference.pt"
+    checkpoints = r"D:\dev\github\ToddleOCR\output\latest.pth"
     save_infer_dir = "./output/SLANet_ch/infer"
     use_visualdl = False
     infer_img = ""
@@ -52,12 +52,12 @@ class Model(ConfigModel):
     save_res_path = "output/infer"
     model_type = "tab"
     algorithm = "SLANet"
-    Backbone = _(PPLCNet, scale=1.0, pretrained=True, use_ssld=True)
+    Backbone = _(PPLCNet, scale=1.0)
     Neck = _(CSPPAN, out_channels=96)
     postprocessor = TableLabelDecode(
         character_dict_path=character_dict_path, merge_no_span_structure=True
     )
-    print(len(postprocessor.character))
+    # print(len(postprocessor.character))
     Head = _(
         SLAHead,
         out_channels=len(postprocessor.character),
@@ -100,7 +100,7 @@ class Model(ConfigModel):
             loc_reg_num=4,
             max_text_length=500,
         ) : ...,
-        TableBoxEncode(in_box_format=box_format, out_box_format=box_format) : ...,
+        TableBoxEncode(in_box_format="xyxy", out_box_format="xy4") : ...,
         ResizeTableImage(max_len=488) : ... : ResizeTableImage(
             max_len=488, infer_mode=True
         ),

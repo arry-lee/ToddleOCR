@@ -57,6 +57,7 @@ class TableAttentionLoss(nn.Module):
 class SLALoss(nn.Module):
     def __init__(self, structure_weight, loc_weight, loc_loss="mse", **kwargs):
         super().__init__()
+        # from paddle.nn import CrossEntropyLoss
         self.loss_func = nn.CrossEntropyLoss()
         self.structure_weight = structure_weight
         self.loc_weight = loc_weight
@@ -65,6 +66,7 @@ class SLALoss(nn.Module):
 
     def forward(self, predicts, batch):
         structure_probs = predicts["structure_probs"]
+        structure_probs = torch.transpose(structure_probs,1,2)
         structure_targets = batch[1].type(torch.int64)
         structure_targets = structure_targets[:, 1:]
 
