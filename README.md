@@ -65,6 +65,11 @@ pip install -r requirements.txt
 ```
 
 4. 下载模型
+目前提供的模型可以在[这里](https://github.com/arry-lee/ToddleOCR/releases/weights)手动下载，代码运行时也会自动下载：
+[x] [zh_ocr_cls_v1.rar](https://github.com/arry-lee/ToddleOCR/releases/download/weights/zh_ocr_cls_v1.rar) 文本角度分类模型
+[x] [zh_ocr_det_v3.rar](https://github.com/arry-lee/ToddleOCR/releases/download/weights/zh_ocr_det_v3.rar) 中英文检测模型
+[x] [zh_ocr_rec_v3.rar](https://github.com/arry-lee/ToddleOCR/releases/download/weights/zh_ocr_rec_v3.rar) 中英文识别模型
+[x] [zh_str_tab_m2.rar](https://github.com/arry-lee/ToddleOCR/releases/download/weights/zh_str_tab_m2.rar) 表格识别重建模型
 
 ### 使用示例
 
