@@ -3,9 +3,7 @@ import warnings
 
 from .postprocess.matcher import TableMatch
 from .postprocess.table_master_match import TableMasterMatcher
-
 from .utils.visual import expand, table_view
-
 
 warnings.filterwarnings("ignore")
 
@@ -24,19 +22,10 @@ import torch
 import torch.distributed as dist
 from loguru import logger
 
-from .modules.architectures import BaseModel
-from .optim.lr_scheduler import warmup_scheduler
-from .utils.stats import TrainingStats
-from .utils.utility import (
-    AverageMeter,
-    filter_tag_det_res,
-    filter_tag_det_res_only_clip,
-    resize_norm_img,
-    sorted_boxes,
-)
 from torch import nn
 from torch.nn.parallel import DistributedDataParallel
 from torch.optim.lr_scheduler import LRScheduler
+from torch.optim import Optimizer
 from torch.utils.data import (
     BatchSampler,
     DataLoader,
@@ -45,8 +34,18 @@ from torch.utils.data import (
     SequentialSampler,
 )
 from torchvision.transforms import Compose
-from utils.init_args import get_minarea_rect_crop, get_rotate_crop_image
-from utils.valid import valid
+from .modules.architectures import BaseModel
+from .optim.lr_scheduler import warmup_scheduler
+from .utils.init_args import get_minarea_rect_crop, get_rotate_crop_image
+from .utils.valid import valid
+from .utils.stats import TrainingStats
+from .utils.utility import (
+    AverageMeter,
+    filter_tag_det_res,
+    filter_tag_det_res_only_clip,
+    resize_norm_img,
+    sorted_boxes,
+)
 
 torch.autograd.set_detect_anomaly(True)
 
@@ -80,7 +79,6 @@ class _:
             return partial(class_, **kwargs)
 
         if isinstance(class_, str):
-
             from utils.modelhub import Hub
 
             hub = Hub(os.path.dirname(__file__))  # 这个操作很耗时，尽量不使用字符串形式的导入
@@ -108,7 +106,7 @@ class _:
                     one.append(i)
         return out
 
-
+# todo 精简参数
 class ConfigModel:
     """
     配置类，摒弃yaml的配置方法，采用纯python语言，类yaml的配置方法，但更灵活
@@ -123,21 +121,23 @@ class ConfigModel:
     等号后面表示训练时参数，冒号后面表示测试时参数，没有冒号则相同
     这种表示方法同样是为了简化配置
     """
-
-    epoch_num: int
-    log_window_size: int
-    log_batch_step: int
-    save_epoch_step: int
-    eval_batch_step: Tuple[int, int]
-    use_gpu: bool = True
-    save_model_dir: Optional[str] = None
-    metric_during_train: bool = False
-    pretrained_model: Optional[str] = None
-    checkpoints: Optional[str] = None
-    distributed: bool = False
-    calc_epoch_interval: int = 1
     model_type: str
     algorithm: str
+
+    epoch_num: int
+    meter_epoch_step: int = 0  # 0表示每一代都不评估，正数表示评估间隔
+    save_epoch_step: int = 1
+
+    log_window_size: int = 20
+    log_batch_step: int = 10
+    eval_batch_step: Tuple[int, int] = [0,1000]
+
+    use_gpu: bool = True
+    distributed: bool = False
+
+    model_dir: Optional[str] = None # 模型存放目录
+    pretrained_model: Optional[str] = None # 预训练模型
+    checkpoints: Optional[str] = None # 训练检查点
 
     class Data:
         dataset: None
@@ -151,17 +151,16 @@ class ConfigModel:
         pin_memory = False
 
     Transforms: List[List[Callable]]
-
-    # Transform: Type[nn.Module] | partial
     Backbone: Type[nn.Module] | partial
     Neck: Type[nn.Module] | partial
     Head: Type[nn.Module] | partial
     loss: nn.Module
-    Optimizer: Type[torch.optim.Optimizer] | partial
-    LRScheduler: Type[torch.optim.lr_scheduler.LRScheduler] | partial
+    Optimizer: Type[Optimizer] | partial
+    LRScheduler: Type[LRScheduler] | partial
     postprocessor: Callable
     metric: Callable
 
+    # todo 下面的参数是模型独有的
     rec_image_shape: list = [3, 32, 320]
     cls_image_shape: list = [3, 48, 192]
     rec_batch_num = 6
@@ -205,7 +204,9 @@ class ConfigModel:
 
     def dataset(self, mode="train"):
         train_dict = {
-            k: v for (k, v) in self.Data.__dict__.items() if not k.startswith("__")
+            k: v
+            for (k, v) in self.Data.__dict__.items()
+            if not k.startswith("__")
         }
         if mode == "train":
             cls = train_dict.pop("dataset")
@@ -258,10 +259,16 @@ class ConfigModel:
                 )
             else:
                 sampler = (
-                    RandomSampler(dataset) if shuffle else SequentialSampler(dataset)
+                    RandomSampler(dataset)
+                    if shuffle
+                    else SequentialSampler(dataset)
                 )
         else:
-            sampler = RandomSampler(dataset) if shuffle else SequentialSampler(dataset)
+            sampler = (
+                RandomSampler(dataset)
+                if shuffle
+                else SequentialSampler(dataset)
+            )
         batch_sampler = BatchSampler(sampler, batch_size, drop_last)
         data_loader = DataLoader(
             dataset=dataset,
@@ -483,8 +490,12 @@ class ConfigModel:
         self._init_distributed()
         train_dataloader = self._build_dataloader("train")
         valid_dataloader = self._build_dataloader("eval")
-        logger.info("train dataloader has {} iters".format(len(train_dataloader)))
-        logger.info("valid dataloader has {} iters".format(len(valid_dataloader)))
+        logger.info(
+            "train dataloader has {} iters".format(len(train_dataloader))
+        )
+        logger.info(
+            "valid dataloader has {} iters".format(len(valid_dataloader))
+        )
         model = self.model
         criterion = self.loss
         optimizer = self.Optimizer(model.parameters())
@@ -494,15 +505,18 @@ class ConfigModel:
         post_processor = self.postprocessor
         metric_ = self.metric
         pre_best_model_dict = self.load()
-        metric_during_train = self.metric_during_train
-        calc_epoch_interval = self.calc_epoch_interval
+        meter_epoch_step = self.meter_epoch_step
+        # calc_epoch_interval = self.calc_epoch_interval
         log_window_size = self.log_window_size
         epoch_num = self.epoch_num
         log_batch_step = self.log_batch_step
         global_step = pre_best_model_dict.get("global_step", 0)
         eval_batch_step = self.eval_batch_step
         start_eval_step = 0
-        if isinstance(eval_batch_step, list | tuple) and len(eval_batch_step) == 2:
+        if (
+            isinstance(eval_batch_step, list | tuple)
+            and len(eval_batch_step) == 2
+        ):
             (start_eval_step, eval_batch_step) = eval_batch_step
             if len(valid_dataloader) == 0:
                 logger.info(
@@ -515,8 +529,8 @@ class ConfigModel:
                 )
             )
         save_epoch_step = self.save_epoch_step
-        save_model_dir = self.save_model_dir
-        os.makedirs(save_model_dir, exist_ok=True)
+        model_dir = self.model_dir
+        os.makedirs(model_dir, exist_ok=True)
         main_indicator = metric_.main_indicator
         best_model_dict = {main_indicator: 0}
         best_model_dict.update(pre_best_model_dict)
@@ -582,7 +596,7 @@ class ConfigModel:
                 optimizer.zero_grad()
 
                 # metric 也应当传入所有数据
-                if metric_during_train and epoch % calc_epoch_interval == 0:
+                if meter_epoch_step > 0 and epoch % meter_epoch_step == 0:
                     batch = [item.numpy() for item in batch]
                     if model_type in ["kie", "sr"]:
                         metric_(predict, batch)
@@ -594,9 +608,13 @@ class ConfigModel:
                         metric_(predict[0], batch[2:], epoch_reset=idx == 0)
                     else:
                         if self.loss.__class__.__name__ in ["MultiLoss"]:
-                            post_result = post_processor(predict["ctc"], batch[1])
+                            post_result = post_processor(
+                                predict["ctc"], batch[1]
+                            )
                         elif self.loss.__class__.__name__ in ["VLLoss"]:
-                            post_result = post_processor(predict, batch[1], batch[-1])
+                            post_result = post_processor(
+                                predict, batch[1], batch[-1]
+                            )
                         else:
                             post_result = post_processor(predict, batch[1])
                         metric_(post_result, batch)
@@ -609,7 +627,9 @@ class ConfigModel:
                 global_step += 1
                 total_samples += len(images)
                 lr_scheduler.step()
-                stats = {k: v.detach().numpy().mean() for (k, v) in loss.items()}
+                stats = {
+                    k: v.detach().numpy().mean() for (k, v) in loss.items()
+                }
                 stats["lr"] = lr
                 train_stats.update(stats)
                 if log_writer and self.is_rank0:
@@ -625,9 +645,13 @@ class ConfigModel:
                 ):
                     logs = train_stats.log()
                     eta_sec = (
-                        (epoch_num + 1 - epoch) * len(train_dataloader) - idx - 1
+                        (epoch_num + 1 - epoch) * len(train_dataloader)
+                        - idx
+                        - 1
                     ) * eta_meter.avg
-                    eta_sec_format = str(datetime.timedelta(seconds=int(eta_sec)))
+                    eta_sec_format = str(
+                        datetime.timedelta(seconds=int(eta_sec))
+                    )
                     strs = "epoch: [{}/{}], global_step: {}, {}, avg_reader_cost: {:.5f} s, avg_batch_cost: {:.5f} s, avg_samples: {}, ips: {:.5f} samples/s, eta: {}".format(
                         epoch,
                         epoch_num,
@@ -658,7 +682,10 @@ class ConfigModel:
                     )
                     cur_metric_str = "cur metric, {}".format(
                         ", ".join(
-                            ["{}: {}".format(k, v) for (k, v) in cur_metric.items()]
+                            [
+                                "{}: {}".format(k, v)
+                                for (k, v) in cur_metric.items()
+                            ]
                         )
                     )
                     logger.info(cur_metric_str)
@@ -666,11 +693,14 @@ class ConfigModel:
                         log_writer.log_metrics(
                             metrics=cur_metric, prefix="EVAL", step=global_step
                         )
-                    if cur_metric[main_indicator] >= best_model_dict[main_indicator]:
+                    if (
+                        cur_metric[main_indicator]
+                        >= best_model_dict[main_indicator]
+                    ):
                         best_model_dict.update(cur_metric)
                         best_model_dict["best_epoch"] = epoch
                         self.save(
-                            save_model_dir,
+                            model_dir,
                             is_best=True,
                             prefix="best_accuracy",
                             best_model_dict=best_model_dict,
@@ -689,9 +719,9 @@ class ConfigModel:
                     if log_writer is not None:
                         log_writer.log_metrics(
                             metrics={
-                                "best_{}".format(main_indicator): best_model_dict[
+                                "best_{}".format(
                                     main_indicator
-                                ]
+                                ): best_model_dict[main_indicator]
                             },
                             prefix="EVAL",
                             step=global_step,
@@ -703,9 +733,11 @@ class ConfigModel:
                         )
                 reader_start = time.time()
             if self.is_rank0:
-                logger.info("Save model checkpoint to {}".format(save_model_dir))
+                logger.info(
+                    "Save model checkpoint to {}".format(model_dir)
+                )
                 self.save(
-                    save_model_dir,
+                    model_dir,
                     is_best=False,
                     prefix="latest",
                     best_model_dict=best_model_dict,
@@ -716,7 +748,7 @@ class ConfigModel:
                     log_writer.log_model(is_best=False, prefix="latest")
                 if epoch > 0 and epoch % save_epoch_step == 0:
                     self.save(
-                        save_model_dir,
+                        model_dir,
                         is_best=False,
                         prefix="iter_epoch_{}".format(epoch),
                         best_model_dict=best_model_dict,
@@ -773,7 +805,7 @@ class ConfigModel:
 
     def _ocr(self, img, det, rec):
         h, w = img.shape[:2]
-        dt_boxes = det(copy.deepcopy(img))['boxes']
+        dt_boxes = det(copy.deepcopy(img))["boxes"]
         dt_boxes = sorted_boxes(dt_boxes)
         r_boxes = []
         for box in dt_boxes:

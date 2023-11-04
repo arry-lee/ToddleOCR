@@ -24,10 +24,10 @@ class Model(ConfigModel):
     epoch_num = 100
     log_window_size = 20
     log_batch_step = 10
-    save_model_dir = None
+    model_dir = None
     save_epoch_step = 3
     eval_batch_step = [0, 1000]
-    metric_during_train = True
+    meter_epoch_step = 1
     pretrained_model = "../model/ch_ppocr_mobile_v2.0_cls_train/best_accuracy.pt"
     checkpoints = None
     save_infer_dir = None

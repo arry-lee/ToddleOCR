@@ -33,7 +33,7 @@ class Model(ConfigModel):
     log_batch_step = 2
     save_epoch_step = 1200
     eval_batch_step = [3000, 2000]
-    metric_during_train = False
+    meter_epoch_step = 0
     pretrained_model = "../model/ch_ppocr_server_v2.0_det_train/best_accuracy.pth"
     checkpoints = None
     model_type = "det"

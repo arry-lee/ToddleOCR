@@ -32,10 +32,10 @@ class Model(ConfigModel):
     epoch_num = 800
     log_window_size = 20
     log_batch_step = 10
-    save_model_dir = "./output/rec_mobile_pp-OCRv2_enhanced_ctc_loss"
+    model_dir = "./output/rec_mobile_pp-OCRv2_enhanced_ctc_loss"
     save_epoch_step = 3
     eval_batch_step = [0, 2000]
-    metric_during_train = True
+    meter_epoch_step = 1
     pretrained_model = None
     checkpoints = None
     save_infer_dir = None

@@ -34,10 +34,10 @@ class Model(ConfigModel):
     epoch_num = 1
     log_window_size = 5
     log_batch_step = 5
-    save_model_dir = "./output/SLANet_ch"
+    model_dir = "./output/SLANet_ch"
     save_epoch_step = 1
     eval_batch_step = [0, 331]
-    metric_during_train = False
+    meter_epoch_step = 0
     pretrained_model = "D:/dev/github/ToddleOCR/weights/zh_str_tab_m2/inference.pt"
     checkpoints = r"D:\dev\github\ToddleOCR\output\latest.pth"
     save_infer_dir = "./output/SLANet_ch/infer"

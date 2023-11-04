@@ -380,10 +380,10 @@ class Model(ConfigModel):
     epoch_num = 1
     log_window_size = 20
     log_batch_step = 10
-    save_model_dir = "D:\dev\github\ToddleOCR\output"
+    model_dir = "D:\dev\github\ToddleOCR\output"
     save_epoch_step = 1
     eval_batch_step = [0, 9999]
-    metric_during_train = False
+    meter_epoch_step = 0
     # pretrained_model = None
     # checkpoints = None
     # save_infer_dir = None

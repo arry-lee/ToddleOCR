@@ -60,7 +60,7 @@ def yaml2py(old_file):
     algo = m.pop("algorithm")
     lines = ["class Model(ConfigModel):"]
     g['pretrained_model']=None
-    g['save_model_dir'] = None
+    g['model_dir'] = None
     for key, value in g.items():
         if key in ['infer_img','save_res_path','Transform']: # skip
             continue
