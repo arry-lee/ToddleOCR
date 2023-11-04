@@ -1,5 +1,3 @@
-# TODO remove or combine this file
-from toddleocr.utils.save_load import load_pretrained_params
 from torch import nn
 
 from .base_model import BaseModel
@@ -26,8 +24,8 @@ class DistillationModel(nn.Module):
             if "pretrained" in model_config:
                 pretrained = model_config.pop("pretrained")
             model = BaseModel(model_config)
-            if pretrained is not None:
-                load_pretrained_params(model, pretrained)
+            # if pretrained is not None:
+            #     load_pretrained_params(model, pretrained)
             if freeze_params:
                 for param in model.parameters():
                     param.trainable = False

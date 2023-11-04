@@ -22,8 +22,8 @@ from torchvision.transforms import ToPILImage, ToTensor
 sys.path.append(os.getcwd())
 import numpy as np
 from pycocotools.mask import decode, frPyObjects as seg2mask
-from toddleocr.config import _, ConfigModel
-from toddleocr.optim.lr_scheduler import PiecewiseLR
+from ...config import _, ConfigModel
+from ...optim.lr_scheduler import PiecewiseLR
 from torch import nn, Tensor
 from torch.optim import Adam
 from torchvision.models import resnet50, ResNet50_Weights

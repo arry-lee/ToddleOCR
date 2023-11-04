@@ -24,10 +24,10 @@ import torch
 import torch.distributed as dist
 from loguru import logger
 
-from toddleocr.modules.architectures import BaseModel
-from toddleocr.optim.lr_scheduler import warmup_scheduler
-from toddleocr.utils.stats import TrainingStats
-from toddleocr.utils.utility import (
+from .modules.architectures import BaseModel
+from .optim.lr_scheduler import warmup_scheduler
+from .utils.stats import TrainingStats
+from .utils.utility import (
     AverageMeter,
     filter_tag_det_res,
     filter_tag_det_res_only_clip,

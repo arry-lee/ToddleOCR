@@ -1,5 +1,5 @@
-from toddleocr.utils.e2e_metric.deteval import combine_results, get_socre_A, get_socre_B
-from toddleocr.utils.e2e_utils.extract_textpoint_slow import get_dict
+from ._det_eval import combine_results, get_score_A, get_score_B
+from ..utils.utility import get_dict
 
 __all__ = ["E2EMetric"]
 
@@ -45,7 +45,7 @@ class E2EMetric:
                     {"points": det_polyon, "texts": pred_str}
                     for (det_polyon, pred_str) in zip(pred["points"], pred["texts"])
                 ]
-                result = get_socre_A(gt_info_list, e2e_info_list)
+                result = get_score_A(gt_info_list, e2e_info_list)
                 self.results.append(result)
         else:
             img_id = batch[5][0]
@@ -53,7 +53,7 @@ class E2EMetric:
                 {"points": det_polyon, "texts": pred_str}
                 for (det_polyon, pred_str) in zip(preds["points"], preds["texts"])
             ]
-            result = get_socre_B(self.gt_mat_dir, img_id, e2e_info_list)
+            result = get_score_B(self.gt_mat_dir, img_id, e2e_info_list)
             self.results.append(result)
 
     def get_metric(self):

@@ -1,4 +1,4 @@
-from toddleocr.utils.e2e_metric.deteval import combine_results, get_score_C
+from ._det_eval import combine_results, get_score_C
 
 __all__ = ["CTMetric"]
 

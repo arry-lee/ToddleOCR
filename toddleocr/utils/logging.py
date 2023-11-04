@@ -53,4 +53,5 @@ def get_logger(name="toddleocr", log_file=None, log_level=logging.DEBUG):
     logger.propagate = False
     return logger
 
+
 logger = get_logger()

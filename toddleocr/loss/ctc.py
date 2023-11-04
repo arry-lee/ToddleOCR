@@ -2,8 +2,8 @@ import torch
 
 __all__ = ["CTCLoss"]
 
-from toddleocr.loss.ace import ACELoss
-from toddleocr.loss.center import CenterLoss
+from .ace import ACELoss
+from .center import CenterLoss
 from torch import nn
 
 

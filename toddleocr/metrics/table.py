@@ -1,4 +1,4 @@
-from toddleocr.metrics.det import DetMetric
+from .det import DetMetric
 
 __all__ = ["TableStructureMetric", "TableMetric"]
 

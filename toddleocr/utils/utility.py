@@ -259,3 +259,14 @@ def filter_tag_det_res_only_clip(dt_boxes, image_shape):
         dt_boxes_new.append(box)
     dt_boxes = np.array(dt_boxes_new)
     return dt_boxes
+
+
+def get_dict(character_dict_path):
+    character_str = ""
+    with open(character_dict_path, "rb") as fin:
+        lines = fin.readlines()
+        for line in lines:
+            line = line.decode("utf-8").strip("\n").strip("\r\n")
+            character_str += line
+        dict_character = list(character_str)
+    return dict_character
