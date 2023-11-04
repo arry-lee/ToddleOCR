@@ -3,10 +3,11 @@ This code is refer from:
 https://github.com/JiaquanYe/TableMASTER-mmocr/blob/master/mmocr/models/textrecog/backbones/table_resnet_extra.py
 """
 
-import toddleocr.utils.visual
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+
+import toddleocr.utils.visual
 
 
 class BasicBlock(nn.Module):

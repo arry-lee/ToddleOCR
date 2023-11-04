@@ -6,11 +6,18 @@ import numpy as np
 
 import torch
 from skimage.morphology import thin
-
-from .e2e_utils.extract_textpoint_fast import generate_pivot_list_fast, restore_poly, sort_and_expand_with_direction_v2
-from .e2e_utils.extract_textpoint_slow import generate_pivot_list_slow, point_pair2poly, \
-    expand_poly_along_width
 from utils.utility import get_dict
+
+from .e2e_utils.extract_textpoint_fast import (
+    generate_pivot_list_fast,
+    restore_poly,
+    sort_and_expand_with_direction_v2,
+)
+from .e2e_utils.extract_textpoint_slow import (
+    expand_poly_along_width,
+    generate_pivot_list_slow,
+    point_pair2poly,
+)
 
 
 class PGPostProcess:

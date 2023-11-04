@@ -1,8 +1,9 @@
 import torch
 import torch.nn.functional as F
-from toddleocr.ops import ConvBNLayer
 from torch import nn
 from torchvision.models.resnet import ResNet
+
+from toddleocr.ops import ConvBNLayer
 
 
 class BottleneckBlock(nn.Module):

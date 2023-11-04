@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from numpy.linalg import norm
+
 from toddleocr.utils.locality_aware_nms import nms_locality as la_nms
 
 

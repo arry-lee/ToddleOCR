@@ -6,9 +6,9 @@ from collections import OrderedDict
 
 import torch
 import torch.nn.functional as F
+from torch import nn
 
 from toddleocr.modules.backbones.rec_efficientb3_pren import Swish
-from torch import nn
 
 __all__ = ["PRENFPN"]
 

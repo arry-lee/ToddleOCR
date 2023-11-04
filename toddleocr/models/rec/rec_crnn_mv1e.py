@@ -38,15 +38,13 @@ class Model(ConfigModel):
     meter_epoch_step = 1
     pretrained_model = None
     checkpoints = None
-    save_infer_dir = None
-    use_visualdl = False
-    infer_img = "doc/imgs_words/ch/word_1.jpg"
+
     character_dict_path = "toddleocr/utils/dict/chinese_sim_dict.txt"
     max_text_length = 25
     infer_mode = False
     use_space_char = True
     distributed = False
-    save_res_path = "./output/rec/predicts_mobile_pp-OCRv2_enhanced_ctc_loss.txt"
+
     model_type = "rec"
     algorithm = "CRNN"
 

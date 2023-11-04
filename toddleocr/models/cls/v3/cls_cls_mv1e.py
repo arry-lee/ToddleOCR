@@ -31,8 +31,7 @@ class Model(ConfigModel):
     meter_epoch_step = 1
     pretrained_model = None
     checkpoints = None
-    save_infer_dir = None
-    use_visualdl = False
+
     character_dict_path = "toddleocr/utils/dict/chinese_sim_dict.txt"
     max_text_length = 25
     infer_mode = False

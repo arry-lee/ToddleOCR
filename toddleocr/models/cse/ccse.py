@@ -22,8 +22,6 @@ from torchvision.transforms import ToPILImage, ToTensor
 sys.path.append(os.getcwd())
 import numpy as np
 from pycocotools.mask import decode, frPyObjects as seg2mask
-from ...config import _, ConfigModel
-from ...optim.lr_scheduler import PiecewiseLR
 from torch import nn, Tensor
 from torch.optim import Adam
 from torchvision.models import resnet50, ResNet50_Weights
@@ -43,6 +41,9 @@ from torchvision.models.detection.transform import (
     resize_keypoints,
 )
 from torchvision.ops import MultiScaleRoIAlign
+
+from ...config import _, ConfigModel
+from ...optim.lr_scheduler import PiecewiseLR
 
 
 #
@@ -386,8 +387,8 @@ class Model(ConfigModel):
     meter_epoch_step = 0
     # pretrained_model = None
     # checkpoints = None
-    # save_infer_dir = None
-    # use_visualdl = False
+    #
+    #
     distributed = False
     model_type = "cse"
     algorithm = "maskrcnn"

@@ -22,7 +22,7 @@ class BaseModel(nn.Module):
         out_dict = {}
         for module_name, module in self.named_children():
             if module is self.head:
-                x = module(x,**kwargs)
+                x = module(x, **kwargs)
             else:
                 x = module(x)
         return x

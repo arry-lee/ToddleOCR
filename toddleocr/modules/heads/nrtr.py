@@ -3,11 +3,11 @@ import math
 import numpy as np
 import torch
 import torch.nn.functional as F
-
-from toddleocr.modules.backbones.rec_svtrnet import Mlp, zeros_
 from torch import nn
 from torch.nn import Dropout, LayerNorm
 from torch.nn.init import xavier_normal_
+
+from toddleocr.modules.backbones.rec_svtrnet import Mlp, zeros_
 
 __all__ = ["Transformer"]
 

@@ -9,9 +9,7 @@ from PIL import Image, ImageDraw, ImageFont
 DEFAULT_FONT = "simfang.ttf"
 
 
-def draw_ser_results(
-        image, ocr_results, font_path=DEFAULT_FONT, font_size=14
-):
+def draw_ser_results(image, ocr_results, font_path=DEFAULT_FONT, font_size=14):
     np.random.seed(2021)
     color = (
         np.random.permutation(range(255)),
@@ -211,12 +209,12 @@ def resize_img(img, input_size=600):
 
 
 def draw_ocr(
-        image,
-        boxes,
-        txts=None,
-        scores=None,
-        drop_score=0.5,
-        font_path=DEFAULT_FONT,
+    image,
+    boxes,
+    txts=None,
+    scores=None,
+    drop_score=0.5,
+    font_path=DEFAULT_FONT,
 ):
     """
     Visualize the results of OCR detection and recognition
@@ -254,12 +252,12 @@ def draw_ocr(
 
 
 def draw_ocr_box_txt(
-        image,
-        boxes,
-        txts=None,
-        scores=None,
-        drop_score=0.5,
-        font_path=DEFAULT_FONT,
+    image,
+    boxes,
+    txts=None,
+    scores=None,
+    drop_score=0.5,
+    font_path=DEFAULT_FONT,
 ):
     h, w = image.height, image.width
     img_left = image.copy()
@@ -365,12 +363,12 @@ def str_count(s):
 
 
 def text_visual(
-        texts,
-        scores,
-        img_h=400,
-        img_w=600,
-        threshold=0.0,
-        font_path=DEFAULT_FONT,
+    texts,
+    scores,
+    img_h=400,
+    img_w=600,
+    threshold=0.0,
+    font_path=DEFAULT_FONT,
 ):
     """
     create new blank img and draw txt on it
@@ -389,7 +387,7 @@ def text_visual(
 
     def create_blank_img():
         blank_img = np.ones(shape=[img_h, img_w], dtype=np.int8) * 255
-        blank_img[:, img_w - 1:] = 0
+        blank_img[:, img_w - 1 :] = 0
         blank_img = Image.fromarray(blank_img).convert("RGB")
         draw_txt = ImageDraw.Draw(blank_img)
         return blank_img, draw_txt
@@ -418,7 +416,7 @@ def text_visual(
             else:
                 new_txt = "    " + txt
             draw_txt.text((0, gap * count), new_txt, txt_color, font=font)
-            txt = tmp[img_w // font_size - 4:]
+            txt = tmp[img_w // font_size - 4 :]
             if count >= img_h // gap - 1:
                 txt_img_list.append(np.array(blank_img))
                 blank_img, draw_txt = create_blank_img()
@@ -570,9 +568,9 @@ def expand_poly_along_width(poly, shrink_ratio_of_width=0.3):
     point_num = poly.shape[0]
     left_quad = np.array([poly[0], poly[1], poly[-2], poly[-1]], dtype=np.float32)
     left_ratio = (
-            -shrink_ratio_of_width
-            * np.linalg.norm(left_quad[0] - left_quad[3])
-            / (np.linalg.norm(left_quad[0] - left_quad[1]) + 1e-6)
+        -shrink_ratio_of_width
+        * np.linalg.norm(left_quad[0] - left_quad[3])
+        / (np.linalg.norm(left_quad[0] - left_quad[1]) + 1e-6)
     )
     left_quad_expand = shrink_quad_along_width(left_quad, left_ratio, 1.0)
     right_quad = np.array(
@@ -597,8 +595,8 @@ def expand_poly_along_width(poly, shrink_ratio_of_width=0.3):
 
 def norm2(x, axis=None):
     if axis:
-        return np.sqrt(np.sum(x ** 2, axis=axis))
-    return np.sqrt(np.sum(x ** 2))
+        return np.sqrt(np.sum(x**2, axis=axis))
+    return np.sqrt(np.sum(x**2))
 
 
 def cos(p1, p2):

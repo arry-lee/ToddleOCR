@@ -5,10 +5,10 @@ import cv2
 import numpy as np
 import torch
 from loguru import logger
+from tools.utility import draw_boxes
 
 from toddleocr.utils.utility import get_image_file_list
 from toddleocr.utils.visual import draw_rectangle
-from tools.utility import draw_boxes
 
 
 @torch.no_grad()
@@ -17,7 +17,7 @@ def tab(model, infer_img=None, save_res_path=None):
     post_process_class = model.postprocessor
     model = model.model
     model.eval()
-    # save_res_path = model.save_res_path
+    #
     os.makedirs(save_res_path, exist_ok=True)
     with open(
         os.path.join(save_res_path, "infer.txt"), mode="w", encoding="utf-8"

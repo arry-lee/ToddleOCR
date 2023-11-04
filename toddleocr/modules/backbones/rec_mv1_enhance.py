@@ -19,10 +19,10 @@ import torch
 
 import torch.nn as nn
 import torch.nn.functional as F
-
-from toddleocr.ops.misc import DeformableConvV2
 from torch.nn import AdaptiveAvgPool2d, BatchNorm2d, Conv2d
 from torch.nn.functional import hardsigmoid
+
+from toddleocr.ops.misc import DeformableConvV2
 
 
 class Hardswish(nn.Module):

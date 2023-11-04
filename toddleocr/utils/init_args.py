@@ -177,6 +177,7 @@ def get_infer_gpuid():
 
 def base64_to_cv2(b64str):
     import base64
+
     data = base64.b64decode(b64str.encode("utf8"))
     data = np.frombuffer(data, np.uint8)
     data = cv2.imdecode(data, cv2.IMREAD_COLOR)

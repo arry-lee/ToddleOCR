@@ -66,7 +66,7 @@ class SLALoss(nn.Module):
 
     def forward(self, predicts, batch):
         structure_probs = predicts["structure_probs"]
-        structure_probs = torch.transpose(structure_probs,1,2)
+        structure_probs = torch.transpose(structure_probs, 1, 2)
         structure_targets = batch[1].type(torch.int64)
         structure_targets = structure_targets[:, 1:]
 

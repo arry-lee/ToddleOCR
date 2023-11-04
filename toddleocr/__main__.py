@@ -17,9 +17,9 @@ from utils.downloader import (
     maybe_download,
 )
 from utils.init_args import check_gpu, init_args, str2bool
-from utils.visual import draw_ocr, draw_ocr_box_txt
 
 from utils.utility import alpha_to_color, binarize_img, check_and_read
+from utils.visual import draw_ocr, draw_ocr_box_txt
 
 SUPPORT_DET_MODEL = ["DB"]
 SUPPORT_REC_MODEL = ["CRNN", "SVTR_LCNet"]

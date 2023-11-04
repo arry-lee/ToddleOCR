@@ -7,6 +7,7 @@ sys.path.append(os.path.join(__dir__, ".."))
 
 import numpy as np
 import torch
+
 from toddleocr.ops.locality_aware_nms import nms_locality
 
 

@@ -17,10 +17,10 @@ https://github.com/whai362/PSENet/blob/python3/models/head/psenet_head.py
 """
 
 import torch
-
-from ..ops.iou import iou
 from torch import nn
 from torch.nn import functional as F
+
+from ..ops.iou import iou
 
 
 class PSELoss(nn.Module):

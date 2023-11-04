@@ -1,5 +1,5 @@
-from ._det_eval import combine_results, get_score_A, get_score_B
 from ..utils.utility import get_dict
+from ._det_eval import combine_results, get_score_A, get_score_B
 
 __all__ = ["E2EMetric"]
 

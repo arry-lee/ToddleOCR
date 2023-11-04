@@ -40,16 +40,14 @@ class Model(ConfigModel):
     meter_epoch_step = 0
     pretrained_model = "D:/dev/github/ToddleOCR/weights/zh_str_tab_m2/inference.pt"
     checkpoints = r"D:\dev\github\ToddleOCR\output\latest.pth"
-    save_infer_dir = "./output/SLANet_ch/infer"
-    use_visualdl = False
-    infer_img = ""
+
     character_dict_path = CHARACTER_DICT_PATH
     character_type = "en"
     max_text_length = 500
     box_format = "xy4"
     infer_mode = False
     use_sync_bn = False
-    save_res_path = "output/infer"
+
     model_type = "tab"
     algorithm = "SLANet"
     Backbone = _(PPLCNet, scale=1.0)
@@ -57,7 +55,7 @@ class Model(ConfigModel):
     postprocessor = TableLabelDecode(
         character_dict_path=character_dict_path, merge_no_span_structure=True
     )
-    # print(len(postprocessor.character))
+
     Head = _(
         SLAHead,
         out_channels=len(postprocessor.character),
@@ -81,8 +79,10 @@ class Model(ConfigModel):
 
     class Data:
         dataset = PubTabDataSet
-        root: r"D:\dev\github\ToddleOCR\train_data\PubTabNet\examples\examples" = r"D:\dev\github\ToddleOCR\train_data\PubTabNet\examples\examples"
-        label_files: [r"D:\dev\github\ToddleOCR\train_data\PubTabNet\examples\PubTabNet_Examples.jsonl"] = [r"D:\dev\github\ToddleOCR\train_data\PubTabNet\examples\PubTabNet_Examples.jsonl"]
+        root = r"D:\dev\github\ToddleOCR\train_data\PubTabNet\examples\examples"
+        label_files = [
+            r"D:\dev\github\ToddleOCR\train_data\PubTabNet\examples\PubTabNet_Examples.jsonl"
+        ]
 
     class Loader:
         shuffle: False = True

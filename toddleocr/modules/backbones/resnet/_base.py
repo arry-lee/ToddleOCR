@@ -4,9 +4,9 @@ import torch
 
 # from torchvision.models.resnet import Bottleneck, BasicBlock, ResNet, resnet50
 import torch.nn.functional as F
+from torch import nn
 
 from toddleocr.ops import ConvBNLayer
-from torch import nn
 
 
 class BottleneckBlock(nn.Module):

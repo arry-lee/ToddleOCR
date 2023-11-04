@@ -6,6 +6,7 @@ https://github.com/roatienza/deep-text-recognition-benchmark/blob/master/modules
 import numpy as np
 import torch
 import torch.nn as nn
+
 from toddleocr.modules.backbones.rec_svtrnet import (
     Block,
     ones_,

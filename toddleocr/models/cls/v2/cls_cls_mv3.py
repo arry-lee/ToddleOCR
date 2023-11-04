@@ -30,8 +30,7 @@ class Model(ConfigModel):
     meter_epoch_step = 1
     pretrained_model = "../model/ch_ppocr_mobile_v2.0_cls_train/best_accuracy.pt"
     checkpoints = None
-    save_infer_dir = None
-    use_visualdl = False
+
     label_list = ["0", "180"]
     model_type = "cls"
     algorithm = "CLS"

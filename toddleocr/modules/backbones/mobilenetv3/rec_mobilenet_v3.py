@@ -1,9 +1,10 @@
+from torch import nn
+
 from toddleocr.modules.backbones.mobilenetv3.det_mobilenet_v3 import (
     ConvBNLayer,
     InvertedResidual,
     make_divisible,
 )
-from torch import nn
 
 __all__ = ["MobileNetV3Rec"]
 

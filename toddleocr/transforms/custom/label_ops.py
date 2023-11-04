@@ -787,27 +787,27 @@ class TableMasterLabelEncode(TableLabelEncode):
 
 
 class TableBoxEncode(object):
-    def __init__(self, in_box_format='xyxy', out_box_format='xyxy', **kwargs):
-        assert out_box_format in ['xywh', 'xyxy', 'xy4']
+    def __init__(self, in_box_format="xyxy", out_box_format="xyxy", **kwargs):
+        assert out_box_format in ["xywh", "xyxy", "xy4"]
         self.in_box_format = in_box_format
         self.out_box_format = out_box_format
 
     def __call__(self, data):
-        img_height, img_width = data['image'].shape[:2]
-        bboxes = data['bboxes']
+        img_height, img_width = data["image"].shape[:2]
+        bboxes = data["bboxes"]
         if self.in_box_format != self.out_box_format:
-            if self.out_box_format == 'xywh':
-                if self.in_box_format == 'xy4':
+            if self.out_box_format == "xywh":
+                if self.in_box_format == "xy4":
                     bboxes = self.xyxyxyxy2xywh(bboxes)
-                elif self.in_box_format == 'xyxy':
+                elif self.in_box_format == "xyxy":
                     bboxes = self.xyxy2xywh(bboxes)
-            if self.out_box_format == 'xy4':
-                if self.in_box_format == 'xyxy':
+            if self.out_box_format == "xy4":
+                if self.in_box_format == "xyxy":
                     bboxes = self.xyxy2xyxyxyxy(bboxes)
 
         bboxes[:, 0::2] /= img_width
         bboxes[:, 1::2] /= img_height
-        data['bboxes'] = bboxes
+        data["bboxes"] = bboxes
         return data
 
     def xyxyxyxy2xywh(self, boxes):
@@ -825,6 +825,7 @@ class TableBoxEncode(object):
         new_bboxes[:, 2] = bboxes[:, 2] - bboxes[:, 0]  # width
         new_bboxes[:, 3] = bboxes[:, 3] - bboxes[:, 1]  # height
         return new_bboxes
+
     def xyxy2xyxyxyxy(self, bboxes):
         new_bboxes = np.zeros([len(bboxes), 8])
         new_bboxes[:, 0] = bboxes[:, 0]
@@ -839,7 +840,6 @@ class TableBoxEncode(object):
         new_bboxes[:, 6] = bboxes[:, 0]
         new_bboxes[:, 7] = bboxes[:, 3]
         return new_bboxes
-
 
 
 class SARLabelEncode(BaseRecLabelEncode):
@@ -949,6 +949,7 @@ class VQATokenLabelEncode:
             LayoutLMv2Tokenizer,
             LayoutXLMTokenizer,
         )
+
         from toddleocr.utils.utility import load_vqa_bio_label_maps
 
         tokenizer_dict = {

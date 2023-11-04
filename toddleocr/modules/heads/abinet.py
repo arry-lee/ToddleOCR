@@ -6,9 +6,9 @@ https://github.com/FangShancheng/ABINet/tree/main/modules
 __all__ = ["ABINetHead"]
 import torch
 import torch.nn.functional as F
+from torch import nn
 
 from toddleocr.modules.heads.nrtr import PositionalEncoding, TransformerBlock
-from torch import nn
 
 
 class BCNLanguage(nn.Module):

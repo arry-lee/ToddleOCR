@@ -39,11 +39,10 @@ class Model(ConfigModel):
     meter_epoch_step = 1
     pretrained_model = None  # "../model/ch_PP-OCRv3_rec_train/best_accuracy.pt"
     save_epoch_step = 3
-    save_infer_dir = None
+
     model_dir = "./output/v3_en_mobile"
-    save_res_path = "./output/rec/predicts_ppocrv3_en.txt"
+
     use_gpu = False
-    use_visualdl = False
 
     class Data:
         dataset = SimpleDataSet

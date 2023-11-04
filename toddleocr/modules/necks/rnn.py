@@ -1,7 +1,7 @@
 import torch
+from torch import nn
 
 from toddleocr.modules.backbones.rec_efficientb3_pren import Swish
-from torch import nn
 
 __all__ = ["SequenceEncoder"]
 from toddleocr.modules.backbones.rec_svtrnet import (

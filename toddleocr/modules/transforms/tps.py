@@ -8,10 +8,10 @@ import math
 
 import numpy as np
 import torch
-
-from toddleocr.ops import ConvBNLayer
 from torch import nn
 from torch.nn import functional as F
+
+from toddleocr.ops import ConvBNLayer
 
 
 class LocalizationNetwork(nn.Module):

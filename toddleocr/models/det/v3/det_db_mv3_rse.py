@@ -40,8 +40,7 @@ class Model(ConfigModel):
     meter_epoch_step = 0
     pretrained_model = None
     checkpoints = None
-    save_infer_dir = None
-    use_visualdl = False
+
     distributed = False
     model_type = "det"
     algorithm = "DB"

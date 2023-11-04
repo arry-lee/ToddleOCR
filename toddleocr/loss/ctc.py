@@ -2,9 +2,10 @@ import torch
 
 __all__ = ["CTCLoss"]
 
+from torch import nn
+
 from .ace import ACELoss
 from .center import CenterLoss
-from torch import nn
 
 
 class CTCLoss(nn.Module):

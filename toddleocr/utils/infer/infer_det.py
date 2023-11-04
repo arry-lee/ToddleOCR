@@ -5,6 +5,7 @@ import cv2
 import numpy as np
 import torch
 from loguru import logger
+
 from toddleocr.utils.utility import get_image_file_list
 
 
