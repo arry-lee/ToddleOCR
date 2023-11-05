@@ -1,4 +1,7 @@
-*[x] [PP-OCRv3: More Attempts for the Improvement of Ultra Lightweight OCR System](https://arxiv.org/abs/2206.03001v2)
+# 项目参考文献阅读笔记
+
+## 按时间线排列
+* [x] [PP-OCRv3: More Attempts for the Improvement of Ultra Lightweight OCR System](https://arxiv.org/abs/2206.03001v2)
   * [PP-OCRv3：改进超轻量级OCR系统的更多尝试](doc/papers/2206.03001.zh.pdf)
     PP-OCRv3在PPOCRv2 的基础上在9个方面升级了文本检测模型和文本 识别模型。对于文本检测器，我们引入了一个具有大感 受野的PAN模块，称为LK-PAN，一个具有残差注意机 制的FPN模块，称为RSE-FPN，以及DML蒸馏策略。对 于文本识别器，我们引入了轻量级文本识别网络SVTRLCNet， 通过注意力进行CTC的引导训练，数据增强策 略TextConAug，通过自监督学习的TextRotNet得到更好 的预训练模型，以及U-DML和UIM来加速模型并提高效果。
 
@@ -6,7 +9,7 @@
     文本识别1850w数据，700w真实数据，1150w个合成图像
     主要关注不同背景、旋转、透视变换、噪声、垂直文本 等场景。合成图像的语料库来自真实场景图像。所有 的验证图像也来自真实场景。
     此外，我们收集了800个用于不同真实应用场景的图像，以评估整体OCR系统，包括合同样本、车牌、铭牌、火车票、答题卡、表格、证书、街景图像、名片、数码仪表等。图10显示了测试集的一些图像
-*[x] [SVTR: Scene Text Recognition with a Single Visual Model](https://arxiv.org/abs/2205.00159)
+* [x] [SVTR: Scene Text Recognition with a Single Visual Model](https://arxiv.org/abs/2205.00159)
 * [SVTR：使用单个视觉模型进行场景文本识别](doc/papers/2205.00159.zh.pdf)
 * [Real-Time Scene Text Detection with Differentiable Binarization and Adaptive Scale Fusion](https://arxiv.org/abs/2202.10304)
 * [基于可微二值化和自适应尺度融合的实时场景文本检测]

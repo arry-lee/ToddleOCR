@@ -37,6 +37,7 @@ class CTCLoss(nn.Module):
 
 
 class EnhancedCTCLoss(nn.Module):
+    """引入了focal_loss ace_loss 和 center_loss的增强ctc_loss"""
     def __init__(
         self,
         use_focal_loss=False,
@@ -52,13 +53,13 @@ class EnhancedCTCLoss(nn.Module):
         super().__init__()
         self.ctc_loss_func = CTCLoss(use_focal_loss=use_focal_loss)
 
-        self.use_ace_loss = False
+        self.use_ace_loss = use_ace_loss
+        self.use_center_loss = use_center_loss
+
         if use_ace_loss:
-            self.use_ace_loss = use_ace_loss
             self.ace_loss_func = ACELoss()
             self.ace_loss_weight = ace_loss_weight
 
-        self.use_center_loss = False
         if use_center_loss:
             self.use_center_loss = use_center_loss
             self.center_loss_func = CenterLoss(
