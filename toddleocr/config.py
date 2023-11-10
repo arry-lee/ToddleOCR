@@ -246,7 +246,7 @@ class ConfigModel:
         drop_last = dataloader["drop_last"]
         batch_size = dataloader["batch_size"]
         if not self.use_gpu:
-            num_workers = 1
+            num_workers = 0
             pin_memory = False
         else:
             num_workers = dataloader["num_workers"]
@@ -563,8 +563,9 @@ class ConfigModel:
                 if idx >= max_iter:
                     break
                 lr = lr_scheduler.get_lr()
-
+                print(batch)
                 images = batch[0]
+
                 # 这里应该是由模型本身决定的，没有必要细分 fixme
                 if model_type == "tab" or extra_input:
                     predict = model(images, targets=batch[1:])
