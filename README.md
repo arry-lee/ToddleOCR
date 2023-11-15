@@ -51,6 +51,11 @@ ToddleOCR这个名称有三层意思：
 ```shell
 git clone https://github.com/arry-lee/ToddleOCR.git
 ```
+或者
+
+```shell
+pip install toddleocr
+```
 
 2. 进入项目目录：
 
