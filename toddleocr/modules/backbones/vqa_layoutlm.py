@@ -21,16 +21,18 @@ __all__ = [
     "LayoutLMForSer",
 ]
 
-from paddlenlp.transformers import (
+from transformers import (
     LayoutLMForTokenClassification,
     LayoutLMModel,
-    LayoutLMv2ForRelationExtraction,
+    # LayoutLMv2ForRelationExtraction,
     LayoutLMv2ForTokenClassification,
     LayoutLMv2Model,
-    LayoutXLMForRelationExtraction,
-    LayoutXLMForTokenClassification,
-    LayoutXLMModel,
+    # LayoutXLMForRelationExtraction,
+    # LayoutXLMForTokenClassification,
+    # LayoutXLMModel,
 )
+from ..layoutlmft.models.layoutlmv2 import LayoutLMv2ForRelationExtraction
+from ..layoutlmft.models.layoutxlm import LayoutXLMForRelationExtraction,LayoutXLMForTokenClassification,LayoutXLMModel
 from torch import nn
 
 
@@ -70,11 +72,11 @@ class NLPBaseModel(nn.Module):
             else:
                 base_model = base_model_class.from_pretrained(pretrained)
             if type == "ser":
-                self.model = model_class(
+                self.model = model_class.bottom_up(
                     base_model, num_classes=kwargs["num_classes"], dropout=None
                 )
             else:
-                self.model = model_class(base_model, dropout=None)
+                self.model = model_class.bottom_up(base_model, dropout=None) # fixme
         self.out_channels = 1
         self.use_visual_backbone = True
 
@@ -162,8 +164,8 @@ class LayoutXLMForSer(NLPBaseModel):
             num_classes=num_classes,
         )
         if (
-            hasattr(self.model.layoutxlm, "use_visual_backbone")
-            and self.model.layoutxlm.use_visual_backbone is False
+            hasattr(self.model.layoutlmv2, "use_visual_backbone")
+            and self.model.layoutlmv2.has_visual_segment_embedding is False
         ):
             self.use_visual_backbone = False
 

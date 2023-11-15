@@ -944,7 +944,7 @@ class VQATokenLabelEncode:
         **kwargs
     ):
         super().__init__()
-        from paddlenlp.transformers import (
+        from transformers import (
             LayoutLMTokenizer,
             LayoutLMv2Tokenizer,
             LayoutXLMTokenizer,
@@ -955,7 +955,7 @@ class VQATokenLabelEncode:
         tokenizer_dict = {
             "LayoutXLM": {
                 "class": LayoutXLMTokenizer,
-                "pretrained_model": "layoutxlm-base-uncased",
+                "pretrained_model": "D:/dev/.model/huggingface/layoutxlm-base",
             },
             "LayoutLM": {
                 "class": LayoutLMTokenizer,
