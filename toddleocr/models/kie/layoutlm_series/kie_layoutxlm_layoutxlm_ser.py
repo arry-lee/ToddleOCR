@@ -3,7 +3,11 @@
 import os
 import sys
 
+import cv2
+import numpy as np
 import torch
+
+from utils.visual import draw_ser_results
 
 sys.path.append(os.getcwd())
 
@@ -29,6 +33,25 @@ from toddleocr.config import PROJECT_DIR
 
 print(PROJECT_DIR)
 CLASS_PATH = os.path.join(PROJECT_DIR, "../train_data/XFUND/class_list_xfun.txt")
+from toddleocr import ToddleOCR
+
+
+
+
+def to_tensor(data):
+    import numbers
+    from collections import defaultdict
+    data_dict = defaultdict(list)
+    to_tensor_idxs = []
+
+    for idx, v in enumerate(data):
+        if isinstance(v, (np.ndarray, torch.Tensor, numbers.Number)):
+            if idx not in to_tensor_idxs:
+                to_tensor_idxs.append(idx)
+        data_dict[idx].append(v)
+    for idx in to_tensor_idxs:
+        data_dict[idx] = torch.tensor(data_dict[idx])
+    return list(data_dict.values())
 
 
 class Model(ConfigModel):
@@ -72,13 +95,29 @@ class Model(ConfigModel):
         batch_size = 8
         num_workers = 4
 
+    kie_det_model_dir = os.path.join(PROJECT_DIR, "../weights/zh_ocr_det_v3")
+    kie_rec_model_dir = os.path.join(PROJECT_DIR, "../weights/zh_ocr_rec_v3")
+
+    ocr_engine = ToddleOCR(
+        det_model_dir=kie_det_model_dir,
+        rec_model_dir=kie_rec_model_dir,
+        use_gpu=use_gpu,
+        use_angle_cls=False,
+    )
+
     Transforms = _[
                  DecodeImage(img_mode="RGB", channel_first=False),
                  VQATokenLabelEncode(
                      contains_re=False,
                      algorithm="LayoutXLM",
                      class_path=CLASS_PATH,
-                 ): ...,
+                 ): ...:VQATokenLabelEncode(
+                     contains_re=False,
+                     algorithm="LayoutXLM",
+                     class_path=CLASS_PATH,
+                     ocr_engine=ocr_engine,
+                     infer_mode=True,
+                 ),
                  VQATokenPad(max_seq_len=512, return_attention_mask=True),
                  VQASerTokenChunk(max_seq_len=512),
                  Resize(size=[224, 224]),
@@ -91,8 +130,30 @@ class Model(ConfigModel):
                  ToCHWImage(),
                  KeepKeys(
                      "input_ids", "bbox", "attention_mask", "token_type_ids", "image", "labels"
-                 ): ...,
+                 ): ...: KeepKeys('input_ids', 'bbox', 'attention_mask', 'token_type_ids',
+                                  'image', 'labels', 'segment_offset_id', 'ocr_info',
+                                  'entities'),
                  ]
+
+    @torch.no_grad()
+    def ser_one_image(self, img_or_path,output=None):
+
+        if isinstance(img_or_path, str):
+            img = cv2.imread(img_or_path)
+
+        self.model.eval()
+        data = {'image': img}
+        batch = self.transforms("infer")(data)  # 可以在此处引入OCR_ENGINE
+        batch = to_tensor(batch)
+
+        preds = self.model(batch)
+        print(preds)
+        post_result = self.postprocessor(preds, segment_offset_ids=batch[6], ocr_infos=batch[7])
+        print(post_result)
+        if output:
+            img_res = draw_ser_results(img_or_path, post_result[0])
+            cv2.imwrite(output, img_res)
+        return post_result
 
 
 def _t():
@@ -113,16 +174,17 @@ def _t():
         pd = paddle.load(pdmodel)
         maps = {'._mean': '.running_mean',
                 '._variance': '.running_var',
-                'layoutxlm': 'model.layoutlmv2',
-                'classifier': 'model.classifier'
+                'layoutxlm': 'backbone.model.layoutlmv2', # todo,simplify the prefix of backbone
+                'classifier': 'backbone.model.classifier'
                 }
         transpose = 'weight'
         new = {}
         for k, v in pd.items():
+            tk = k
             for key in maps:
                 if key in k:
-                    tk = k.replace(key, maps[key])
-                    new[tk] = p2t(v)
+                    tk = tk.replace(key, maps[key])
+            new[tk] = p2t(v)
 
         for tk in new.keys():
             if tk.endswith(transpose):
@@ -132,15 +194,13 @@ def _t():
         torch.save(new, fr'{pdmodel.split(".")[0]}.pt')
 
     transmodel("D:\dev\github\ToddleOCR\model\ser_LayoutXLM_xfun_zh\model_state.pdparams",
-               ("classifier.weight",
-                "embeddings.weight", "query.weight", "key.weight", "value.weight", "dense.weight"
+               ("classifier.weight", "query.weight", "key.weight", "value.weight", "dense.weight","visual_proj.weight"
                 ))
 
 
 if __name__ == '__main__':
-
-    m = LayoutXLMForSer(7, pretrained="D:/dev/.model/huggingface/layoutxlm-base")
-    m.load_state_dict(torch.load("D:\dev\github\ToddleOCR\model\ser_LayoutXLM_xfun_zh\model_state.pt"))
+    # m = LayoutXLMForSer(7, pretrained="D:/dev/.model/huggingface/layoutxlm-base")
+    # m.load_state_dict(torch.load("D:\dev\github\ToddleOCR\model\ser_LayoutXLM_xfun_zh\model_state.pt"))
 
     ## todo 推理测试
     # for k in m.state_dict().keys():
@@ -154,3 +214,6 @@ if __name__ == '__main__':
     # print(len(pd))
     # for k in pd.keys():
     #     print(k)
+    # _t()
+    m = Model(pretrained="D:\dev\github\ToddleOCR\model\ser_LayoutXLM_xfun_zh\model_state.pt")
+    m.ser_one_image("D:\dev\github\ToddleOCR\docs\imgs\zh_val_42.jpg",output='output.jpg')

@@ -100,8 +100,11 @@ class VQASerTokenLayoutLMPostProcess:
     def __call__(self, preds, batch=None, *args, **kwargs):
         if isinstance(preds, tuple):
             preds = preds[0]
+        if hasattr(preds,"logits"): # adapter
+            preds = preds.logits
         if isinstance(preds, torch.Tensor):
             preds = preds.numpy()
+
         if batch is not None:
             return self._metric(preds, batch[5])
         else:

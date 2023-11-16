@@ -1017,9 +1017,11 @@ class VQATokenLabelEncode:
         # load bbox and label info
         ocr_info = self._load_ocr_info(data)
 
-        for idx in range(len(ocr_info)):
-            if "bbox" not in ocr_info[idx]:
-                ocr_info[idx]["bbox"] = self.trans_poly_to_bbox(ocr_info[idx]["points"])
+        # 这里推理模式下不需要浪费时间检查
+        if not self.infer_mode:
+            for idx in range(len(ocr_info)):
+                if "bbox" not in ocr_info[idx]:
+                    ocr_info[idx]["bbox"] = self.trans_poly_to_bbox(ocr_info[idx]["points"])
 
         if self.order_method == "tb-yx":
             ocr_info = order_by_tbyx(ocr_info)
@@ -1062,12 +1064,13 @@ class VQATokenLabelEncode:
             # smooth_box
             info["bbox"] = self.trans_poly_to_bbox(info["points"])
 
-            encode_res = self.tokenizer.encode(
+            encode_res = self.tokenizer.encode_plus(
                 text,
+                boxes=info['bbox'],
                 pad_to_max_seq_len=False,
                 return_attention_mask=True,
                 return_token_type_ids=True,
-            )
+            ) # paddlenlp 和一般的结果不一样
 
             if not self.add_special_ids:
                 # TODO: use tok.all_special_ids to remove
@@ -1150,16 +1153,18 @@ class VQATokenLabelEncode:
 
     def _load_ocr_info(self, data):
         if self.infer_mode:
-            ocr_result = self.ocr_engine.ocr(data["image"], cls=False)[0]
+            ocr_result = self.ocr_engine.ocr(data["image"], cls=False)[0]#todo
+            # {"boxes": dt_boxes, "rec_res": img_crop_list}
             ocr_info = []
-            for res in ocr_result:
-                ocr_info.append(
-                    {
-                        "transcription": res[1][0],
-                        "bbox": self.trans_poly_to_bbox(res[0]),
-                        "points": res[0],
-                    }
-                )
+            for res in zip(ocr_result['boxes'],ocr_result['rec_res']):
+                if res[1][0].strip():
+                    ocr_info.append(
+                        {
+                            "transcription": res[1][0],
+                            "bbox": self.trans_poly_to_bbox(res[0]),
+                            "points": res[0],
+                        }
+                    )
             return ocr_info
         else:
             info = data["label"]
