@@ -5,10 +5,10 @@ import cv2
 import numpy as np
 import torch
 from loguru import logger
-from tools.utility import draw_boxes
+
 
 from toddleocr.utils.utility import get_image_file_list
-from toddleocr.utils.visual import draw_rectangle
+from toddleocr.utils.visual import draw_rectangle, draw_boxes
 
 
 @torch.no_grad()
