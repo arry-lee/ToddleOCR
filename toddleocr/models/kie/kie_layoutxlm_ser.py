@@ -1,3 +1,5 @@
+#  Copyright (c) 2023. Arry Lee, <arry_lee@qq.com>
+
 import os
 import sys
 
@@ -24,7 +26,7 @@ from torch.optim.lr_scheduler import PolynomialLR
 from toddleocr.config import PROJECT_DIR
 
 print(PROJECT_DIR)
-CLASS_PATH = os.path.join(PROJECT_DIR, "../train_data/XFUND/class_list_xfun.txt")
+CLASS_PATH = os.path.join(PROJECT_DIR, "../../../train_data/XFUND/class_list_xfun.txt")
 from toddleocr import ToddleOCR
 
 
@@ -69,8 +71,8 @@ class Model(ConfigModel):
         batch_size = 8
         num_workers = 4
 
-    kie_det_model_dir = os.path.join(PROJECT_DIR, "../weights/zh_ocr_det_v3")
-    kie_rec_model_dir = os.path.join(PROJECT_DIR, "../weights/zh_ocr_rec_v3")
+    kie_det_model_dir = os.path.join(PROJECT_DIR, "../../../weights/zh_ocr_det_v3")
+    kie_rec_model_dir = os.path.join(PROJECT_DIR, "../../../weights/zh_ocr_rec_v3")
 
     ocr_engine = ToddleOCR(
         det_model_dir=kie_det_model_dir,

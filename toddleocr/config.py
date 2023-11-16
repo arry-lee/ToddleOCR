@@ -1,6 +1,9 @@
 import copy
 import warnings
 
+from transforms.functional import make_re_input
+from utils.visual import draw_re_results
+
 from .postprocess.matcher import TableMatch
 from .postprocess.table_master_match import TableMasterMatcher
 from .utils.visual import expand, table_view, draw_ser_results
@@ -848,3 +851,26 @@ class ConfigModel:
                 output = output or "."
                 table_view(img_or_path, pred_html, output)
         return result
+
+    @torch.no_grad()
+    def re_one_image(self, img_or_path, ser_engine, output_dir=None):
+        ser_path = os.path.join(output_dir, 'ser_' + os.path.basename(img_or_path))
+        re_path = os.path.join(output_dir, 're_' + os.path.basename(img_or_path))
+
+        ser_results, ser_inputs = ser_engine.ser_one_image(img_or_path, ser_path)
+
+        re_input, entity_idx_dict_batch = make_re_input(ser_inputs, ser_results)
+        if self.model.backbone.use_visual_backbone is False:
+            re_input.pop(4)
+        self.model.eval()
+        preds = self.model(re_input)  # 是个列表
+        # print(preds)
+        post_result = self.postprocessor(
+            preds,
+            ser_results=ser_results,
+            entity_idx_dict_batch=entity_idx_dict_batch)[0]
+
+        # print(post_result)
+        img_res = draw_re_results(img_or_path, post_result)
+        cv2.imwrite(re_path, img_res)
+        return post_result
