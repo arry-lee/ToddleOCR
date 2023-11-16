@@ -793,7 +793,7 @@ class ConfigModel:
         if output:
             img_res = draw_ser_results(img_or_path, post_result[0])
             cv2.imwrite(output, img_res)
-        return post_result
+        return post_result,batch
 
     def _ocr(self, img, det, rec):
         h, w = img.shape[:2]

@@ -25,7 +25,7 @@ class MultiHead(nn.Module):
         self.gtc_head = "sar"
         assert len(self.head_list) >= 2
         for idx, head_name in enumerate(self.head_list):
-            name = head_name.pop("class")
+            name = head_name.get("class")
             if name == "SARHead":
                 sar_args = head_name
                 self.sar_head = eval(name)(

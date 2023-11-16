@@ -21,6 +21,9 @@ __all__ = [
     "LayoutLMForSer",
 ]
 
+# from paddlenlp.transformers.layoutlmv2.modeling import REDecoder
+# from paddlenlp.transformers.layoutxlm.modeling import REDecoder
+
 from transformers import (
     LayoutLMForTokenClassification,
     LayoutLMModel,
@@ -40,6 +43,8 @@ from ..layoutlmft.models.layoutxlm import LayoutXLMForRelationExtraction, Layout
 from torch import nn
 
 from ..layoutlmft.modules.decoders.re import REDecoder
+
+x = REDecoder
 from ..layoutlmft.utils import ReOutput
 
 pretrained_model_dict = {
