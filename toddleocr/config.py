@@ -3,7 +3,6 @@ import warnings
 
 from transforms.functional import make_re_input
 from utils.visual import draw_re_results
-
 from .postprocess.matcher import TableMatch
 from .postprocess.table_master_match import TableMasterMatcher
 from .utils.visual import expand, table_view, draw_ser_results
@@ -53,7 +52,6 @@ from .utils.valid import valid
 
 torch.autograd.set_detect_anomaly(True)
 
-PROJECT_DIR = os.path.dirname(__file__)
 
 
 class _:
@@ -783,6 +781,10 @@ class ConfigModel:
 
         if isinstance(img_or_path, str):
             img = cv2.imread(img_or_path)
+        elif isinstance(img_or_path, os.PathLike):
+            img = cv2.imread(str(img_or_path))
+        else:
+            img = img_or_path
 
         self.model.eval()
         data = {'image': img}

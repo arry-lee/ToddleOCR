@@ -1,8 +1,10 @@
 import os
 import sys
 
+from _appdir import PACKAGE_DIR
+
 sys.path.append(os.getcwd())
-from toddleocr.config import _, ConfigModel, PROJECT_DIR
+from toddleocr.config import _, ConfigModel
 from toddleocr.datasets.simple import SimpleDataSet
 from toddleocr.loss.compose import MultiLoss
 from toddleocr.metrics.rec import RecMetric
@@ -20,7 +22,7 @@ from toddleocr.transforms import (
 from torch.optim import Adam
 from torch.optim.lr_scheduler import CosineAnnealingWarmRestarts
 
-CHARACTER_DICT_PATH = os.path.join(PROJECT_DIR, "utils/dict/chinese_sim_dict.txt")
+CHARACTER_DICT_PATH = PACKAGE_DIR/"utils/dict/chinese_sim_dict.txt"
 
 MAX_TEXT_LENGTH = 25
 USE_SPACE_CHAR = True

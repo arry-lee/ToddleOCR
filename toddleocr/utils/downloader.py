@@ -48,8 +48,9 @@ def maybe_download(model_storage_directory, url):
 
 
 def is_link(s):
-    return s is not None and s.startswith("http")
-
+    if isinstance(s,str):
+        return s is not None and s.startswith("http")
+    return False
 
 def confirm_model_dir_url(model_dir, default_model_dir, default_url):
     url = default_url
@@ -59,4 +60,4 @@ def confirm_model_dir_url(model_dir, default_model_dir, default_url):
         file_name = url.split("/")[-1][:-4]
         model_dir = default_model_dir
         model_dir = os.path.join(model_dir, file_name)
-    return model_dir, url
+    return str(model_dir), url

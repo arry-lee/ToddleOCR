@@ -955,7 +955,7 @@ class VQATokenLabelEncode:
         tokenizer_dict = {
             "LayoutXLM": {
                 "class": LayoutXLMTokenizer,
-                "pretrained_model": "D:/dev/.model/huggingface/layoutxlm-base",
+                "pretrained_model": "layoutxlm-base",
             },
             "LayoutLM": {
                 "class": LayoutLMTokenizer,
@@ -968,8 +968,13 @@ class VQATokenLabelEncode:
         }
         self.contains_re = contains_re
         tokenizer_config = tokenizer_dict[algorithm]
+        from toddleocr._appdir import MODEL_DIR
+        if (MODEL_DIR/tokenizer_config["pretrained_model"]).exists():
+            pretrained_model = MODEL_DIR/tokenizer_config["pretrained_model"]
+        else:
+            pretrained_model = tokenizer_config["pretrained_model"]
         self.tokenizer = tokenizer_config["class"].from_pretrained(
-            tokenizer_config["pretrained_model"]
+            pretrained_model
         )
         self.label2id_map, id2label_map = load_vqa_bio_label_maps(class_path)
         self.add_special_ids = add_special_ids

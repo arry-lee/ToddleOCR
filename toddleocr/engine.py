@@ -2,209 +2,25 @@
 
 import importlib
 import logging
-import os
 import sys
 from pathlib import Path
 
 import cv2
 import numpy as np
-
 from loguru import logger
 
+from _appdir import WEIGHTS_DIR, WEIGHTS_URL, MODEL_URLS
 from utils.downloader import is_link, download_with_progressbar, confirm_model_dir_url, maybe_download
 from utils.init_args import init_args, str2bool, check_gpu
 from utils.utility import check_and_read, alpha_to_color, binarize_img
 
 SUPPORT_DET_MODEL = ["DB"]
 SUPPORT_REC_MODEL = ["CRNN", "SVTR_LCNet"]
-PACKAGE_DIR = os.path.dirname(__file__)
-BASE_DIR = os.path.dirname(PACKAGE_DIR)
-WEIGHTS_DIR = os.path.join(BASE_DIR, "weights")
-BASE_URL = "https://github.com/arry-lee/ToddleOCR/releases/download/weights/"
+
 DEFAULT_OCR_MODEL_VERSION = "v3"
 SUPPORT_OCR_MODEL_VERSION = ["v3"]
 DEFAULT_STRUCTURE_MODEL_VERSION = "v2"
 SUPPORT_STRUCTURE_MODEL_VERSION = ["v2"]
-MODEL_URLS = {
-    "OCR": {
-        "v3": {
-            "det": {
-                "model": "models.det.v3.det_db_mv3_rse",
-                "ch": {"url": "zh_ocr_det_v3.tar"},
-                "en": {"url": "en_ocr_det_v3.tar"},
-                "ml": {"url": "ml_ocr_det_v3.tar"},
-            },
-            "rec": {
-                "model": "models.rec.v3.rec_svtr_mv1e",
-                "ch": {
-                    "url": "zh_ocr_rec_v3.tar",
-                    "dict": "utils/dict/chinese_sim_dict.txt",
-                },
-                "en": {
-                    "url": "en_ocr_rec_v3.tar",
-                    "dict": "utils/dict/en96_dict.txt",
-                },
-                "korean": {
-                    "url": "ko_ocr_rec_v3.tar",
-                    "dict": "utils/dict/korean_dict.txt",
-                },
-                "japan": {
-                    "url": "ja_ocr_rec_v3.tar",
-                    "dict": "utils/dict/japan_dict.txt",
-                },
-                "chinese_cht": {
-                    "url": "ch_ocr_rec_v3.tar",
-                    "dict": "utils/dict/chinese_cht_dict.txt",
-                },
-                "ta": {
-                    "url": "ta_ocr_rec_v3.tar",
-                    "dict": "utils/dict/ta_dict.txt",
-                },
-                "te": {
-                    "url": "te_ocr_rec_v3.tar",
-                    "dict": "utils/dict/te_dict.txt",
-                },
-                "ka": {
-                    "url": "ka_ocr_rec_v3.tar",
-                    "dict": "utils/dict/ka_dict.txt",
-                },
-                "latin": {
-                    "url": "la_ocr_rec_v3.tar",
-                    "dict": "utils/dict/latin_dict.txt",
-                },
-                "arabic": {
-                    "url": "ar_ocr_rec_v3.tar",
-                    "dict": "utils/dict/arabic_dict.txt",
-                },
-                "cyrillic": {
-                    "url": "ru_ocr_rec_v3.tar",
-                    "dict": "utils/dict/cyrillic_dict.txt",
-                },
-                "devanagari": {
-                    "url": "hi_ocr_rec_v3.tar",
-                    "dict": "utils/dict/devanagari_dict.txt",
-                },
-            },
-            "cls": {
-                "model": "models.cls.v2.cls_cls_mv3",
-                "ch": {"url": "zh_ocr_cls_v1.tar"},
-            },
-        },
-        # "v2": {
-        #     "det": {"ch": {"url": "zh_ocr_det_v2.tar"}},
-        #     "rec": {
-        #         "ch": {
-        #             "url": "zh_ocr_rec_v2.tar",
-        #             "dict": "utils/dict/chinese_sim_dict.txt",
-        #         }
-        #     },
-        #     "cls": {"ch": {"url": "zh_ocr_cls_v1.tar"}},
-        # },
-        # "v1": {
-        #     "det": {
-        #         "ch": {"url": "zh_ocr_det_v1.tar"},
-        #         "en": {"url": "en_ocr_det_v1.tar"},
-        #         "structure": {"url": "en_tab_det_v1.tar"},
-        #     },
-        #     "rec": {
-        #         "ch": {
-        #             "url": "zh_ocr_rec_v1.tar",
-        #             "dict": "utils/dict/chinese_sim_dict.txt",
-        #         },
-        #         "en": {
-        #             "url": "en_ocr_rec_m2.tar",
-        #             "dict": "utils/dict/en96_dict.txt",
-        #         },
-        #         "french": {
-        #             "url": "fr_ocr_rec_m2.tar",
-        #             "dict": "utils/dict/french_dict.txt",
-        #         },
-        #         "german": {
-        #             "url": "de_ocr_rec_m2.tar",
-        #             "dict": "utils/dict/german_dict.txt",
-        #         },
-        #         "korean": {
-        #             "url": "ko_ocr_rec_m2.tar",
-        #             "dict": "utils/dict/korean_dict.txt",
-        #         },
-        #         "japan": {
-        #             "url": "ja_ocr_rec_m2.tar",
-        #             "dict": "utils/dict/japan_dict.txt",
-        #         },
-        #         "chinese_cht": {
-        #             "url": "ch_ocr_rec_m2.tar",
-        #             "dict": "utils/dict/chinese_cht_dict.txt",
-        #         },
-        #         "ta": {
-        #             "url": "ta_ocr_rec_m2.tar",
-        #             "dict": "utils/dict/ta_dict.txt",
-        #         },
-        #         "te": {
-        #             "url": "te_ocr_rec_m2.tar",
-        #             "dict": "utils/dict/te_dict.txt",
-        #         },
-        #         "ka": {
-        #             "url": "ka_ocr_rec_m2.tar",
-        #             "dict": "utils/dict/ka_dict.txt",
-        #         },
-        #         "latin": {
-        #             "url": "la_ocr_rec_v1.tar",
-        #             "dict": "utils/dict/latin_dict.txt",
-        #         },
-        #         "arabic": {
-        #             "url": "ar_ocr_rec_v1.tar",
-        #             "dict": "utils/dict/arabic_dict.txt",
-        #         },
-        #         "cyrillic": {
-        #             "url": "ru_ocr_rec_v1.tar",
-        #             "dict": "utils/dict/cyrillic_dict.txt",
-        #         },
-        #         "devanagari": {
-        #             "url": "hi_ocr_rec_v1.tar",
-        #             "dict": "utils/dict/devanagari_dict.txt",
-        #         },
-        #         "structure": {
-        #             "url": "en_tab_rec_v1.tar",
-        #             "dict": "utils/dict/table_dict.txt",
-        #         },
-        #     },
-        #     "cls": {"ch": {"url": "zh_ocr_cls_v1.tar"}},
-        # },
-    },
-    "STRUCTURE": {
-        "v1": {
-            "table": {
-                "en": {
-                    "url": "en_tab_str_v1.tar",
-                    "dict": "utils/dict/table_structure_dict.txt",
-                }
-            }
-        },
-        "v2": {
-            "table": {
-                "model": "models.tab.tab_slanet_pplcnet",
-                "en": {
-                    "url": "en_str_tab_m2.tar",
-                    "dict": "utils/dict/table_structure_dict.txt",
-                },
-                "ch": {
-                    "url": "zh_str_tab_m2.tar",
-                    "dict": "utils/dict/table_structure_dict_ch.txt",
-                },
-            },
-            # "layout": {
-            #     "en": {
-            #         "url": "en_lay_det_x1_picodet.tar",
-            #         "dict": "utils/dict/layout_dict/layout_publaynet_dict.txt",
-            #     },
-            #     "ch": {
-            #         "url": "ch_lay_det_x1_picodet.tar",
-            #         "dict": "utils/dict/layout_dict/layout_cdla_dict.txt",
-            #     },
-            # },
-        },
-    },
-}
 
 
 def parse_args(main=True):
@@ -222,9 +38,9 @@ def parse_args(main=True):
         choices=SUPPORT_OCR_MODEL_VERSION,
         default="v3",
         help="OCR Model version, the current model support list is as follows: "
-        "1. v3 Support Chinese and English detection and recognition model, and direction classifier model"
-        "2. v2 Support Chinese detection and recognition model. "
-        "3. v1 support Chinese detection, recognition and direction classifier and multilingual recognition model.",
+             "1. v3 Support Chinese and English detection and recognition model, and direction classifier model"
+             "2. v2 Support Chinese detection and recognition model. "
+             "3. v1 support Chinese detection, recognition and direction classifier and multilingual recognition model.",
     )
     parser.add_argument(
         "--structure_version",
@@ -232,8 +48,8 @@ def parse_args(main=True):
         choices=SUPPORT_STRUCTURE_MODEL_VERSION,
         default="v2",
         help="Model version, the current model support list is as follows:"
-        " 1. PP-Structure Support en table structure model."
-        " 2. PP-StructureV2 Support ch and en table structure model.",
+             " 1. PP-Structure Support en table structure model."
+             " 2. PP-StructureV2 Support ch and en table structure model.",
     )
 
     for action in parser._actions:
@@ -340,7 +156,7 @@ def parse_lang(lang):
     elif lang in devanagari_lang:
         lang = "devanagari"
     assert (
-        lang in MODEL_URLS["OCR"][DEFAULT_OCR_MODEL_VERSION]["rec"]
+            lang in MODEL_URLS["OCR"][DEFAULT_OCR_MODEL_VERSION]["rec"]
     ), "param lang must in {}, but got {}".format(
         MODEL_URLS["OCR"][DEFAULT_OCR_MODEL_VERSION]["rec"].keys(), lang
     )
@@ -444,7 +260,7 @@ class ToddleOCR:
         params.det_model_dir, det_url = confirm_model_dir_url(
             params.det_model_dir,
             WEIGHTS_DIR,
-            BASE_URL + det_model_config["url"],
+            WEIGHTS_URL + det_model_config["url"],
         )
         rec_model_config, rec_model_cls = get_model_config(
             "OCR", params.ocr_version, "rec", lang
@@ -452,7 +268,7 @@ class ToddleOCR:
         params.rec_model_dir, rec_url = confirm_model_dir_url(
             params.rec_model_dir,
             WEIGHTS_DIR,
-            BASE_URL + rec_model_config["url"],
+            WEIGHTS_URL + rec_model_config["url"],
         )
         cls_model_config, cls_model_cls = get_model_config(
             "OCR", params.ocr_version, "cls", "ch"
@@ -460,17 +276,17 @@ class ToddleOCR:
         params.cls_model_dir, cls_url = confirm_model_dir_url(
             params.cls_model_dir,
             WEIGHTS_DIR,
-            BASE_URL + cls_model_config["url"],
+            WEIGHTS_URL + cls_model_config["url"],
         )
         tab_model_config, tab_model_cls = get_model_config(
             "STRUCTURE", params.structure_version, "table", "ch"
         )
-        use_table = hasattr(params,"tab_model_config")
+        use_table = hasattr(params, "tab_model_config")
         if use_table:
             params.tab_model_config, tab_url = confirm_model_dir_url(
                 params.tab_model_dir,
                 WEIGHTS_DIR,
-                BASE_URL + tab_model_config["url"],
+                WEIGHTS_URL + tab_model_config["url"],
             )
 
         if params.ocr_version == "v3":
@@ -508,15 +324,15 @@ class ToddleOCR:
             self.tab_model = tab_model_cls(params.tab_model_dir + "/inference.pt")
 
     def ocr(
-        self,
-        img,
-        det=True,
-        rec=True,
-        cls=True,
-        tab=False,
-        bin=False,
-        inv=False,
-        alpha_color=(255, 255, 255),
+            self,
+            img,
+            det=True,
+            rec=True,
+            cls=True,
+            tab=False,
+            bin=False,
+            inv=False,
+            alpha_color=(255, 255, 255),
     ):
         """
         OCR with ToddleOCR

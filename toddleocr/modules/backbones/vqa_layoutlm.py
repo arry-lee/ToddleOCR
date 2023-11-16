@@ -93,6 +93,9 @@ class NLPBaseModel(nn.Module):
             if pretrained is True:
                 pretrained_model_name = pretrained_model_dict[base_model_class][mode]
                 # base_model = base_model_class.from_pretrained(pretrained_model_name)
+                from _appdir import MODEL_DIR
+                if (MODEL_DIR/pretrained_model_name).exists():
+                    pretrained_model_name = MODEL_DIR/pretrained_model_name
                 self.config = LayoutLMv2Config.from_pretrained(pretrained_model_name)
             else:
                 self.config = LayoutLMv2Config.from_pretrained(pretrained)

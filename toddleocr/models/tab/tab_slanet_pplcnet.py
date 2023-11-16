@@ -2,8 +2,11 @@
 import os
 import sys
 
+
+
 sys.path.append(os.getcwd())
-from toddleocr.config import _, ConfigModel, PROJECT_DIR
+from toddleocr._appdir import PACKAGE_DIR
+from toddleocr.config import _, ConfigModel
 from toddleocr.datasets.pubtab import PubTabDataSet
 from toddleocr.loss.table_att import SLALoss
 from toddleocr.metrics.table import TableMetric
@@ -24,9 +27,7 @@ from toddleocr.transforms import (
 from torch.optim import Adam
 from torch.optim.lr_scheduler import ConstantLR
 
-CHARACTER_DICT_PATH = os.path.join(
-    PROJECT_DIR, "utils/dict/table_structure_dict_ch.txt"
-)
+CHARACTER_DICT_PATH = PACKAGE_DIR/"utils/dict/table_structure_dict_ch.txt"
 
 
 class Model(ConfigModel):
