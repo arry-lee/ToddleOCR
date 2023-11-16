@@ -3,7 +3,7 @@ import warnings
 
 from .postprocess.matcher import TableMatch
 from .postprocess.table_master_match import TableMasterMatcher
-from .utils.visual import expand, table_view
+from .utils.visual import expand, table_view, draw_ser_results
 
 warnings.filterwarnings("ignore")
 
@@ -44,7 +44,7 @@ from .utils.utility import (
     filter_tag_det_res,
     filter_tag_det_res_only_clip,
     resize_norm_img,
-    sorted_boxes,
+    sorted_boxes, to_tensor,
 )
 from .utils.valid import valid
 
@@ -774,6 +774,26 @@ class ConfigModel:
         )
 
         return structure_str_list, bbox_list
+
+    @torch.no_grad()
+    def ser_one_image(self, img_or_path, output=None):
+
+        if isinstance(img_or_path, str):
+            img = cv2.imread(img_or_path)
+
+        self.model.eval()
+        data = {'image': img}
+        batch = self.transforms("infer")(data)  # 可以在此处引入OCR_ENGINE
+        batch = to_tensor(batch)
+
+        preds = self.model(batch)
+        print(preds)
+        post_result = self.postprocessor(preds, segment_offset_ids=batch[6], ocr_infos=batch[7])
+        print(post_result)
+        if output:
+            img_res = draw_ser_results(img_or_path, post_result[0])
+            cv2.imwrite(output, img_res)
+        return post_result
 
     def _ocr(self, img, det, rec):
         h, w = img.shape[:2]

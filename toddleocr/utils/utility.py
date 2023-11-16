@@ -270,3 +270,19 @@ def get_dict(character_dict_path):
             character_str += line
         dict_character = list(character_str)
     return dict_character
+
+
+def to_tensor(data):
+    import numbers
+    from collections import defaultdict
+    data_dict = defaultdict(list)
+    to_tensor_idxs = []
+
+    for idx, v in enumerate(data):
+        if isinstance(v, (np.ndarray, torch.Tensor, numbers.Number)):
+            if idx not in to_tensor_idxs:
+                to_tensor_idxs.append(idx)
+        data_dict[idx].append(v)
+    for idx in to_tensor_idxs:
+        data_dict[idx] = torch.tensor(data_dict[idx])
+    return list(data_dict.values())
