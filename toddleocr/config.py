@@ -189,12 +189,13 @@ class ConfigModel:
             logger.info(self.world_size)
 
     def _build_model(self):
+
         _model = BaseModel(
             in_channels=3,
             backbone=self.Backbone,
-            neck=self.Neck,
-            head=self.Head,
-            # transform=self.Transform
+            neck=getattr(self, "Neck", None),
+            head=getattr(self, "Head", None),
+            transform=getattr(self, "Transform", None)
         )
         use_sync_bn = getattr(self, "use_sync_bn", False)
         if use_sync_bn:
@@ -622,14 +623,14 @@ class ConfigModel:
                         step=global_step,
                     )
                 if self.is_rank0 and (
-                    global_step > 0
-                    and global_step % log_batch_step == 0
-                    or idx >= len(train_dataloader) - 1
+                        global_step > 0
+                        and global_step % log_batch_step == 0
+                        or idx >= len(train_dataloader) - 1
                 ):
                     logs = train_stats.log()
                     eta_sec = (
-                        (epoch_num + 1 - epoch) * len(train_dataloader) - idx - 1
-                    ) * eta_meter.avg
+                                      (epoch_num + 1 - epoch) * len(train_dataloader) - idx - 1
+                              ) * eta_meter.avg
                     eta_sec_format = str(datetime.timedelta(seconds=int(eta_sec)))
                     strs = "epoch: [{}/{}], global_step: {}, {}, avg_reader_cost: {:.5f} s, avg_batch_cost: {:.5f} s, avg_samples: {}, ips: {:.5f} samples/s, eta: {}".format(
                         epoch,
@@ -647,9 +648,9 @@ class ConfigModel:
                     train_reader_cost = 0.0
                     train_batch_cost = 0.0
                 if (
-                    global_step > start_eval_step
-                    and (global_step - start_eval_step) % eval_batch_step == 0
-                    and self.is_rank0
+                        global_step > start_eval_step
+                        and (global_step - start_eval_step) % eval_batch_step == 0
+                        and self.is_rank0
                 ):
                     cur_metric = valid(
                         model,
@@ -767,9 +768,9 @@ class ConfigModel:
         bbox_list = post_result["bbox_batch_list"][0]
         structure_str_list = structure_str_list[0]
         structure_str_list = (
-            ["<html>", "<body>", "<table>"]
-            + structure_str_list
-            + ["</table>", "</body>", "</html>"]
+                ["<html>", "<body>", "<table>"]
+                + structure_str_list
+                + ["</table>", "</body>", "</html>"]
         )
 
         return structure_str_list, bbox_list
@@ -795,7 +796,7 @@ class ConfigModel:
         for i in range(len(dt_boxes)):
             det_box = dt_boxes[i]
             x0, y0, x1, y1 = expand(2, det_box, img.shape)
-            text_rect = img[int(y0) : int(y1), int(x0) : int(x1), :]
+            text_rect = img[int(y0): int(y1), int(x0): int(x1), :]
             img_crop_list.append(text_rect)
         rec_res = rec(img_crop_list)
         # logger.debug("rec_res num  : {}, elapse : {}".format(len(rec_res), rec_elapse))

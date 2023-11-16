@@ -3,7 +3,7 @@ from torch import nn
 
 class BaseModel(nn.Module):
     def __init__(
-        self, in_channels, backbone, neck, head, transform=None, return_all_feats=False
+        self, in_channels, backbone, neck=None, head=None, transform=None, return_all_feats=False
     ):
         super().__init__()
         if transform:
@@ -16,6 +16,9 @@ class BaseModel(nn.Module):
             in_channels = self.neck.out_channels
         if head:
             self.head = head(in_channels=in_channels)
+        else:
+            self.head = None
+
         self.return_all_feats = return_all_feats
 
     def forward(self, x, **kwargs):
