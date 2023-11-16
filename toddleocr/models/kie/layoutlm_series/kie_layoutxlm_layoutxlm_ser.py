@@ -148,7 +148,7 @@ def _t():
         pd = paddle.load(pdmodel)
         maps = {'._mean': '.running_mean',
                 '._variance': '.running_var',
-                'layoutxlm': 'backbone.model.layoutlmv2', # todo,simplify the prefix of backbone
+                'layoutxlm': 'backbone.model.layoutxlm', # todo,simplify the prefix of backbone
                 'classifier': 'backbone.model.classifier'
                 }
         transpose = 'weight'
@@ -189,5 +189,8 @@ if __name__ == '__main__':
     # for k in pd.keys():
     #     print(k)
     # _t()
+    # _t()
     m = Model(pretrained="D:\dev\github\ToddleOCR\model\ser_LayoutXLM_xfun_zh\model_state.pt")
-    m.ser_one_image("D:\dev\github\ToddleOCR\docs\imgs\zh_val_42.jpg",output='output.jpg')
+    # for k in m.model.state_dict():
+    #     print(k)
+    m.ser_one_image("D:\dev\github\ToddleOCR\docs\imgs\zh_val_21.jpg",output='output1.jpg')

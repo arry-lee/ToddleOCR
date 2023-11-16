@@ -26,15 +26,21 @@ from transformers import (
     LayoutLMModel,
     # LayoutLMv2ForRelationExtraction,
     LayoutLMv2ForTokenClassification,
-    LayoutLMv2Model,
+    LayoutLMv2Model, PretrainedConfig,
     # LayoutXLMForRelationExtraction,
     # LayoutXLMForTokenClassification,
     # LayoutXLMModel,
 )
+
+from ..layoutlmft import LayoutLMv2Config
 from ..layoutlmft.models.layoutlmv2 import LayoutLMv2ForRelationExtraction
-from ..layoutlmft.models.layoutxlm import LayoutXLMForRelationExtraction,LayoutXLMForTokenClassification,LayoutXLMModel
+from ..layoutlmft.models.layoutlmv2.modeling_layoutlmv2 import LayoutLMv2PreTrainedModel
+from ..layoutlmft.models.layoutxlm import LayoutXLMForRelationExtraction, LayoutXLMForTokenClassification, \
+    LayoutXLMModel
 from torch import nn
 
+from ..layoutlmft.modules.decoders.re import REDecoder
+from ..layoutlmft.utils import ReOutput
 
 pretrained_model_dict = {
     LayoutXLMModel: {
@@ -50,40 +56,58 @@ pretrained_model_dict = {
     },
 }
 
+# from
+
+
 
 class NLPBaseModel(nn.Module):
     def __init__(
-        self,
-        base_model_class,
-        model_class,
-        mode="Global",
-        type="ser",
-        pretrained=True,
-        checkpoints=None,
-        **kwargs
+            self,
+            base_model_class,
+            model_class,
+            mode="Global",
+            type="ser",
+            pretrained=True,
+            checkpoints=None,
+            **kwargs
     ):
         super().__init__()
+        config = kwargs.pop("config",None)
+        if config:
+            self.config = LayoutLMv2Config.from_json_file(config)
+
+        # PretrainedConfig.from_pretrained()
+        if mode=="vi":
+            self.use_visual_backbone = False
+        else:
+            self.use_visual_backbone = True
+
         if checkpoints is not None:  # load the trained model
             self.model = model_class.from_pretrained(checkpoints)
         else:  # load the pretrained-model
-            pretrained_model_name = pretrained_model_dict[base_model_class][mode]
             if pretrained is True:
-                base_model = base_model_class.from_pretrained(pretrained_model_name)
+                pretrained_model_name = pretrained_model_dict[base_model_class][mode]
+                # base_model = base_model_class.from_pretrained(pretrained_model_name)
+                self.config = LayoutLMv2Config.from_pretrained(pretrained_model_name)
             else:
-                base_model = base_model_class.from_pretrained(pretrained)
+                self.config = LayoutLMv2Config.from_pretrained(pretrained)
+                # base_model = base_model_class.from_pretrained(pretrained)
+            self.config.update({"use_visual_backbone": self.use_visual_backbone})
             if type == "ser":
-                self.model = model_class.bottom_up(
-                    base_model, num_classes=kwargs["num_classes"], dropout=None
-                )
+                assert "num_labels" in kwargs # hidden_dropout_prob
+                self.config.update(kwargs)
+                self.model = model_class(self.config)
             else:
-                self.model = model_class.bottom_up(base_model, dropout=None) # fixme
+                self.config.update(kwargs)
+                self.model = model_class(self.config)  # fixme
+
         self.out_channels = 1
-        self.use_visual_backbone = True
+
 
 
 class LayoutLMForSer(NLPBaseModel):
     def __init__(
-        self, num_classes, pretrained=True, checkpoints=None, mode="Global", **kwargs
+            self, num_classes, pretrained=True, checkpoints=None, mode="Global", **kwargs
     ):
         super().__init__(
             LayoutLMModel,
@@ -92,7 +116,8 @@ class LayoutLMForSer(NLPBaseModel):
             "ser",
             pretrained,
             checkpoints,
-            num_classes=num_classes,
+            num_labels=num_classes,
+            **kwargs
         )
         self.use_visual_backbone = False
 
@@ -110,7 +135,7 @@ class LayoutLMForSer(NLPBaseModel):
 
 class LayoutLMv2ForSer(NLPBaseModel):
     def __init__(
-        self, num_classes, pretrained=True, checkpoints=None, mode="Global", **kwargs
+            self, num_classes, pretrained=True, checkpoints=None, mode="Global", **kwargs
     ):
         super().__init__(
             LayoutLMv2Model,
@@ -119,13 +144,14 @@ class LayoutLMv2ForSer(NLPBaseModel):
             "ser",
             pretrained,
             checkpoints,
-            num_classes=num_classes,
+            num_labels=num_classes,
+            **kwargs
         )
-        if (
-            hasattr(self.model.layoutlmv2, "use_visual_backbone")
-            and self.model.layoutlmv2.use_visual_backbone is False
-        ):
-            self.use_visual_backbone = False
+        # if (
+        #         hasattr(self.model.layoutlmv2, "use_visual_backbone")
+        #         and self.model.layoutlmv2.use_visual_backbone is False
+        # ):
+        #     self.use_visual_backbone = False
 
     def forward(self, x):
         if self.use_visual_backbone is True:
@@ -161,13 +187,14 @@ class LayoutXLMForSer(NLPBaseModel):
             "ser",
             pretrained,
             checkpoints,
-            num_classes=num_classes,
+            num_labels=num_classes,
+            **kwargs
         )
-        if (
-            hasattr(self.model.layoutlmv2, "use_visual_backbone")
-            and self.model.layoutlmv2.has_visual_segment_embedding is False
-        ):
-            self.use_visual_backbone = False
+        # if (
+        #         hasattr(self.model.layoutxlm, "use_visual_backbone")
+        #         and self.model.layoutxlm.use_visual_backbone is False
+        # ):
+        #     self.use_visual_backbone = False
 
     def forward(self, x):
         if self.use_visual_backbone is True:
@@ -201,12 +228,13 @@ class LayoutLMv2ForRe(NLPBaseModel):
             "re",
             pretrained,
             checkpoints,
+            **kwargs
         )
-        if (
-            hasattr(self.model.layoutlmv2, "use_visual_backbone")
-            and self.model.layoutlmv2.use_visual_backbone is False
-        ):
-            self.use_visual_backbone = False
+        # if (
+        #         hasattr(self.model.layoutlmv2, "use_visual_backbone")
+        #         and self.model.layoutlmv2.use_visual_backbone is False
+        # ):
+        #     self.use_visual_backbone = False
 
     def forward(self, x):
         x = self.model(
@@ -233,12 +261,13 @@ class LayoutXLMForRe(NLPBaseModel):
             "re",
             pretrained,
             checkpoints,
+            **kwargs
         )
-        if (
-            hasattr(self.model.layoutxlm, "use_visual_backbone")
-            and self.model.layoutxlm.use_visual_backbone is False
-        ):
-            self.use_visual_backbone = False
+        # if (
+        #         hasattr(self.model.layoutxlm, "use_visual_backbone")
+        #         and self.model.layoutxlm.use_visual_backbone is False
+        # ):
+        #     self.use_visual_backbone = False
 
     def forward(self, x):
         if self.use_visual_backbone is True:

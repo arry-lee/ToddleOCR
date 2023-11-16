@@ -735,12 +735,15 @@ class LayoutLMv2Model(LayoutLMv2PreTrainedModel):
     def __init__(self, config):
         super(LayoutLMv2Model, self).__init__(config)
         self.config = config
+        self.use_visual_backbone = config.use_visual_backbone
+
         self.has_visual_segment_embedding = config.has_visual_segment_embedding
         # 嵌入层
         self.embeddings = LayoutLMv2Embeddings(config)
         # 视觉处理部分
-        self.visual = VisualBackbone(config)
-        self.visual_proj = nn.Linear(config.image_feature_pool_shape[-1], config.hidden_size)
+        if self.use_visual_backbone:
+            self.visual = VisualBackbone(config)
+            self.visual_proj = nn.Linear(config.image_feature_pool_shape[-1], config.hidden_size)
         if self.has_visual_segment_embedding: # 是否使用视觉嵌入
             self.visual_segment_embedding = nn.Parameter(nn.Embedding(1, config.hidden_size).weight[0])
         # 层归一化
@@ -806,8 +809,7 @@ class LayoutLMv2Model(LayoutLMv2PreTrainedModel):
     def _calc_img_embeddings(self, image, bbox, position_ids):
         # 计算图像的嵌入表示
 
-        # 计算视觉嵌入
-        visual_embeddings = self.visual_proj(self.visual(image)) # todo 使用其他
+
 
         # 计算位置嵌入
         position_embeddings = self.embeddings.position_embeddings(position_ids)
@@ -816,8 +818,11 @@ class LayoutLMv2Model(LayoutLMv2PreTrainedModel):
         spatial_position_embeddings = self.embeddings._cal_spatial_position_embeddings(bbox)
 
         # 将视觉嵌入、位置嵌入和空间位置嵌入相加得到最终的嵌入表示
-        embeddings = visual_embeddings + position_embeddings + spatial_position_embeddings
-
+        embeddings =  position_embeddings + spatial_position_embeddings
+        # 计算视觉嵌入
+        if self.use_visual_backbone:
+            visual_embeddings = self.visual_proj(self.visual(image)) # todo 使用其他
+            embeddings = embeddings + visual_embeddings
         # 如果模型包含视觉分段嵌入，则将其加到嵌入表示上
         if self.has_visual_segment_embedding:
             embeddings += self.visual_segment_embedding
@@ -1010,25 +1015,19 @@ class LayoutLMv2Model(LayoutLMv2PreTrainedModel):
 
 
 class LayoutLMv2ForTokenClassification(LayoutLMv2PreTrainedModel):
+    base_model = LayoutLMv2Model
+
     def __init__(self, config):
 
         super().__init__(config)
         self.num_labels = config.num_labels
-        self.layoutlmv2 = LayoutLMv2Model(config) # todo layoutxlm
+        # self.layoutlmv2 = LayoutLMv2Model(config) # todo layoutxlm
+        self.register_module(self.base_model_prefix,self.base_model(config))
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
         self.classifier = nn.Linear(config.hidden_size, config.num_labels)
 
         self.init_weights()
 
-    @classmethod
-    def bottom_up(cls,base_model,num_classes,dropout=None):
-        new = cls(base_model.config)
-        new.layoutlmv2 = base_model
-        new.num_labels = num_classes
-        new.classifier = nn.Linear(base_model.config.hidden_size, num_classes)
-        if dropout is None:
-            new.dropout = nn.Dropout(0)
-        return new
 
     def get_input_embeddings(self):
         return self.layoutlmv2.embeddings.word_embeddings
@@ -1050,7 +1049,7 @@ class LayoutLMv2ForTokenClassification(LayoutLMv2PreTrainedModel):
     ):
         return_dict = return_dict if return_dict is not None else self.config.use_return_dict
 
-        outputs = self.layoutlmv2(
+        outputs = getattr(self,self.base_model_prefix)(
             input_ids=input_ids,
             bbox=bbox,
             image=image,
@@ -1093,21 +1092,15 @@ class LayoutLMv2ForTokenClassification(LayoutLMv2PreTrainedModel):
 
 
 class LayoutLMv2ForRelationExtraction(LayoutLMv2PreTrainedModel):
+    base_model = LayoutLMv2Model
+
     def __init__(self, config):
         super().__init__(config)
-        self.layoutlmv2 = LayoutLMv2Model(config)
+        self.register_module(self.base_model_prefix,self.base_model(config))
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
         self.extractor = REDecoder(config)
         self.init_weights()
 
-    @classmethod
-    def bottom_up(cls, base_model, dropout=None):
-        new = cls(base_model.config)
-        new.layoutlmv2 = base_model
-        # new.num_labels = num_classes
-        if dropout is None:
-            new.dropout = nn.Dropout(0)
-        return new
 
     def forward(
         self,
@@ -1122,7 +1115,8 @@ class LayoutLMv2ForRelationExtraction(LayoutLMv2PreTrainedModel):
         entities=None,
         relations=None,
     ):
-        outputs = self.layoutlmv2(
+
+        outputs = getattr(self,self.base_model_prefix)(
             input_ids=input_ids,
             bbox=bbox,
             image=image,

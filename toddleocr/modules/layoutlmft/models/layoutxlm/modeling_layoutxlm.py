@@ -15,11 +15,18 @@ LAYOUTXLM_PRETRAINED_MODEL_ARCHIVE_LIST = [
 
 class LayoutXLMModel(LayoutLMv2Model):
     config_class = LayoutXLMConfig
-
+    pretrained_model_archive_map = LAYOUTXLM_PRETRAINED_MODEL_ARCHIVE_LIST
+    base_model_prefix = "layoutxlm"
 
 class LayoutXLMForTokenClassification(LayoutLMv2ForTokenClassification):
     config_class = LayoutXLMConfig
+    pretrained_model_archive_map = LAYOUTXLM_PRETRAINED_MODEL_ARCHIVE_LIST
+    base_model_prefix = "layoutxlm"
+    base_model = LayoutXLMModel
 
 
 class LayoutXLMForRelationExtraction(LayoutLMv2ForRelationExtraction):
     config_class = LayoutXLMConfig
+    pretrained_model_archive_map = LAYOUTXLM_PRETRAINED_MODEL_ARCHIVE_LIST
+    base_model_prefix = "layoutxlm"
+    base_model = LayoutXLMModel
