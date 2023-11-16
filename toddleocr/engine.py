@@ -465,11 +465,13 @@ class ToddleOCR:
         tab_model_config, tab_model_cls = get_model_config(
             "STRUCTURE", params.structure_version, "table", "ch"
         )
-        params.tab_model_config, tab_url = confirm_model_dir_url(
-            params.tab_model_dir,
-            WEIGHTS_DIR,
-            BASE_URL + tab_model_config["url"],
-        )
+        use_table = hasattr(params,"tab_model_config")
+        if use_table:
+            params.tab_model_config, tab_url = confirm_model_dir_url(
+                params.tab_model_dir,
+                WEIGHTS_DIR,
+                BASE_URL + tab_model_config["url"],
+            )
 
         if params.ocr_version == "v3":
             rec_model_cls.rec_image_shape = (3, 48, 320)
@@ -480,7 +482,8 @@ class ToddleOCR:
             maybe_download(params.det_model_dir, det_url)
             maybe_download(params.rec_model_dir, rec_url)
             maybe_download(params.cls_model_dir, cls_url)
-            maybe_download(params.tab_model_dir, tab_url)
+            if use_table:
+                maybe_download(params.tab_model_dir, tab_url)
 
         if params.det_algorithm not in SUPPORT_DET_MODEL:
             logger.error("det_algorithm must in {}".format(SUPPORT_DET_MODEL))
@@ -501,7 +504,8 @@ class ToddleOCR:
         tab_model_cls.character_dict_path = str(
             Path(__file__).parent / tab_model_config["dict"]
         )
-        self.tab_model = tab_model_cls(params.tab_model_dir + "/inference.pt")
+        if use_table:
+            self.tab_model = tab_model_cls(params.tab_model_dir + "/inference.pt")
 
     def ocr(
         self,
