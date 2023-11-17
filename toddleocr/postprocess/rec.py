@@ -34,6 +34,7 @@ class BaseRecLabelDecode:
             self.character_str = "0123456789abcdefghijklmnopqrstuvwxyz"
             dict_character = list(self.character_str)
         else:
+            character_dict_path = str(character_dict_path)
             with open(character_dict_path, "rb") as fin:
                 lines = fin.readlines()
                 for line in lines:
