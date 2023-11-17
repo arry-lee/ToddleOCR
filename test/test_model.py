@@ -59,3 +59,13 @@ class TestModel(TestCase):
 
         r = tm.tab("assert/table_bank.jpg", det=dm, rec=rm)
         print(r)
+
+    def test_kie(self):
+        from toddleocr.models.kie.kie_layoutxlm_ser import Model as SERModel
+        from toddleocr.models.kie.kie_layoutxlm_re import Model as REModel
+        from toddleocr._appdir import MODEL_DIR
+        ser_model = SERModel(pretrained=MODEL_DIR / "ser_LayoutXLM_xfun_zh/model_state.pt")
+
+        m = REModel(pretrained=MODEL_DIR / "re_LayoutXLM_xfun_zh/model_state.pt")
+        r = m.re_one_image("../docs/imgs/zh_val_21.jpg", ser_engine=ser_model, output_dir='.')
+        print(r)

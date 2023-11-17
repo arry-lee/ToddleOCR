@@ -112,6 +112,7 @@ def _t():
             return torch.from_numpy(tensor.numpy())
 
         # global transpose
+        pdmodel = str(pdmodel)
         pd = paddle.load(pdmodel)
         maps = {
             "._mean": ".running_mean",

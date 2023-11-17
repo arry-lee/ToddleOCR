@@ -152,4 +152,4 @@ def _t():
 
 if __name__ == '__main__':
     m = Model(pretrained=MODEL_DIR / "ser_LayoutXLM_xfun_zh\model_state.pt")
-    m.ser_one_image(PROJECT_DIR / "docs/imgs/zh_val_21.jpg", output='output1.jpg')
+    m.ser_one_image(r"D:\dev\github\ToddleOCR\train_data\XFUND\zh_val\image\zh_val_2.jpg", output='output1.jpg')
